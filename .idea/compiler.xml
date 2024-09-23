@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ruoyi-framework" />
+        <module name="innovation-generator" />
+        <module name="innovation-system" />
+        <module name="innovation-common" />
+        <module name="ruoyi-common" />
+        <module name="innovation-framework" />
+        <module name="innovation-quartz" />
+        <module name="innovation-admin" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
