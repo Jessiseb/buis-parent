@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.ruoyi.common.annotation.Anonymous;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
  * 
  * @author ruoyi
  */
-@Api("用户信息管理")
+@Api(tags = "用户信息管理")
 @RestController
 @RequestMapping("/test/user")
 public class TestController extends BaseController
