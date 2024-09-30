@@ -61,6 +61,12 @@
             <artifactId>innovation-generator</artifactId>
         </dependency>
 
+        <!-- 业务模块-->
+        <dependency>
+            <groupId>com.innovation</groupId>
+            <artifactId>innovation-module-business</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
