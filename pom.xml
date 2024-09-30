@@ -172,6 +172,13 @@
                 <version>${innovation.version}</version>
             </dependency>
 
+            <!-- 业务模块-->
+            <dependency>
+                <groupId>com.innovation</groupId>
+                <artifactId>innovation-module-business</artifactId>
+                <version>${innovation.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -182,6 +189,7 @@
         <module>innovation-quartz</module>
         <module>innovation-generator</module>
         <module>innovation-common</module>
+        <module>innovation-module-business</module>
     </modules>
     <packaging>pom</packaging>
 

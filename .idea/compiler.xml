@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ruoyi-framework" />
+        <module name="innovation-business-manager" />
         <module name="innovation-generator" />
         <module name="innovation-system" />
         <module name="innovation-common" />

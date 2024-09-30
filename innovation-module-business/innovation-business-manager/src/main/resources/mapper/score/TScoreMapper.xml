@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.businessmanager.score.mapper.TScoreMapper">
+    
+    <resultMap type="TScore" id="TScoreResult">
+        <result property="id"    column="id"    />
+        <result property="race"    column="race"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="team"    column="team"    />
+        <result property="build"    column="build"    />
+        <result property="score"    column="score"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createdTime"    column="created_time"    />
+        <result property="updatedTime"    column="updated_time"    />
+    </resultMap>
+
+    <sql id="selectTScoreVo">
+        select id, race, teacher, team, build, score, is_deleted, created_time, updated_time from t_score
+    </sql>
+
+    <select id="selectTScoreList" parameterType="TScore" resultMap="TScoreResult">
+        <include refid="selectTScoreVo"/>
+        <where>  
+            <if test="race != null  and race != ''"> and race = #{race}</if>
+            <if test="teacher != null  and teacher != ''"> and teacher = #{teacher}</if>
+            <if test="team != null  and team != ''"> and team = #{team}</if>
+            <if test="build != null  and build != ''"> and build = #{build}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+            <if test="createdTime != null "> and created_time = #{createdTime}</if>
+            <if test="updatedTime != null "> and updated_time = #{updatedTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectTScoreById" parameterType="Long" resultMap="TScoreResult">
+        <include refid="selectTScoreVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTScore" parameterType="TScore" useGeneratedKeys="true" keyProperty="id">
+        insert into t_score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="race != null">race,</if>
+            <if test="teacher != null">teacher,</if>
+            <if test="team != null">team,</if>
+            <if test="build != null">build,</if>
+            <if test="score != null">score,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createdTime != null">created_time,</if>
+            <if test="updatedTime != null">updated_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="race != null">#{race},</if>
+            <if test="teacher != null">#{teacher},</if>
+            <if test="team != null">#{team},</if>
+            <if test="build != null">#{build},</if>
+            <if test="score != null">#{score},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTScore" parameterType="TScore">
+        update t_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="race != null">race = #{race},</if>
+            <if test="teacher != null">teacher = #{teacher},</if>
+            <if test="team != null">team = #{team},</if>
+            <if test="build != null">build = #{build},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
+            <if test="updatedTime != null">updated_time = #{updatedTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTScoreById" parameterType="Long">
+        delete from t_score where id = #{id}
+    </delete>
+
+    <delete id="deleteTScoreByIds" parameterType="String">
+        delete from t_score where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
