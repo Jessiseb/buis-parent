@@ -1,7 +1,7 @@
 # 项目相关配置
 ruoyi:
   # 名称
-  name: RuoYi
+  name: Ruoyi
   # 版本
   version: 3.8.8
   # 版权年份
@@ -52,7 +52,7 @@ spring:
     # 国际化资源文件路径
     basename: i18n/messages
   profiles:
-    active: druid
+    active: dev
   # 文件上传
   servlet:
     multipart:
@@ -68,13 +68,13 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: localhost
+    host: 42.194.233.38
     # 端口，默认为6379
-    port: 6379
+    port: 6338
     # 数据库索引
-    database: 0
+    database: 2
     # 密码
-    password:
+    password: ***REMOVED***
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -117,7 +117,7 @@ swagger:
   # 是否开启swagger
   enabled: true
   # 请求前缀
-  pathMapping: /dev-api
+  pathMapping: /buis
 
 # 防止XSS攻击
 xss:

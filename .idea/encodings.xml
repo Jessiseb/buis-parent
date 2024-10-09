@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/innovation-admin/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-admin/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-common/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-framework/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-generator/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-generator/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-module-business/innovation-business-manager/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-module-business/innovation-business-manager/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-quartz/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-quartz/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-system/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/innovation-system/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-admin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-admin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-business/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-business/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-framework/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-generator/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-generator/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-quartz/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-quartz/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-system/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/buis-system/src/main/resources" charset="UTF-8" />
   </component>
 </project>

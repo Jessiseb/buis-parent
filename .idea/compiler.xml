@@ -6,16 +6,27 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="buis-business" />
+        <module name="buis-admin" />
+        <module name="buis-generator" />
+        <module name="buis-quartz" />
         <module name="ruoyi-framework" />
         <module name="innovation-business-manager" />
         <module name="innovation-generator" />
         <module name="innovation-system" />
+        <module name="buis-system" />
         <module name="innovation-common" />
+        <module name="buis-common" />
+        <module name="buis-framework" />
         <module name="ruoyi-common" />
         <module name="innovation-framework" />
         <module name="innovation-quartz" />
         <module name="innovation-admin" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="buis-business-manager" target="1.8" />
+      <module name="buis-modules-business" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
