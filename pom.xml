@@ -182,6 +182,13 @@
                 <version>${buis.version}</version>
             </dependency>
 
+            <!-- 业务管理-->
+            <dependency>
+                <artifactId>buis-business</artifactId>
+                <groupId>com.buis</groupId>
+                <version>${buis.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -192,6 +199,7 @@
         <module>buis-quartz</module>
         <module>buis-generator</module>
         <module>buis-common</module>
+        <module>buis-business</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -61,6 +61,12 @@
             <artifactId>buis-generator</artifactId>
         </dependency>
 
+        <!-- 业务管理-->
+        <dependency>
+            <groupId>com.buis</groupId>
+            <artifactId>buis-business</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
