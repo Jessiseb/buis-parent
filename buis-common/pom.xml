@@ -16,6 +16,11 @@
     </description>
 
     <dependencies>
+        <!-- lombok工具 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
         <!-- spring-boot-devtools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -28,7 +33,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-ui</artifactId>
+            <version>3.0.3</version>
+        </dependency>
         <!-- 防止进入swagger页面报类型转换错误，排除3.0.0中的引用，手动增加1.6.2版本 -->
         <dependency>
             <groupId>io.swagger</groupId>

@@ -45,15 +45,15 @@ public class GenConstants
             "bit", "bigint", "float", "double", "decimal" };
 
     /** 页面不需要编辑字段 */
-    public static final String[] COLUMNNAME_NOT_EDIT = { "id", "create_by", "create_time", "del_flag" };
+    public static final String[] COLUMNNAME_NOT_EDIT = { "id", "create_by", "create_time", "del_flag" , "update_time","is_deleted" };
 
     /** 页面不需要显示的列表字段 */
     public static final String[] COLUMNNAME_NOT_LIST = { "id", "create_by", "create_time", "del_flag", "update_by",
-            "update_time" };
+            "update_time", "is_deleted" };
 
     /** 页面不需要查询字段 */
     public static final String[] COLUMNNAME_NOT_QUERY = { "id", "create_by", "create_time", "del_flag", "update_by",
-            "update_time", "remark" };
+            "update_time", "remark","is_deleted" };
 
     /** Entity基类字段 */
     public static final String[] BASE_ENTITY = { "createBy", "createTime", "updateBy", "updateTime", "remark" };
