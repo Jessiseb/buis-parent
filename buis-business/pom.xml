@@ -17,11 +17,6 @@
     </properties>
 
     <dependencies>
-        <!-- 核心模块-->
-        <dependency>
-            <groupId>com.buis</groupId>
-            <artifactId>buis-framework</artifactId>
-        </dependency>
 
         <!-- 通用工具-->
         <dependency>
