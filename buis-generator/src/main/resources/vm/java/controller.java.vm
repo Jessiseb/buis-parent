@@ -56,7 +56,6 @@ public class ${ClassName}Controller extends BaseController
         return getDataTable(list);
     }
     #elseif($table.tree)
-        @ApiOperation("查询${functionName}列表")
         public AjaxResult list(${ClassName} ${className})
         {
             List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
