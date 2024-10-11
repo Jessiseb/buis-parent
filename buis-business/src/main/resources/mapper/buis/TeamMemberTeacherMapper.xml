@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.TeamMemberTeacherMapper">
+    
+    <resultMap type="TeamMemberTeacher" id="TeamMemberTeacherResult">
+        <result property="id"    column="id"    />
+        <result property="race"    column="race"    />
+        <result property="team"    column="team"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="decider"    column="decider"    />
+        <result property="isChoosed"    column="is_choosed"    />
+        <result property="reason"    column="reason"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTeamMemberTeacherVo">
+        select id, race, team, teacher, decider, is_choosed, reason, is_deleted, create_time, update_time from team_member_teacher
+    </sql>
+
+    <select id="selectTeamMemberTeacherList" parameterType="TeamMemberTeacher" resultMap="TeamMemberTeacherResult">
+        <include refid="selectTeamMemberTeacherVo"/>
+        <where>
+            is_deleted = 0
+            <if test="id != null "> and id = #{id}</if>
+            <if test="race != null "> and race = #{race}</if>
+            <if test="team != null "> and team = #{team}</if>
+            <if test="teacher != null "> and teacher = #{teacher}</if>
+            <if test="decider != null "> and decider = #{decider}</if>
+            <if test="isChoosed != null "> and is_choosed = #{isChoosed}</if>
+            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTeamMemberTeacherById" parameterType="Long" resultMap="TeamMemberTeacherResult">
+        <include refid="selectTeamMemberTeacherVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertTeamMemberTeacher" parameterType="TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
+        insert into team_member_teacher
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="race != null">race,</if>
+            <if test="team != null">team,</if>
+            <if test="teacher != null">teacher,</if>
+            <if test="decider != null">decider,</if>
+            <if test="isChoosed != null">is_choosed,</if>
+            <if test="reason != null">reason,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="race != null">#{race},</if>
+            <if test="team != null">#{team},</if>
+            <if test="teacher != null">#{teacher},</if>
+            <if test="decider != null">#{decider},</if>
+            <if test="isChoosed != null">#{isChoosed},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTeamMemberTeacher" parameterType="TeamMemberTeacher">
+        update team_member_teacher
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="race != null">race = #{race},</if>
+            <if test="team != null">team = #{team},</if>
+            <if test="teacher != null">teacher = #{teacher},</if>
+            <if test="decider != null">decider = #{decider},</if>
+            <if test="isChoosed != null">is_choosed = #{isChoosed},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeamMemberTeacherById" parameterType="Long">
+        update team_member_teacher
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteTeamMemberTeacherByIds" parameterType="String">
+        update team_member_teacher
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.CollegeMajorMapper">
+    
+    <resultMap type="CollegeMajor" id="CollegeMajorResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="college"    column="college"    />
+        <result property="sort"    column="sort"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCollegeMajorVo">
+        select id, name, college, sort, is_deleted, create_time, update_time from t_college_major
+    </sql>
+
+    <select id="selectCollegeMajorList" parameterType="CollegeMajor" resultMap="CollegeMajorResult">
+        <include refid="selectCollegeMajorVo"/>
+        <where>
+            is_deleted = 0
+            <if test="id != null "> and id = #{id}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="college != null "> and college = #{college}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+        </where>
+    </select>
+    
+    <select id="selectCollegeMajorById" parameterType="Long" resultMap="CollegeMajorResult">
+        <include refid="selectCollegeMajorVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertCollegeMajor" parameterType="CollegeMajor" useGeneratedKeys="true" keyProperty="id">
+        insert into t_college_major
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="college != null">college,</if>
+            <if test="sort != null">sort,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="college != null">#{college},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCollegeMajor" parameterType="CollegeMajor">
+        update t_college_major
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="college != null">college = #{college},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCollegeMajorById" parameterType="Long">
+        update t_college_major
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteCollegeMajorByIds" parameterType="String">
+        update t_college_major
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

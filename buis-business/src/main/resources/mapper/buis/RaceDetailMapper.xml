@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.RaceDetailMapper">
+    
+    <resultMap type="RaceDetail" id="RaceDetailResult">
+        <result property="id"    column="id"    />
+        <result property="race"    column="race"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="descUrl"    column="desc_url"    />
+        <result property="groupUrl"    column="group_url"    />
+        <result property="rule"    column="rule"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="teamMin"    column="team_min"    />
+        <result property="teamMax"    column="team_max"    />
+        <result property="teacherMin"    column="teacher_min"    />
+        <result property="teacherMax"    column="teacher_max"    />
+        <result property="rRank"    column="r_rank"    />
+        <result property="tLimit"    column="t_limit"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap id="RaceDetailWeightResult" type="RaceDetail" extends="RaceDetailResult">
+        <collection property="weightList" ofType="Weight" column="id" select="selectWeightList" />
+    </resultMap>
+
+    <resultMap type="Weight" id="WeightResult">
+        <result property="id"    column="id"    />
+        <result property="raceD"    column="race_d"    />
+        <result property="name"    column="name"    />
+        <result property="weight"    column="weight"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectRaceDetailVo">
+        select id, race, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time from race_detail
+    </sql>
+
+    <select id="selectRaceDetailList" parameterType="RaceDetail" resultMap="RaceDetailResult">
+        <include refid="selectRaceDetailVo"/>
+        <where>
+            is_deleted = 0
+            <if test="id != null "> and id = #{id}</if>
+            <if test="race != null "> and race = #{race}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="rRank != null "> and r_rank = #{rRank}</if>
+            <if test="tLimit != null "> and t_limit = #{tLimit}</if>
+        </where>
+    </select>
+    
+    <select id="selectRaceDetailById" parameterType="Long" resultMap="RaceDetailWeightResult">
+        select id, race, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
+        from race_detail
+        where id = #{id} and is_deleted = 0
+    </select>
+
+    <select id="selectWeightList" resultMap="WeightResult">
+        select id, race_d, name, weight, is_deleted, create_time, update_time
+        from t_weight
+        where race_d = #{race_d} and is_deleted = 0
+    </select>
+
+    <insert id="insertRaceDetail" parameterType="RaceDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into race_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="race != null">race,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="descUrl != null and descUrl != ''">desc_url,</if>
+            <if test="groupUrl != null and groupUrl != ''">group_url,</if>
+            <if test="rule != null">rule,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="teamMin != null">team_min,</if>
+            <if test="teamMax != null">team_max,</if>
+            <if test="teacherMin != null">teacher_min,</if>
+            <if test="teacherMax != null">teacher_max,</if>
+            <if test="rRank != null">r_rank,</if>
+            <if test="tLimit != null">t_limit,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="race != null">#{race},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="descUrl != null and descUrl != ''">#{descUrl},</if>
+            <if test="groupUrl != null and groupUrl != ''">#{groupUrl},</if>
+            <if test="rule != null">#{rule},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="teamMin != null">#{teamMin},</if>
+            <if test="teamMax != null">#{teamMax},</if>
+            <if test="teacherMin != null">#{teacherMin},</if>
+            <if test="teacherMax != null">#{teacherMax},</if>
+            <if test="rRank != null">#{rRank},</if>
+            <if test="tLimit != null">#{tLimit},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRaceDetail" parameterType="RaceDetail">
+        update race_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="race != null">race = #{race},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="descUrl != null and descUrl != ''">desc_url = #{descUrl},</if>
+            <if test="groupUrl != null and groupUrl != ''">group_url = #{groupUrl},</if>
+            <if test="rule != null">rule = #{rule},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="teamMin != null">team_min = #{teamMin},</if>
+            <if test="teamMax != null">team_max = #{teamMax},</if>
+            <if test="teacherMin != null">teacher_min = #{teacherMin},</if>
+            <if test="teacherMax != null">teacher_max = #{teacherMax},</if>
+            <if test="rRank != null">r_rank = #{rRank},</if>
+            <if test="tLimit != null">t_limit = #{tLimit},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRaceDetailById" parameterType="Long">
+        update race_detail
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteRaceDetailByIds" parameterType="String">
+        update race_detail
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteWeightByRaceDs" parameterType="String">
+        update t_weight
+        set is_deleted = 1
+        where race_d in
+        <foreach item="raceD" collection="array" open="(" separator="," close=")">
+            #{raceD}
+        </foreach>
+    </delete>
+
+    <delete id="deleteWeightByRaceD" parameterType="Long">
+        update t_weight
+        set is_deleted = 1
+        where race_d = #{raceD}
+    </delete>
+
+    <insert id="batchWeight">
+        insert into t_weight( id, race_d, name, weight, is_deleted, create_time, update_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.raceD}, #{item.name}, #{item.weight}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+</mapper>

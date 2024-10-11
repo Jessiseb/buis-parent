@@ -1,0 +1,48 @@
+package com.buis.domain;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.buis.common.annotation.Excel;
+import com.buis.common.core.domain.BaseEntity;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+/**
+ * 奖项对象 t_reward
+ *
+ * @author kaven
+ * @date 2024-10-11
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Reward extends BaseEntity
+{
+    private static final long serialVersionUID = 1L;
+
+    /** id */
+    private Long id;
+
+    /** 比赛(关联比赛表id) */
+    @Excel(name = "比赛(关联比赛表id)")
+    private Long race;
+
+    /** 等级 */
+    @Excel(name = "等级")
+    private String rRank;
+
+    /** 奖品名称 */
+    @Excel(name = "奖品名称")
+    private String name;
+
+    /** 数量 */
+    @Excel(name = "数量")
+    private Long quantity;
+
+    /** 标识是否被删除，0表示未删除 */
+    private Integer isDeleted;
+
+
+}
