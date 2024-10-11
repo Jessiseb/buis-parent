@@ -1,0 +1,61 @@
+package com.buis.service;
+
+import java.util.List;
+import com.buis.domain.PreSignTeacher;
+
+/**
+ * 老师预报名Service接口
+ * 
+ * @author buis
+ * @date 2024-10-11
+ */
+public interface IPreSignTeacherService 
+{
+    /**
+     * 查询老师预报名
+     * 
+     * @param id 老师预报名主键
+     * @return 老师预报名
+     */
+    public PreSignTeacher selectPreSignTeacherById(Long id);
+
+    /**
+     * 查询老师预报名列表
+     * 
+     * @param preSignTeacher 老师预报名
+     * @return 老师预报名集合
+     */
+    public List<PreSignTeacher> selectPreSignTeacherList(PreSignTeacher preSignTeacher);
+
+    /**
+     * 新增老师预报名
+     * 
+     * @param preSignTeacher 老师预报名
+     * @return 结果
+     */
+    public int insertPreSignTeacher(PreSignTeacher preSignTeacher);
+
+    /**
+     * 修改老师预报名
+     * 
+     * @param preSignTeacher 老师预报名
+     * @return 结果
+     */
+    public int updatePreSignTeacher(PreSignTeacher preSignTeacher);
+
+    /**
+     * 批量删除老师预报名
+     * 
+     * @param ids 需要删除的老师预报名主键集合
+     * @return 结果
+     */
+    public int deletePreSignTeacherByIds(Long[] ids);
+
+    /**
+     * 删除老师预报名信息
+     * 
+     * @param id 老师预报名主键
+     * @return 结果
+     */
+    public int deletePreSignTeacherById(Long id);
+}

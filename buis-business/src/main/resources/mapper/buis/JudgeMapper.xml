@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.JudgeMapper">
+    
+    <resultMap type="Judge" id="JudgeResult">
+        <result property="id"    column="id"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="race"    column="race"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectJudgeVo">
+        select id, teacher, race, is_deleted, create_time, update_time from t_judge
+    </sql>
+
+    <select id="selectJudgeList" parameterType="Judge" resultMap="JudgeResult">
+        <include refid="selectJudgeVo"/>
+        <where>
+            is_deleted = 0
+            <if test="id != null "> and id = #{id}</if>
+            <if test="teacher != null "> and teacher = #{teacher}</if>
+            <if test="race != null "> and race = #{race}</if>
+        </where>
+    </select>
+    
+    <select id="selectJudgeById" parameterType="Long" resultMap="JudgeResult">
+        <include refid="selectJudgeVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertJudge" parameterType="Judge" useGeneratedKeys="true" keyProperty="id">
+        insert into t_judge
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teacher != null">teacher,</if>
+            <if test="race != null">race,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teacher != null">#{teacher},</if>
+            <if test="race != null">#{race},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJudge" parameterType="Judge">
+        update t_judge
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teacher != null">teacher = #{teacher},</if>
+            <if test="race != null">race = #{race},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteJudgeById" parameterType="Long">
+        update t_judge
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteJudgeByIds" parameterType="String">
+        update t_judge
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

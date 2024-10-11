@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.TeamInfoMapper">
+    
+    <resultMap type="TeamInfo" id="TeamInfoResult">
+        <result property="id"    column="id"    />
+        <result property="race"    column="race"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="leader"    column="leader"    />
+        <result property="tLimit"    column="t_limit"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="start"    column="start"    />
+        <result property="end"    column="end"    />
+        <result property="rRank"    column="r_rank"    />
+        <result property="status"    column="status"    />
+        <result property="reason"    column="reason"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTeamInfoVo">
+        select id, race, name, description, leader, t_limit, capacity, start, end, r_rank, status, reason, is_deleted, create_time, update_time from team_info
+    </sql>
+
+    <select id="selectTeamInfoList" parameterType="TeamInfo" resultMap="TeamInfoResult">
+        <include refid="selectTeamInfoVo"/>
+        <where>
+            is_deleted = 0
+            <if test="race != null "> and race = #{race}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
+            <if test="leader != null "> and leader = #{leader}</if>
+            <if test="tLimit != null  and tLimit != ''"> and t_limit like concat('%', #{tLimit}, '%')</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="start != null "> and start = #{start}</if>
+            <if test="end != null "> and end = #{end}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTeamInfoById" parameterType="Long" resultMap="TeamInfoResult">
+        <include refid="selectTeamInfoVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertTeamInfo" parameterType="TeamInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into team_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="race != null">race,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="leader != null">leader,</if>
+            <if test="tLimit != null and tLimit != ''">t_limit,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="start != null">start,</if>
+            <if test="end != null">end,</if>
+            <if test="rRank != null">r_rank,</if>
+            <if test="status != null">status,</if>
+            <if test="reason != null">reason,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="race != null">#{race},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="leader != null">#{leader},</if>
+            <if test="tLimit != null and tLimit != ''">#{tLimit},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="start != null">#{start},</if>
+            <if test="end != null">#{end},</if>
+            <if test="rRank != null">#{rRank},</if>
+            <if test="status != null">#{status},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTeamInfo" parameterType="TeamInfo">
+        update team_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="race != null">race = #{race},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="leader != null">leader = #{leader},</if>
+            <if test="tLimit != null and tLimit != ''">t_limit = #{tLimit},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="start != null">start = #{start},</if>
+            <if test="end != null">end = #{end},</if>
+            <if test="rRank != null">r_rank = #{rRank},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeamInfoById" parameterType="Long">
+        update team_info
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteTeamInfoByIds" parameterType="String">
+        update team_info
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.RaceTypeMapper">
+    
+    <resultMap type="RaceType" id="RaceTypeResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="pType"    column="p_type"    />
+        <result property="sort"    column="sort"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectRaceTypeVo">
+        select id, name, p_type, sort, is_deleted, create_time, update_time from race_type
+    </sql>
+
+    <select id="selectRaceTypeList" parameterType="RaceType" resultMap="RaceTypeResult">
+        <include refid="selectRaceTypeVo"/>
+        <where>
+            is_deleted = 0
+            <if test="id != null "> and id = #{id}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="pType != null "> and p_type = #{pType}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+        </where>
+    </select>
+    
+    <select id="selectRaceTypeById" parameterType="Long" resultMap="RaceTypeResult">
+        <include refid="selectRaceTypeVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertRaceType" parameterType="RaceType" useGeneratedKeys="true" keyProperty="id">
+        insert into race_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="pType != null">p_type,</if>
+            <if test="sort != null">sort,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="pType != null">#{pType},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRaceType" parameterType="RaceType">
+        update race_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="pType != null">p_type = #{pType},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRaceTypeById" parameterType="Long">
+        update race_type
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteRaceTypeByIds" parameterType="String">
+        update race_type
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
