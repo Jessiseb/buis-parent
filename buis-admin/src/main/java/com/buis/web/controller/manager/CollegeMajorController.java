@@ -1,4 +1,5 @@
 package com.buis.web.controller.manager;
+
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,7 +27,7 @@ import com.buis.common.utils.poi.ExcelUtil;
  * 专业信息Controller
  *
  * @author buis
- * @date 2024-10-10
+ * @date 2024-10-12
  */
 @Api(tags = "专业信息Controller")
 @RestController
