@@ -1,7 +1,10 @@
 package com.buis.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.common.utils.bean.BeanUtils;
+import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.UserInfoMapper;
@@ -27,9 +30,16 @@ public class UserInfoServiceImpl implements IUserInfoService
      * @return 用户信息
      */
     @Override
-    public UserInfo selectUserInfoById(Long id)
+    public UserInfoVo selectUserInfoById(Long id)
     {
-        return userInfoMapper.selectUserInfoById(id);
+        UserInfoVo vo = new UserInfoVo();
+        UserInfo userInfo = userInfoMapper.selectUserInfoById(id);
+        BeanUtils.copyProperties(userInfo,vo);
+        if (vo.getTitle() != null) {
+            vo.setIsTeacher(true);
+        }
+        //TODO指导队伍数
+        return vo;
     }
 
     /**
@@ -39,9 +49,20 @@ public class UserInfoServiceImpl implements IUserInfoService
      * @return 用户信息
      */
     @Override
-    public List<UserInfo> selectUserInfoList(UserInfo userInfo)
+    public List<UserInfoVo> selectUserInfoList(UserInfo userInfo)
     {
-        return userInfoMapper.selectUserInfoList(userInfo);
+        List<UserInfoVo> userInfoVos = new ArrayList<>();
+        UserInfoVo vo = new UserInfoVo();
+        List<UserInfo> userInfos = userInfoMapper.selectUserInfoList(userInfo);
+        for (UserInfo user : userInfos) {
+            BeanUtils.copyProperties(user,vo);
+            if (vo.getTitle() != null) {
+                vo.setIsTeacher(true);
+            }
+            //TODO指导队伍数
+            userInfoVos.add(vo);
+        }
+        return userInfoVos;
     }
 
     /**

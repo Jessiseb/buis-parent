@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,16 +39,15 @@ public class UserInfoController extends BaseController
     @Autowired
     private IUserInfoService userInfoService;
 
-/**
- * 查询用户信息列表
- */
-@ApiOperation("查询用户信息列表")
-@PreAuthorize("@ss.hasPermi('buis:userInfo:list')")
-@GetMapping("/list")
-    public TableDataInfo list(UserInfo userInfo)
-    {
+    /**
+     * 查询用户信息列表
+     */
+    @ApiOperation("查询用户信息列表")
+    @PreAuthorize("@ss.hasPermi('buis:userInfo:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(UserInfo userInfo) {
         startPage();
-        List<UserInfo> list = userInfoService.selectUserInfoList(userInfo);
+        List<UserInfoVo> list = userInfoService.selectUserInfoList(userInfo);
         return getDataTable(list);
     }
 
@@ -60,8 +60,8 @@ public class UserInfoController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, UserInfo userInfo)
     {
-        List<UserInfo> list = userInfoService.selectUserInfoList(userInfo);
-        ExcelUtil<UserInfo> util = new ExcelUtil<UserInfo>(UserInfo.class);
+        List<UserInfoVo> list = userInfoService.selectUserInfoList(userInfo);
+        ExcelUtil<UserInfoVo> util = new ExcelUtil<>(UserInfoVo.class);
         util.exportExcel(response, list, "用户信息数据");
     }
 
