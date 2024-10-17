@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.PreSignStudentMapper">
     
-    <resultMap type="PreSignStudent" id="PreSignStudentResult">
+    <resultMap type="com.buis.domain.PreSignStudent" id="PreSignStudentResult">
         <result property="id"    column="id"    />
         <result property="student"    column="student"    />
         <result property="race"    column="race"    />
@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, student, race, is_deleted, create_time, update_time from pre_sign_student
     </sql>
 
-    <select id="selectPreSignStudentList" parameterType="PreSignStudent" resultMap="PreSignStudentResult">
+    <select id="selectPreSignStudentList" parameterType="com.buis.domain.PreSignStudent" resultMap="PreSignStudentResult">
         <include refid="selectPreSignStudentVo"/>
         <where>
             is_deleted = 0
@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertPreSignStudent" parameterType="PreSignStudent" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertPreSignStudent" parameterType="com.buis.domain.PreSignStudent" useGeneratedKeys="true" keyProperty="id">
         insert into pre_sign_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="student != null">student,</if>
@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updatePreSignStudent" parameterType="PreSignStudent">
+    <update id="updatePreSignStudent" parameterType="com.buis.domain.PreSignStudent">
         update pre_sign_student
         <trim prefix="SET" suffixOverrides=",">
             <if test="student != null">student = #{student},</if>

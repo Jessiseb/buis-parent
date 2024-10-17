@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.UserInfo;
+import com.buis.vo.UserInfoVo;
 
 /**
  * 用户信息Service接口
@@ -17,7 +18,7 @@ public interface IUserInfoService
      * @param id 用户信息主键
      * @return 用户信息
      */
-    public UserInfo selectUserInfoById(Long id);
+    public UserInfoVo selectUserInfoById(Long id);
 
     /**
      * 查询用户信息列表
@@ -25,7 +26,7 @@ public interface IUserInfoService
      * @param userInfo 用户信息
      * @return 用户信息集合
      */
-    public List<UserInfo> selectUserInfoList(UserInfo userInfo);
+    public List<UserInfoVo> selectUserInfoList(UserInfo userInfo);
 
     /**
      * 新增用户信息
