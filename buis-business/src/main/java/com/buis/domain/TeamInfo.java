@@ -1,13 +1,14 @@
 package com.buis.domain;
 
-        import java.util.Date;
-    import com.fasterxml.jackson.annotation.JsonFormat;
-    import com.buis.common.annotation.Excel;
-            import com.buis.common.core.domain.BaseEntity;
-    import lombok.Builder;
+import com.buis.common.annotation.Excel;
+import com.buis.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+
+import java.util.Date;
 
 /**
  * 队伍信息对象 team_info
@@ -19,60 +20,84 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TeamInfo extends BaseEntity
-        {   private static final long serialVersionUID = 1L;
-        /** id */
-            private Long id;
+public class TeamInfo extends BaseEntity {
+    private static final long serialVersionUID = 1L;
+    /**
+     * id
+     */
+    private Long id;
 
-        /** 比赛 */
-                    @Excel(name = "比赛")
+    /**
+     * 比赛
+     */
+    @Excel(name = "比赛")
     private Long race;
 
-        /** 项目名称 */
-                    @Excel(name = "项目名称")
+    /**
+     * 项目名称
+     */
+    @Excel(name = "项目名称")
     private String name;
 
-        /** 项目简介 */
-                    @Excel(name = "项目简介")
+    /**
+     * 项目简介
+     */
+    @Excel(name = "项目简介")
     private String description;
 
-        /** 队长 */
-                    @Excel(name = "队长")
+    /**
+     * 队长
+     */
+    @Excel(name = "队长")
     private Long leader;
 
-        /** 招募要求 */
-                    @Excel(name = "招募要求")
+    /**
+     * 招募要求
+     */
+    @Excel(name = "招募要求")
     private String tLimit;
 
-        /** 招募人数 */
-                    @Excel(name = "招募人数")
+    /**
+     * 招募人数
+     */
+    @Excel(name = "招募人数")
     private Long capacity;
 
-        /** 招聘开始时间 */
-                    @JsonFormat(pattern = "yyyy-MM-dd")
-            @Excel(name = "招聘开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    /**
+     * 招聘开始时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "招聘开始时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date start;
 
-        /** 招聘结束时间 */
-                    @JsonFormat(pattern = "yyyy-MM-dd")
-            @Excel(name = "招聘结束时间", width = 30, dateFormat = "yyyy-MM-dd")
+    /**
+     * 招聘结束时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "招聘结束时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date end;
 
-        /** 奖项 */
-            private String rRank;
+    /**
+     * 奖项
+     */
+    private String rRank;
 
-        /** 材料审核状态 */
-                    @Excel(name = "材料审核状态")
+    /**
+     * 材料审核状态
+     */
+    @Excel(name = "材料审核状态")
     private Long status;
 
-        /** 不合格原因 */
-                    @Excel(name = "不合格原因")
+    /**
+     * 不合格原因
+     */
+    @Excel(name = "不合格原因")
     private String reason;
 
-        /** 标识是否被删除，0表示未删除 */
-            private Integer isDeleted;
+    /**
+     * 标识是否被删除，0表示未删除
+     */
+    private Integer isDeleted;
 
-        
 
-
-        }
+}
