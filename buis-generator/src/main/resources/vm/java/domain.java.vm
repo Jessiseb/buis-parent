@@ -70,6 +70,4 @@ private List<${subClassName}> ${subclassName}List;
 
 #end
 
-
-
         }

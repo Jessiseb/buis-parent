@@ -1,28 +1,21 @@
 package com.buis.web.controller.manager;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Judge;
 import com.buis.service.IJudgeService;
-import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.common.core.page.TableDataInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 评委管理Controller
@@ -33,19 +26,17 @@ import com.buis.common.core.page.TableDataInfo;
 @Api(tags = "评委管理Controller")
 @RestController
 @RequestMapping("/buis/judge")
-public class JudgeController extends BaseController
-{
+public class JudgeController extends BaseController {
     @Autowired
     private IJudgeService judgeService;
 
-/**
- * 查询评委管理列表
- */
-@ApiOperation("查询评委管理列表")
-@PreAuthorize("@ss.hasPermi('buis:judge:list')")
-@GetMapping("/list")
-    public TableDataInfo list(Judge judge)
-    {
+    /**
+     * 查询评委管理列表
+     */
+    @ApiOperation("查询评委管理列表")
+    @PreAuthorize("@ss.hasPermi('buis:judge:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(Judge judge) {
         startPage();
         List<Judge> list = judgeService.selectJudgeList(judge);
         return getDataTable(list);
