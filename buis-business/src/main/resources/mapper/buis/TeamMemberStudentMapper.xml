@@ -44,13 +44,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectTeamMemberStudentQueryList" resultType="com.buis.domain.UserInfo">
-        select t2.id,t2.number,t2.email,t2.phone,t2.name,t2.description,t2.sex,t2.college,t2.major,
-               t1.update_time from team_member_student t1
+        select t2.id,
+               t2.number,
+               t2.email,
+               t2.phone,
+               t2.name,
+               t2.description,
+               t2.sex,
+               t2.college,
+               t2.major,
+               t1.update_time
+        from team_member_student t1
                  left join user_info t2
-                 on t1.student = t2.id
-            where t1.is_deleted = 0 and t1.is_choosed = 1
-             and t1.race = #{race}
-             and t1.team = #{team}
+                           on t1.student = t2.id
+        where t1.is_deleted = 0
+          and t1.is_choosed = 1
+          and t1.race = #{race}
+          and t1.team = #{team}
     </select>
 
 
