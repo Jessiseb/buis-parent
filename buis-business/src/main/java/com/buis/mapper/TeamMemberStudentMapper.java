@@ -3,7 +3,6 @@ package com.buis.mapper;
 import java.util.List;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.UserInfo;
-import com.buis.dto.TeamMemberStudentQueryDTO;
 import com.buis.vo.TeamMemberStudentQueryVo;
 import org.apache.ibatis.annotations.Param;
 
