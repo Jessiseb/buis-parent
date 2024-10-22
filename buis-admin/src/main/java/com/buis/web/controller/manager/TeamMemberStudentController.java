@@ -3,6 +3,8 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.dto.TeamMemberStudentQueryDTO;
+import com.buis.vo.TeamMemberStudentQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +40,7 @@ public class TeamMemberStudentController extends BaseController
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
 
+
 /**
  * 查询队伍成员管理列表
  */
@@ -50,6 +53,9 @@ public class TeamMemberStudentController extends BaseController
         List<TeamMemberStudent> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return getDataTable(list);
     }
+
+
+
 
     /**
      * 导出队伍成员管理列表
