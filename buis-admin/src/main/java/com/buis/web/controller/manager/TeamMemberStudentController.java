@@ -3,8 +3,6 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.buis.dto.TeamMemberStudentQueryDTO;
-import com.buis.vo.TeamMemberStudentQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
