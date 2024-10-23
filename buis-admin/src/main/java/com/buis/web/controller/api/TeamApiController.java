@@ -30,6 +30,5 @@ public class TeamApiController extends BaseController{
         startPage();
         List<UserInfo> result = teamMemberStudentService.selectTeamMemberStudentQueryList(race,team);
         return getDataTable(result);
-
     }
 }
