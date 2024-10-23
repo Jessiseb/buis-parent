@@ -230,9 +230,9 @@ public class UserInfoServiceImpl implements IUserInfoService
 
 
     @Override
-    public String getUserPasswordById(Long id) {
+    public UserInfo getLoginInfoByUserId(Long id) {
         if (id != null){
-           return userInfoMapper.getUserPasswordById(id);
+           return userInfoMapper.getLoginInfoByUserId(id);
         }
         throw new ServiceException("参数错误!");
     }

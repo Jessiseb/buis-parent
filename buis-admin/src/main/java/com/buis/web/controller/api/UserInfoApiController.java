@@ -39,7 +39,7 @@ public class UserInfoApiController extends BaseController {
         //密码加密
         String encryptPassword = SaSecureUtil.md5(passWord);
         Long id = userDTO.getId();
-        UserInfo user = userInfoService.selectUserInfoById(id);
+        UserInfo user = userInfoService.getLoginInfoByUserId(id);
 
         if (email.equals(user.getEmail()) && encryptPassword.equals(user.getPassword())) {
             StpUtil.login(id);
