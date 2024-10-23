@@ -7,7 +7,7 @@ import com.buis.domain.RaceInfo;
  * 比赛信息Service接口
  * 
  * @author kaven
- * @date 2024-10-11
+ * @date 2024-10-23
  */
 public interface IRaceInfoService 
 {
