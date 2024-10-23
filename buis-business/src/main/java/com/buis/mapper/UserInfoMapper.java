@@ -2,6 +2,7 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.UserInfo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户信息Mapper接口
@@ -58,4 +59,13 @@ public interface UserInfoMapper
      * @return 结果
      */
     public int deleteUserInfoByIds(Long[] ids);
+
+    /**
+     *  用户注册
+     * @param member 用户信息
+     * @return 结果
+     */
+    public int register(UserInfo member);
+
+    int selectCount(String email);
 }

@@ -40,6 +40,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
+    <select id="selectTeamMyInstruct" resultType="com.buis.domain.TeamMemberTeacher">
+        <include refid="selectTeamMemberTeacherVo"/>
+        where teacher = #{id}  and is_deleted = 0
+    </select>
+
     <insert id="insertTeamMemberTeacher" parameterType="TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into team_member_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">

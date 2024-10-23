@@ -93,4 +93,9 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService
     {
         return teamMemberTeacherMapper.deleteTeamMemberTeacherById(id);
     }
+
+    @Override
+    public List<TeamMemberTeacher> selectTeamMyInstruct(Long id) {
+        return teamMemberTeacherMapper.selectTeamMyInstruct(id);
+    }
 }

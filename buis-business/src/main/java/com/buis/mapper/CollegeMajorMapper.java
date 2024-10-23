@@ -1,6 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.Assistant;
 import com.buis.domain.CollegeMajor;
 
 /**
@@ -9,7 +12,7 @@ import com.buis.domain.CollegeMajor;
  * @author buis
  * @date 2024-10-10
  */
-public interface CollegeMajorMapper 
+public interface CollegeMajorMapper
 {
     /**
      * 查询专业信息
