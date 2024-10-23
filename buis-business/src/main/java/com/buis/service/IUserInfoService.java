@@ -69,6 +69,5 @@ public interface IUserInfoService {
     UserInfo getLoginUser();
 
 
-    UserInfo getSafetyUser(UserInfo originUser);
-
+    String getUserPasswordById(Long id);
 }
