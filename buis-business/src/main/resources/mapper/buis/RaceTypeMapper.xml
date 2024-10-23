@@ -27,6 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="pType != null "> and p_type = #{pType}</if>
             <if test="sort != null "> and sort = #{sort}</if>
         </where>
+        order by sortASC;
     </select>
     
     <select id="selectRaceTypeById" parameterType="Long" resultMap="RaceTypeResult">
