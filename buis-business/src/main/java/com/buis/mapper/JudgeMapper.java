@@ -1,6 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.CollegeMajor;
 import com.buis.domain.Judge;
 
 /**
@@ -9,7 +12,7 @@ import com.buis.domain.Judge;
  * @author buis
  * @date 2024-10-10
  */
-public interface JudgeMapper 
+public interface JudgeMapper
 {
     /**
      * 查询评委管理

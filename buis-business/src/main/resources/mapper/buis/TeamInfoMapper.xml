@@ -30,22 +30,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTeamInfoVo"/>
         <where>
             is_deleted = 0
-            <if test="race != null "> and race = #{race}</if>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
-            <if test="leader != null "> and leader = #{leader}</if>
-            <if test="tLimit != null  and tLimit != ''"> and t_limit like concat('%', #{tLimit}, '%')</if>
-            <if test="capacity != null "> and capacity = #{capacity}</if>
-            <if test="start != null "> and start = #{start}</if>
-            <if test="end != null "> and end = #{end}</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
+            <if test="race != null ">and race = #{race}</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''">and description like concat('%', #{description},
+                '%')
+            </if>
+            <if test="leader != null ">and leader = #{leader}</if>
+            <if test="tLimit != null  and tLimit != ''">and t_limit like concat('%', #{tLimit}, '%')</if>
+            <if test="capacity != null ">and capacity = #{capacity}</if>
+            <if test="start != null ">and start = #{start}</if>
+            <if test="end != null ">and end = #{end}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="reason != null  and reason != ''">and reason like concat('%', #{reason}, '%')</if>
         </where>
     </select>
-    
+
     <select id="selectTeamInfoById" parameterType="Long" resultMap="TeamInfoResult">
         <include refid="selectTeamInfoVo"/>
-        where id = #{id}  and is_deleted = 0
+        where id = #{id} and is_deleted = 0
+    </select>
+    <select id="listTeams" resultType="com.buis.domain.TeamInfo">
+        <include refid="selectTeamInfoVo"/>
+        <where>
+            is_deleted = 0
+            <if test="race != null ">and race = #{race}</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="idList != null and idList != ''">and id in #{idList}</if>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="leader != null and leader != ''">and leader = #{leader}</if>
+        </where>
     </select>
 
     <insert id="insertTeamInfo" parameterType="TeamInfo" useGeneratedKeys="true" keyProperty="id">

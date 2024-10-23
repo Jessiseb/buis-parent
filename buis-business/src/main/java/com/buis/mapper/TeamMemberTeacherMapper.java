@@ -58,4 +58,6 @@ public interface TeamMemberTeacherMapper
      * @return 结果
      */
     public int deleteTeamMemberTeacherByIds(Long[] ids);
+
+    List<TeamMemberTeacher> selectTeamMyInstruct(Long id);
 }

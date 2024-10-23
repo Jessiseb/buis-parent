@@ -1,6 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.RaceInfo;
 import com.buis.domain.RaceType;
 
 /**
@@ -9,7 +12,7 @@ import com.buis.domain.RaceType;
  * @author buis
  * @date 2024-10-23
  */
-public interface RaceTypeMapper 
+public interface RaceTypeMapper
 {
     /**
      * 查询比赛类型

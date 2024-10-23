@@ -58,4 +58,6 @@ public interface ITeamMemberTeacherService
      * @return 结果
      */
     public int deleteTeamMemberTeacherById(Long id);
+
+    List<TeamMemberTeacher> selectTeamMyInstruct(Long id);
 }

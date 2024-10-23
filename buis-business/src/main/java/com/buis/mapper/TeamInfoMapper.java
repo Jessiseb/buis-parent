@@ -1,7 +1,11 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.Score;
 import com.buis.domain.TeamInfo;
+import com.buis.dto.TeamQueryDTO;
 
 /**
  * 队伍信息Mapper接口
@@ -9,7 +13,7 @@ import com.buis.domain.TeamInfo;
  * @author buis
  * @date 2024-10-11
  */
-public interface TeamInfoMapper 
+public interface TeamInfoMapper
 {
     /**
      * 查询队伍信息
@@ -58,4 +62,6 @@ public interface TeamInfoMapper
      * @return 结果
      */
     public int deleteTeamInfoByIds(Long[] ids);
+
+    List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO);
 }

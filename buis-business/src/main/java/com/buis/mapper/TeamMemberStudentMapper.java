@@ -1,6 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.UserInfo;
 import com.buis.vo.TeamMemberStudentQueryVo;
@@ -12,7 +15,7 @@ import org.apache.ibatis.annotations.Param;
  * @author buis
  * @date 2024-10-11
  */
-public interface TeamMemberStudentMapper 
+public interface TeamMemberStudentMapper
 {
     /**
      * 查询队伍成员管理
