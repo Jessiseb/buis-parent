@@ -12,7 +12,7 @@ import com.buis.service.IRaceTypeService;
  * 比赛类型Service业务层处理
  * 
  * @author buis
- * @date 2024-10-11
+ * @date 2024-10-23
  */
 @Service
 public class RaceTypeServiceImpl implements IRaceTypeService 

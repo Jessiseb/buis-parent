@@ -11,7 +11,7 @@ import com.buis.domain.Reward;
  * 比赛信息Mapper接口
  * 
  * @author kaven
- * @date 2024-10-11
+ * @date 2024-10-23
  */
 public interface RaceInfoMapper
 {
