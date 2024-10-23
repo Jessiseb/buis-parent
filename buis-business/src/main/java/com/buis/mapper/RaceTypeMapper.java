@@ -7,7 +7,7 @@ import com.buis.domain.RaceType;
  * 比赛类型Mapper接口
  * 
  * @author buis
- * @date 2024-10-11
+ * @date 2024-10-23
  */
 public interface RaceTypeMapper 
 {

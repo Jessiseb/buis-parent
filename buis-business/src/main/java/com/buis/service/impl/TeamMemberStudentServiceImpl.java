@@ -2,6 +2,8 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.UserInfo;
+import com.buis.vo.TeamMemberStudentQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.TeamMemberStudentMapper;
@@ -92,5 +94,21 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService
     public int deleteTeamMemberStudentById(Long id)
     {
         return teamMemberStudentMapper.deleteTeamMemberStudentById(id);
+    }
+    @Override
+    public TeamMemberStudentQueryVo selectTeamMemberStudentQueryById(Long id)
+    {
+        return teamMemberStudentMapper.selectTeamMemberStudentQueryById(id);
+    }
+
+    /**
+     * 查询队伍成员管理列表
+     *
+     * @return 队伍成员管理
+     */
+    @Override
+    public List<UserInfo> selectTeamMemberStudentQueryList(Long race, Long team)
+    {
+        return teamMemberStudentMapper.selectTeamMemberStudentQueryList(race,team);
     }
 }

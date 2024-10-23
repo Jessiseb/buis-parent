@@ -38,6 +38,7 @@ public class TeamMemberStudentController extends BaseController
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
 
+
 /**
  * 查询队伍成员管理列表
  */
@@ -50,6 +51,9 @@ public class TeamMemberStudentController extends BaseController
         List<TeamMemberStudent> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return getDataTable(list);
     }
+
+
+
 
     /**
      * 导出队伍成员管理列表

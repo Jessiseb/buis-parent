@@ -27,7 +27,7 @@ import com.buis.common.utils.poi.ExcelUtil;
  * 比赛类型Controller
  *
  * @author buis
- * @date 2024-10-11
+ * @date 2024-10-23
  */
 @Api(tags = "比赛类型Controller")
 @RestController
