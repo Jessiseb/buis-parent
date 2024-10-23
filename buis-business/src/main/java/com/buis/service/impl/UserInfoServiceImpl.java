@@ -3,7 +3,6 @@ package com.buis.service.impl;
 import java.util.ArrayList;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
-import com.buis.common.constant.RedisConstant;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.bean.BeanUtils;
@@ -16,6 +15,7 @@ import com.buis.dto.RegisterDTO;
 import com.buis.dto.UserDTO;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.IUserInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -31,14 +31,10 @@ import java.util.List;
 @Service
 public class UserInfoServiceImpl implements IUserInfoService 
 {
-    @Autowired
+    @Resource
     private UserInfoMapper userInfoMapper;
 
     @Resource
-    private RedisTemplate redisTemplate;
-
-
-    @Autowired
     private TeamMemberTeacherMapper teamMemberTeacherMapper;
     /**
      * 查询用户信息
@@ -160,7 +156,7 @@ public class UserInfoServiceImpl implements IUserInfoService
         String passWord = loginDTO.getPassWord();
         Long id = loginDTO.getId();
         //查询用户是否存在
-        UserInfo user = this.selectUserInfoById(id);
+        UserInfoVo user = this.selectUserInfoById(id);
         if (user == null) {
             throw new ServiceException("用户不存在,请先注册!", 50001);
         }

@@ -3,6 +3,7 @@ package com.buis.service;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDTO;
 import com.buis.dto.UserDTO;
+import com.buis.vo.UserInfoVo;
 import org.apache.catalina.User;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface IUserInfoService {
      * @param id 用户信息主键
      * @return 用户信息
      */
-    public UserInfo selectUserInfoById(Long id);
+    public UserInfoVo selectUserInfoById(Long id);
 
     /**
      * 查询用户信息列表
@@ -28,7 +29,7 @@ public interface IUserInfoService {
      * @param userInfo 用户信息
      * @return 用户信息集合
      */
-    public List<UserInfo> selectUserInfoList(UserInfo userInfo);
+    public List<UserInfoVo> selectUserInfoList(UserInfo userInfo);
 
     /**
      * 新增用户信息
