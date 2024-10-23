@@ -16,7 +16,7 @@ import com.buis.service.IRaceInfoService;
  * 比赛信息Service业务层处理
  * 
  * @author kaven
- * @date 2024-10-11
+ * @date 2024-10-23
  */
 @Service
 public class RaceInfoServiceImpl implements IRaceInfoService 

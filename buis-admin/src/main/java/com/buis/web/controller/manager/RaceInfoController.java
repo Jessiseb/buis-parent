@@ -28,7 +28,7 @@ import com.buis.common.core.page.TableDataInfo;
  * 比赛信息Controller
  *
  * @author kaven
- * @date 2024-10-11
+ * @date 2024-10-23
  */
 @Api(tags = "比赛信息Controller")
 @RestController
