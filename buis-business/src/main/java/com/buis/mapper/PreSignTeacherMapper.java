@@ -1,6 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.PreSignStudent;
 import com.buis.domain.PreSignTeacher;
 
 /**
@@ -9,9 +12,9 @@ import com.buis.domain.PreSignTeacher;
  * @author buis
  * @date 2024-10-11
  */
-public interface PreSignTeacherMapper 
+public interface PreSignTeacherMapper
 {
-    /**
+    /*
      * 查询老师预报名
      * 
      * @param id 老师预报名主键

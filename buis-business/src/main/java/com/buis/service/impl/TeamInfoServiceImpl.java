@@ -2,6 +2,9 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.TeamMemberTeacher;
+import com.buis.dto.TeamQueryDTO;
+import com.buis.mapper.TeamMemberTeacherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.TeamInfoMapper;
@@ -19,6 +22,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
 {
     @Autowired
     private TeamInfoMapper teamInfoMapper;
+
 
     /**
      * 查询队伍信息
@@ -93,4 +97,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService
     {
         return teamInfoMapper.deleteTeamInfoById(id);
     }
+
+    @Override
+    public List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO) {
+        return teamInfoMapper.listTeams(teamQueryDTO);
+    }
+
 }

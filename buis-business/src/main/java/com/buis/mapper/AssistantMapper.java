@@ -1,6 +1,8 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
 import com.buis.domain.Assistant;
 
 /**
@@ -9,8 +11,7 @@ import com.buis.domain.Assistant;
  * @author buis
  * @date 2024-10-11
  */
-public interface AssistantMapper 
-{
+public interface AssistantMapper{
     /**
      * 查询学生助理
      * 

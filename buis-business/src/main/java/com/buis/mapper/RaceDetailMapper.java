@@ -1,6 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.PreSignTeacher;
 import com.buis.domain.RaceDetail;
 import com.buis.domain.Weight;
 
@@ -10,7 +13,7 @@ import com.buis.domain.Weight;
  * @author buis
  * @date 2024-10-11
  */
-public interface RaceDetailMapper 
+public interface RaceDetailMapper
 {
     /**
      * 查询比赛详情

@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.TeamInfo;
+import com.buis.dto.TeamQueryDTO;
 
 /**
  * 队伍信息Service接口
@@ -58,4 +59,6 @@ public interface ITeamInfoService
      * @return 结果
      */
     public int deleteTeamInfoById(Long id);
+
+    List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO);
 }
