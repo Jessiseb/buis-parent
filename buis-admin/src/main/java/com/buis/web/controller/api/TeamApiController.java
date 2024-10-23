@@ -106,7 +106,7 @@ public class TeamApiController extends BaseController{
             //根据队长id和本用户id做对比,一样的说明本用户就是队长-->查出所在的队伍并返回
 //            teamInfoService.selectTeamMyCreate(LeaderIds);
             myTeamsAsLeader = teamInfos.stream()
-                    .filter(teamInfo -> userId.equals(teamInfo.getLeader()))
+                    .filter(teamInfo -> userId.equals(LeaderIds))
                     .collect(Collectors.toList());
         }
         return R.ok(myTeamsAsLeader);

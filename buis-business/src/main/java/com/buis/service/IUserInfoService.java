@@ -68,6 +68,7 @@ public interface IUserInfoService {
 
     UserInfo getLoginUser();
 
+
     UserInfo getSafetyUser(UserInfo originUser);
 
 }
