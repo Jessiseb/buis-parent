@@ -112,7 +112,6 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (null == loginDTO) {
             throw new ServiceException("参数不能为空!", 50001);
         }
-
         String email = loginDTO.getEmail();
         String passWord = loginDTO.getPassWord();
         Long id = loginDTO.getId();
@@ -190,21 +189,12 @@ public class UserInfoServiceImpl implements IUserInfoService {
         return userInfo;
     }
 
-    @Override
-    public UserInfo getSafetyUser(UserInfo originUser) {
-        if (originUser == null){
-            return null;
-        }
-        UserInfo safetyUser = new UserInfo();
-        safetyUser.setId(originUser.getId());
-        safetyUser.setNumber(originUser.getNumber());
-        safetyUser.setName(originUser.getName());
-        safetyUser.setDescription(originUser.getDescription());
-        safetyUser.setSex(originUser.getSex());
-        safetyUser.setCollege(originUser.getCollege());
-        safetyUser.setMajor(originUser.getMajor());
-        safetyUser.setTitle(originUser.getTitle());
-        return safetyUser;
 
+    @Override
+    public String getUserPasswordById(Long id) {
+        if (id != null){
+           return userInfoMapper.getUserPasswordById(id);
+        }
+        throw new ServiceException("参数错误!");
     }
 }
