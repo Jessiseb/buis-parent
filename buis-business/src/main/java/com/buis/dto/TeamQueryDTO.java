@@ -5,6 +5,7 @@ import com.buis.common.core.domain.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 队伍查询封装类
@@ -21,6 +22,11 @@ public class TeamQueryDTO implements Serializable {
      * id
      */
     private Long id;
+
+    /**
+     * idList
+     */
+    private List<Long> idList;
 
     /**
      * 比赛

@@ -1,6 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.RaceDetail;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.Reward;
 
@@ -10,7 +13,7 @@ import com.buis.domain.Reward;
  * @author kaven
  * @date 2024-10-23
  */
-public interface RaceInfoMapper 
+public interface RaceInfoMapper
 {
     /**
      * 查询比赛信息

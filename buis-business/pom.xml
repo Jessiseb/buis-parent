@@ -23,6 +23,7 @@
             <groupId>com.buis</groupId>
             <artifactId>buis-system</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>

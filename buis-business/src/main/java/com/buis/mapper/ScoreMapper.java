@@ -1,6 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
+
+
+import com.buis.domain.RaceType;
 import com.buis.domain.Score;
 
 /**
@@ -9,7 +12,7 @@ import com.buis.domain.Score;
  * @author buis
  * @date 2024-10-11
  */
-public interface ScoreMapper 
+public interface ScoreMapper
 {
     /**
      * 查询评分管理
