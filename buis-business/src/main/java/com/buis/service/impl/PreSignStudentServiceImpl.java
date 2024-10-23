@@ -9,6 +9,7 @@ import com.buis.domain.UserInfo;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.vo.PreSignStudentVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.PreSignStudentMapper;
@@ -22,6 +23,7 @@ import com.buis.service.IPreSignStudentService;
  * @date 2024-10-11
  */
 @Service
+@Slf4j
 public class PreSignStudentServiceImpl implements IPreSignStudentService 
 {
     @Autowired
@@ -48,12 +50,21 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
         PreSignStudentVo vo = new PreSignStudentVo();
         BeanUtils.copyProperties(preSignStudent, vo);
 
-        vo.setStudentName(user.getName());
-        vo.setRaceName(race.getName());
+        if (user != null) {
+            vo.setStudentName(user.getName());
+        } else {
+            log.error("用户不存在 id:{}",preSignStudent.getStudent());
+        }
+
+        if (race != null) {
+            vo.setRaceName(race.getName());
+        } else {
+            log.error("比赛不存在 id:{}",preSignStudent.getRace());
+        }
+
         vo.setPreTime(preSignStudent.getUpdateTime());
 
         return vo;
-
     }
 
     /**
@@ -63,8 +74,7 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
      * @return 学生预报名
      */
     @Override
-    public List<PreSignStudentVo> selectPreSignStudentList(PreSignStudent preSignStudent)
-    {
+    public List<PreSignStudentVo> selectPreSignStudentList(PreSignStudent preSignStudent) {
         List<PreSignStudent> preSignStudents = preSignStudentMapper.selectPreSignStudentList(preSignStudent);
         List<PreSignStudentVo> preSignStudentVos = new ArrayList<>();
         for (PreSignStudent student : preSignStudents) {
@@ -74,9 +84,19 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
             PreSignStudentVo vo = new PreSignStudentVo();
             BeanUtils.copyProperties(student, vo);
 
-            vo.setStudentName(user.getName());
-            vo.setRaceName(race.getName());
-            vo.setPreTime(student.getUpdateTime());
+            if (user != null) {
+                vo.setStudentName(user.getName());
+            } else {
+                log.error("用户不存在 id:{}",student.getStudent());
+            }
+
+            if (race != null) {
+                vo.setRaceName(race.getName());
+            } else {
+                log.error("比赛不存在 id:{}",student.getRace());
+            }
+
+            vo.setPreTime(preSignStudent.getUpdateTime());
 
             preSignStudentVos.add(vo);
         }
