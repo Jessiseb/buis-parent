@@ -1,7 +1,14 @@
 package com.buis.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.common.utils.bean.BeanUtils;
+import com.buis.domain.RaceInfo;
+import com.buis.domain.UserInfo;
+import com.buis.mapper.RaceInfoMapper;
+import com.buis.mapper.UserInfoMapper;
+import com.buis.vo.PreSignStudentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.PreSignStudentMapper;
@@ -19,6 +26,10 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
 {
     @Autowired
     private PreSignStudentMapper preSignStudentMapper;
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+    @Autowired
+    private RaceInfoMapper raceInfoMapper;
 
     /**
      * 查询学生预报名
@@ -27,9 +38,22 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
      * @return 学生预报名
      */
     @Override
-    public PreSignStudent selectPreSignStudentById(Long id)
+    public PreSignStudentVo selectPreSignStudentById(Long id)
     {
-        return preSignStudentMapper.selectPreSignStudentById(id);
+        PreSignStudent preSignStudent = preSignStudentMapper.selectPreSignStudentById(id);
+
+        UserInfo user = userInfoMapper.selectUserInfoById(preSignStudent.getStudent());
+        RaceInfo race = raceInfoMapper.selectRaceInfoById(preSignStudent.getRace());
+
+        PreSignStudentVo vo = new PreSignStudentVo();
+        BeanUtils.copyProperties(preSignStudent, vo);
+
+        vo.setStudentName(user.getName());
+        vo.setRaceName(race.getName());
+        vo.setPreTime(preSignStudent.getUpdateTime());
+
+        return vo;
+
     }
 
     /**
@@ -39,9 +63,24 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
      * @return 学生预报名
      */
     @Override
-    public List<PreSignStudent> selectPreSignStudentList(PreSignStudent preSignStudent)
+    public List<PreSignStudentVo> selectPreSignStudentList(PreSignStudent preSignStudent)
     {
-        return preSignStudentMapper.selectPreSignStudentList(preSignStudent);
+        List<PreSignStudent> preSignStudents = preSignStudentMapper.selectPreSignStudentList(preSignStudent);
+        List<PreSignStudentVo> preSignStudentVos = new ArrayList<>();
+        for (PreSignStudent student : preSignStudents) {
+            UserInfo user = userInfoMapper.selectUserInfoById(student.getStudent());
+            RaceInfo race = raceInfoMapper.selectRaceInfoById(student.getRace());
+
+            PreSignStudentVo vo = new PreSignStudentVo();
+            BeanUtils.copyProperties(student, vo);
+
+            vo.setStudentName(user.getName());
+            vo.setRaceName(race.getName());
+            vo.setPreTime(student.getUpdateTime());
+
+            preSignStudentVos.add(vo);
+        }
+        return preSignStudentVos;
     }
 
     /**

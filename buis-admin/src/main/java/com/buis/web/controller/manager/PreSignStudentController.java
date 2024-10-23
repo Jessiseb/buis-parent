@@ -8,6 +8,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.PreSignStudent;
 import com.buis.service.IPreSignStudentService;
+import com.buis.vo.PreSignStudentVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class PreSignStudentController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(PreSignStudent preSignStudent) {
         startPage();
-        List<PreSignStudent> list = preSignStudentService.selectPreSignStudentList(preSignStudent);
+        List<PreSignStudentVo> list = preSignStudentService.selectPreSignStudentList(preSignStudent);
         return getDataTable(list);
     }
 
@@ -51,8 +52,8 @@ public class PreSignStudentController extends BaseController {
     @PostMapping("/export")
     public void export(HttpServletResponse response, PreSignStudent preSignStudent)
     {
-        List<PreSignStudent> list = preSignStudentService.selectPreSignStudentList(preSignStudent);
-        ExcelUtil<PreSignStudent> util = new ExcelUtil<PreSignStudent>(PreSignStudent.class);
+        List<PreSignStudentVo> list = preSignStudentService.selectPreSignStudentList(preSignStudent);
+        ExcelUtil<PreSignStudentVo> util = new ExcelUtil<>(PreSignStudentVo.class);
         util.exportExcel(response, list, "学生预报名数据");
     }
 
