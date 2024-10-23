@@ -70,5 +70,5 @@ public interface IUserInfoService {
     UserInfo getLoginUser();
 
 
-    String getUserPasswordById(Long id);
+    UserInfo getLoginInfoByUserId(Long id);
 }

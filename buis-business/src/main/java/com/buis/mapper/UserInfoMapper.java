@@ -69,6 +69,6 @@ public interface UserInfoMapper
 
     int selectCount(String email);
 
-    String getUserPasswordById(Long id);
+    UserInfo getLoginInfoByUserId(Long id);
 
 }

@@ -53,8 +53,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select count(1) from user_info
         where email = #{email} and is_deleted = 0
     </select>
-    <select id="getUserPasswordById" resultType="java.lang.String">
-        select password from user_info where id = #{id}
+    <select id="getLoginInfoByUserId" resultType="com.buis.domain.UserInfo">
+        select email,password from user_info where id = #{id}
     </select>
 
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
