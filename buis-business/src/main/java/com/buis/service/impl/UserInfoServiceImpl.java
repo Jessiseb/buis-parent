@@ -46,6 +46,9 @@ public class UserInfoServiceImpl implements IUserInfoService
             long teamNum = teamMemberTeachers.stream().count();
             vo.setTeamNum(teamNum);
             vo.setIsTeacher(true);
+        } else {
+            vo.setIsTeacher(false);
+            vo.setTeamNum(0L);
         }
         return vo;
     }
@@ -72,6 +75,9 @@ public class UserInfoServiceImpl implements IUserInfoService
                 long teamNum = teamMemberTeachers.stream().count();
                 vo.setTeamNum(teamNum);
                 vo.setIsTeacher(true);
+            } else {
+                vo.setIsTeacher(false);
+                vo.setTeamNum(0L);
             }
             userInfoVos.add(vo);
         }
