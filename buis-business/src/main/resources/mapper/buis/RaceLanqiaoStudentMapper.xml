@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.RaceLanqiaoStudentMapper">
+    
+    <resultMap type="RaceLanqiaoStudent" id="RaceLanqiaoStudentResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="number"    column="number"    />
+        <result property="sClass"    column="s_class"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="identity"    column="identity"    />
+        <result property="parentTid"    column="parent_tid"    />
+        <result property="sonTid"    column="son_tid"    />
+        <result property="teacher1"    column="teacher1"    />
+        <result property="teacher2"    column="teacher2"    />
+        <result property="teacher3"    column="teacher3"    />
+        <result property="bankNumber"    column="bank_number"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectRaceLanqiaoStudentVo">
+        select id, name, number, s_class, phone, email, identity, parent_tid, son_tid, teacher1, teacher2, teacher3, bank_number, bank_name, remark, is_deleted, create_time, update_time from race_lanqiao_student
+    </sql>
+
+    <select id="selectRaceLanqiaoStudentList" parameterType="RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResult">
+        <include refid="selectRaceLanqiaoStudentVo"/>
+        <where>
+            is_deleted = 0
+            <if test="id != null "> and id = #{id}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="number != null  and number != ''"> and number = #{number}</if>
+            <if test="sClass != null  and sClass != ''"> and s_class like concat('%', #{sClass}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="identity != null  and identity != ''"> and identity = #{identity}</if>
+            <if test="parentTid != null "> and parent_tid = #{parentTid}</if>
+            <if test="sonTid != null "> and son_tid = #{sonTid}</if>
+            <if test="teacher1 != null  and teacher1 != ''"> and teacher1 = #{teacher1}</if>
+            <if test="teacher2 != null  and teacher2 != ''"> and teacher2 = #{teacher2}</if>
+            <if test="teacher3 != null  and teacher3 != ''"> and teacher3 = #{teacher3}</if>
+            <if test="bankNumber != null  and bankNumber != ''"> and bank_number = #{bankNumber}</if>
+            <if test="bankName != null  and bankName != ''"> and bank_name like concat('%', #{bankName}, '%')</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+        </where>
+    </select>
+    
+    <select id="selectRaceLanqiaoStudentById" parameterType="Long" resultMap="RaceLanqiaoStudentResult">
+        <include refid="selectRaceLanqiaoStudentVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertRaceLanqiaoStudent" parameterType="RaceLanqiaoStudent" useGeneratedKeys="true" keyProperty="id">
+        insert into race_lanqiao_student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="number != null and number != ''">number,</if>
+            <if test="sClass != null and sClass != ''">s_class,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="identity != null and identity != ''">identity,</if>
+            <if test="parentTid != null">parent_tid,</if>
+            <if test="sonTid != null">son_tid,</if>
+            <if test="teacher1 != null">teacher1,</if>
+            <if test="teacher2 != null">teacher2,</if>
+            <if test="teacher3 != null">teacher3,</if>
+            <if test="bankNumber != null">bank_number,</if>
+            <if test="bankName != null">bank_name,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="number != null and number != ''">#{number},</if>
+            <if test="sClass != null and sClass != ''">#{sClass},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="identity != null and identity != ''">#{identity},</if>
+            <if test="parentTid != null">#{parentTid},</if>
+            <if test="sonTid != null">#{sonTid},</if>
+            <if test="teacher1 != null">#{teacher1},</if>
+            <if test="teacher2 != null">#{teacher2},</if>
+            <if test="teacher3 != null">#{teacher3},</if>
+            <if test="bankNumber != null">#{bankNumber},</if>
+            <if test="bankName != null">#{bankName},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRaceLanqiaoStudent" parameterType="RaceLanqiaoStudent">
+        update race_lanqiao_student
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="number != null and number != ''">number = #{number},</if>
+            <if test="sClass != null and sClass != ''">s_class = #{sClass},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="identity != null and identity != ''">identity = #{identity},</if>
+            <if test="parentTid != null">parent_tid = #{parentTid},</if>
+            <if test="sonTid != null">son_tid = #{sonTid},</if>
+            <if test="teacher1 != null">teacher1 = #{teacher1},</if>
+            <if test="teacher2 != null">teacher2 = #{teacher2},</if>
+            <if test="teacher3 != null">teacher3 = #{teacher3},</if>
+            <if test="bankNumber != null">bank_number = #{bankNumber},</if>
+            <if test="bankName != null">bank_name = #{bankName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRaceLanqiaoStudentById" parameterType="Long">
+        update race_lanqiao_student
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteRaceLanqiaoStudentByIds" parameterType="String">
+        update race_lanqiao_student
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
