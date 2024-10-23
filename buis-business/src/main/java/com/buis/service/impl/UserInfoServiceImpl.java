@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.bean.BeanUtils;
+import com.buis.domain.TeamMemberTeacher;
+import com.buis.mapper.TeamMemberTeacherMapper;
 import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,8 @@ public class UserInfoServiceImpl implements IUserInfoService
 {
     @Autowired
     private UserInfoMapper userInfoMapper;
-
+    @Autowired
+    private TeamMemberTeacherMapper teamMemberTeacherMapper;
     /**
      * 查询用户信息
      * 
@@ -36,9 +39,14 @@ public class UserInfoServiceImpl implements IUserInfoService
         UserInfo userInfo = userInfoMapper.selectUserInfoById(id);
         BeanUtils.copyProperties(userInfo,vo);
         if (vo.getTitle() != null) {
+            TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
+            teamMemberTeacher.setTeacher(id);
+            teamMemberTeacher.setIsChoosed(1L);
+            List<TeamMemberTeacher> teamMemberTeachers = teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
+            long teamNum = teamMemberTeachers.stream().count();
+            vo.setTeamNum(teamNum);
             vo.setIsTeacher(true);
         }
-        //TODO指导队伍数
         return vo;
     }
 
@@ -57,9 +65,14 @@ public class UserInfoServiceImpl implements IUserInfoService
         for (UserInfo user : userInfos) {
             BeanUtils.copyProperties(user,vo);
             if (vo.getTitle() != null) {
+                TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
+                teamMemberTeacher.setTeacher(userInfo.getId());
+                teamMemberTeacher.setIsChoosed(1L);
+                List<TeamMemberTeacher> teamMemberTeachers = teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
+                long teamNum = teamMemberTeachers.stream().count();
+                vo.setTeamNum(teamNum);
                 vo.setIsTeacher(true);
             }
-            //TODO指导队伍数
             userInfoVos.add(vo);
         }
         return userInfoVos;

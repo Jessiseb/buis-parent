@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 /**
  * 学生预报名对象 pre_sign_student
  *
@@ -36,6 +39,11 @@ public class PreSignStudent extends BaseEntity {
      */
     @Excel(name = "比赛")
     private Long race;
+
+    /**
+     * 预报名时间
+     */
+    private Date updateTime;
 
     /**
      * 标识是否被删除，0表示未删除
