@@ -3,9 +3,11 @@ package com.buis.web.controller.api;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
+import com.buis.common.utils.StringUtils;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDTO;
 import com.buis.dto.UserDTO;
@@ -13,9 +15,11 @@ import com.buis.service.IUserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.naming.ldap.Rdn;
 
 @Api(tags = "用户信息Api")
 @RestController
@@ -24,23 +28,39 @@ import javax.annotation.Resource;
 public class UserInfoApiController extends BaseController {
     @Resource
     private IUserInfoService userInfoService;
+    @Resource
+    private RedisTemplate redisTemplate;
 
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
     public R<String> login(@RequestBody UserDTO userDTO) {
         boolean isLogin = StpUtil.isLogin();
+        if (isLogin){
+            //已经登录过就无需登录
+            throw new ServiceException("您已登录~");
+        }
 
         String email = userDTO.getEmail();
         String passWord = userDTO.getPassWord();
-        //TODO 验证码
+        //TODO 验证码校验
         String code = userDTO.getCode();
         //密码加密
         String encryptPassword = SaSecureUtil.md5(passWord);
+        //获取登录用户id
         Long id = userDTO.getId();
+        //根据id查到用户
         UserInfo user = userInfoService.selectUserInfoById(id);
-
-        if (email.equals(user.getEmail()) && encryptPassword.equals(user.getPassword())) {
+        if (user == null){
+            throw new ServiceException("用户不存在,请先注册!!");
+        }
+        //从缓存中取验证码
+        String rcode = (String) redisTemplate.opsForValue().get(RedisConstant.EMAIL + email);
+        //缓存中没有验证码说明还没有发送验证码
+        if (StringUtils.isEmpty(rcode)){
+            throw new ServiceException("请先发送验证码!");
+        }
+        if (email.equals(user.getEmail()) && encryptPassword.equals(user.getPassword()) && code.equals(rcode)) {
             StpUtil.login(id);
             return R.ok("登录成功!");
         }
