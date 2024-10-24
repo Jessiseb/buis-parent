@@ -43,14 +43,13 @@ public class UserInfoApiController extends BaseController {
 
         String email = userDTO.getEmail();
         String passWord = userDTO.getPassWord();
-        //TODO 验证码校验
         String code = userDTO.getCode();
         //密码加密
         String encryptPassword = SaSecureUtil.md5(passWord);
         //获取登录用户id
         Long id = userDTO.getId();
         //根据id查到用户
-        UserInfo user = userInfoService.selectUserInfoById(id);
+        UserInfo user = userInfoService.getLoginInfoByUserId(id);
         if (user == null){
             throw new ServiceException("用户不存在,请先注册!!");
         }
