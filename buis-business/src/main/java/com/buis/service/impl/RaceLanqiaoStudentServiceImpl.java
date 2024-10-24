@@ -12,7 +12,7 @@ import com.buis.service.IRaceLanqiaoStudentService;
  * 蓝桥杯学生报名信息Service业务层处理
  * 
  * @author buis
- * @date 2024-10-23
+ * @date 2024-10-24
  */
 @Service
 public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService 

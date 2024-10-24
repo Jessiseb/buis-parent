@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
  * 蓝桥杯老师报名信息对象 race_lanqiao_teacher
  *
  * @author buis
- * @date 2024-10-23
+ * @date 2024-10-24
  */
 @Data
 @NoArgsConstructor
@@ -22,6 +22,10 @@ public class RaceLanqiaoTeacher extends BaseEntity
         /** id */
                     @Excel(name = "id")
     private Long id;
+
+        /** 老师id */
+                    @Excel(name = "老师id")
+    private Long userId;
 
         /** 姓名 */
                     @Excel(name = "姓名")
@@ -65,7 +69,7 @@ public class RaceLanqiaoTeacher extends BaseEntity
 
         /** 指导科目 */
                     @Excel(name = "指导科目")
-    private Long type;
+    private String type;
 
         /** 本学期任课班级 */
                     @Excel(name = "本学期任课班级")
@@ -77,7 +81,7 @@ public class RaceLanqiaoTeacher extends BaseEntity
 
         /** 指导经验 */
                     @Excel(name = "指导经验")
-    private String teacher3;
+    private String guidance;
 
             /** 标识是否被删除，0表示未删除 */
             private Integer isDeleted;

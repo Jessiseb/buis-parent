@@ -7,7 +7,7 @@ import com.buis.domain.RaceLanqiaoStudent;
  * 蓝桥杯学生报名信息Mapper接口
  * 
  * @author buis
- * @date 2024-10-23
+ * @date 2024-10-24
  */
 public interface RaceLanqiaoStudentMapper 
 {

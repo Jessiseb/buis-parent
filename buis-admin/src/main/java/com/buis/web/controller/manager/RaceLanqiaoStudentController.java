@@ -28,7 +28,7 @@ import com.buis.common.core.page.TableDataInfo;
  * 蓝桥杯学生报名信息Controller
  *
  * @author buis
- * @date 2024-10-23
+ * @date 2024-10-24
  */
 @Api(tags = "蓝桥杯学生报名信息Controller")
 @RestController
