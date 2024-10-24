@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
  * 蓝桥杯学生报名信息对象 race_lanqiao_student
  *
  * @author buis
- * @date 2024-10-23
+ * @date 2024-10-24
  */
 @Data
 @NoArgsConstructor
@@ -22,6 +22,10 @@ public class RaceLanqiaoStudent extends BaseEntity
         /** id */
                     @Excel(name = "id")
     private Long id;
+
+        /** 学生id */
+                    @Excel(name = "学生id")
+    private Long userId;
 
         /** 姓名 */
                     @Excel(name = "姓名")

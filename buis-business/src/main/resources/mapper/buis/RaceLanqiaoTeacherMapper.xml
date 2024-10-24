@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="RaceLanqiaoTeacher" id="RaceLanqiaoTeacherResult">
         <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
         <result property="name"    column="name"    />
         <result property="sex"    column="sex"    />
         <result property="college"    column="college"    />
@@ -19,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="type"    column="type"    />
         <result property="tClass"    column="t_class"    />
         <result property="bankNumber"    column="bank_number"    />
-        <result property="teacher3"    column="teacher3"    />
+        <result property="guidance"    column="guidance"    />
         <result property="remark"    column="remark"    />
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
@@ -27,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectRaceLanqiaoTeacherVo">
-        select id, name, sex, college, major, title, office, phone, email, identity, course, type, t_class, bank_number, teacher3, remark, is_deleted, create_time, update_time from race_lanqiao_teacher
+        select id, user_id, name, sex, college, major, title, office, phone, email, identity, course, type, t_class, bank_number, guidance, remark, is_deleted, create_time, update_time from race_lanqiao_teacher
     </sql>
 
     <select id="selectRaceLanqiaoTeacherList" parameterType="RaceLanqiaoTeacher" resultMap="RaceLanqiaoTeacherResult">
@@ -35,20 +36,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             is_deleted = 0
             <if test="id != null "> and id = #{id}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="sex != null "> and sex = #{sex}</if>
             <if test="college != null "> and college = #{college}</if>
             <if test="major != null "> and major = #{major}</if>
             <if test="title != null "> and title = #{title}</if>
-            <if test="office != null  and office != ''"> and office like concat('%', #{office}, '%')</if>
+            <if test="office != null  and office != ''"> and office = #{office}</if>
             <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
             <if test="email != null  and email != ''"> and email = #{email}</if>
             <if test="identity != null  and identity != ''"> and identity = #{identity}</if>
-            <if test="course != null  and course != ''"> and course like concat('%', #{course}, '%')</if>
-            <if test="type != null "> and type like concat('%', #{type}, '%')</if>
+            <if test="course != null  and course != ''"> and course = #{course}</if>
+            <if test="type != null  and type != ''"> and type like concat('%', #{type}, '%')</if>
             <if test="tClass != null  and tClass != ''"> and t_class like concat('%', #{tClass}, '%')</if>
             <if test="bankNumber != null  and bankNumber != ''"> and bank_number = #{bankNumber}</if>
-            <if test="teacher3 != null  and teacher3 != ''"> and teacher3 like concat('%', #{teacher3}, '%')</if>
+            <if test="guidance != null  and guidance != ''"> and guidance = #{guidance}</if>
             <if test="remark != null  and remark != ''"> and remark like concat('%', #{remark}, '%')</if>
         </where>
     </select>
@@ -61,6 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertRaceLanqiaoTeacher" parameterType="RaceLanqiaoTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="sex != null">sex,</if>
             <if test="college != null">college,</if>
@@ -71,16 +74,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="email != null and email != ''">email,</if>
             <if test="identity != null and identity != ''">identity,</if>
             <if test="course != null">course,</if>
-            <if test="type != null">type,</if>
+            <if test="type != null and type != ''">type,</if>
             <if test="tClass != null">t_class,</if>
             <if test="bankNumber != null and bankNumber != ''">bank_number,</if>
-            <if test="teacher3 != null">teacher3,</if>
+            <if test="guidance != null">guidance,</if>
             <if test="remark != null">remark,</if>
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="sex != null">#{sex},</if>
             <if test="college != null">#{college},</if>
@@ -91,10 +95,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="email != null and email != ''">#{email},</if>
             <if test="identity != null and identity != ''">#{identity},</if>
             <if test="course != null">#{course},</if>
-            <if test="type != null">#{type},</if>
+            <if test="type != null and type != ''">#{type},</if>
             <if test="tClass != null">#{tClass},</if>
             <if test="bankNumber != null and bankNumber != ''">#{bankNumber},</if>
-            <if test="teacher3 != null">#{teacher3},</if>
+            <if test="guidance != null">#{guidance},</if>
             <if test="remark != null">#{remark},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -105,6 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateRaceLanqiaoTeacher" parameterType="RaceLanqiaoTeacher">
         update race_lanqiao_teacher
         <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="sex != null">sex = #{sex},</if>
             <if test="college != null">college = #{college},</if>
@@ -115,10 +120,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="email != null and email != ''">email = #{email},</if>
             <if test="identity != null and identity != ''">identity = #{identity},</if>
             <if test="course != null">course = #{course},</if>
-            <if test="type != null">type = #{type},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
             <if test="tClass != null">t_class = #{tClass},</if>
             <if test="bankNumber != null and bankNumber != ''">bank_number = #{bankNumber},</if>
-            <if test="teacher3 != null">teacher3 = #{teacher3},</if>
+            <if test="guidance != null">guidance = #{guidance},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
