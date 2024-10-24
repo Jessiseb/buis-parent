@@ -6,4 +6,6 @@ public class RedisConstant {
      * string：EMAIL+email code
      */
     public static final String EMAIL = "email:";
+
+    public static final Long EMAIL_TTL = 5L;
 }

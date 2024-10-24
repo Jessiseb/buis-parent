@@ -31,7 +31,6 @@ public class UserInfoApiController extends BaseController {
     public R<String> login(@RequestBody UserDTO userDTO) {
         boolean isLogin = StpUtil.isLogin();
 
-
         String email = userDTO.getEmail();
         String passWord = userDTO.getPassWord();
         //TODO 验证码
