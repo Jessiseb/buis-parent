@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.vo.TeamInfoVo;
 
 /**
  * 队伍信息Service接口
@@ -58,4 +59,13 @@ public interface ITeamInfoService
      * @return 结果
      */
     public int deleteTeamInfoById(Long id);
+
+    /**
+     * 查询队伍信息列表 Vo
+     * @param teamInfo
+     * @return
+     */
+    List<TeamInfoVo> selectTeamInfoVoList(TeamInfo teamInfo);
+
+    TeamInfoVo selectTeamInfoVoById(Long id);
 }

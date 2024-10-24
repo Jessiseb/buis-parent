@@ -2,6 +2,7 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.PreSignTeacher;
+import com.buis.domain.vo.PreSignTeacherVo;
 
 /**
  * 老师预报名Mapper接口
@@ -58,4 +59,9 @@ public interface PreSignTeacherMapper
      * @return 结果
      */
     public int deletePreSignTeacherByIds(Long[] ids);
+
+    List<PreSignTeacherVo> selectPreSignTeacherVoList(PreSignTeacher preSignTeacher);
+
+
+    PreSignTeacherVo selectPreSignTeacherVoById(Long id);
 }

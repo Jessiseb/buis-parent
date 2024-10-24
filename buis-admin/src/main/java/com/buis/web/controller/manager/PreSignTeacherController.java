@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.domain.vo.PreSignTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,8 +48,9 @@ public class PreSignTeacherController extends BaseController
     public TableDataInfo list(PreSignTeacher preSignTeacher)
     {
         startPage();
-        List<PreSignTeacher> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
-        return getDataTable(list);
+//        List<PreSignTeacher> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
+       List<PreSignTeacherVo> listVo= preSignTeacherService.selectPreSignTeacherVoList(preSignTeacher);
+        return getDataTable(listVo);
     }
 
     /**
@@ -73,7 +75,8 @@ public class PreSignTeacherController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return success(preSignTeacherService.selectPreSignTeacherById(id));
+//        return success(preSignTeacherService.selectPreSignTeacherById(id));
+        return success(preSignTeacherService.selectPreSignTeacherVoById(id));
     }
 
     /**
@@ -86,6 +89,7 @@ public class PreSignTeacherController extends BaseController
     public AjaxResult add(@RequestBody PreSignTeacher preSignTeacher)
     {
         return toAjax(preSignTeacherService.insertPreSignTeacher(preSignTeacher));
+
     }
 
     /**

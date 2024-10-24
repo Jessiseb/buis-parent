@@ -2,6 +2,7 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.vo.TeamInfoVo;
 
 /**
  * 队伍信息Mapper接口
@@ -58,4 +59,10 @@ public interface TeamInfoMapper
      * @return 结果
      */
     public int deleteTeamInfoByIds(Long[] ids);
+
+
+
+    List<TeamInfoVo> selectTeamInfoVo(TeamInfo teamInfo);
+
+    TeamInfoVo selectTeamInfoVoById(Long id);
 }

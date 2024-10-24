@@ -1,6 +1,8 @@
 package com.buis.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import com.buis.domain.TeamMemberStudent;
 
 /**
@@ -58,4 +60,11 @@ public interface TeamMemberStudentMapper
      * @return 结果
      */
     public int deleteTeamMemberStudentByIds(Long[] ids);
+
+    int getCount(Long id);
+
+    Map<String, Object> getCountAndStudents(Long id);
+
+//    Map<String, Object> getCountAndStudents(Long id);
+
 }
