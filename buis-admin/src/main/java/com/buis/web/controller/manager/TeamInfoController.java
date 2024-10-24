@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.domain.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,7 +48,8 @@ public class TeamInfoController extends BaseController
     public TableDataInfo list(TeamInfo teamInfo)
     {
         startPage();
-        List<TeamInfo> list = teamInfoService.selectTeamInfoList(teamInfo);
+//        List<TeamInfo> list = teamInfoService.selectTeamInfoList(teamInfo);
+        List<TeamInfoVo> list = teamInfoService.selectTeamInfoVoList(teamInfo);
         return getDataTable(list);
     }
 
@@ -73,7 +75,8 @@ public class TeamInfoController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return success(teamInfoService.selectTeamInfoById(id));
+//        return success(teamInfoService.selectTeamInfoById(id));
+        return success(teamInfoService.selectTeamInfoVoById(id));
     }
 
     /**

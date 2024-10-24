@@ -39,6 +39,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTeamMemberStudentVo"/>
         where id = #{id}  and is_deleted = 0
     </select>
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(team_member_student.student) as teamNumbers
+        FROM team_info
+                 LEFT JOIN team_member_student ON team_info.id = team_member_student.team
+        WHERE team_info.id = #{id} AND team_member_student.is_deleted = 0
+    </select>
+    <select id="getCountAndStudents" resultType="java.util.Map">
+        SELECT
+            COUNT(team_member_student.student) AS teamNumbers,
+            (SELECT GROUP_CONCAT(CONCAT(user_info.id, ':', user_info.`name`))
+             FROM user_info
+                      INNER JOIN team_member_student ON user_info.id = team_member_student.student
+             WHERE team_member_student.team = team_info.id AND team_member_student.is_deleted = 0) AS teamMembersNameWithIds
+        FROM
+            team_info
+                LEFT JOIN
+            team_member_student ON team_info.id = team_member_student.team AND team_member_student.is_deleted = 0
+        WHERE
+            team_info.id = #{id}
+    </select>
+    <!-- <select id="getCountAndStudents" resultType="java.util.Map">
+         SELECT
+             COUNT(team_member_teacher.teacher) AS teamNumbers,
+             (SELECT GROUP_CONCAT(user_info.`name`)
+              FROM user_info
+                       INNER JOIN team_member_student ON user_info.id = team_member_student.student
+              WHERE team_member_student.team = team_info.id AND team_member_student.is_deleted = 0) AS teamMembersName
+         FROM
+             team_info
+                 LEFT JOIN
+             team_member_student ON team_info.id = team_member_student.team
+         WHERE
+             team_info.id = #{id} AND team_member_student.is_deleted = 0
+     </select>-->
+
 
     <insert id="insertTeamMemberStudent" parameterType="TeamMemberStudent" useGeneratedKeys="true" keyProperty="id">
         insert into team_member_student
