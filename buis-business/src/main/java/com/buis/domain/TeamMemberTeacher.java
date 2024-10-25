@@ -17,9 +17,11 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class TeamMemberTeacher extends BaseEntity
         {   private static final long serialVersionUID = 1L;
         /** id */
+
                     @Excel(name = "id")
     private Long id;
 
