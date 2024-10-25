@@ -2,10 +2,10 @@ package com.buis.service;
 
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDTO;
-import com.buis.dto.UserDTO;
+import com.buis.dto.UserLoginDTO;
 import com.buis.vo.UserInfoVo;
-import org.apache.catalina.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -63,12 +63,19 @@ public interface IUserInfoService {
      */
     public int deleteUserInfoById(Long id);
 
-    boolean login(UserDTO loginDTO);
-
     int register(RegisterDTO registerDTO);
 
     UserInfo getLoginUser();
 
 
     UserInfo getLoginInfoByUserId(Long id);
+
+    /**
+     * 用户登录接口
+     * @param  userLoginDTO 登录用户信息
+     * @param request session
+     * @return 结果
+     */
+    UserInfoVo userLogin(UserLoginDTO userLoginDTO, HttpServletRequest request);
+
 }

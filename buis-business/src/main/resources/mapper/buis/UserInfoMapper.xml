@@ -57,6 +57,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select email,password from user_info where id = #{id}
     </select>
 
+    <select id="selectUserInfoByEmail" resultType="com.buis.domain.UserInfo">
+        <include refid="selectUserInfoVo"/>
+        where email = #{email} and is_deleted = 0
+    </select>
+
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
