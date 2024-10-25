@@ -17,31 +17,44 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+
     <sql id="selectTeamMemberTeacherVo">
         select id, race, team, teacher, decider, is_choosed, reason, is_deleted, create_time, update_time from team_member_teacher
     </sql>
 
-    <select id="selectTeamMemberTeacherList" parameterType="TeamMemberTeacher" resultMap="TeamMemberTeacherResult">
-        <include refid="selectTeamMemberTeacherVo"/>
-        <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="team != null "> and team = #{team}</if>
-            <if test="teacher != null "> and teacher = #{teacher}</if>
-            <if test="decider != null "> and decider = #{decider}</if>
-            <if test="isChoosed != null "> and is_choosed = #{isChoosed}</if>
-            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
-        </where>
-    </select>
-    
+
+    <!--查询队伍老师管理列表-->
+    <select id="selectTeamMemberTeacherList" parameterType="com.buis.domain.TeamMemberTeacher" resultMap="TeamMemberTeacherResult">
+    <include refid="selectTeamMemberTeacherVo"/>
+    <where>
+        SET is_deleted = 0
+        <if test="id != null "> AND id = #{id}</if>
+        <if test="race != null "> AND race = #{race}</if>
+        <if test="team != null "> AND team = #{team}</if>
+        <if test="teacher != null "> AND teacher = #{teacher}</if>
+        <if test="decider != null "> AND decider = #{decider}</if>
+        <if test="isChoosed != null "> AND is_choosed = #{isChoosed}</if>
+        <if test="reason != null  and reason != ''"> AND reason LIKE concat('%', #{reason}, '%')</if>
+    </where>
+</select>
+
+
+    <!--查询队伍老师管理-->
     <select id="selectTeamMemberTeacherById" parameterType="Long" resultMap="TeamMemberTeacherResult">
         <include refid="selectTeamMemberTeacherVo"/>
-        where id = #{id}  and is_deleted = 0
+            /*去除报红问题即ok*/
+         WHERE id = #{id}
+         AND is_deleted = 0
     </select>
 
-    <insert id="insertTeamMemberTeacher" parameterType="TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
-        insert into team_member_teacher
+
+
+
+
+    <!--插入队伍老师信息管理-->
+    <insert id="insertTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO team_member_teacher
+
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
             <if test="team != null">team,</if>
@@ -52,7 +65,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
+
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="race != null">#{race},</if>
             <if test="team != null">#{team},</if>
@@ -63,11 +77,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
+
     </insert>
 
-    <update id="updateTeamMemberTeacher" parameterType="TeamMemberTeacher">
-        update team_member_teacher
+
+
+
+
+    <!--更新队伍老师管理-->
+    <update id="updateTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher">
+        Update  team_member_teacher
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>
             <if test="team != null">team = #{team},</if>
@@ -79,21 +99,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
-        where id = #{id}
+        WHERE id = #{id}
     </update>
 
-    <delete id="deleteTeamMemberTeacherById" parameterType="Long">
-        update team_member_teacher
-        set is_deleted = 1
-        where id = #{id}
-    </delete>
 
-    <delete id="deleteTeamMemberTeacherByIds" parameterType="String">
-        update team_member_teacher
-        set is_deleted = 1
-        where id in
-        <foreach item="id" collection="array" open="(" separator="," close=")">
+
+
+
+
+
+
+    <!--对队伍老师信息进行逻辑删除   ok 但是实体类报红-->
+    <update id="deleteTeamMemberTeacherById" parameterType="Long">
+        UPDATE team_member_teacher
+        SET is_deleted  = 1
+        WHERE id = #{id}
+    </update>
+
+
+
+        <!--批量对队伍老师信息进行逻辑删除   ok-->
+    <update id="deleteTeamMemberTeacherByIds" parameterType="Long[]" >
+            UPDATE  team_member_teacher
+            SET is_deleted = 1
+            WHERE id  IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
+    </update>
+
+
 </mapper>

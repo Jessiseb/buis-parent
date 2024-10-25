@@ -2,6 +2,8 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.TeamMemberTeacher;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * 队伍老师管理Mapper接口
@@ -9,6 +11,7 @@ import com.buis.domain.TeamMemberTeacher;
  * @author buis
  * @date 2024-10-11
  */
+@Mapper
 public interface TeamMemberTeacherMapper 
 {
     /**
@@ -18,6 +21,10 @@ public interface TeamMemberTeacherMapper
      * @return 队伍老师管理
      */
     public TeamMemberTeacher selectTeamMemberTeacherById(Long id);
+
+
+
+
 
     /**
      * 查询队伍老师管理列表
@@ -42,6 +49,11 @@ public interface TeamMemberTeacherMapper
      * @return 结果
      */
     public int updateTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher);
+
+
+
+
+
 
     /**
      * 删除队伍老师管理
