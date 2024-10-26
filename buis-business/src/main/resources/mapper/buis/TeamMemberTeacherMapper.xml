@@ -45,6 +45,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where teacher = #{id}  and is_deleted = 0
     </select>
 
+    <select id="listTeacherIdByRaceId" resultType="java.lang.Integer">
+        select teacher from team_member_teacher where race = #{id}
+    </select>
+
     <insert id="insertTeamMemberTeacher" parameterType="TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into team_member_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">

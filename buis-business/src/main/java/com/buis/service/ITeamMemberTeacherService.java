@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.domain.UserInfo;
 
 /**
  * 队伍老师管理Service接口
@@ -60,4 +61,9 @@ public interface ITeamMemberTeacherService
     public int deleteTeamMemberTeacherById(Long id);
 
     List<TeamMemberTeacher> selectTeamMyInstruct(Long id);
+
+    List<Integer> listTeacherIdByRaceId(Long id);
+
+
+    List<UserInfo> listTeachersByIds(List<Integer> ids);
 }

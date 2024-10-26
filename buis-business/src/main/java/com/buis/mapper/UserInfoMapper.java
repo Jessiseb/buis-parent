@@ -72,4 +72,6 @@ public interface UserInfoMapper
     public UserInfo getLoginInfoByUserId(Long id);
 
     public UserInfo selectUserInfoByEmail(String email);
+
+    List<UserInfo> listTeachersByIds(@Param("ids") List<Integer> ids);
 }
