@@ -6,6 +6,7 @@ import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
 import com.buis.dto.TeamQueryDTO;
@@ -77,6 +78,7 @@ public class TeamApiController extends BaseController{
         return R.ok(teamInfos);
     }
 
+
     @ApiOperation("查询我创建的队伍列表")
     @GetMapping("/listTeam/my/create")
     public R<List<TeamInfo>> listTeamMyCreate(TeamQueryDTO teamQueryDTO) {
@@ -90,17 +92,38 @@ public class TeamApiController extends BaseController{
         //判断是老师还是学生
         if (title == null) {
             //是学生
-//            List<TeamMemberStudent> teamMemberStudentsList = teamMemberStudentService.selectTeamMyInstruct(loginUser.getId());
+            //根据当前用户id查询所在的队伍
+            List<TeamMemberStudent> teamMemberStudentsList = teamMemberStudentService.selectTeamMyCreate(loginUser.getId());
+
+            //根据学生队伍表,获取到队伍ids
+            List<Long> teamIds = teamMemberStudentsList.stream().map(TeamMemberStudent::getTeam).collect(Collectors.toList());
+
+            //根据队伍ids查询到队伍信息
+            teamQueryDTO.setIdList(teamIds);
+            List<TeamInfo> teamInfos = teamInfoService.listTeams(teamQueryDTO);
+
+            //获取到所加入队伍的所有队长id
+            List<Long> LeaderIds = teamInfos.stream().map(TeamInfo::getLeader).collect(Collectors.toList());
+
+            //判断本用户id与队长id是否对应,对应说明是该队伍的队长,则是我创建的队伍
+            myTeamsAsLeader = teamInfos
+                    .stream()
+                    .filter(teamInfo -> userId.equals(LeaderIds))
+                    .collect(Collectors.toList());
         } else {
             //是老师
             //根据当前用户id查询所在的队伍
             List<TeamMemberTeacher> teamMemberTeacherList = teamMemberTeacherService.selectTeamMyInstruct(loginUser.getId());
+
             //根据队伍老师表,获取到队伍ids
             List<Long> teamIds = teamMemberTeacherList.stream().map(TeamMemberTeacher::getTeam).collect(Collectors.toList());
+
             //根据队伍ids获得所有加入的队伍
             teamQueryDTO.setIdList(teamIds);
+
             //本用户已加入的队伍
             List<TeamInfo> teamInfos = teamInfoService.listTeams(teamQueryDTO);
+
             //获取到所有的队长id
             List<Long> LeaderIds = teamInfos.stream().map(TeamInfo::getLeader).collect(Collectors.toList());
             //根据队长id和本用户id做对比,一样的说明本用户就是队长-->查出所在的队伍并返回
@@ -111,5 +134,6 @@ public class TeamApiController extends BaseController{
         }
         return R.ok(myTeamsAsLeader);
     }
+
 
 }

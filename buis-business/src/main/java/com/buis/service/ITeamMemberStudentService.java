@@ -66,4 +66,7 @@ public interface ITeamMemberStudentService
 
     //    查询队伍学生列表
     List<UserInfo> selectTeamMemberStudentQueryList(Long race, Long team);
+
+    List<TeamMemberStudent> selectTeamMyCreate(Long id);
+
 }
