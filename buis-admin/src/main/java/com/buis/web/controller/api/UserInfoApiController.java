@@ -69,4 +69,5 @@ public class UserInfoApiController extends BaseController {
         return R.ok("是否登录:"+StpUtil.isLogin());
     }
 
+
 }
