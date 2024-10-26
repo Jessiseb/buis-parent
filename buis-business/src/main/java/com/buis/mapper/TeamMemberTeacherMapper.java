@@ -60,4 +60,7 @@ public interface TeamMemberTeacherMapper
     public int deleteTeamMemberTeacherByIds(Long[] ids);
 
     List<TeamMemberTeacher> selectTeamMyInstruct(Long id);
+
+    List<Integer> listTeacherIdByRaceId(Long id);
+
 }
