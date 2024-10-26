@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * 队伍管理
+ */
 @Api(tags = "队伍管理Api")
 @RestController
 @RequestMapping("/api/team")
@@ -47,6 +50,13 @@ public class TeamApiController extends BaseController{
         return getDataTable(result);
     }
 
+//region 查询队伍
+    /**
+     * 查询所有队伍列表->也用户所有用户查询
+     *
+     * @param teamQueryDTO 查询参数
+     * @return 返回结果
+     */
     @ApiOperation("查询所有队伍列表")
     @GetMapping("/listTeams")
     public R<List<TeamInfo>> listTeams(TeamQueryDTO teamQueryDTO) {
@@ -56,6 +66,12 @@ public class TeamApiController extends BaseController{
     }
 
 
+    /**
+     * 查询我(老师)指导的队伍列表
+     *
+     * @param teamQueryDTO 查询参数
+     * @return 返回结果
+     */
     @ApiOperation("查询我(老师)指导的队伍列表")
     @GetMapping("/listTeam/my/instruct")
     public R<List<TeamInfo>> listTeamMyInstruct(TeamQueryDTO teamQueryDTO) {
@@ -79,6 +95,12 @@ public class TeamApiController extends BaseController{
     }
 
 
+    /**
+     * 查询我创建的队伍列表
+     *
+     * @param teamQueryDTO 查询参数
+     * @return 返回结果
+     */
     @ApiOperation("查询我创建的队伍列表")
     @GetMapping("/listTeam/my/create")
     public R<List<TeamInfo>> listTeamMyCreate(TeamQueryDTO teamQueryDTO) {
@@ -134,6 +156,9 @@ public class TeamApiController extends BaseController{
         }
         return R.ok(myTeamsAsLeader);
     }
+
+    //endregion
+
 
 
 }

@@ -100,6 +100,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
 
     @Override
     public List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO) {
+        //TODO 需要在查出来的时候判断我是否加入该队伍吗?
         return teamInfoMapper.listTeams(teamQueryDTO);
     }
 

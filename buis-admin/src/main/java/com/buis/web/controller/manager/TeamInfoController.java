@@ -62,8 +62,7 @@ public class TeamInfoController extends BaseController {
     @ApiOperation("获取队伍信息详细信息")
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(teamInfoService.selectTeamInfoById(id));
     }
 
@@ -74,8 +73,7 @@ public class TeamInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:add')")
     @Log(title = "队伍信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TeamInfo teamInfo)
-    {
+    public AjaxResult add(@RequestBody TeamInfo teamInfo) {
         return toAjax(teamInfoService.insertTeamInfo(teamInfo));
     }
 
@@ -86,8 +84,7 @@ public class TeamInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:edit')")
     @Log(title = "队伍信息", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody TeamInfo teamInfo)
-    {
+    public AjaxResult edit(@RequestBody TeamInfo teamInfo) {
         return toAjax(teamInfoService.updateTeamInfo(teamInfo));
     }
 
@@ -98,8 +95,7 @@ public class TeamInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:remove')")
     @Log(title = "队伍信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(teamInfoService.deleteTeamInfoByIds(ids));
     }
 }

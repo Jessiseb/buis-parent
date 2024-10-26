@@ -50,8 +50,7 @@ public class PreSignStudentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preStudent:export')")
     @Log(title = "学生预报名", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, PreSignStudent preSignStudent)
-    {
+    public void export(HttpServletResponse response, PreSignStudent preSignStudent) {
         List<PreSignStudentVo> list = preSignStudentService.selectPreSignStudentList(preSignStudent);
         ExcelUtil<PreSignStudentVo> util = new ExcelUtil<>(PreSignStudentVo.class);
         util.exportExcel(response, list, "学生预报名数据");
@@ -63,8 +62,7 @@ public class PreSignStudentController extends BaseController {
     @ApiOperation("获取学生预报名详细信息")
     @PreAuthorize("@ss.hasPermi('buis:preStudent:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(preSignStudentService.selectPreSignStudentById(id));
     }
 
@@ -75,8 +73,7 @@ public class PreSignStudentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preStudent:add')")
     @Log(title = "学生预报名", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody PreSignStudent preSignStudent)
-    {
+    public AjaxResult add(@RequestBody PreSignStudent preSignStudent) {
         return toAjax(preSignStudentService.insertPreSignStudent(preSignStudent));
     }
 
@@ -87,8 +84,7 @@ public class PreSignStudentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preStudent:edit')")
     @Log(title = "学生预报名", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody PreSignStudent preSignStudent)
-    {
+    public AjaxResult edit(@RequestBody PreSignStudent preSignStudent) {
         return toAjax(preSignStudentService.updatePreSignStudent(preSignStudent));
     }
 
@@ -99,8 +95,7 @@ public class PreSignStudentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preStudent:remove')")
     @Log(title = "学生预报名", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(preSignStudentService.deletePreSignStudentByIds(ids));
     }
 }
