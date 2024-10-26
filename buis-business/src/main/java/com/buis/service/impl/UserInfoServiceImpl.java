@@ -158,7 +158,6 @@ public class UserInfoServiceImpl implements IUserInfoService {
         //TODO 封装错误信息
         //获取注册信息，进行校验
         String email = registerDTO.getEmail();
-        //TODO 校验验证码
         String code = registerDTO.getCode();
         String password = registerDTO.getPassword();
         String name = registerDTO.getName();
@@ -189,7 +188,6 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (userInfo != null) {
             throw new ServiceException("用户已存在!");
         }
-
 
         //密码加密
         String encryptPassword = SaSecureUtil.md5(SALT + password);

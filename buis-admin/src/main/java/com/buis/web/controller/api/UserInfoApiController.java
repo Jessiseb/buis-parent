@@ -47,8 +47,9 @@ public class UserInfoApiController extends BaseController {
         if (registerDTO == null){
             throw new ServiceException("参数错误!");
         }
-        userInfoService.register(registerDTO);
-        return R.ok();
+        long result = userInfoService.register(registerDTO);
+        //返回注册id
+        return R.ok(result);
     }
 
     @ApiOperation("用户退出登录功能")
@@ -61,11 +62,11 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("检查用户是否登录功能")
     @GetMapping("checkLogin")
-    public R checkLogin() {
+    public R<String> checkLogin() {
         // 检验当前会话是否已经登录, 如果未登录，则抛出异常：`NotLoginException`
         StpUtil.checkLogin();
         // 抛出异常后，代码将走入全局异常处理（GlobalException.java），如果没有抛出异常，则代表通过了登录校验，返回下面信息
-        return R.ok("校验登录成功");
+        return R.ok("是否登录:"+StpUtil.isLogin());
     }
 
 }

@@ -111,4 +111,9 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService
     {
         return teamMemberStudentMapper.selectTeamMemberStudentQueryList(race,team);
     }
+
+    @Override
+    public List<TeamMemberStudent> selectTeamMyCreate(Long id) {
+        return teamMemberStudentMapper.selectTeamMyCreate(id);
+    }
 }

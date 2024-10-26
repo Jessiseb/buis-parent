@@ -68,4 +68,6 @@ public interface TeamMemberStudentMapper
     public int deleteTeamMemberStudentByIds(Long[] ids);
 
     List<UserInfo> selectTeamMemberStudentQueryList(@Param("race") Long race,@Param("team") Long team);
+
+    List<TeamMemberStudent> selectTeamMyCreate(Long id);
 }
