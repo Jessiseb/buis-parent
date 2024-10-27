@@ -27,6 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="college != null "> and college = #{college}</if>
             <if test="sort != null "> and sort = #{sort}</if>
         </where>
+        order by asc sort;
     </select>
     
     <select id="selectCollegeMajorById" parameterType="Long" resultMap="CollegeMajorResult">
