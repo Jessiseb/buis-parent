@@ -2,7 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.PreSignStudent;
-import com.buis.vo.PreSignStudentVo;
+import com.buis.vo.PreSignStudentVO;
 
 /**
  * 学生预报名Service接口
@@ -18,7 +18,7 @@ public interface IPreSignStudentService
      * @param id 学生预报名主键
      * @return 学生预报名
      */
-    public PreSignStudentVo selectPreSignStudentById(Long id);
+    public PreSignStudentVO selectPreSignStudentById(Long id);
 
     /**
      * 查询学生预报名列表
@@ -26,7 +26,7 @@ public interface IPreSignStudentService
      * @param preSignStudent 学生预报名
      * @return 学生预报名集合
      */
-    public List<PreSignStudentVo> selectPreSignStudentList(PreSignStudent preSignStudent);
+    public List<PreSignStudentVO> selectPreSignStudentList(PreSignStudent preSignStudent);
 
     /**
      * 新增学生预报名

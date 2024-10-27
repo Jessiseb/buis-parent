@@ -1,8 +1,8 @@
 package com.buis.service;
 
 import com.buis.domain.UserInfo;
-import com.buis.dto.RegisterDTO;
-import com.buis.dto.UserLoginDTO;
+import com.buis.dto.RegisterDto;
+import com.buis.dto.UserLoginDto;
 import com.buis.vo.UserInfoVo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +63,7 @@ public interface IUserInfoService {
      */
     public int deleteUserInfoById(Long id);
 
-    int register(RegisterDTO registerDTO);
+    int register(RegisterDto registerDTO);
 
     UserInfo getLoginUser();
 
@@ -76,6 +76,6 @@ public interface IUserInfoService {
      * @param request session
      * @return 结果
      */
-    UserInfoVo userLogin(UserLoginDTO userLoginDTO, HttpServletRequest request);
+    UserInfoVo userLogin(UserLoginDto userLoginDTO, HttpServletRequest request);
 
 }

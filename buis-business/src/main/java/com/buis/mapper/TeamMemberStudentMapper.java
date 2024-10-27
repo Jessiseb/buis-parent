@@ -3,12 +3,11 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.TeamInfo;
 import java.util.Map;
 
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.UserInfo;
-import com.buis.vo.TeamMemberStudentQueryVo;
+import com.buis.dto.TeamMemberStudentDto;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -36,7 +35,7 @@ public interface TeamMemberStudentMapper
     public List<TeamMemberStudent> selectTeamMemberStudentList(TeamMemberStudent teamMemberStudent);
 
 
-    public TeamMemberStudentQueryVo selectTeamMemberStudentQueryById(Long id);
+    public TeamMemberStudentDto selectTeamMemberStudentQueryById(Long id);
     /**
      * 新增队伍成员管理
      * 

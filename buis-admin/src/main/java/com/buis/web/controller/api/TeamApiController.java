@@ -9,7 +9,7 @@ import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
-import com.buis.dto.TeamQueryDTO;
+import com.buis.dto.TeamQueryDto;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
@@ -59,7 +59,7 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("查询所有队伍列表")
     @GetMapping("/listTeams")
-    public R<List<TeamInfo>> listTeams(TeamQueryDTO teamQueryDTO) {
+    public R<List<TeamInfo>> listTeams(TeamQueryDto teamQueryDTO) {
         startPage();
         List<TeamInfo> list = teamInfoService.listTeams(teamQueryDTO);
         return R.ok(list);
@@ -74,7 +74,7 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("查询我(老师)指导的队伍列表")
     @GetMapping("/listTeam/my/instruct")
-    public R<List<TeamInfo>> listTeamMyInstruct(TeamQueryDTO teamQueryDTO) {
+    public R<List<TeamInfo>> listTeamMyInstruct(TeamQueryDto teamQueryDTO) {
         //判断当前用户身份
         //1.找出当前用户信息
         UserInfo loginUser = userInfoService.getLoginUser();
@@ -103,7 +103,7 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("查询我创建的队伍列表")
     @GetMapping("/listTeam/my/create")
-    public R<List<TeamInfo>> listTeamMyCreate(TeamQueryDTO teamQueryDTO) {
+    public R<List<TeamInfo>> listTeamMyCreate(TeamQueryDto teamQueryDTO) {
         //获取当前登录用户
         UserInfo loginUser = userInfoService.getLoginUser();
         //获取登录用户id

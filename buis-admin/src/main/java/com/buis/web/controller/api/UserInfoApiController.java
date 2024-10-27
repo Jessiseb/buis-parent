@@ -4,8 +4,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
-import com.buis.dto.RegisterDTO;
-import com.buis.dto.UserLoginDTO;
+import com.buis.dto.RegisterDto;
+import com.buis.dto.UserLoginDto;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
@@ -31,7 +31,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
-    public R<UserInfoVo> login(@RequestBody UserLoginDTO userLoginDTO, HttpServletRequest request) {
+    public R<UserInfoVo> login(@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
         if (userLoginDTO == null){
             throw new ServiceException("参数有误!");
         }
@@ -42,7 +42,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户注册功能")
     @PostMapping("/register")
-    public R<Long> register(@RequestBody RegisterDTO registerDTO) {
+    public R<Long> register(@RequestBody RegisterDto registerDTO) {
         //判空
         if (registerDTO == null){
             throw new ServiceException("参数错误!");

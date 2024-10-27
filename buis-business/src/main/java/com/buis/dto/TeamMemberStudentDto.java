@@ -1,9 +1,9 @@
-package com.buis.vo;
+package com.buis.dto;
 
 import lombok.Data;
 
 @Data
-public class TeamMemberStudentQueryVo {
+public class TeamMemberStudentDto {
     //    队伍
     private Long team;
     //    id

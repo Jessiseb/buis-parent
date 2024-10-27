@@ -1,6 +1,5 @@
-package com.buis.vo;
+package com.buis.dto;
 
-import com.buis.common.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,7 +8,7 @@ import java.io.Serializable;
  *  队伍老师查询结果返回封装类
  */
 @Data
-public class TeamTeacherQueryVO implements Serializable {
+public class TeamTeacherDto implements Serializable {
     private static final long serialVersionUID = 1L;
     /**
      * id

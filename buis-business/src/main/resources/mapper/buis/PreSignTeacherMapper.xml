@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectPreSignTeacherVo"/>
         where id = #{id}  and is_deleted = 0
     </select>
-    <select id="selectPreSignTeacherVoList" resultType="com.buis.domain.vo.PreSignTeacherVo">
+    <select id="selectPreSignTeacherVoList" resultType="com.buis.vo.PreSignTeacherVo">
         SELECT
         pre_sign_teacher.*,
         race_info.`name` AS raceName,
@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
 
     </select>
-    <select id="selectPreSignTeacherVoById" resultType="com.buis.domain.vo.PreSignTeacherVo">
+    <select id="selectPreSignTeacherVoById" resultType="com.buis.vo.PreSignTeacherVo">
         SELECT
             pre_sign_teacher.*,
             race_info.`name` AS raceName,

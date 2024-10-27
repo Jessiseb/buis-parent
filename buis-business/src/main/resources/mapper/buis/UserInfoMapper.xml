@@ -108,41 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
-    <insert id="register" parameterType="UserInfo" useGeneratedKeys="true" keyProperty="id">
-        insert into user_info
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="number != null and number != ''">number,</if>
-            <if test="password != null and password != ''">password,</if>
-            <if test="email != null and email != ''">email,</if>
-            <if test="phone != null and phone != ''">phone,</if>
-            <if test="name != null and name != ''">name,</if>
-            <if test="description != null and description != ''">description,</if>
-            <if test="sex != null">sex,</if>
-            <if test="college != null">college,</if>
-            <if test="major != null">major,</if>
-            <if test="title != null">title,</if>
-            <if test="isDisabled != null">is_disabled,</if>
-            <if test="isDeleted != null">is_deleted,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="number != null and number != ''">#{number},</if>
-            <if test="password != null and password != ''">#{password},</if>
-            <if test="email != null and email != ''">#{email},</if>
-            <if test="phone != null and phone != ''">#{phone},</if>
-            <if test="name != null and name != ''">#{name},</if>
-            <if test="description != null and description != ''">#{description},</if>
-            <if test="sex != null">#{sex},</if>
-            <if test="college != null">#{college},</if>
-            <if test="major != null">#{major},</if>
-            <if test="title != null">#{title},</if>
-            <if test="isDisabled != null">#{isDisabled},</if>
-            <if test="isDeleted != null">#{isDeleted},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-        </trim>
-    </insert>
+
 
     <update id="updateUserInfo" parameterType="com.buis.domain.UserInfo">
         update user_info

@@ -3,14 +3,11 @@ package com.buis.service.impl;
 import java.util.*;
 
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.TeamMemberTeacher;
-import com.buis.dto.TeamQueryDTO;
+import com.buis.dto.TeamQueryDto;
 import com.buis.mapper.TeamMemberTeacherMapper;
-import com.buis.domain.vo.MemberNameWithId;
-import com.buis.domain.vo.TeamInfoVo;
+import com.buis.bo.MemberInfoBO;
+import com.buis.vo.TeamInfoVo;
 import com.buis.mapper.TeamMemberStudentMapper;
-import com.buis.mapper.TeamMemberTeacherMapper;
-import org.apache.ibatis.annotations.MapKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.TeamInfoMapper;
@@ -109,7 +106,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
     }
 
     @Override
-    public List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO) {
+    public List<TeamInfo> listTeams(TeamQueryDto teamQueryDTO) {
         //TODO 需要在查出来的时候判断我是否加入该队伍吗?
         return teamInfoMapper.listTeams(teamQueryDTO);
     }
@@ -137,7 +134,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
                     infoVo.setTeamNumbers(teamNumbers);
                     if (teamMembersNameWithIdsStr != null) {
                         //通过parseTeamMembersNameWithIds方法解析成员对象
-                        List<MemberNameWithId> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
+                        List<MemberInfoBO> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
                         infoVo.setTeamMemberList(teamMembers);
                     } else {
                         infoVo.setTeamMemberList(Collections.emptyList());
@@ -156,7 +153,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
                     infoVo.setTeamNumbers(teamNumbers);
                     if (teamMembersNameWithIdsStr != null) {
                         //通过parseTeamMembersNameWithIds方法解析成员对象
-                        List<MemberNameWithId> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
+                        List<MemberInfoBO> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
                         infoVo.setTeamMemberList(teamMembers);
                     } else {
                         infoVo.setTeamMemberList(Collections.emptyList());
@@ -197,7 +194,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
                 teamInfoVo.setTeamNumbers(teamNumbers);
                 if (teamMembersNameWithIdsStr != null) {
                     //通过parseTeamMembersNameWithIds方法解析成员对象
-                    List<MemberNameWithId> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
+                    List<MemberInfoBO> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
                     teamInfoVo.setTeamMemberList(teamMembers);
                 } else {
                     teamInfoVo.setTeamMemberList(Collections.emptyList());
@@ -216,7 +213,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
                 teamInfoVo.setTeamNumbers(teamNumbers);
                 if (teamMembersNameWithIdsStr != null) {
                     //通过parseTeamMembersNameWithIds方法解析成员对象
-                    List<MemberNameWithId> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
+                    List<MemberInfoBO> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
                     teamInfoVo.setTeamMemberList(teamMembers);
                 } else {
                     teamInfoVo.setTeamMemberList(Collections.emptyList());
@@ -231,8 +228,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService
 
 
 
-    private List<MemberNameWithId> parseTeamMembersNameWithIds(String teamMembersNameWithIdsStr) {
-        List<MemberNameWithId> teamMembers = new ArrayList<>();
+    private List<MemberInfoBO> parseTeamMembersNameWithIds(String teamMembersNameWithIdsStr) {
+        List<MemberInfoBO> teamMembers = new ArrayList<>();
         // 将输入字符串按逗号分割，得到每个成员的ID和名字对
         String[] pairs = teamMembersNameWithIdsStr.split(",");
         // 遍历每个成员的ID和名字对
@@ -241,7 +238,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
             String[] parts = pair.split(":");
             // 检查分割后的数组长度是否为2，确保每个成员的ID和名字都存在
             if (parts.length == 2) {
-                MemberNameWithId member = new MemberNameWithId();
+                MemberInfoBO member = new MemberInfoBO();
                 member.setId(Long.parseLong(parts[0]));
                 member.setName(parts[1]);
                 teamMembers.add(member);

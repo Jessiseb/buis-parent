@@ -2,7 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.PreSignTeacher;
-import com.buis.domain.vo.PreSignTeacherVo;
+import com.buis.vo.PreSignTeacherVo;
 
 /**
  * 老师预报名Service接口

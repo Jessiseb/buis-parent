@@ -1,7 +1,7 @@
-package com.buis.domain.vo;
+package com.buis.vo;
 
+import com.buis.bo.MemberInfoBO;
 import com.buis.domain.TeamInfo;
-import com.buis.domain.UserInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -36,6 +36,6 @@ public class TeamInfoVo extends TeamInfo {
     //队伍已有成员
 //    private List<String> teamMemberList;
 
-    private List<MemberNameWithId> teamMemberList;
+    private List<MemberInfoBO> teamMemberList;
 
 }

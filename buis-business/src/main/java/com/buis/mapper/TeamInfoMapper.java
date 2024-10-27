@@ -3,10 +3,9 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.Score;
 import com.buis.domain.TeamInfo;
-import com.buis.dto.TeamQueryDTO;
-import com.buis.domain.vo.TeamInfoVo;
+import com.buis.dto.TeamQueryDto;
+import com.buis.vo.TeamInfoVo;
 
 /**
  * 队伍信息Mapper接口
@@ -70,5 +69,5 @@ public interface TeamInfoMapper
 
     TeamInfoVo selectTeamInfoVoById(Long id);
 
-    List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO);
+    List<TeamInfo> listTeams(TeamQueryDto teamQueryDTO);
 }

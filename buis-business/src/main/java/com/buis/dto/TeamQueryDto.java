@@ -1,7 +1,5 @@
 package com.buis.dto;
 
-import com.buis.common.annotation.Excel;
-import com.buis.common.core.domain.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,7 +12,7 @@ import java.util.List;
  * @date 2024-10-16
  */
 @Data
-public class TeamQueryDTO implements Serializable {
+public class TeamQueryDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

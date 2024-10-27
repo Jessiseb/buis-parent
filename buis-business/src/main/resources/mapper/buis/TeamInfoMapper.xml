@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectTeamInfoVo" resultType="com.buis.domain.vo.TeamInfoVo">
+    <select id="selectTeamInfoVo" resultType="com.buis.vo.TeamInfoVo">
         SELECT
         ti.*,
         ui.id AS user_id,
@@ -107,7 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="status != null "> and ti.status = #{status}</if>
         <if test="reason != null and reason != ''"> and ti.reason like concat('%', #{reason}, '%')</if>
     </select>
-    <select id="selectTeamInfoVoById" resultType="com.buis.domain.vo.TeamInfoVo">
+    <select id="selectTeamInfoVoById" resultType="com.buis.vo.TeamInfoVo">
         SELECT
             ti.*,
             ui.id AS user_id,

@@ -2,8 +2,8 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.TeamInfo;
-import com.buis.dto.TeamQueryDTO;
-import com.buis.domain.vo.TeamInfoVo;
+import com.buis.dto.TeamQueryDto;
+import com.buis.vo.TeamInfoVo;
 
 /**
  * 队伍信息Service接口
@@ -61,7 +61,7 @@ public interface ITeamInfoService
      */
     public int deleteTeamInfoById(Long id);
 
-    List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO);
+    List<TeamInfo> listTeams(TeamQueryDto teamQueryDTO);
 
     /**
      * 查询队伍信息列表 Vo
