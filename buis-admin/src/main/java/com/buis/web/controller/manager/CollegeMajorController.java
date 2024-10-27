@@ -59,8 +59,7 @@ public class CollegeMajorController extends BaseController {
     @ApiOperation("获取专业信息详细信息")
     @PreAuthorize("@ss.hasPermi('buis:major:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(collegeMajorService.selectCollegeMajorById(id));
     }
 
@@ -71,8 +70,7 @@ public class CollegeMajorController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:major:add')")
     @Log(title = "专业信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody CollegeMajor collegeMajor)
-    {
+    public AjaxResult add(@RequestBody CollegeMajor collegeMajor) {
         return toAjax(collegeMajorService.insertCollegeMajor(collegeMajor));
     }
 
@@ -83,8 +81,7 @@ public class CollegeMajorController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:major:edit')")
     @Log(title = "专业信息", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody CollegeMajor collegeMajor)
-    {
+    public AjaxResult edit(@RequestBody CollegeMajor collegeMajor) {
         return toAjax(collegeMajorService.updateCollegeMajor(collegeMajor));
     }
 
@@ -95,8 +92,7 @@ public class CollegeMajorController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:major:remove')")
     @Log(title = "专业信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(collegeMajorService.deleteCollegeMajorByIds(ids));
     }
 }

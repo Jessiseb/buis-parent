@@ -49,8 +49,7 @@ public class JudgeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:judge:export')")
     @Log(title = "评委管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, Judge judge)
-    {
+    public void export(HttpServletResponse response, Judge judge) {
         List<Judge> list = judgeService.selectJudgeList(judge);
         ExcelUtil<Judge> util = new ExcelUtil<Judge>(Judge.class);
         util.exportExcel(response, list, "评委管理数据");
@@ -62,8 +61,7 @@ public class JudgeController extends BaseController {
     @ApiOperation("获取评委管理详细信息")
     @PreAuthorize("@ss.hasPermi('buis:judge:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(judgeService.selectJudgeById(id));
     }
 
@@ -74,8 +72,7 @@ public class JudgeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:judge:add')")
     @Log(title = "评委管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Judge judge)
-    {
+    public AjaxResult add(@RequestBody Judge judge) {
         return toAjax(judgeService.insertJudge(judge));
     }
 
@@ -86,8 +83,7 @@ public class JudgeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:judge:edit')")
     @Log(title = "评委管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Judge judge)
-    {
+    public AjaxResult edit(@RequestBody Judge judge) {
         return toAjax(judgeService.updateJudge(judge));
     }
 
@@ -98,8 +94,7 @@ public class JudgeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:judge:remove')")
     @Log(title = "评委管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(judgeService.deleteJudgeByIds(ids));
     }
 }

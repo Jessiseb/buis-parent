@@ -3,6 +3,7 @@ package com.buis.web.controller.api;
 import cn.hutool.core.util.RandomUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.domain.R;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.StringUtils;
 import com.buis.service.IEmailService;
 import io.swagger.annotations.Api;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 发送邮箱功能
@@ -37,6 +40,14 @@ public class EmailController {
     @ApiOperation("邮箱发送")
     @PostMapping("/sendEmail/{email}")
     public R<String> sendEmail(@PathVariable("email") String email) {
+        //校验账户
+        //邮箱的正则表达式
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Matcher matcher = Pattern.compile(emailRegex).matcher(email);
+        if (!matcher.find()) {
+            throw new ServiceException("邮箱格式有误,请重新输入!");
+        }
+
         //生成四位数验证码
         String code = RandomUtil.randomNumbers(4);
 

@@ -50,11 +50,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id} and is_deleted = 0
     </select>
     <select id="selectCount" resultType="java.lang.Integer">
-        select count(1) from user_info
-        where email = #{email} and is_deleted = 0
+        select count(1)
+        from user_info
+        where email = #{email}
+          and is_deleted = 0
     </select>
     <select id="getLoginInfoByUserId" resultType="com.buis.domain.UserInfo">
-        select email,password from user_info where id = #{id}
+        select email, password
+        from user_info
+        where id = #{id}
+    </select>
+
+    <select id="selectUserInfoByEmail" resultType="com.buis.domain.UserInfo">
+        <include refid="selectUserInfoVo"/>
+        where email = #{email} and is_deleted = 0
+    </select>
+    <select id="listTeachersByIds" resultType="com.buis.domain.UserInfo">
+        <include refid="selectUserInfoVo"/>
+        where is_deleted = 0 and id in
+        <foreach item="ids" collection="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
     </select>
 
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
