@@ -1,10 +1,9 @@
 package com.buis.dto;
 
-import com.buis.common.annotation.Excel;
 import lombok.Data;
 
 @Data
-public class RegisterDTO {
+public class RegisterDto {
 
     /**
      * 密码

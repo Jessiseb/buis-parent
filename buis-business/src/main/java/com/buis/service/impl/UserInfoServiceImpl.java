@@ -9,8 +9,8 @@ import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.bean.BeanUtils;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
-import com.buis.dto.RegisterDTO;
-import com.buis.dto.UserLoginDTO;
+import com.buis.dto.RegisterDto;
+import com.buis.dto.UserLoginDto;
 import com.buis.mapper.TeamMemberTeacherMapper;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.IUserInfoService;
@@ -154,7 +154,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
 
     @Override
-    public int register(RegisterDTO registerDTO) {
+    public int register(RegisterDto registerDTO) {
         //TODO 封装错误信息
         //获取注册信息，进行校验
         String email = registerDTO.getEmail();
@@ -197,7 +197,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         member.setName(name);
         member.setEmail(email);
         member.setPassword(encryptPassword);
-        return userInfoMapper.register(member);
+        return userInfoMapper.insertUserInfo(member);
     }
 
     /**
@@ -225,7 +225,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
     @Override
-    public UserInfoVo userLogin(UserLoginDTO userLoginDTO, HttpServletRequest request) {
+    public UserInfoVo userLogin(UserLoginDto userLoginDTO, HttpServletRequest request) {
         String email = userLoginDTO.getEmail();
         String passWord = userLoginDTO.getPassWord();
         String code = userLoginDTO.getCode();

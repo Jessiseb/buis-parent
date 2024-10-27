@@ -3,7 +3,7 @@ package com.buis.service.impl;
 import java.util.List;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.UserInfo;
-import com.buis.vo.TeamMemberStudentQueryVo;
+import com.buis.dto.TeamMemberStudentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.TeamMemberStudentMapper;
@@ -96,7 +96,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService
         return teamMemberStudentMapper.deleteTeamMemberStudentById(id);
     }
     @Override
-    public TeamMemberStudentQueryVo selectTeamMemberStudentQueryById(Long id)
+    public TeamMemberStudentDto selectTeamMemberStudentQueryById(Long id)
     {
         return teamMemberStudentMapper.selectTeamMemberStudentQueryById(id);
     }

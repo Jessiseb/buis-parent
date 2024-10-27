@@ -2,14 +2,12 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.vo.PreSignTeacherVo;
+import com.buis.vo.PreSignTeacherVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.PreSignTeacherMapper;
 import com.buis.domain.PreSignTeacher;
 import com.buis.service.IPreSignTeacherService;
-
-import javax.annotation.Resource;
 
 /**
  * 老师预报名Service业务层处理

@@ -1,4 +1,4 @@
-package com.buis.domain.vo;
+package com.buis.vo;
 
 import com.buis.domain.PreSignTeacher;
 import lombok.Data;

@@ -3,7 +3,7 @@ package com.buis.service;
 import java.util.List;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.UserInfo;
-import com.buis.vo.TeamMemberStudentQueryVo;
+import com.buis.dto.TeamMemberStudentDto;
 
 /**
  * 队伍成员管理Service接口
@@ -62,7 +62,7 @@ public interface ITeamMemberStudentService
     public int deleteTeamMemberStudentById(Long id);
 
     //    查询队伍学生id
-    public TeamMemberStudentQueryVo selectTeamMemberStudentQueryById(Long id);
+    public TeamMemberStudentDto selectTeamMemberStudentQueryById(Long id);
 
     //    查询队伍学生列表
     List<UserInfo> selectTeamMemberStudentQueryList(Long race, Long team);

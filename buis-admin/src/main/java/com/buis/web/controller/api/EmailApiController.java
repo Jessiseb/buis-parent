@@ -4,11 +4,9 @@ import cn.hutool.core.util.RandomUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
-import com.buis.common.utils.StringUtils;
 import com.buis.service.IEmailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Results;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +27,7 @@ import java.util.regex.Pattern;
 @Api(tags = "发送邮箱功能Api")
 @RestController
 @RequestMapping("/email")
-public class EmailController {
+public class EmailApiController {
 
     @Resource
     private IEmailService emailService;
@@ -52,10 +50,10 @@ public class EmailController {
         String code = RandomUtil.randomNumbers(4);
 
         //构建信息
-        String massage = "验证码为：" + code + "。您正在登录或注册创新创业中心平台，此验证码5分钟内有效，请勿外传！";
+        String massage = "验证码为：" + code + "。您正在登录或注册广东白云学院大数据与计算机学院创新创业中心平台，此验证码5分钟内有效，请勿外传！";
         try {
             //发送邮件
-            emailService.sendEmail(email, "创新创业中心", massage);
+            emailService.sendEmail(email, "广东白云学院大数据与计算机学院创新创业中心", massage);
         } catch (Exception e) {
             e.printStackTrace();
             return R.fail("发送邮箱验证码失败!");
