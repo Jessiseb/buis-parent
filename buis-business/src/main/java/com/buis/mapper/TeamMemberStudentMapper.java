@@ -3,10 +3,9 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
-import com.buis.domain.UserInfo;
 import com.buis.vo.TeamMemberStudentQueryVo;
+import com.buis.vo.UserInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -67,5 +66,5 @@ public interface TeamMemberStudentMapper
      */
     public int deleteTeamMemberStudentByIds(Long[] ids);
 
-    List<UserInfo> selectTeamMemberStudentQueryList(@Param("race") Long race,@Param("team") Long team);
+    List<UserInfoVo> selectTeamMemberStudentQueryList(@Param("race") Long race, @Param("team") Long team);
 }
