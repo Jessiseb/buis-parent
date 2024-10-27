@@ -65,15 +65,16 @@ spring:
   mail:
     #smtp服务主机  163邮箱则为smtp.163.com
     host: smtp.qq.com
+    port: 465
     #服务协议
-    protocol: smtp
+    protocol: smtps
     # 编码集
     default-encoding: UTF-8
     #发送邮件的账户
-    username: 3119932256@163.com
+    username: 3119932256@qq.com
     #授权码
     password: tbwwnogiqvxpdgbh
-    from: 创新创业中心
+    from: 3119932256@qq.com
     test-connection: true
     properties:
       mail:
