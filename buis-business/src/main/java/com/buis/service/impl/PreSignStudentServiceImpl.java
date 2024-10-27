@@ -8,7 +8,7 @@ import com.buis.domain.RaceInfo;
 import com.buis.domain.UserInfo;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.mapper.UserInfoMapper;
-import com.buis.vo.PreSignStudentVO;
+import com.buis.vo.PreSignStudentVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,14 +40,14 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
      * @return 学生预报名
      */
     @Override
-    public PreSignStudentVO selectPreSignStudentById(Long id)
+    public PreSignStudentVo selectPreSignStudentById(Long id)
     {
         PreSignStudent preSignStudent = preSignStudentMapper.selectPreSignStudentById(id);
 
         UserInfo user = userInfoMapper.selectUserInfoById(preSignStudent.getStudent());
         RaceInfo race = raceInfoMapper.selectRaceInfoById(preSignStudent.getRace());
 
-        PreSignStudentVO vo = new PreSignStudentVO();
+        PreSignStudentVo vo = new PreSignStudentVo();
         BeanUtils.copyProperties(preSignStudent, vo);
 
         if (user != null) {
@@ -74,14 +74,14 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
      * @return 学生预报名
      */
     @Override
-    public List<PreSignStudentVO> selectPreSignStudentList(PreSignStudent preSignStudent) {
+    public List<PreSignStudentVo> selectPreSignStudentList(PreSignStudent preSignStudent) {
         List<PreSignStudent> preSignStudents = preSignStudentMapper.selectPreSignStudentList(preSignStudent);
-        List<PreSignStudentVO> preSignStudentVos = new ArrayList<>();
+        List<PreSignStudentVo> preSignStudentVos = new ArrayList<>();
         for (PreSignStudent student : preSignStudents) {
             UserInfo user = userInfoMapper.selectUserInfoById(student.getStudent());
             RaceInfo race = raceInfoMapper.selectRaceInfoById(student.getRace());
 
-            PreSignStudentVO vo = new PreSignStudentVO();
+            PreSignStudentVo vo = new PreSignStudentVo();
             BeanUtils.copyProperties(student, vo);
 
             if (user != null) {
