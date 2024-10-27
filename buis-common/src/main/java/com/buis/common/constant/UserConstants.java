@@ -2,11 +2,15 @@ package com.buis.common.constant;
 
 /**
  * 用户常量信息
- * 
+ *
  * @author ruoyi
  */
-public class UserConstants
-{
+public class UserConstants {
+    /**
+     * 用户登录标识
+     */
+    public static final String USER_LOGIN_STATE = "userLoginState";
+
     /**
      * 平台内系统用户的唯一标志
      */

@@ -62,7 +62,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and t1.race = #{race}
           and t1.team = #{team}
     </select>
-
+    <select id="selectTeamMyCreate" resultType="com.buis.domain.TeamMemberStudent">
+        <include refid="selectTeamMemberStudentVo"/>
+        where id = #{id} and is_deleted = 0
+    </select>
 
 
     <insert id="insertTeamMemberStudent" parameterType="TeamMemberStudent" useGeneratedKeys="true" keyProperty="id">
