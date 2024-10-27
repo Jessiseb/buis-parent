@@ -2,11 +2,14 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.vo.PreSignTeacherVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.PreSignTeacherMapper;
 import com.buis.domain.PreSignTeacher;
 import com.buis.service.IPreSignTeacherService;
+
+import javax.annotation.Resource;
 
 /**
  * 老师预报名Service业务层处理
@@ -93,4 +96,16 @@ public class PreSignTeacherServiceImpl implements IPreSignTeacherService
     {
         return preSignTeacherMapper.deletePreSignTeacherById(id);
     }
+
+    @Override
+    public List<PreSignTeacherVo> selectPreSignTeacherVoList(PreSignTeacher preSignTeacher) {
+        return preSignTeacherMapper.selectPreSignTeacherVoList(preSignTeacher);
+    }
+
+    @Override
+    public PreSignTeacherVo selectPreSignTeacherVoById(Long id) {
+        return preSignTeacherMapper.selectPreSignTeacherVoById(id);
+    }
+
+
 }

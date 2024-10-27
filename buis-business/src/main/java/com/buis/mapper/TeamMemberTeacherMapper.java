@@ -1,7 +1,10 @@
 package com.buis.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import com.buis.domain.TeamMemberTeacher;
+import org.apache.ibatis.annotations.MapKey;
 
 /**
  * 队伍老师管理Mapper接口
@@ -58,6 +61,13 @@ public interface TeamMemberTeacherMapper
      * @return 结果
      */
     public int deleteTeamMemberTeacherByIds(Long[] ids);
+
+    int getCount(Long id);
+/* @MapKey("id")
+    Map<Long, Map<String, Object>> getCountAndTeachers(Long id);*/
+
+
+    Map<String, Object> getCountAndTeachers(Long id);
 
     List<TeamMemberTeacher> selectTeamMyInstruct(Long id);
 

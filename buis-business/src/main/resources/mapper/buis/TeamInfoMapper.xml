@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.TeamInfoMapper">
-    
+
     <resultMap type="TeamInfo" id="TeamInfoResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
@@ -60,6 +60,91 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leader != null and leader != ''">and leader = #{leader}</if>
         </where>
     </select>
+
+    <select id="selectTeamInfoVo" resultType="com.buis.domain.vo.TeamInfoVo">
+        SELECT
+        ti.*,
+        ui.id AS user_id,
+        ui.name AS user_name,
+        ui.college,
+        ui.major,
+        ui.number AS user_number,
+        cm.name AS college_name,
+        pm.name AS major_name,
+        ti.name AS team_name,
+        ri.name AS race_name,
+        ui2.name AS leader_name,
+        ui2.college AS leader_college,
+        ui2.major AS leader_major,
+        ui2.phone AS leader_phone,
+        ui2.email AS leader_email,
+        ui2.title AS leader_title,
+        ui2.description AS leader_description
+        FROM
+        team_info ti
+        LEFT JOIN
+        user_info ui ON ti.leader = ui.id -- 队长的详细信息
+        LEFT JOIN
+        t_college_major cm ON ui.college = cm.id AND cm.college = 0 -- 获取学院信息
+        LEFT JOIN
+        t_college_major pm ON ui.major = pm.id AND pm.college != 0 -- 获取专业信息
+        LEFT JOIN
+        race_info ri ON ti.race = ri.id -- 参加的比赛
+        LEFT JOIN
+        user_info ui2 ON ti.leader = ui2.id -- 队长的详细信息
+        WHERE
+        (ui.is_deleted = 0 OR ui.is_deleted IS NULL) -- 只查询未被删除的用户
+        AND (cm.is_deleted = 0 OR cm.is_deleted IS NULL) -- 只查询未被删除的学院
+        AND (pm.is_deleted = 0 OR pm.is_deleted IS NULL) -- 只查询未被删除的专业
+        <if test="race != null "> and ti.race = #{race}</if>
+        <if test="name != null and name != ''"> and ti.name like concat('%', #{name}, '%')</if>
+        <if test="description != null and description != ''"> and ti.description like concat('%', #{description}, '%')</if>
+        <if test="leader != null "> and ti.leader = #{leader}</if>
+        <if test="tLimit != null and tLimit != ''"> and ti.t_limit like concat('%', #{tLimit}, '%')</if>
+        <if test="capacity != null "> and ti.capacity = #{capacity}</if>
+        <if test="start != null "> and ti.start = #{start}</if>
+        <if test="end != null "> and ti.end = #{end}</if>
+        <if test="status != null "> and ti.status = #{status}</if>
+        <if test="reason != null and reason != ''"> and ti.reason like concat('%', #{reason}, '%')</if>
+    </select>
+    <select id="selectTeamInfoVoById" resultType="com.buis.domain.vo.TeamInfoVo">
+        SELECT
+            ti.*,
+            ui.id AS user_id,
+            ui.name AS user_name,
+            ui.college,
+            ui.major,
+            ui.number AS user_number,
+            cm.name AS college_name,
+            pm.name AS major_name,
+            ti.name AS team_name,
+            ri.name AS race_name,
+            ui2.name AS leader_name,
+            ui2.college AS leader_college,
+            ui2.major AS leader_major,
+            ui2.phone AS leader_phone,
+            ui2.email AS leader_email,
+            ui2.title AS leader_title,
+            ui2.description AS leader_description
+        FROM
+            team_info ti
+                LEFT JOIN
+            user_info ui ON ti.leader = ui.id -- 队长的详细信息
+                LEFT JOIN
+            t_college_major cm ON ui.college = cm.id AND cm.college = 0 -- 获取学院信息
+                LEFT JOIN
+            t_college_major pm ON ui.major = pm.id AND pm.college != 0 -- 获取专业信息
+    LEFT JOIN
+        race_info ri ON ti.race = ri.id -- 参加的比赛
+            LEFT JOIN
+            user_info ui2 ON ti.leader = ui2.id -- 队长的详细信息
+        WHERE
+            (ui.is_deleted = 0 OR ui.is_deleted IS NULL) -- 只查询未被删除的用户
+          AND (cm.is_deleted = 0 OR cm.is_deleted IS NULL) -- 只查询未被删除的学院
+          AND (pm.is_deleted = 0 OR pm.is_deleted IS NULL) -- 只查询未被删除的专业
+          AND ti.id = #{id} -- 过滤指定的 team_info.id
+    </select>
+
 
     <insert id="insertTeamInfo" parameterType="TeamInfo" useGeneratedKeys="true" keyProperty="id">
         insert into team_info

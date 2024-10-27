@@ -1,5 +1,21 @@
 package com.buis.web.controller.manager;
 
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+
+import com.buis.domain.vo.PreSignTeacherVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -38,8 +54,9 @@ public class PreSignTeacherController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(PreSignTeacher preSignTeacher) {
         startPage();
-        List<PreSignTeacher> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
-        return getDataTable(list);
+//        List<PreSignTeacher> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
+       List<PreSignTeacherVo> listVo= preSignTeacherService.selectPreSignTeacherVoList(preSignTeacher);
+        return getDataTable(listVo);
     }
 
     /**
@@ -62,9 +79,9 @@ public class PreSignTeacherController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preTeacher:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(preSignTeacherService.selectPreSignTeacherById(id));
+//        return success(preSignTeacherService.selectPreSignTeacherById(id));
+        return success(preSignTeacherService.selectPreSignTeacherVoById(id));
     }
-
     /**
      * 新增老师预报名
      */
@@ -72,8 +89,10 @@ public class PreSignTeacherController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preTeacher:add')")
     @Log(title = "老师预报名", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody PreSignTeacher preSignTeacher) {
+    public AjaxResult add(@RequestBody PreSignTeacher preSignTeacher)
+    {
         return toAjax(preSignTeacherService.insertPreSignTeacher(preSignTeacher));
+
     }
 
     /**
@@ -83,7 +102,8 @@ public class PreSignTeacherController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preTeacher:edit')")
     @Log(title = "老师预报名", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody PreSignTeacher preSignTeacher) {
+    public AjaxResult edit(@RequestBody PreSignTeacher preSignTeacher)
+    {
         return toAjax(preSignTeacherService.updatePreSignTeacher(preSignTeacher));
     }
 
@@ -94,7 +114,8 @@ public class PreSignTeacherController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preTeacher:remove')")
     @Log(title = "老师预报名", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids) {
+    public AjaxResult remove(@PathVariable Long[] ids)
+    {
         return toAjax(preSignTeacherService.deletePreSignTeacherByIds(ids));
     }
 }
