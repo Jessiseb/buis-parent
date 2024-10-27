@@ -1,10 +1,16 @@
 package com.buis.service.impl;
 
-import java.util.List;
+import java.util.*;
+
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.dto.TeamQueryDTO;
 import com.buis.mapper.TeamMemberTeacherMapper;
+import com.buis.domain.vo.MemberNameWithId;
+import com.buis.domain.vo.TeamInfoVo;
+import com.buis.mapper.TeamMemberStudentMapper;
+import com.buis.mapper.TeamMemberTeacherMapper;
+import org.apache.ibatis.annotations.MapKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.TeamInfoMapper;
@@ -18,12 +24,16 @@ import com.buis.service.ITeamInfoService;
  * @date 2024-10-11
  */
 @Service
-public class TeamInfoServiceImpl implements ITeamInfoService 
+public class TeamInfoServiceImpl implements ITeamInfoService
 {
     @Autowired
     private TeamInfoMapper teamInfoMapper;
 
+    @Autowired
+    private TeamMemberStudentMapper teamMemberStudentMapper;
 
+    @Autowired
+    private TeamMemberTeacherMapper teamMemberTeacherMapper;
     /**
      * 查询队伍信息
      * 
@@ -102,6 +112,142 @@ public class TeamInfoServiceImpl implements ITeamInfoService
     public List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO) {
         //TODO 需要在查出来的时候判断我是否加入该队伍吗?
         return teamInfoMapper.listTeams(teamQueryDTO);
+    }
+
+
+    /**
+     * 查询队伍信息列表 Vo
+     * @param teamInfo
+     * @return
+     */
+    @Override
+    public List<TeamInfoVo> selectTeamInfoVoList(TeamInfo teamInfo) {
+        List<TeamInfoVo> teamInfoVo=teamInfoMapper.selectTeamInfoVo(teamInfo);
+        if (teamInfoVo == null || teamInfoVo.isEmpty()) {
+            return Collections.emptyList(); // 返回空列表
+        }
+        //根据返回的title判断队长是否为老师
+        for (TeamInfoVo infoVo : teamInfoVo) {
+            if (infoVo.getLeaderTitle()!=null) {
+                //队长为老师,获取老师队伍人数及队伍已有老师名称
+                Map<String, Object> resultMap = teamMemberTeacherMapper.getCountAndTeachers(infoVo.getId());
+                if (resultMap != null) {
+                    Long teamNumbers = (Long) resultMap.get("teamNumbers");
+                    String teamMembersNameWithIdsStr = (String) resultMap.get("teamMembersNameWithIds");
+                    infoVo.setTeamNumbers(teamNumbers);
+                    if (teamMembersNameWithIdsStr != null) {
+                        //通过parseTeamMembersNameWithIds方法解析成员对象
+                        List<MemberNameWithId> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
+                        infoVo.setTeamMemberList(teamMembers);
+                    } else {
+                        infoVo.setTeamMemberList(Collections.emptyList());
+                    }
+                } else {
+                    infoVo.setTeamNumbers(0L);
+                    infoVo.setTeamMemberList(Collections.emptyList());
+                }
+            }else {
+                //队长为学生,获取学生队伍人数及已有成员名称
+                Map<String, Object> resultMap = teamMemberStudentMapper.getCountAndStudents(infoVo.getId());
+                if (resultMap != null) {
+                    // 从Map获取学生队伍人数及已有成员名称
+                    Long teamNumbers = (Long) resultMap.get("teamNumbers");
+                    String teamMembersNameWithIdsStr = (String) resultMap.get("teamMembersNameWithIds");
+                    infoVo.setTeamNumbers(teamNumbers);
+                    if (teamMembersNameWithIdsStr != null) {
+                        //通过parseTeamMembersNameWithIds方法解析成员对象
+                        List<MemberNameWithId> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
+                        infoVo.setTeamMemberList(teamMembers);
+                    } else {
+                        infoVo.setTeamMemberList(Collections.emptyList());
+                    }
+                } else {
+                    infoVo.setTeamNumbers(0L);
+                    infoVo.setTeamMemberList(Collections.emptyList());
+                }
+              /*      Map<String, Object> resultMap = teamMemberStudentMapper.getCountAndStudents(infoVo.getId());
+                    if (resultMap != null) {
+                        Long teamNumbers = (Long) resultMap.get("teamNumbers");
+                        String teacherNamesStr = (String) resultMap.get("teamMembersName");
+                        infoVo.setTeamNumbers(teamNumbers);
+                        if (teacherNamesStr != null) {
+                            infoVo.setTeamMemberList(Arrays.asList(teacherNamesStr.split(",")));
+                        } else {
+                            infoVo.setTeamMemberList(Collections.emptyList());
+                        }*/
+            }
+        }
+        return teamInfoVo;
+    }
+
+    /**
+     * 查询单个队伍信息 vo
+     * @param id
+     * @return
+     */
+    @Override
+    public TeamInfoVo selectTeamInfoVoById(Long id) {
+        TeamInfoVo teamInfoVo = teamInfoMapper.selectTeamInfoVoById(id);
+        if (teamInfoVo != null && teamInfoVo.getLeaderTitle()!=null) {
+            //队长为老师,获取老师队伍人数及队伍已有老师名称
+            Map<String, Object> resultMap = teamMemberTeacherMapper.getCountAndTeachers(teamInfoVo.getId());
+            if (resultMap != null) {
+                Long teamNumbers = (Long) resultMap.get("teamNumbers");
+                String teamMembersNameWithIdsStr = (String) resultMap.get("teamMembersNameWithIds");
+                teamInfoVo.setTeamNumbers(teamNumbers);
+                if (teamMembersNameWithIdsStr != null) {
+                    //通过parseTeamMembersNameWithIds方法解析成员对象
+                    List<MemberNameWithId> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
+                    teamInfoVo.setTeamMemberList(teamMembers);
+                } else {
+                    teamInfoVo.setTeamMemberList(Collections.emptyList());
+                }
+            } else {
+                teamInfoVo.setTeamNumbers(0L);
+                teamInfoVo.setTeamMemberList(Collections.emptyList());
+            }
+        }else {
+            //队长为学生,获取学生队伍人数及已有成员名称
+            Map<String, Object> resultMap = teamMemberStudentMapper.getCountAndStudents(teamInfoVo.getId());
+            if (resultMap != null) {
+                // 从Map获取学生队伍人数及已有成员名称
+                Long teamNumbers = (Long) resultMap.get("teamNumbers");
+                String teamMembersNameWithIdsStr = (String) resultMap.get("teamMembersNameWithIds");
+                teamInfoVo.setTeamNumbers(teamNumbers);
+                if (teamMembersNameWithIdsStr != null) {
+                    //通过parseTeamMembersNameWithIds方法解析成员对象
+                    List<MemberNameWithId> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
+                    teamInfoVo.setTeamMemberList(teamMembers);
+                } else {
+                    teamInfoVo.setTeamMemberList(Collections.emptyList());
+                }
+            } else {
+                teamInfoVo.setTeamNumbers(0L);
+                teamInfoVo.setTeamMemberList(Collections.emptyList());
+            }
+        }
+        return teamInfoVo;
+    }
+
+
+
+    private List<MemberNameWithId> parseTeamMembersNameWithIds(String teamMembersNameWithIdsStr) {
+        List<MemberNameWithId> teamMembers = new ArrayList<>();
+        // 将输入字符串按逗号分割，得到每个成员的ID和名字对
+        String[] pairs = teamMembersNameWithIdsStr.split(",");
+        // 遍历每个成员的ID和名字对
+        for (String pair : pairs) {
+            // 将每个成员的ID和名字对按冒号分割，得到ID和名字
+            String[] parts = pair.split(":");
+            // 检查分割后的数组长度是否为2，确保每个成员的ID和名字都存在
+            if (parts.length == 2) {
+                MemberNameWithId member = new MemberNameWithId();
+                member.setId(Long.parseLong(parts[0]));
+                member.setName(parts[1]);
+                teamMembers.add(member);
+            }
+        }
+        return teamMembers;
     }
 
 }

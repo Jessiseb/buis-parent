@@ -39,6 +39,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTeamMemberTeacherVo"/>
         where id = #{id}  and is_deleted = 0
     </select>
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT
+            COUNT(team_member_teacher.teacher) AS teamNumbers,
+            (SELECT GROUP_CONCAT(user_info.`name`)
+             FROM user_info
+                      INNER JOIN team_member_teacher ON user_info.id = team_member_teacher.teacher
+             WHERE team_member_teacher.team = team_info.id AND team_member_teacher.is_deleted = 0) AS teacherNames
+        FROM
+            team_info
+                LEFT JOIN
+            team_member_teacher ON team_info.id = team_member_teacher.team
+        WHERE
+            team_info.id = #{id} AND team_member_teacher.is_deleted = 0
+    </select>
+    <select id="getCountAndTeachers" resultType="java.util.Map">
+        SELECT
+            COUNT(team_member_teacher.teacher) AS teamNumbers,
+            (SELECT GROUP_CONCAT(CONCAT(user_info.id, ':', user_info.`name`))
+             FROM user_info
+                      INNER JOIN team_member_teacher ON user_info.id = team_member_teacher.teacher
+             WHERE team_member_teacher.team = team_info.id AND team_member_teacher.is_deleted = 0) AS teamMembersNameWithIds
+        FROM
+            team_info
+                LEFT JOIN
+            team_member_teacher ON team_info.id = team_member_teacher.team
+        WHERE
+            team_info.id = #{id} AND team_member_teacher.is_deleted = 0
+    </select>
+
+
 
     <select id="selectTeamMyInstruct" resultType="com.buis.domain.TeamMemberTeacher">
         <include refid="selectTeamMemberTeacherVo"/>
@@ -90,6 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+
 
     <delete id="deleteTeamMemberTeacherById" parameterType="Long">
         update team_member_teacher

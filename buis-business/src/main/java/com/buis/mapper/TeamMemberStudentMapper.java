@@ -4,6 +4,8 @@ import java.util.List;
 
 
 import com.buis.domain.TeamInfo;
+import java.util.Map;
+
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.UserInfo;
 import com.buis.vo.TeamMemberStudentQueryVo;
@@ -66,6 +68,13 @@ public interface TeamMemberStudentMapper
      * @return 结果
      */
     public int deleteTeamMemberStudentByIds(Long[] ids);
+
+    int getCount(Long id);
+
+    Map<String, Object> getCountAndStudents(Long id);
+
+//    Map<String, Object> getCountAndStudents(Long id);
+
 
     List<UserInfo> selectTeamMemberStudentQueryList(@Param("race") Long race,@Param("team") Long team);
 

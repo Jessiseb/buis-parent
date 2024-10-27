@@ -6,6 +6,7 @@ import java.util.List;
 import com.buis.domain.Score;
 import com.buis.domain.TeamInfo;
 import com.buis.dto.TeamQueryDTO;
+import com.buis.domain.vo.TeamInfoVo;
 
 /**
  * 队伍信息Mapper接口
@@ -13,7 +14,7 @@ import com.buis.dto.TeamQueryDTO;
  * @author buis
  * @date 2024-10-11
  */
-public interface TeamInfoMapper
+public interface TeamInfoMapper 
 {
     /**
      * 查询队伍信息
@@ -62,6 +63,12 @@ public interface TeamInfoMapper
      * @return 结果
      */
     public int deleteTeamInfoByIds(Long[] ids);
+
+
+
+    List<TeamInfoVo> selectTeamInfoVo(TeamInfo teamInfo);
+
+    TeamInfoVo selectTeamInfoVoById(Long id);
 
     List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO);
 }
