@@ -43,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 
-    <select id="selectTeamMemberStudentQueryList" resultType="com.buis.domain.UserInfo">
+    <select id="selectTeamMemberStudentQueryList" resultType="com.buis.vo.UserInfoVo">
         select t2.id,
                t2.number,
                t2.email,

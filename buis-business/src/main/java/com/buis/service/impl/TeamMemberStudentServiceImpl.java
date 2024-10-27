@@ -4,6 +4,7 @@ import java.util.List;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.UserInfo;
 import com.buis.vo.TeamMemberStudentQueryVo;
+import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.TeamMemberStudentMapper;
@@ -107,7 +108,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService
      * @return 队伍成员管理
      */
     @Override
-    public List<UserInfo> selectTeamMemberStudentQueryList(Long race, Long team)
+    public List<UserInfoVo> selectTeamMemberStudentQueryList(Long race, Long team)
     {
         return teamMemberStudentMapper.selectTeamMemberStudentQueryList(race,team);
     }
