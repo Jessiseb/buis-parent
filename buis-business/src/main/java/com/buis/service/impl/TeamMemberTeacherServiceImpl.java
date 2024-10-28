@@ -1,30 +1,35 @@
 package com.buis.service.impl;
 
-import java.util.List;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.UserInfo;
-import com.buis.mapper.UserInfoMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.buis.mapper.TeamMemberTeacherMapper;
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.domain.UserInfo;
+import com.buis.mapper.TeamMemberTeacherMapper;
+import com.buis.mapper.UserInfoMapper;
 import com.buis.service.ITeamMemberTeacherService;
+import com.buis.service.IUserInfoService;
+import com.buis.vo.UserInfoVo;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 队伍老师管理Service业务层处理
- * 
+ *
  * @author buis
  * @date 2024-10-11
  */
 @Service
 public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
-    @Autowired
+    @Resource
     private TeamMemberTeacherMapper teamMemberTeacherMapper;
 
     @Resource
     private UserInfoMapper userInfoMapper;
+
+    @Resource
+    private IUserInfoService userInfoService;
 
     /**
      * 查询队伍老师管理
@@ -111,8 +116,11 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
     }
 
     @Override
-    public List<UserInfo> listTeachersByIds(List<Integer> ids) {
-        return userInfoMapper.listTeachersByIds(ids);
+    public List<UserInfoVo> listTeachersByIds(List<Integer> ids) {
+        List<UserInfo> userInfos = userInfoMapper.listTeachersByIds(ids);
+        return userInfos.stream()
+                .flatMap(userInfo -> userInfoService.selectUserInfoList(userInfo).stream())
+                .collect(Collectors.toList());
     }
 
 }

@@ -1,8 +1,9 @@
 package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
-import com.buis.domain.UserInfo;
 import com.buis.service.ITeamMemberTeacherService;
+import com.buis.service.IUserInfoService;
+import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,10 +26,12 @@ import static com.buis.common.utils.PageUtils.startPage;
 public class RaceInfoApiController {
     @Resource
     private ITeamMemberTeacherService teamMemberTeacherService;
+    @Resource
+    private IUserInfoService userInfoService;
 
     @ApiOperation("根据比赛id查询指导老师信息")
     @PostMapping("/listTeachers/{RaceId}")
-    public R<List<UserInfo>> listTeachersByRaceId(@PathVariable("RaceId") Long id) {
+    public R<List<UserInfoVo>> listTeachersByRaceId(@PathVariable("RaceId") Long id) {
         //开始分页
         startPage();
 
@@ -39,7 +42,7 @@ public class RaceInfoApiController {
         List<Integer> Ids = teacherIds.stream().distinct().collect(Collectors.toList());
 
         //根据老师ids查出所有老师的信息
-        List<UserInfo> userInfos = teamMemberTeacherService.listTeachersByIds(Ids);
+        List<UserInfoVo> userInfos = teamMemberTeacherService.listTeachersByIds(Ids);
 
         //返回结果
         return R.ok(userInfos);

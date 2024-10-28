@@ -2,6 +2,8 @@ package com.buis.common.config.serializer;
 
 import java.io.IOException;
 import java.util.Objects;
+
+import com.buis.common.core.domain.model.LoginUser;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;

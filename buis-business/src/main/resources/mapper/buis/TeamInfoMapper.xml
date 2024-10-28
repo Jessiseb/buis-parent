@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             is_deleted = 0
             <if test="race != null ">and race = #{race}</if>
             <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
-            <if test="idList != null and idList != ''">and id in #{idList}</if>
+            <if test="idList != null and idList != ''">and id in #{idList}</if>-
             <if test="id != null and id != ''">and id = #{id}</if>
             <if test="leader != null and leader != ''">and leader = #{leader}</if>
         </where>

@@ -284,11 +284,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         //5.记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
         StpUtil.login(userInfo.getId());
-
         return safetyUser;
-
-
-
 
     }
 }
