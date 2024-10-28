@@ -3,6 +3,7 @@ package com.buis.service;
 import java.util.List;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
+import com.buis.vo.UserInfoVo;
 
 /**
  * 队伍老师管理Service接口
@@ -65,5 +66,5 @@ public interface ITeamMemberTeacherService
     List<Integer> listTeacherIdByRaceId(Long id);
 
 
-    List<UserInfo> listTeachersByIds(List<Integer> ids);
+    List<UserInfoVo> listTeachersByIds(List<Integer> ids);
 }

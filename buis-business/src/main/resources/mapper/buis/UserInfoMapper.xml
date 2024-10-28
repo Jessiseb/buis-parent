@@ -65,6 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectUserInfoVo"/>
         where email = #{email} and is_deleted = 0
     </select>
+
     <select id="listTeachersByIds" resultType="com.buis.domain.UserInfo">
         <include refid="selectUserInfoVo"/>
         where is_deleted = 0 and id in

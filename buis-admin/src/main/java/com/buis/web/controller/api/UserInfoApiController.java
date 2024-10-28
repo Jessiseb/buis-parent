@@ -1,5 +1,6 @@
 package com.buis.web.controller.api;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
@@ -28,23 +29,21 @@ public class UserInfoApiController extends BaseController {
     private RedisTemplate redisTemplate;
 
 
-
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
     public R<UserInfoVo> login(@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
-        if (userLoginDTO == null){
+        if (userLoginDTO == null) {
             throw new ServiceException("参数有误!");
         }
-        UserInfoVo user = userInfoService.userLogin(userLoginDTO,request);
+        UserInfoVo user = userInfoService.userLogin(userLoginDTO, request);
         return R.ok(user);
-
     }
 
     @ApiOperation("用户注册功能")
     @PostMapping("/register")
     public R<Long> register(@RequestBody RegisterDto registerDTO) {
         //判空
-        if (registerDTO == null){
+        if (registerDTO == null) {
             throw new ServiceException("参数错误!");
         }
         long result = userInfoService.register(registerDTO);
@@ -63,11 +62,14 @@ public class UserInfoApiController extends BaseController {
     @ApiOperation("检查用户是否登录功能")
     @GetMapping("checkLogin")
     public R<String> checkLogin() {
-        // 检验当前会话是否已经登录, 如果未登录，则抛出异常：`NotLoginException`
-        StpUtil.checkLogin();
-        // 抛出异常后，代码将走入全局异常处理（GlobalException.java），如果没有抛出异常，则代表通过了登录校验，返回下面信息
-        return R.ok("是否登录:"+StpUtil.isLogin());
+        return R.ok("是否登录:" + StpUtil.isLogin());
     }
 
+    @ApiOperation("获取登录用户token功能")
+    @GetMapping("/getToken")
+    public R<SaTokenInfo> getToken() {
+        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();// 获取当前 Token 的详细参数。
+        return R.ok(tokenInfo);
+    }
 
 }
