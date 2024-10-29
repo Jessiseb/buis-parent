@@ -225,7 +225,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
     @Override
-    public UserInfoVo userLogin(UserLoginDto userLoginDTO, HttpServletRequest request) {
+    public String userLogin(UserLoginDto userLoginDTO, HttpServletRequest request) {
         String email = userLoginDTO.getEmail();
         String passWord = userLoginDTO.getPassWord();
         String code = userLoginDTO.getCode();
@@ -268,23 +268,25 @@ public class UserInfoServiceImpl implements IUserInfoService {
             throw new ServiceException("邮箱格式有误,请重新输入!");
         }
 
-        //用户脱敏
-        UserInfoVo safetyUser = new UserInfoVo();
-        safetyUser.setId(userInfo.getId());
-        safetyUser.setNumber(userInfo.getNumber());
-        safetyUser.setEmail(userInfo.getEmail());
-        safetyUser.setPhone(userInfo.getPhone());
-        safetyUser.setName(userInfo.getName());
-        safetyUser.setDescription(userInfo.getDescription());
-        safetyUser.setSex(userInfo.getSex());
-        safetyUser.setCollege(userInfo.getCollege());
-        safetyUser.setMajor(userInfo.getMajor());
-        safetyUser.setTitle(userInfo.getTitle());
+//        //用户脱敏
+//        UserInfoVo safetyUser = new UserInfoVo();
+//        safetyUser.setId(userInfo.getId());
+//        safetyUser.setNumber(userInfo.getNumber());
+//        safetyUser.setEmail(userInfo.getEmail());
+//        safetyUser.setPhone(userInfo.getPhone());
+//        safetyUser.setName(userInfo.getName());
+//        safetyUser.setDescription(userInfo.getDescription());
+//        safetyUser.setSex(userInfo.getSex());
+//        safetyUser.setCollege(userInfo.getCollege());
+//        safetyUser.setMajor(userInfo.getMajor());
+//        safetyUser.setTitle(userInfo.getTitle());
 
         //5.记录用户的登录态
-        request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
+//        request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
         StpUtil.login(userInfo.getId());
-        return safetyUser;
+        String token = StpUtil.getTokenValue();
+
+        return token;
 
     }
 }

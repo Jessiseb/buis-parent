@@ -2,6 +2,8 @@ package com.buis.web.controller.api;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
@@ -31,12 +33,12 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
-    public R<UserInfoVo> login(@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
+    public R<String> login(@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
         if (userLoginDTO == null) {
             throw new ServiceException("参数有误!");
         }
-        UserInfoVo user = userInfoService.userLogin(userLoginDTO, request);
-        return R.ok(user);
+        String token = userInfoService.userLogin(userLoginDTO, request);
+        return R.ok(token);
     }
 
     @ApiOperation("用户注册功能")
@@ -67,9 +69,10 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("获取登录用户token功能")
     @GetMapping("/getToken")
-    public R<SaTokenInfo> getToken() {
-        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();// 获取当前 Token 的详细参数。
-        return R.ok(tokenInfo);
+    public R<String> getToken() {
+        String tokenValue = StpUtil.getTokenValue();
+        System.out.println(tokenValue);
+        return R.ok(tokenValue);
     }
 
 }

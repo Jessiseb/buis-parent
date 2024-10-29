@@ -33,8 +33,7 @@ public class SaTokenConfig {
                     SaRouter.match("/api/**")
                             .notMatch("/api/user/login","/api/user/register","/api/email/sendEmail/{email}")
                             .notMatch("/*.html")
-//                            .notMatch("/swagger-resources")
-//                            .notMatch("/webjars/**")
+                            .notMatch("/api/user/getToken")
                             .notMatch("/**/doc.html")
                             .check(r -> StpUtil.checkLogin());
 

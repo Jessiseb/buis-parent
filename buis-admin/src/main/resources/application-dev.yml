@@ -100,8 +100,8 @@ sa-token:
   is-share: true
   # 是否尝试重cookie里读取token
   is-read-cookie: false
-  # token 前缀
-  token-prefix: "Bearer"
+#  # token 前缀
+#  token-prefix: "Bearer"
   # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
   token-style: uuid
   # 是否输出操作日志
