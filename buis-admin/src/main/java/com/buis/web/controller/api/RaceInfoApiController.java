@@ -1,6 +1,8 @@
 package com.buis.web.controller.api;
 
+import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
@@ -23,7 +25,7 @@ import static com.buis.common.utils.PageUtils.startPage;
 @Api(tags = "比赛信息Api")
 @RestController
 @RequestMapping("/api/race")
-public class RaceInfoApiController {
+public class RaceInfoApiController extends BaseController {
     @Resource
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Resource
@@ -31,7 +33,7 @@ public class RaceInfoApiController {
 
     @ApiOperation("根据比赛id查询指导老师信息")
     @PostMapping("/listTeachers/{RaceId}")
-    public R<List<UserInfoVo>> listTeachersByRaceId(@PathVariable("RaceId") Long id) {
+    public TableDataInfo listTeachersByRaceId(@PathVariable("RaceId") Long id){
         //开始分页
         startPage();
 
@@ -45,7 +47,7 @@ public class RaceInfoApiController {
         List<UserInfoVo> userInfos = teamMemberTeacherService.listTeachersByIds(Ids);
 
         //返回结果
-        return R.ok(userInfos);
+        return getDataTable(userInfos);
     }
 
 
