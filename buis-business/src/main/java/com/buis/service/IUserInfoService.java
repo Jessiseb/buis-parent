@@ -76,6 +76,6 @@ public interface IUserInfoService {
      * @param request session
      * @return 结果
      */
-    UserInfoVo userLogin(UserLoginDto userLoginDTO, HttpServletRequest request);
+    String userLogin(UserLoginDto userLoginDTO, HttpServletRequest request);
 
 }
