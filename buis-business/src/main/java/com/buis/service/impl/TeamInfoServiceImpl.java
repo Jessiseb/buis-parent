@@ -125,54 +125,34 @@ public class TeamInfoServiceImpl implements ITeamInfoService
         }
         //根据返回的title判断队长是否为老师
         for (TeamInfoVo infoVo : teamInfoVo) {
-            if (infoVo.getLeaderTitle()!=null) {
-                //队长为老师,获取老师队伍人数及队伍已有老师名称
-                Map<String, Object> resultMap = teamMemberTeacherMapper.getCountAndTeachers(infoVo.getId());
-                if (resultMap != null) {
-                    Long teamNumbers = (Long) resultMap.get("teamNumbers");
-                    String teamMembersNameWithIdsStr = (String) resultMap.get("teamMembersNameWithIds");
-                    infoVo.setTeamNumbers(teamNumbers);
-                    if (teamMembersNameWithIdsStr != null) {
-                        //通过parseTeamMembersNameWithIds方法解析成员对象
-                        List<MemberInfoBO> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
-                        infoVo.setTeamMemberList(teamMembers);
-                    } else {
-                        infoVo.setTeamMemberList(Collections.emptyList());
-                    }
-                } else {
-                    infoVo.setTeamNumbers(0L);
-                    infoVo.setTeamMemberList(Collections.emptyList());
+            // 获取老师队伍人数及队伍已有老师名称
+            Map<String, Object> teacherResultMap = teamMemberTeacherMapper.getCountAndTeachers(infoVo.getId());
+            // 获取学生队伍人数及已有成员名称
+            Map<String, Object> studentResultMap = teamMemberStudentMapper.getCountAndStudents(infoVo.getId());
+
+            Long teamNumbers = 0L;
+            List<MemberInfoBO> teamMembers = new ArrayList<>();
+
+            if (teacherResultMap != null) {
+                Long teacherNumbers = (Long) teacherResultMap.get("teamNumbers");
+                String teacherMembersNameWithIdsStr = (String) teacherResultMap.get("teamMembersNameWithIds");
+                teamNumbers += teacherNumbers;
+                if (teacherMembersNameWithIdsStr != null) {
+                    teamMembers.addAll(parseTeamMembersNameWithIds(teacherMembersNameWithIdsStr));
                 }
-            }else {
-                //队长为学生,获取学生队伍人数及已有成员名称
-                Map<String, Object> resultMap = teamMemberStudentMapper.getCountAndStudents(infoVo.getId());
-                if (resultMap != null) {
-                    // 从Map获取学生队伍人数及已有成员名称
-                    Long teamNumbers = (Long) resultMap.get("teamNumbers");
-                    String teamMembersNameWithIdsStr = (String) resultMap.get("teamMembersNameWithIds");
-                    infoVo.setTeamNumbers(teamNumbers);
-                    if (teamMembersNameWithIdsStr != null) {
-                        //通过parseTeamMembersNameWithIds方法解析成员对象
-                        List<MemberInfoBO> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
-                        infoVo.setTeamMemberList(teamMembers);
-                    } else {
-                        infoVo.setTeamMemberList(Collections.emptyList());
-                    }
-                } else {
-                    infoVo.setTeamNumbers(0L);
-                    infoVo.setTeamMemberList(Collections.emptyList());
-                }
-              /*      Map<String, Object> resultMap = teamMemberStudentMapper.getCountAndStudents(infoVo.getId());
-                    if (resultMap != null) {
-                        Long teamNumbers = (Long) resultMap.get("teamNumbers");
-                        String teacherNamesStr = (String) resultMap.get("teamMembersName");
-                        infoVo.setTeamNumbers(teamNumbers);
-                        if (teacherNamesStr != null) {
-                            infoVo.setTeamMemberList(Arrays.asList(teacherNamesStr.split(",")));
-                        } else {
-                            infoVo.setTeamMemberList(Collections.emptyList());
-                        }*/
             }
+
+            if (studentResultMap != null) {
+                Long studentNumbers = (Long) studentResultMap.get("teamNumbers");
+                String studentMembersNameWithIdsStr = (String) studentResultMap.get("teamMembersNameWithIds");
+                teamNumbers += studentNumbers;
+                if (studentMembersNameWithIdsStr != null) {
+                    teamMembers.addAll(parseTeamMembersNameWithIds(studentMembersNameWithIdsStr));
+                }
+            }
+
+            infoVo.setTeamNumbers(teamNumbers);
+            infoVo.setTeamMemberList(teamMembers);
         }
         return teamInfoVo;
     }
@@ -185,44 +165,35 @@ public class TeamInfoServiceImpl implements ITeamInfoService
     @Override
     public TeamInfoVo selectTeamInfoVoById(Long id) {
         TeamInfoVo teamInfoVo = teamInfoMapper.selectTeamInfoVoById(id);
-        if (teamInfoVo != null && teamInfoVo.getLeaderTitle()!=null) {
-            //队长为老师,获取老师队伍人数及队伍已有老师名称
-            Map<String, Object> resultMap = teamMemberTeacherMapper.getCountAndTeachers(teamInfoVo.getId());
-            if (resultMap != null) {
-                Long teamNumbers = (Long) resultMap.get("teamNumbers");
-                String teamMembersNameWithIdsStr = (String) resultMap.get("teamMembersNameWithIds");
-                teamInfoVo.setTeamNumbers(teamNumbers);
-                if (teamMembersNameWithIdsStr != null) {
-                    //通过parseTeamMembersNameWithIds方法解析成员对象
-                    List<MemberInfoBO> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
-                    teamInfoVo.setTeamMemberList(teamMembers);
-                } else {
-                    teamInfoVo.setTeamMemberList(Collections.emptyList());
-                }
-            } else {
-                teamInfoVo.setTeamNumbers(0L);
-                teamInfoVo.setTeamMemberList(Collections.emptyList());
-            }
-        }else {
-            //队长为学生,获取学生队伍人数及已有成员名称
-            Map<String, Object> resultMap = teamMemberStudentMapper.getCountAndStudents(teamInfoVo.getId());
-            if (resultMap != null) {
-                // 从Map获取学生队伍人数及已有成员名称
-                Long teamNumbers = (Long) resultMap.get("teamNumbers");
-                String teamMembersNameWithIdsStr = (String) resultMap.get("teamMembersNameWithIds");
-                teamInfoVo.setTeamNumbers(teamNumbers);
-                if (teamMembersNameWithIdsStr != null) {
-                    //通过parseTeamMembersNameWithIds方法解析成员对象
-                    List<MemberInfoBO> teamMembers = parseTeamMembersNameWithIds(teamMembersNameWithIdsStr);
-                    teamInfoVo.setTeamMemberList(teamMembers);
-                } else {
-                    teamInfoVo.setTeamMemberList(Collections.emptyList());
-                }
-            } else {
-                teamInfoVo.setTeamNumbers(0L);
-                teamInfoVo.setTeamMemberList(Collections.emptyList());
+        // 获取老师队伍人数及队伍已有老师名称
+        Map<String, Object> teacherResultMap = teamMemberTeacherMapper.getCountAndTeachers(teamInfoVo.getId());
+        // 获取学生队伍人数及已有成员名称
+        Map<String, Object> studentResultMap = teamMemberStudentMapper.getCountAndStudents(teamInfoVo.getId());
+
+        Long teamNumbers = 0L;
+        List<MemberInfoBO> teamMembers = new ArrayList<>();
+
+        if (teacherResultMap != null) {
+            Long teacherNumbers = (Long) teacherResultMap.get("teamNumbers");
+            String teacherMembersNameWithIdsStr = (String) teacherResultMap.get("teamMembersNameWithIds");
+            teamNumbers += teacherNumbers;
+            if (teacherMembersNameWithIdsStr != null) {
+                // parseTeamMembersNameWithIds方法解析并添加到列表
+                teamMembers.addAll(parseTeamMembersNameWithIds(teacherMembersNameWithIdsStr));
             }
         }
+
+        if (studentResultMap != null) {
+            Long studentNumbers = (Long) studentResultMap.get("teamNumbers");
+            String studentMembersNameWithIdsStr = (String) studentResultMap.get("teamMembersNameWithIds");
+            teamNumbers += studentNumbers;
+            if (studentMembersNameWithIdsStr != null) {
+                teamMembers.addAll(parseTeamMembersNameWithIds(studentMembersNameWithIdsStr));
+            }
+        }
+
+        teamInfoVo.setTeamNumbers(teamNumbers);
+        teamInfoVo.setTeamMemberList(teamMembers);
         return teamInfoVo;
     }
 
