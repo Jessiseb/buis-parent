@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 @Api(tags = "发送邮箱功能Api")
 @RestController
-@RequestMapping("/email")
+@RequestMapping("/api/email")
 public class EmailApiController {
 
     @Resource
