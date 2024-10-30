@@ -3,7 +3,12 @@ package com.buis.service;
 import java.util.List;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.UserInfo;
+<<<<<<< HEAD
 import com.buis.dto.TeamMemberStudentDto;
+=======
+import com.buis.vo.TeamMemberStudentQueryVo;
+import com.buis.vo.UserInfoVo;
+>>>>>>> 3b679592e9155bb2c435ee603a8acf26f8d42ff8
 
 /**
  * 队伍成员管理Service接口
@@ -65,8 +70,12 @@ public interface ITeamMemberStudentService
     public TeamMemberStudentDto selectTeamMemberStudentQueryById(Long id);
 
     //    查询队伍学生列表
+<<<<<<< HEAD
     List<UserInfo> selectTeamMemberStudentQueryList(Long race, Long team);
 
     List<TeamMemberStudent> selectTeamMyCreate(Long id);
 
+=======
+    List<UserInfoVo> selectTeamMemberStudentQueryList(Long race, Long team);
+>>>>>>> 3b679592e9155bb2c435ee603a8acf26f8d42ff8
 }

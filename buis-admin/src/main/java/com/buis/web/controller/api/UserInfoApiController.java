@@ -41,6 +41,7 @@ public class UserInfoApiController extends BaseController {
         return R.ok(token);
     }
 
+
     @ApiOperation("用户注册功能")
     @PostMapping("/register")
     public R<Long> register(@RequestBody RegisterDto registerDTO) {
@@ -67,6 +68,7 @@ public class UserInfoApiController extends BaseController {
         return R.ok("是否登录:" + StpUtil.isLogin());
     }
 
+
     @ApiOperation("获取登录用户token功能")
     @GetMapping("/getToken")
     public R<String> getToken() {
@@ -74,5 +76,4 @@ public class UserInfoApiController extends BaseController {
         System.out.println(tokenValue);
         return R.ok(tokenValue);
     }
-
 }
