@@ -25,7 +25,8 @@ public class RaceInfo extends BaseEntity
         {   private static final long serialVersionUID = 1L;
         /** id */
                     @Excel(name = "id")
-    private Long id;
+                    @ApiModelProperty(value = "id")
+                    private Long id;
 
         /** 一级类型 */
                     @Excel(name = "一级类型")

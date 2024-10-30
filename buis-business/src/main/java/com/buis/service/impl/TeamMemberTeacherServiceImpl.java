@@ -55,7 +55,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
 
     /**
      * 新增队伍老师管理
-     * 
+     *
      * @param teamMemberTeacher 队伍老师管理
      * @return 结果
      */
@@ -67,7 +67,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
 
     /**
      * 修改队伍老师管理
-     * 
+     *
      * @param teamMemberTeacher 队伍老师管理
      * @return 结果
      */
@@ -76,7 +76,6 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
         teamMemberTeacher.setUpdateTime(DateUtils.getNowDate());
         return teamMemberTeacherMapper.updateTeamMemberTeacher(teamMemberTeacher);
     }
-
 
 
     /**
@@ -124,3 +123,4 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
                 .flatMap(userInfo -> userInfoService.selectUserInfoList(userInfo).stream())
                 .collect(Collectors.toList());
     }
+}
