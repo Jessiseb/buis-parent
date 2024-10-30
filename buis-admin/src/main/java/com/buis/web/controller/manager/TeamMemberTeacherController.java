@@ -38,18 +38,27 @@ public class TeamMemberTeacherController extends BaseController
     @Autowired
     private ITeamMemberTeacherService teamMemberTeacherService;
 
-/**
- * 查询队伍老师管理列表
- */
-@ApiOperation("查询队伍老师管理列表")
-@PreAuthorize("@ss.hasPermi('buis:teamTeacher:list')")
-@GetMapping("/list")
-    public TableDataInfo list(TeamMemberTeacher teamMemberTeacher)
-    {
-        startPage();
-        List<TeamMemberTeacher> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
-        return getDataTable(list);
-    }
+    /**
+     * 查询队伍老师管理列表
+     */
+    @ApiOperation("查询队伍老师管理列表")
+    @PreAuthorize("@ss.hasPermi('buis:teamTeacher:list')")
+    @GetMapping("/list")
+        public TableDataInfo list(TeamMemberTeacher teamMemberTeacher)
+        {
+            //controller ok
+
+            List<TeamMemberTeacher> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
+            return getDataTable(list);
+        }
+
+
+
+
+
+
+
+
 
     /**
      * 导出队伍老师管理列表
@@ -97,6 +106,7 @@ public class TeamMemberTeacherController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody TeamMemberTeacher teamMemberTeacher)
     {
+
         return toAjax(teamMemberTeacherService.updateTeamMemberTeacher(teamMemberTeacher));
     }
 
@@ -109,6 +119,7 @@ public class TeamMemberTeacherController extends BaseController
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
+        //controller ok
         return toAjax(teamMemberTeacherService.deleteTeamMemberTeacherByIds(ids));
     }
 }
