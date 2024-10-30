@@ -24,26 +24,27 @@ public class Judge extends BaseEntity {
      * id
      */
     @Excel(name = "id")
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**
      * 老师
      */
     @Excel(name = "老师")
-    @ApiModelProperty("老师id")
+    @ApiModelProperty(value = "老师id")
     private Long teacher;
 
     /**
      * 比赛
      */
     @Excel(name = "比赛")
-    @ApiModelProperty("比赛id")
+    @ApiModelProperty(value = "比赛id")
     private Long race;
 
     /**
      * 标识是否被删除，0表示未删除
      */
-    @ApiModelProperty("标识是否被删除，0表示未删除")
+    @ApiModelProperty(value = "标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
 
