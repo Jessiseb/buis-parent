@@ -1,20 +1,22 @@
 package com.buis.framework.config;
 
 import cn.dev33.satoken.context.SaHolder;
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.filter.SaServletFilter;
 import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.druid.wall.violation.ErrorCode;
 import com.buis.common.constant.HttpStatus;
 import com.buis.common.core.domain.AjaxResult;
-import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
+import com.buis.framework.web.exception.TokenExpiredException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import static com.buis.common.constant.HttpStatus.UNAUTHORIZED;
+import org.springframework.validation.BindException;
 
 /**
  * [Sa-Token 权限认证] 配置类
@@ -45,9 +47,25 @@ public class SaTokenConfig {
                 })
 
                 // 异常处理函数：每次认证函数发生异常时执行此函数
+//                .setError(e -> {
+////                    System.out.println("---------- 进入Sa-Token异常处理 -----------");
+//
+////                    return SaResult.code(UNAUTHORIZED);
+//                    throw new NotLoginException();
+////                    throw new RuntimeException("token失效");
+//                })
                 .setError(e -> {
-//                    System.out.println("---------- 进入Sa-Token异常处理 -----------");
-                    return AjaxResult.error(UNAUTHORIZED,"token失效");
+                    if (e instanceof NotLoginException) {
+//                        throw new TokenExpiredException("token失效,请重新登录!", HttpStatus.UNAUTHORIZED);
+                        return JSONUtil.toJsonStr(AjaxResult.error(HttpStatus.UNAUTHORIZED,"token失效,请重新登录!"));
+                    } else if (e instanceof ServiceException) {
+                        ServiceException serviceException = (ServiceException) e;
+                        return SaResult.error(serviceException.getMessage());
+                    } else if (e instanceof BindException) {
+                        BindException bindException = (BindException) e;
+                        return SaResult.error();
+                    }
+                        return SaResult.error();
                 })
 
 
