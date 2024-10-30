@@ -57,7 +57,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户退出登录功能")
     @PostMapping("/logout")
-    public R<String> logout(@ApiParam(name = "id", value = "用户id", required = false)Long id) {
+    public R<String> logout(@ApiParam(name = "id", value = "用户id", required = true)Long id) {
         StpUtil.logout(id);
         return R.ok("退出成功!");
     }

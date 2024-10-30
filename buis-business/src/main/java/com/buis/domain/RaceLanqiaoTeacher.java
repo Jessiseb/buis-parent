@@ -85,7 +85,7 @@ public class RaceLanqiaoTeacher extends BaseEntity
 
         /** 指导科目 */
                     @Excel(name = "指导科目")
-                    @ApiModelProperty("指导科目 ")
+                    @ApiModelProperty("指导科目")
     private String type;
 
         /** 本学期任课班级 */
