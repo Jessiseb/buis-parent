@@ -24,26 +24,27 @@ public class Assistant extends BaseEntity {
      * id
      */
     @Excel(name = "id")
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**
      * 学生助理
      */
-    @ApiModelProperty("学生助理id")
+    @ApiModelProperty(value = "学生助理id")
     @Excel(name = "学生助理")
     private Long student;
 
     /**
      * 比赛
      */
-    @ApiModelProperty("比赛id")
+    @ApiModelProperty(value = "比赛id")
     @Excel(name = "比赛")
     private Long race;
 
     /**
      * 标识是否被删除，0表示未删除
      */
-    @ApiModelProperty("标识是否被删除，0表示未删除")
+    @ApiModelProperty(value = "标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
 
