@@ -7,7 +7,10 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import com.buis.common.constant.HttpStatus;
+import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.domain.R;
+import com.buis.common.exception.ServiceException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,8 +47,9 @@ public class SaTokenConfig {
                 // 异常处理函数：每次认证函数发生异常时执行此函数
                 .setError(e -> {
 //                    System.out.println("---------- 进入Sa-Token异常处理 -----------");
-                    return R.fail(UNAUTHORIZED,"token失效");
+                    return AjaxResult.error(UNAUTHORIZED,"token失效");
                 })
+
 
                 // 前置函数：在每次认证函数之前执行（BeforeAuth 不受 includeList 与 excludeList 的限制，所有请求都会进入）
                 .setBeforeAuth(r -> {
