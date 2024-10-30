@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 @RestController
-@RequestMapping("/raceDetail")
+@RequestMapping("/api/raceDetail")
 @Api(tags = "比赛详情Api")
 public class RaceDetailApiController extends BaseController {
     @Autowired
