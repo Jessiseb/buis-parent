@@ -1,26 +1,23 @@
 package com.buis.service;
 
-import java.util.List;
 import com.buis.domain.TeamMemberStudent;
-import com.buis.domain.UserInfo;
-<<<<<<< HEAD
 import com.buis.dto.TeamMemberStudentDto;
-=======
-import com.buis.vo.TeamMemberStudentQueryVo;
 import com.buis.vo.UserInfoVo;
->>>>>>> 3b679592e9155bb2c435ee603a8acf26f8d42ff8
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 
 /**
  * 队伍成员管理Service接口
- * 
+ *
  * @author buis
  * @date 2024-10-11
  */
-public interface ITeamMemberStudentService 
-{
+public interface ITeamMemberStudentService {
     /**
      * 查询队伍成员管理
-     * 
+     *
      * @param id 队伍成员管理主键
      * @return 队伍成员管理
      */
@@ -28,7 +25,7 @@ public interface ITeamMemberStudentService
 
     /**
      * 查询队伍成员管理列表
-     * 
+     *
      * @param teamMemberStudent 队伍成员管理
      * @return 队伍成员管理集合
      */
@@ -36,7 +33,7 @@ public interface ITeamMemberStudentService
 
     /**
      * 新增队伍成员管理
-     * 
+     *
      * @param teamMemberStudent 队伍成员管理
      * @return 结果
      */
@@ -44,7 +41,7 @@ public interface ITeamMemberStudentService
 
     /**
      * 修改队伍成员管理
-     * 
+     *
      * @param teamMemberStudent 队伍成员管理
      * @return 结果
      */
@@ -52,7 +49,7 @@ public interface ITeamMemberStudentService
 
     /**
      * 批量删除队伍成员管理
-     * 
+     *
      * @param ids 需要删除的队伍成员管理主键集合
      * @return 结果
      */
@@ -60,7 +57,7 @@ public interface ITeamMemberStudentService
 
     /**
      * 删除队伍成员管理信息
-     * 
+     *
      * @param id 队伍成员管理主键
      * @return 结果
      */
@@ -70,12 +67,10 @@ public interface ITeamMemberStudentService
     public TeamMemberStudentDto selectTeamMemberStudentQueryById(Long id);
 
     //    查询队伍学生列表
-<<<<<<< HEAD
-    List<UserInfo> selectTeamMemberStudentQueryList(Long race, Long team);
+    List<UserInfoVo> selectTeamMemberStudentQueryList(@Param("race") Long race, @Param("team") Long team);
 
     List<TeamMemberStudent> selectTeamMyCreate(Long id);
 
-=======
-    List<UserInfoVo> selectTeamMemberStudentQueryList(Long race, Long team);
->>>>>>> 3b679592e9155bb2c435ee603a8acf26f8d42ff8
+
+
 }
