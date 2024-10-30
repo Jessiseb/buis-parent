@@ -55,7 +55,7 @@ public class RaceApiController extends BaseController {
 
 
 
-    @ApiOperation("查询比赛详情列表")
+    @ApiOperation("查询比赛信息列表")
     @GetMapping("/list")
     public TableDataInfo list(@ApiParam(name = "raceInfo", value = "比赛信息", required = false)RaceInfo raceInfo) {
         startPage();

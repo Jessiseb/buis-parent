@@ -46,8 +46,8 @@ public class TeamApiController extends BaseController{
 
     @ApiOperation("查询队伍成员学生列表")
     @GetMapping("/listMember/student/{race}/{team}")
-    public TableDataInfo list(@ApiParam(name = "race", value = "比赛名称", required = true)@PathVariable("race") Long race,
-                              @ApiParam(name = "team", value = "队伍名称", required = true)@PathVariable("team") Long team) {
+    public TableDataInfo list(@ApiParam(name = "race", value = "比赛id", required = true)@PathVariable("race") Long race,
+                              @ApiParam(name = "team", value = "队伍id", required = true)@PathVariable("team") Long team) {
         startPage();
         List<UserInfoVo> result = teamMemberStudentService.selectTeamMemberStudentQueryList(race, team);
         return getDataTable(result);
