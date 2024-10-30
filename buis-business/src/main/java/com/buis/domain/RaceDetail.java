@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,12 +31,14 @@ public class RaceDetail extends BaseEntity {
     /**
      * 比赛(关联比赛表id)
      */
+    @ApiModelProperty("比赛(关联比赛表id)")
     @Excel(name = "比赛(关联比赛表id)")
     private Long race;
 
     /**
      * 比赛负责人姓名
      */
+    @ApiModelProperty("比赛负责人姓名")
     @Excel(name = "比赛负责人姓名")
     private String name;
 
@@ -43,65 +46,77 @@ public class RaceDetail extends BaseEntity {
      * 比赛负责人手机号
      */
     @Excel(name = "比赛负责人手机号")
+    @ApiModelProperty("负责人手机号")
     private String phone;
 
     /**
      * 比赛负责人邮箱
      */
+    @ApiModelProperty("比赛负责人手机号")
     @Excel(name = "比赛负责人邮箱")
     private String email;
 
     /**
      * 比赛说明材料
      */
+    @ApiModelProperty("比赛说明材料url")
     private String descUrl;
 
     /**
      * 比赛群二维码
      */
+    @ApiModelProperty("比赛群二维码url")
     private String groupUrl;
 
     /**
      * 计分规则
      */
+    @ApiModelProperty("计分规则")
     private Long rule;
 
     /**
      * 最大可报名人数
      */
+    @ApiModelProperty("最大可报名人数")
     @Excel(name = "最大可报名人数")
     private Long capacity;
 
     /**
      * 队伍最小人数
      */
+    @ApiModelProperty("队伍最小人数")
     private Long teamMin;
 
     /**
      * 队伍最大人数
      */
+    @ApiModelProperty("队伍最大人数")
     private Long teamMax;
 
     /**
      * 老师最小人数
      */
+    @ApiModelProperty("老师最小人数")
     private Long teacherMin;
 
     /**
      * 老师最大人数
      */
+    @ApiModelProperty("老师最大人数")
     private Long teacherMax;
 
     /**
      * 推荐排名
      */
     @Excel(name = "推荐排名")
+    @ApiModelProperty("推荐排名")
     private Long rRank;
 
     /**
      * 限制老师最大指导数量
      */
     @Excel(name = "限制老师最大指导数量")
+    @ApiModelProperty("限制老师最大指导数量")
     private Long tLimit;
 
     /**
@@ -112,6 +127,7 @@ public class RaceDetail extends BaseEntity {
     /**
      * 分数权重信息
      */
+    @ApiModelProperty("分数权重")
     private List<Weight> weightList;
 
 

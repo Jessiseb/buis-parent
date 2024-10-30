@@ -2,9 +2,10 @@ package com.buis.mapper;
 
 import java.util.List;
 import java.util.Map;
-
 import com.buis.domain.TeamMemberTeacher;
 import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * 队伍老师管理Mapper接口
