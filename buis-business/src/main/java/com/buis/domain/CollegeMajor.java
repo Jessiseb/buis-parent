@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.TreeEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,12 +29,14 @@ public class CollegeMajor extends TreeEntity {
     /**
      * 名称
      */
+    @ApiModelProperty("学院或专业名称")
     @Excel(name = "名称")
     private String name;
 
     /**
      * 所属学院
      */
+    @ApiModelProperty("所属学院id")
     @Excel(name = "所属学院")
     private Long college;
 
@@ -41,11 +44,13 @@ public class CollegeMajor extends TreeEntity {
      * 排序号
      */
     @Excel(name = "排序号")
+    @ApiModelProperty("排序号")
     private Long sort;
 
     /**
      * 标识是否被删除，0表示未删除
      */
+    @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
 
