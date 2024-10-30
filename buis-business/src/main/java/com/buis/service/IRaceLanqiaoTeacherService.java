@@ -58,4 +58,8 @@ public interface IRaceLanqiaoTeacherService
      * @return 结果
      */
     public int deleteRaceLanqiaoTeacherById(Long id);
+
+    RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserId(Long loginId);
+
+    void deleteRaceLanqiaoTeacherByUserId(Long loginId);
 }

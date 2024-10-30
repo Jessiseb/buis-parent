@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.RaceLanqiaoStudent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoTeacherMapper;
@@ -92,5 +93,16 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
     public int deleteRaceLanqiaoTeacherById(Long id)
     {
         return raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherById(id);
+    }
+
+    @Override
+    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserId(Long loginId) {
+        RaceLanqiaoTeacher raceLanqiaoTeacher = raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherByUserId(loginId);
+        return raceLanqiaoTeacher;
+    }
+
+    @Override
+    public void deleteRaceLanqiaoTeacherByUserId(Long loginId) {
+        raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherByUserId(loginId);
     }
 }
