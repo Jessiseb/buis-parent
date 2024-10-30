@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * 队伍老师管理Service业务层处理
- *
+ * 
  * @author buis
  * @date 2024-10-11
  */
@@ -77,6 +77,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
         return teamMemberTeacherMapper.updateTeamMemberTeacher(teamMemberTeacher);
     }
 
+
     /**
      * 批量删除队伍老师管理
      *
@@ -122,7 +123,4 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
                 .flatMap(userInfo -> userInfoService.selectUserInfoList(userInfo).stream())
                 .collect(Collectors.toList());
     }
-
 }
-
-
