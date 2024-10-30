@@ -17,6 +17,7 @@ import com.buis.service.impl.TeamInfoServiceImpl;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +46,8 @@ public class TeamApiController extends BaseController{
 
     @ApiOperation("查询队伍成员学生列表")
     @GetMapping("/listMember/student/{race}/{team}")
-    public TableDataInfo list(@PathVariable("race") Long race, @PathVariable("team") Long team) {
+    public TableDataInfo list(@ApiParam(name = "race", value = "比赛名称", required = true)@PathVariable("race") Long race,
+                              @ApiParam(name = "team", value = "队伍名称", required = true)@PathVariable("team") Long team) {
         startPage();
         List<UserInfoVo> result = teamMemberStudentService.selectTeamMemberStudentQueryList(race, team);
         return getDataTable(result);
@@ -60,7 +62,7 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("查询所有队伍列表")
     @GetMapping("/listTeams")
-    public R<List<TeamInfo>> listTeams(TeamQueryDto teamQueryDTO) {
+    public R<List<TeamInfo>> listTeams(@ApiParam(name = "teamQueryDTO", value = "查询队伍信息", required = false)TeamQueryDto teamQueryDTO) {
         startPage();
         List<TeamInfo> list = teamInfoService.listTeams(teamQueryDTO);
         return R.ok(list);
@@ -75,7 +77,7 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("查询我(老师)指导的队伍列表")
     @GetMapping("/listTeam/my/instruct")
-    public R<List<TeamInfo>> listTeamMyInstruct(TeamQueryDto teamQueryDTO) {
+    public R<List<TeamInfo>> listTeamMyInstruct(@ApiParam(name = "teamQueryDTO", value = "查询队伍信息", required = false)TeamQueryDto teamQueryDTO) {
         //判断当前用户身份
         //1.找出当前用户信息
         UserInfo loginUser = userInfoService.getLoginUser();
@@ -104,7 +106,7 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("查询我创建的队伍列表")
     @GetMapping("/listTeam/my/create")
-    public R<List<TeamInfo>> listTeamMyCreate(TeamQueryDto teamQueryDTO) {
+    public R<List<TeamInfo>> listTeamMyCreate(@ApiParam(name = "teamQueryDTO", value = "查询队伍信息", required = false)TeamQueryDto teamQueryDTO) {
         //获取当前登录用户
         UserInfo loginUser = userInfoService.getLoginUser();
         //获取登录用户id

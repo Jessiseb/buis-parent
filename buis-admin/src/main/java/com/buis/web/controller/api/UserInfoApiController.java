@@ -13,6 +13,7 @@ import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
-    public R<String> login(@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
+    public R<String> login(@ApiParam(name = "userLoginDTO", value = "用户登录信息", required = true)@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
         if (userLoginDTO == null) {
             throw new ServiceException("参数有误!");
         }
@@ -44,7 +45,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户注册功能")
     @PostMapping("/register")
-    public R<Long> register(@RequestBody RegisterDto registerDTO) {
+    public R<Long> register(@ApiParam(name = "registerDTO", value = "用户注册信息", required = true)@RequestBody RegisterDto registerDTO) {
         //判空
         if (registerDTO == null) {
             throw new ServiceException("参数错误!");
@@ -56,7 +57,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户退出登录功能")
     @PostMapping("/logout")
-    public R<String> logout(Long id) {
+    public R<String> logout(@ApiParam(name = "id", value = "用户id", required = false)Long id) {
         StpUtil.logout(id);
         return R.ok("退出成功!");
     }

@@ -36,12 +36,12 @@ public class RaceApiController extends BaseController {
 
     @ApiOperation("根据比赛id查询指导老师信息")
     @PostMapping("/listTeachers/{RaceId}")
-    public TableDataInfo listTeachersByRaceId(@PathVariable("RaceId") Long id){
+    public TableDataInfo listTeachersByRaceId(@ApiParam(name = "RaceId", value = "比赛id", required = true)@PathVariable("RaceId") Long RaceId){
         //开始分页
         startPage();
 
         //根据比赛id查出队伍老师表中的老师id
-        List<Integer> teacherIds = teamMemberTeacherService.listTeacherIdByRaceId(id);
+        List<Integer> teacherIds = teamMemberTeacherService.listTeacherIdByRaceId(RaceId);
 
         //去重
         List<Integer> Ids = teacherIds.stream().distinct().collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class RaceApiController extends BaseController {
 
     @ApiOperation("查询比赛详情列表")
     @GetMapping("/list")
-    public TableDataInfo list(@ApiParam(name = "rewardList", value = "奖项信息", required = false)RaceInfo raceInfo) {
+    public TableDataInfo list(@ApiParam(name = "raceInfo", value = "比赛信息", required = false)RaceInfo raceInfo) {
         startPage();
         List<RaceInfo> list = raceInfoService.selectRaceInfoList(raceInfo);
         return getDataTable(list);
