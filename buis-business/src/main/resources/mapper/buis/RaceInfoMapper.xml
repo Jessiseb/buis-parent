@@ -19,6 +19,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <collection property="rewardList" ofType="com.buis.domain.Reward">
+            <id property="id" column="id"></id>
+            <result property="race" column="race"></result>
+            <result property="rRank" column="rRank"></result>
+            <result property="name" column="name"></result>
+            <result property="quantity" column="quantity"></result>
+            <result property="isDeleted" column="is_deleted"></result>
+        </collection>
     </resultMap>
 
     <resultMap id="RaceInfoRewardResult" type="RaceInfo" extends="RaceInfoResult">

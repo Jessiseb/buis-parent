@@ -3,15 +3,16 @@ package com.buis.web.controller.api;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
+import com.buis.domain.RaceInfo;
+import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -25,7 +26,9 @@ import static com.buis.common.utils.PageUtils.startPage;
 @Api(tags = "比赛信息Api")
 @RestController
 @RequestMapping("/api/race")
-public class RaceInfoApiController extends BaseController {
+public class RaceApiController extends BaseController {
+    @Autowired
+    private IRaceInfoService raceInfoService;
     @Resource
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Resource
@@ -48,6 +51,16 @@ public class RaceInfoApiController extends BaseController {
 
         //返回结果
         return getDataTable(userInfos);
+    }
+
+
+
+    @ApiOperation("查询比赛详情列表")
+    @GetMapping("/list")
+    public TableDataInfo list(@ApiParam(name = "rewardList", value = "奖项信息", required = false)RaceInfo raceInfo) {
+        startPage();
+        List<RaceInfo> list = raceInfoService.selectRaceInfoList(raceInfo);
+        return getDataTable(list);
     }
 
 
