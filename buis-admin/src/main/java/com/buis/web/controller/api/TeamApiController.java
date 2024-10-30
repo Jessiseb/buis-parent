@@ -14,6 +14,7 @@ import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.TeamInfoServiceImpl;
+import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class TeamApiController extends BaseController{
     @GetMapping("/listMember/student/{race}/{team}")
     public TableDataInfo list(@PathVariable("race") Long race, @PathVariable("team") Long team) {
         startPage();
-        List<UserInfo> result = teamMemberStudentService.selectTeamMemberStudentQueryList(race, team);
+        List<UserInfoVo> result = teamMemberStudentService.selectTeamMemberStudentQueryList(race, team);
         return getDataTable(result);
     }
 

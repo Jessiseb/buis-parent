@@ -3,11 +3,17 @@ package com.buis.mapper;
 import java.util.List;
 
 
+<<<<<<< HEAD
 import java.util.Map;
 
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberStudentDto;
+=======
+import com.buis.domain.TeamMemberStudent;
+import com.buis.vo.TeamMemberStudentQueryVo;
+import com.buis.vo.UserInfoVo;
+>>>>>>> 3b679592e9155bb2c435ee603a8acf26f8d42ff8
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -68,6 +74,7 @@ public interface TeamMemberStudentMapper
      */
     public int deleteTeamMemberStudentByIds(Long[] ids);
 
+<<<<<<< HEAD
     int getCount(Long id);
 
     Map<String, Object> getCountAndStudents(Long id);
@@ -78,4 +85,7 @@ public interface TeamMemberStudentMapper
     List<UserInfo> selectTeamMemberStudentQueryList(@Param("race") Long race,@Param("team") Long team);
 
     List<TeamMemberStudent> selectTeamMyCreate(Long id);
+=======
+    List<UserInfoVo> selectTeamMemberStudentQueryList(@Param("race") Long race, @Param("team") Long team);
+>>>>>>> 3b679592e9155bb2c435ee603a8acf26f8d42ff8
 }
