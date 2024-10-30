@@ -1,6 +1,9 @@
 package com.buis.framework.web.exception;
 
 import javax.servlet.http.HttpServletRequest;
+
+import cn.dev33.satoken.exception.NotLoginException;
+import com.buis.common.core.domain.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -142,4 +145,19 @@ public class GlobalExceptionHandler
     {
         return AjaxResult.error("演示模式，不允许操作");
     }
+
+    /**
+     *  拦截Sa-Token的异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(TokenExpiredException.class)
+   public AjaxResult TokenExpiredException(TokenExpiredException e) {
+        log.error(e.getMessage(), e);
+        String message = "Token失效,请重新登录!";
+        return AjaxResult.error(HttpStatus.UNAUTHORIZED,message);
+    }
+
+
+
 }
