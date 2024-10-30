@@ -3,6 +3,7 @@ package com.buis.domain;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,42 +31,49 @@ public class TeamInfo extends BaseEntity {
     /**
      * 比赛
      */
+    @ApiModelProperty("比赛")
     @Excel(name = "比赛")
     private Long race;
 
     /**
      * 项目名称
      */
+    @ApiModelProperty("项目名称")
     @Excel(name = "项目名称")
     private String name;
 
     /**
      * 项目简介
      */
+    @ApiModelProperty("项目简介")
     @Excel(name = "项目简介")
     private String description;
 
     /**
      * 队长
      */
+    @ApiModelProperty("队长")
     @Excel(name = "队长")
     private Long leader;
 
     /**
      * 招募要求
      */
+    @ApiModelProperty("招募要求")
     @Excel(name = "招募要求")
     private String tLimit;
 
     /**
      * 招募人数
      */
+    @ApiModelProperty("招募人数")
     @Excel(name = "招募人数")
     private Long capacity;
 
     /**
      * 招聘开始时间
      */
+    @ApiModelProperty("招聘开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "招聘开始时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date start;
@@ -73,6 +81,7 @@ public class TeamInfo extends BaseEntity {
     /**
      * 招聘结束时间
      */
+    @ApiModelProperty("招聘结束时间")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "招聘结束时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date end;
@@ -80,23 +89,27 @@ public class TeamInfo extends BaseEntity {
     /**
      * 奖项
      */
+    @ApiModelProperty("奖项")
     private String rRank;
 
     /**
      * 材料审核状态
      */
+    @ApiModelProperty("材料审核状态")
     @Excel(name = "材料审核状态")
     private Long status;
 
     /**
      * 不合格原因
      */
+    @ApiModelProperty("不合格原因")
     @Excel(name = "不合格原因")
     private String reason;
 
     /**
      * 标识是否被删除，0表示未删除
      */
+    @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
 
