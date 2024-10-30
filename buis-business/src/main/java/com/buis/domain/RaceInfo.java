@@ -3,10 +3,13 @@ package com.buis.domain;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Date;
 import java.util.List;
@@ -84,13 +87,13 @@ public class RaceInfo extends BaseEntity {
     /**
      * 比赛状态（字典）
      */
-    @Excel(name = "比赛状态", readConverterExp = "字=典")
+    @Excel(name = "比赛状态", readConverterExp = "字典")
     private Long status;
 
     /**
      * 比赛级别（字典）
      */
-    @Excel(name = "比赛级别", readConverterExp = "字=典")
+    @Excel(name = "比赛级别", readConverterExp = "字典")
     private Long level;
 
     /**
@@ -101,6 +104,8 @@ public class RaceInfo extends BaseEntity {
     /**
      * 奖项信息
      */
+    @JsonIgnore
+    @ApiModelProperty(hidden = true)
     private List<Reward> rewardList;
 
 
