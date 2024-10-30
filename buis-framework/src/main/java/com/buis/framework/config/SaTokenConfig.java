@@ -45,10 +45,10 @@ public class SaTokenConfig {
                 })
 
                 // 异常处理函数：每次认证函数发生异常时执行此函数
-                .setError(e -> {
-//                    System.out.println("---------- 进入Sa-Token异常处理 -----------");
-                    return AjaxResult.error(UNAUTHORIZED,"token失效");
-                })
+//                .setError(e -> {
+////                    System.out.println("---------- 进入Sa-Token异常处理 -----------");
+//                    return AjaxResult.error(UNAUTHORIZED,"token失效");
+//                })
 
 
                 // 前置函数：在每次认证函数之前执行（BeforeAuth 不受 includeList 与 excludeList 的限制，所有请求都会进入）
