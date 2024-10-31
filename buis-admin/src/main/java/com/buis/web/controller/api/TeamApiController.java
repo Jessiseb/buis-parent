@@ -1,6 +1,7 @@
 package com.buis.web.controller.api;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
@@ -49,8 +50,11 @@ public class TeamApiController extends BaseController{
     public TableDataInfo list(@ApiParam(name = "race", value = "比赛id", required = true)@PathVariable("race") Long race,
                               @ApiParam(name = "team", value = "队伍id", required = true)@PathVariable("team") Long team) {
         startPage();
+        Page<UserInfoVo> pageresult = new Page<>();
         List<UserInfoVo> result = teamMemberStudentService.selectTeamMemberStudentQueryList(race, team);
-        return getDataTable(result);
+
+        TableDataInfo tableDataInfo =  getDataTable(result);
+        return tableDataInfo;
     }
 
 //region 查询队伍

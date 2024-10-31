@@ -1,5 +1,7 @@
 package com.buis.web.controller.api;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
@@ -39,6 +41,7 @@ public class RaceApiController extends BaseController {
     public TableDataInfo listTeachersByRaceId(@ApiParam(name = "RaceId", value = "比赛id", required = true)@PathVariable("RaceId") Long RaceId){
         //开始分页
         startPage();
+        Page<UserInfoVo> pageresult = new Page<>();
 
         //根据比赛id查出队伍老师表中的老师id
         List<Integer> teacherIds = teamMemberTeacherService.listTeacherIdByRaceId(RaceId);
@@ -50,7 +53,8 @@ public class RaceApiController extends BaseController {
         List<UserInfoVo> userInfos = teamMemberTeacherService.listTeachersByIds(Ids);
 
         //返回结果
-        return getDataTable(userInfos);
+         TableDataInfo tableDataInfo =  getDataTable(userInfos);
+        return tableDataInfo;
     }
 
 
@@ -59,8 +63,11 @@ public class RaceApiController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(@ApiParam(name = "raceInfo", value = "比赛信息", required = false)RaceInfo raceInfo) {
         startPage();
+        Page<UserInfoVo> pageresult = new Page<>();
         List<RaceInfo> list = raceInfoService.selectRaceInfoList(raceInfo);
-        return getDataTable(list);
+        //返回结果
+        TableDataInfo tableDataInfo =  getDataTable(list);
+        return tableDataInfo;
     }
 
 
