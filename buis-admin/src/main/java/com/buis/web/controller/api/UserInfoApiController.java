@@ -6,20 +6,24 @@ import cn.dev33.satoken.util.SaResult;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDTO;
 import com.buis.dto.UserDTO;
 import com.buis.service.IUserInfoService;
+import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.naming.ldap.Rdn;
+import java.util.List;
 
 @Api(tags = "用户信息Api")
 @RestController
@@ -93,6 +97,14 @@ public class UserInfoApiController extends BaseController {
         StpUtil.checkLogin();
         // 抛出异常后，代码将走入全局异常处理（GlobalException.java），如果没有抛出异常，则代表通过了登录校验，返回下面信息
         return R.ok("校验登录成功");
+    }
+
+    @ApiOperation("查询用户信息列表")
+    @GetMapping("/list")
+    public TableDataInfo list(UserInfo userInfo) {
+        startPage();
+        List<UserInfoVo> list = userInfoService.selectUserInfoList(userInfo);
+        return getDataTable(list);
     }
 
 

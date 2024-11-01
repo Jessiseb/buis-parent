@@ -112,7 +112,7 @@ public class LanQiaoApiController extends BaseController {
      * 修改蓝桥杯老师报名信息
      */
     @ApiOperation("修改蓝桥杯老师报名信息")
-    @PutMapping("teacher")
+    @PutMapping("/{flag}")
     public AjaxResult edit(@RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher)
     {
         Long userId = SecurityUtils.getFrontLoginUserId();
