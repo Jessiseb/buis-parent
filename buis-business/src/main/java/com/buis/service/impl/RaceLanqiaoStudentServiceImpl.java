@@ -93,4 +93,17 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     {
         return raceLanqiaoStudentMapper.deleteRaceLanqiaoStudentById(id);
     }
+
+
+    //    获取蓝桥杯学生报名信息详细信息
+    @Override
+    public RaceLanqiaoStudent selectRaceLanqiaoStudentByUserId(Long loginId) {
+        RaceLanqiaoStudent raceLanqiaoStudent = raceLanqiaoStudentMapper.selectRaceLanqiaoStudentByUserId(loginId);
+        return raceLanqiaoStudent;
+    }
+
+    @Override
+    public void deleteRaceLanqiaoStudentByUserId(Long loginId) {
+        raceLanqiaoStudentMapper.deleteRaceLanqiaoStudentByUserId(loginId);
+    }
 }
