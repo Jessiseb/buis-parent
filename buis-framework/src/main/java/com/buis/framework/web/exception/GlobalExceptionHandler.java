@@ -2,7 +2,8 @@ package com.buis.framework.web.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cn.hutool.json.JSONUtil;
+import cn.dev33.satoken.exception.NotLoginException;
+import com.buis.common.core.domain.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -56,14 +57,13 @@ public class GlobalExceptionHandler
 
     /**
      * 业务异常
-     * @return
      */
     @ExceptionHandler(ServiceException.class)
-    public String handleServiceException(ServiceException e, HttpServletRequest request)
+    public AjaxResult handleServiceException(ServiceException e, HttpServletRequest request)
     {
         log.error(e.getMessage(), e);
         Integer code = e.getCode();
-        return StringUtils.isNotNull(code) ? JSONUtil.toJsonStr(AjaxResult.error(code, e.getMessage())) :  JSONUtil.toJsonStr(AjaxResult.error(e.getMessage()));
+        return StringUtils.isNotNull(code) ? AjaxResult.error(code, e.getMessage()) : AjaxResult.error(e.getMessage());
     }
 
     /**
