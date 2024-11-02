@@ -2,8 +2,7 @@ package com.buis.framework.web.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cn.dev33.satoken.exception.NotLoginException;
-import com.buis.common.core.domain.R;
+import cn.hutool.json.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -57,13 +56,14 @@ public class GlobalExceptionHandler
 
     /**
      * 业务异常
+     * @return
      */
     @ExceptionHandler(ServiceException.class)
-    public AjaxResult handleServiceException(ServiceException e, HttpServletRequest request)
+    public String handleServiceException(ServiceException e, HttpServletRequest request)
     {
         log.error(e.getMessage(), e);
         Integer code = e.getCode();
-        return StringUtils.isNotNull(code) ? AjaxResult.error(code, e.getMessage()) : AjaxResult.error(e.getMessage());
+        return StringUtils.isNotNull(code) ? JSONUtil.toJsonStr(AjaxResult.error(code, e.getMessage())) :  JSONUtil.toJsonStr(AjaxResult.error(e.getMessage()));
     }
 
     /**
@@ -146,17 +146,17 @@ public class GlobalExceptionHandler
         return AjaxResult.error("演示模式，不允许操作");
     }
 
-    /**
-     *  拦截Sa-Token的异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(TokenExpiredException.class)
-   public AjaxResult TokenExpiredException(TokenExpiredException e) {
-        log.error(e.getMessage(), e);
-        String message = "Token失效,请重新登录!";
-        return AjaxResult.error(HttpStatus.UNAUTHORIZED,message);
-    }
+//    /**
+//     *  拦截Sa-Token的异常
+//     * @param e
+//     * @return
+//     */
+//    @ExceptionHandler(TokenExpiredException.class)
+//   public AjaxResult TokenExpiredException(TokenExpiredException e) {
+//        log.error(e.getMessage(), e);
+//        String message = "Token失效,请重新登录!";
+//        return AjaxResult.error(HttpStatus.UNAUTHORIZED,message);
+//    }
 
 
 
