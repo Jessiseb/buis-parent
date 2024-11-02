@@ -76,4 +76,7 @@ public class UserInfoApiController extends BaseController {
         System.out.println(tokenValue);
         return R.ok(tokenValue);
     }
+
+
+    //TODO 查询用户信息
 }
