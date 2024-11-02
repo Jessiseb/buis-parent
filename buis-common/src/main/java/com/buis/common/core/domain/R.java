@@ -2,6 +2,7 @@ package com.buis.common.core.domain;
 
 import java.io.Serializable;
 import com.buis.common.constant.HttpStatus;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * 响应信息主体
@@ -17,11 +18,11 @@ public class R<T> implements Serializable
 
     /** 失败 */
     public static final int FAIL = HttpStatus.ERROR;
-
+    @ApiModelProperty(value = "返回码")
     private int code;
-
+    @ApiModelProperty(value = "返回消息")
     private String msg;
-
+    @ApiModelProperty(value = "返回数据")
     private T data;
 
     public static <T> R<T> ok()
