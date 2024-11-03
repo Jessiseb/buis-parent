@@ -68,4 +68,11 @@ public interface UserInfoMapper
     public UserInfo selectUserInfoByEmail(String email);
 
     List<UserInfo> listTeachersByIds(@Param("ids") List<Integer> ids);
+    /**
+     * 根据用户ID列表查询用户信息
+     *
+     * @param ids 用户信息主键列表
+     * @return 用户信息列表
+     */
+    List<UserInfo> selectUserInfoByIds(List<Long> ids);
 }

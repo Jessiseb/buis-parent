@@ -62,5 +62,5 @@ public interface IRaceLanqiaoStudentService
 //    获取蓝桥杯学生报名信息详细信息
     RaceLanqiaoStudent selectRaceLanqiaoStudentByUserId(Long loginId);
 
-    void deleteRaceLanqiaoStudentByUserId(Long loginId);
+    int deleteRaceLanqiaoStudentByUserId(Long loginId);
 }
