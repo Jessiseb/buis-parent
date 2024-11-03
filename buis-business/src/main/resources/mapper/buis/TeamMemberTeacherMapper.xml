@@ -30,13 +30,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTeamMemberTeacherVo"/>
         <where>
             is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="team != null "> and team = #{team}</if>
-            <if test="teacher != null "> and teacher = #{teacher}</if>
-            <if test="decider != null "> and decider = #{decider}</if>
-            <if test="isChoosed != null "> and is_choosed = #{isChoosed}</if>
-            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="team != null "> and t1.team = #{team}</if>
+            <if test="teacher != null "> and t1.teacher = #{teacher}</if>
+            <if test="decider != null "> and t1.decider = #{decider}</if>
+            <if test="isChoosed != null "> and t1.is_choosed = #{isChoosed}</if>
+            <if test="reason != null  and reason != ''"> and t1.reason like concat('%', #{reason}, '%')</if>
         </where>
     </select>
     
