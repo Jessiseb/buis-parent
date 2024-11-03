@@ -35,7 +35,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("删除蓝桥杯报名信息")
     @DeleteMapping("/{flag}")
-    public R remove(@ApiParam(name = "flag", value = "标识（0-学生，1-老师）", required = true)@PathVariable Integer flag) {
+    public R remove(@ApiParam(name = "flag", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer flag) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         Integer res = 0;
         if (flag == 0) {
@@ -55,7 +55,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("获取蓝桥杯报名信息")
     @GetMapping("/{flag}")
-    public R getInfo(@ApiParam(name = "flag", value = "标识（0-学生，1-老师）", required = true)@PathVariable Integer flag) {
+    public R getInfo(@ApiParam(name = "flag", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer flag) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         Object result = null;
         if (flag == 0) {
@@ -72,7 +72,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("新增蓝桥杯学生报名信息")
     @PostMapping("/student")
-    public R add(@ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true)@RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
+    public R add(@ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoStudent.setUserId(userId);
         return R.ok(raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent));
@@ -83,7 +83,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("新增蓝桥杯老师报名信息")
     @PostMapping("/teacher")
-    public R add(@ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true)@RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
+    public R add(@ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true) @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoTeacher.setUserId(userId);
         return R.ok(raceLanqiaoTeacherService.insertRaceLanqiaoTeacher(raceLanqiaoTeacher));
@@ -94,7 +94,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("修改蓝桥杯学生报名信息")
     @PutMapping("/student")
-    public R edit(@ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true)@RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
+    public R edit(@ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         if (userId != null && userId.equals(raceLanqiaoStudent.getUserId())) {
             return R.ok(raceLanqiaoStudentService.updateRaceLanqiaoStudent(raceLanqiaoStudent));
@@ -108,7 +108,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("修改蓝桥杯老师报名信息")
     @PutMapping("/teacher")
-    public R edit(@ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true)@RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
+    public R edit(@ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true) @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         if (userId != null && userId.equals(raceLanqiaoTeacher.getUserId())) {
             return R.ok(raceLanqiaoTeacherService.updateRaceLanqiaoTeacher(raceLanqiaoTeacher));
@@ -122,7 +122,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("查询蓝桥杯赛道类型列表")
     @PostMapping("/typeList")
-    public R typeList(@ApiParam(name = "raceLanqiaoType", value = "赛道类型条件过滤", required = false)@RequestBody RaceLanqiaoType raceLanqiaoType) {
+    public R typeList(@ApiParam(name = "raceLanqiaoType", value = "赛道类型条件过滤", required = false) @RequestBody RaceLanqiaoType raceLanqiaoType) {
         List<RaceLanqiaoType> list = raceLanqiaoTypeService.selectRaceLanqiaoTypeList(raceLanqiaoType);
         return R.ok(list);
     }
