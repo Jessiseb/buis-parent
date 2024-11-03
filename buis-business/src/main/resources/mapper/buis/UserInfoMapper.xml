@@ -53,7 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectUserInfoById" parameterType="Long" resultMap="UserInfoResult">
         <include refid="selectUserInfoVo"/>
-        where id = #{id} and is_deleted = 0
+        where t1.id = #{id} and t1.is_deleted = 0
     </select>
     <select id="selectCount" resultType="java.lang.Integer">
         select count(1)
@@ -69,12 +69,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectUserInfoByEmail" resultType="com.buis.domain.UserInfo">
         <include refid="selectUserInfoVo"/>
-        where email = #{email} and is_deleted = 0
+        where t1.email = #{email} and t1.is_deleted = 0
     </select>
 
     <select id="listTeachersByIds" resultType="com.buis.domain.UserInfo">
         <include refid="selectUserInfoVo"/>
-        where is_deleted = 0 and id in
+        where t1.is_deleted = 0 and t1.id in
         <foreach item="ids" collection="ids" open="(" separator="," close=")">
             #{ids}
         </foreach>

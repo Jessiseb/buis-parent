@@ -23,17 +23,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectPreSignStudentList" parameterType="com.buis.domain.PreSignStudent" resultMap="PreSignStudentResult">
         <include refid="selectPreSignStudentVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="student != null "> and student = #{student}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="student != null "> and t1.student = #{student}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="updateTime != null "> and t1.update_time = #{updateTime}</if>
         </where>
     </select>
     
     <select id="selectPreSignStudentById" parameterType="Long" resultMap="PreSignStudentResult">
         <include refid="selectPreSignStudentVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
     <insert id="insertPreSignStudent" parameterType="com.buis.domain.PreSignStudent" useGeneratedKeys="true" keyProperty="id">

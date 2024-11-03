@@ -29,20 +29,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectTeamMemberStudentList"  resultMap="TeamMemberStudentResult">
         <include refid="selectTeamMemberStudentVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="team != null "> and team = #{team}</if>
-            <if test="student != null "> and student = #{student}</if>
-            <if test="decider != null "> and decider = #{decider}</if>
-            <if test="isChoosed != null "> and is_choosed = #{isChoosed}</if>
-            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="team != null "> and t1.team = #{team}</if>
+            <if test="student != null "> and t1.student = #{student}</if>
+            <if test="decider != null "> and t1.decider = #{decider}</if>
+            <if test="isChoosed != null "> and t1.is_choosed = #{isChoosed}</if>
+            <if test="reason != null  and reason != ''"> and t1.reason like concat('%', #{reason}, '%')</if>
         </where>
     </select>
     
     <select id="selectTeamMemberStudentById" parameterType="Long" resultMap="TeamMemberStudentResult">
         <include refid="selectTeamMemberStudentVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
 
