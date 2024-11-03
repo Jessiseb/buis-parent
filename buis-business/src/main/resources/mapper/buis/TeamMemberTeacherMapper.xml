@@ -42,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectTeamMemberTeacherById" parameterType="Long" resultMap="TeamMemberTeacherResult">
         <include refid="selectTeamMemberTeacherVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
     <select id="getCount" resultType="java.lang.Long">
         SELECT
@@ -77,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectTeamMyInstruct" resultType="com.buis.domain.TeamMemberTeacher">
         <include refid="selectTeamMemberTeacherVo"/>
-        where teacher = #{id}  and is_deleted = 0
+        where t1.teacher = #{id}  and t1.is_deleted = 0
     </select>
 
     <select id="getTeachersByRaceId" resultType="java.lang.Long">

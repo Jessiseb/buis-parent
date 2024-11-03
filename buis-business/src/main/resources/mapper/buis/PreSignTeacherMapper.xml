@@ -26,19 +26,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectPreSignTeacherList" parameterType="com.buis.domain.PreSignTeacher" resultMap="PreSignTeacherResult">
         <include refid="selectPreSignTeacherVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="teacher != null "> and teacher = #{teacher}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="fileUrl != null  and fileUrl != ''"> and file_url like concat('%', #{fileUrl}, '%')</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="teacher != null "> and t1.teacher = #{teacher}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="fileUrl != null  and fileUrl != ''"> and t1.file_url like concat('%', #{fileUrl}, '%')</if>
+            <if test="status != null "> and t1.status = #{status}</if>
+            <if test="reason != null  and reason != ''"> and t1.reason like concat('%', #{reason}, '%')</if>
         </where>
     </select>
     
     <select id="selectPreSignTeacherById" parameterType="Long" resultMap="PreSignTeacherResult">
         <include refid="selectPreSignTeacherVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
 
