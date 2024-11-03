@@ -35,19 +35,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectUserInfoList" parameterType="com.buis.domain.UserInfo" resultMap="UserInfoResult">
         <include refid="selectUserInfoVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="number != null  and number != ''"> and number = #{number}</if>
-            <if test="password != null  and password != ''"> and password = #{password}</if>
-            <if test="email != null  and email != ''"> and email = #{email}</if>
-            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
-            <if test="sex != null "> and sex = #{sex}</if>
-            <if test="college != null "> and college = #{college}</if>
-            <if test="major != null ">and major = #{major}</if>
-            <if test="title != null ">and title = #{title}</if>
-            <if test="isDisabled != null ">and is_disabled = #{isDisabled}</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="number != null  and number != ''"> and t1.number = #{number}</if>
+            <if test="password != null  and password != ''"> and t1.password = #{password}</if>
+            <if test="email != null  and email != ''"> and t1.email = #{email}</if>
+            <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
+            <if test="name != null  and name != ''"> and t1.name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and t1.description like concat('%', #{description}, '%')</if>
+            <if test="sex != null "> and t1.sex = #{sex}</if>
+            <if test="college != null "> and t1.college = #{college}</if>
+            <if test="major != null ">and t1.major = #{major}</if>
+            <if test="title != null ">and t1.title = #{title}</if>
+            <if test="isDisabled != null ">and t1.is_disabled = #{isDisabled}</if>
         </where>
     </select>
 
