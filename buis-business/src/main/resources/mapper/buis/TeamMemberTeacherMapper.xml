@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTeamMemberTeacherVo">
-        select id, race, team,t2.name as team_name,t3.name as race_name, teacher, decider, is_choosed, reason, is_deleted, create_time, update_time
+        select id, race, team,t2.name as team_name,t3.name as race_name, teacher, decider, is_choosed, reason, t1.is_deleted, create_time, update_time
         from team_member_teacher t1
                  left join team_info t2 on t1.team = t2.id
                  left join race_info t3 on t1.race = t3.id
@@ -81,7 +81,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getTeachersByRaceId" resultType="java.lang.Long">
-        select distinct teacher from team_member_teacher where race = #{id}
+        select distinct teacher from team_member_teacher where race = #{id} and is_deleted = 0
     </select>
 
     <insert id="insertTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
@@ -144,7 +144,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getGuideCount" resultType="java.lang.Long">
         SELECT COUNT(1)
         FROM team_member_teacher
-        WHERE teacher = #{id}
+        WHERE teacher = #{id} AND is_deleted = 0
     </select>
     <select id="getJoinCountByTeamId" resultType="java.lang.Long">
         SELECT COUNT(1)

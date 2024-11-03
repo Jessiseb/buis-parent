@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectUserInfoVo">
-        select id, number, password, email, phone, name, description, sex, college,t2.name AS major_name,t3.name AS college_name, title, is_disabled, is_deleted, create_time, update_time
+        select id, number, password, email, phone, name, description, sex, college,t2.name AS major_name,t3.name AS college_name, title, is_disabled, t1.is_deleted, create_time, update_time
         from user_info t1
         LEFT JOIN
         t_college_major t2 ON t1.major = t2.id
@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getLoginInfoByUserId" resultType="com.buis.domain.UserInfo">
         select email, password
         from user_info
-        where id = #{id}
+        where id = #{id} and is_deleted = 0
     </select>
 
     <select id="selectUserInfoByEmail" resultType="com.buis.domain.UserInfo">
