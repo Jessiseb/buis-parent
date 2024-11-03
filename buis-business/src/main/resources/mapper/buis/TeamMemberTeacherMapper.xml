@@ -163,11 +163,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamMemberTeacherVo"/>
         FROM team_info
-        WHERE id IN
+        WHERE t1.id IN
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
-        AND is_deleted = 0
+        AND t1.is_deleted = 0
     </select>
 
 </mapper>
