@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTeamMemberTeacherVo">
-        select t1.id, t1.race, t1.team,t2.name as t1.team_name,t3.name as t1.race_name, t1.teacher, t1.decider, t1.is_choosed, t1.reason, t1.is_deleted, t1.create_time, t1.update_time
+        select t1.id, t1.race, t1.team,t2.name as team_name,t3.name as race_name, t1.teacher, t1.decider, t1.is_choosed, t1.reason, t1.is_deleted, t1.create_time, t1.update_time
         from team_member_teacher t1
                  left join team_info t2 on t1.team = t2.id
                  left join race_info t3 on t1.race = t3.id
