@@ -4,10 +4,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.TeamMemberStudentMapper">
     
-    <resultMap type="TeamMemberStudent" id="TeamMemberStudentResult">
+    <resultMap type="com.buis.vo.TeamMemberStudentVo" id="TeamMemberStudentResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
+        <result property="raceName"    column="race_name"    />
         <result property="team"    column="team"    />
+        <result property="teamName"    column="team_name"    />
         <result property="student"    column="student"    />
         <result property="decider"    column="decider"    />
         <result property="isChoosed"    column="is_choosed"    />
@@ -18,7 +20,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTeamMemberStudentVo">
-        select id, race, team, student, decider, is_choosed, reason, is_deleted, create_time, update_time from team_member_student
+        select id, race, team, student,t2.name as team_name,t3.naame as race_name, decider, is_choosed, reason, is_deleted, create_time, update_time
+        from team_member_student t1
+                 left join team_info t2 on t1.team = t2.id
+                 left join race_info t3 on t1.race = t3.id
     </sql>
 
     <select id="selectTeamMemberStudentList"  resultMap="TeamMemberStudentResult">
@@ -39,69 +44,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTeamMemberStudentVo"/>
         where id = #{id}  and is_deleted = 0
     </select>
-    <select id="getCount" resultType="java.lang.Integer">
-        SELECT COUNT(team_member_student.student) as teamNumbers
-        FROM team_info
-                 LEFT JOIN team_member_student ON team_info.id = team_member_student.team
-        WHERE team_info.id = #{id} AND team_member_student.is_deleted = 0
-    </select>
-    <select id="getCountAndStudents" resultType="java.util.Map">
-        SELECT
-            COUNT(team_member_student.student) AS teamNumbers,
-            (SELECT GROUP_CONCAT(CONCAT(user_info.id, ':', user_info.`name`))
-             FROM user_info
-                      INNER JOIN team_member_student ON user_info.id = team_member_student.student
-             WHERE team_member_student.team = team_info.id AND team_member_student.is_deleted = 0) AS teamMembersNameWithIds
-        FROM
-            team_info
-                LEFT JOIN
-            team_member_student ON team_info.id = team_member_student.team AND team_member_student.is_deleted = 0
-        WHERE
-            team_info.id = #{id}
-    </select>
-    <!-- <select id="getCountAndStudents" resultType="java.util.Map">
-         SELECT
-             COUNT(team_member_teacher.teacher) AS teamNumbers,
-             (SELECT GROUP_CONCAT(user_info.`name`)
-              FROM user_info
-                       INNER JOIN team_member_student ON user_info.id = team_member_student.student
-              WHERE team_member_student.team = team_info.id AND team_member_student.is_deleted = 0) AS teamMembersName
-         FROM
-             team_info
-                 LEFT JOIN
-             team_member_student ON team_info.id = team_member_student.team
-         WHERE
-             team_info.id = #{id} AND team_member_student.is_deleted = 0
-     </select>-->
 
 
-
-
-
-    <select id="selectTeamMemberStudentQueryList" resultType="com.buis.vo.UserInfoVo">
-        select t2.id,
-               t2.number,
-               t2.email,
-               t2.phone,
-               t2.name,
-               t2.description,
-               t2.sex,
-               t2.college,
-               t2.major,
-               t1.update_time
-        from team_member_student t1
-                 left join user_info t2
-                           on t1.student = t2.id
-        where t1.is_deleted = 0
-          and t1.is_choosed = 1
-          and t1.race = #{race}
-          and t1.team = #{team}
-    </select>
-    <select id="selectTeamMyCreate" resultType="com.buis.domain.TeamMemberStudent">
-        <include refid="selectTeamMemberStudentVo"/>
-        where id = #{id} and is_deleted = 0
+    <select id="getMemberStudentByTeamId" resultType="java.lang.Long">
+        SELECT t2.id
+        FROM team_member_student t1
+                 LEFT JOIN user_info t2 ON t1.student = t2.id
+        WHERE t1.is_deleted = 0
+          AND t1.is_choosed = 1
+          AND t1.team = #{team}
     </select>
 
+
+    <select id="getJoinCountByTeamId" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM team_member_student
+        WHERE team = #{id}
+          AND is_deleted = 0
+          and is_choosed = 1
+    </select>
 
     <insert id="insertTeamMemberStudent" parameterType="TeamMemberStudent" useGeneratedKeys="true" keyProperty="id">
         insert into team_member_student

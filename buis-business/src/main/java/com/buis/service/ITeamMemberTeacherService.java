@@ -3,6 +3,8 @@ package com.buis.service;
 import java.util.List;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
+import com.buis.vo.TeamInfoVo;
+import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
 
 /**
@@ -19,15 +21,15 @@ public interface ITeamMemberTeacherService
      * @param id 队伍老师管理主键
      * @return 队伍老师管理
      */
-    public TeamMemberTeacher selectTeamMemberTeacherById(Long id);
+    public TeamMemberTeacherVo selectTeamMemberTeacherById(Long id);
 
     /**
      * 查询队伍老师管理列表
-     * 
+     *
      * @param teamMemberTeacher 队伍老师管理
      * @return 队伍老师管理集合
      */
-    public List<TeamMemberTeacher> selectTeamMemberTeacherList(TeamMemberTeacher teamMemberTeacher);
+    public List<TeamMemberTeacherVo> selectTeamMemberTeacherList(TeamMemberTeacher teamMemberTeacher);
 
     /**
      * 新增队伍老师管理
@@ -61,10 +63,30 @@ public interface ITeamMemberTeacherService
      */
     public int deleteTeamMemberTeacherById(Long id);
 
-    List<TeamMemberTeacher> selectTeamMyInstruct(Long id);
+    /**
+     * 查询老师指导数量
+     * @param id 老师id
+     * @return 数量
+     */
+    Long getGuideCount(Long id);
+    /**
+     * 根据teamId获取结对的个数，查老师个数
+     * @param id teamId
+     * @return
+     */
+    Long getJoinCountByTeamId(Long id);
 
-    List<Integer> listTeacherIdByRaceId(Long id);
+    /**
+     * 根据比赛id获取老师列表
+     * @param raceId
+     * @return
+     */
+    List<UserInfoVo> getTeachersByRaceId(Long raceId);
 
-
-    List<UserInfoVo> listTeachersByIds(List<Integer> ids);
+    /**
+     * 根据老师id查询队伍队伍列表
+     * @param userId
+     * @return
+     */
+    List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId);
 }

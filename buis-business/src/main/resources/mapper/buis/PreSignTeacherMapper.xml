@@ -4,10 +4,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.PreSignTeacherMapper">
     
-    <resultMap type="PreSignTeacher" id="PreSignTeacherResult">
+    <resultMap type="com.buis.vo.PreSignTeacherVo" id="PreSignTeacherResult">
         <result property="id"    column="id"    />
         <result property="teacher"    column="teacher"    />
         <result property="race"    column="race"    />
+        <result property="raceName"    column="race_name"    />
         <result property="fileUrl"    column="file_url"    />
         <result property="status"    column="status"    />
         <result property="reason"    column="reason"    />
@@ -17,10 +18,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectPreSignTeacherVo">
-        select id, teacher, race, file_url, status, reason, is_deleted, create_time, update_time from pre_sign_teacher
+        select id, teacher, race,t2.name as race_name, file_url, status, reason, is_deleted, create_time, update_time
+        from pre_sign_teacher t1
+                 left join race_info t2 on t1.race = t2.id
     </sql>
 
-    <select id="selectPreSignTeacherList" parameterType="PreSignTeacher" resultMap="PreSignTeacherResult">
+    <select id="selectPreSignTeacherList" parameterType="com.buis.domain.PreSignTeacher" resultMap="PreSignTeacherResult">
         <include refid="selectPreSignTeacherVo"/>
         <where>
             is_deleted = 0
@@ -37,67 +40,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectPreSignTeacherVo"/>
         where id = #{id}  and is_deleted = 0
     </select>
-    <select id="selectPreSignTeacherVoList" resultType="com.buis.vo.PreSignTeacherVo">
-        SELECT
-        pre_sign_teacher.*,
-        race_info.`name` AS raceName,
-        user_info.`name` AS teacherName,
-        user_info.phone AS teacherPhone,
-        user_info.email AS teacherEmail,
-        user_info.college AS collegeId,
-        user_info.major AS majorId,
-        college.name AS collegeName,
-        major.name AS majorName
-        FROM
-        pre_sign_teacher
-        LEFT OUTER JOIN
-        user_info ON pre_sign_teacher.teacher = user_info.id
-        LEFT OUTER JOIN
-        race_info ON pre_sign_teacher.race = race_info.id
-        LEFT OUTER JOIN
-        t_college_major AS college ON user_info.college = college.id AND college.college = 0
-        LEFT OUTER JOIN
-        t_college_major AS major ON user_info.major = major.id AND major.college = college.id
-        <where>
-            user_info.is_deleted = 0
-            AND user_info.title IS NOT NULL
-            <if test="id != null "> and pre_sign_teacher.id = #{id}</if>
-            <if test="teacher != null "> and pre_sign_teacher.teacher = #{teacher}</if>
-            <if test="race != null "> and pre_sign_teacher.race = #{race}</if>
-            <if test="fileUrl != null  and fileUrl != ''"> and pre_sign_teacher.file_url like concat('%', #{fileUrl}, '%')</if>
-            <if test="status != null "> and pre_sign_teacher.status = #{status}</if>
-            <if test="reason != null  and reason != ''"> and pre_sign_teacher.reason like concat('%', #{reason}, '%')</if>
-        </where>
 
-    </select>
-    <select id="selectPreSignTeacherVoById" resultType="com.buis.vo.PreSignTeacherVo">
-        SELECT
-            pre_sign_teacher.*,
-            race_info.`name` AS raceName,
-            user_info.`name` AS teacherName,
-            user_info.phone AS teacherPhone,
-            user_info.email AS teacherEmail,
-            user_info.college AS collegeId,
-            user_info.major AS majorId,
-            college.name AS collegeName,
-            major.name AS majorName
-        FROM
-            pre_sign_teacher
-                LEFT OUTER JOIN
-            user_info ON pre_sign_teacher.teacher = user_info.id
-                LEFT OUTER JOIN
-            race_info ON pre_sign_teacher.race = race_info.id
-                LEFT OUTER JOIN
-            t_college_major AS college ON user_info.college = college.id AND college.college = 0
-                LEFT OUTER JOIN
-            t_college_major AS major ON user_info.major = major.id AND major.college = college.id
-        WHERE
-            user_info.is_deleted = 0
-          AND user_info.title IS NOT NULL
-          AND pre_sign_teacher.id = #{id}
-    </select>
 
-    <insert id="insertPreSignTeacher" parameterType="PreSignTeacher" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertPreSignTeacher" parameterType="com.buis.domain.PreSignTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into pre_sign_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="teacher != null">teacher,</if>
@@ -122,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
 
-    <update id="updatePreSignTeacher" parameterType="PreSignTeacher">
+    <update id="updatePreSignTeacher" parameterType="com.buis.domain.PreSignTeacher">
         update pre_sign_teacher
         <trim prefix="SET" suffixOverrides=",">
             <if test="teacher != null">teacher = #{teacher},</if>

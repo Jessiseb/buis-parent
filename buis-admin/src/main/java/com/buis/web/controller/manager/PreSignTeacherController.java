@@ -46,9 +46,8 @@ public class PreSignTeacherController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(PreSignTeacher preSignTeacher) {
         startPage();
-//        List<PreSignTeacher> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
-       List<PreSignTeacherVo> listVo= preSignTeacherService.selectPreSignTeacherVoList(preSignTeacher);
-        return getDataTable(listVo);
+        List<PreSignTeacherVo> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
+        return getDataTable(list);
     }
 
     /**
@@ -59,8 +58,8 @@ public class PreSignTeacherController extends BaseController {
     @Log(title = "老师预报名", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, PreSignTeacher preSignTeacher) {
-        List<PreSignTeacher> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
-        ExcelUtil<PreSignTeacher> util = new ExcelUtil<PreSignTeacher>(PreSignTeacher.class);
+        List<PreSignTeacherVo> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
+        ExcelUtil<PreSignTeacherVo> util = new ExcelUtil<PreSignTeacherVo>(PreSignTeacherVo.class);
         util.exportExcel(response, list, "老师预报名数据");
     }
 
@@ -71,8 +70,7 @@ public class PreSignTeacherController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:preTeacher:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
-//        return success(preSignTeacherService.selectPreSignTeacherById(id));
-        return success(preSignTeacherService.selectPreSignTeacherVoById(id));
+        return success(preSignTeacherService.selectPreSignTeacherById(id));
     }
     /**
      * 新增老师预报名

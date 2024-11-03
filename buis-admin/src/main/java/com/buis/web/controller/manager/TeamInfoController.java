@@ -39,8 +39,7 @@ public class TeamInfoController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(TeamInfo teamInfo) {
         startPage();
-//        List<TeamInfo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        List<TeamInfoVo> list = teamInfoService.selectTeamInfoVoList(teamInfo);
+        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return getDataTable(list);
     }
 
@@ -52,8 +51,8 @@ public class TeamInfoController extends BaseController {
     @Log(title = "队伍信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, TeamInfo teamInfo) {
-        List<TeamInfo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        ExcelUtil<TeamInfo> util = new ExcelUtil<TeamInfo>(TeamInfo.class);
+        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
+        ExcelUtil<TeamInfoVo> util = new ExcelUtil<TeamInfoVo>(TeamInfoVo.class);
         util.exportExcel(response, list, "队伍信息数据");
     }
 
@@ -64,8 +63,7 @@ public class TeamInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
-//        return success(teamInfoService.selectTeamInfoById(id));
-        return success(teamInfoService.selectTeamInfoVoById(id));
+        return success(teamInfoService.selectTeamInfoById(id));
     }
 
     /**
