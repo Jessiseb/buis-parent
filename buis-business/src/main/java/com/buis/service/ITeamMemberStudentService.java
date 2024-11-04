@@ -2,6 +2,8 @@ package com.buis.service;
 
 import com.buis.domain.TeamMemberStudent;
 import com.buis.dto.TeamMemberStudentDto;
+import com.buis.dto.TeamMemberStudentInvitedDto;
+import com.buis.dto.TeamMemberStudentInvitedListDto;
 import com.buis.vo.UserInfoVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -69,8 +71,39 @@ public interface ITeamMemberStudentService {
     //    查询队伍学生列表
     List<UserInfoVo> selectTeamMemberStudentQueryList(@Param("race") Long race, @Param("team") Long team);
 
+    /**
+     * 查询我创建的队伍
+     * @param id
+     * @return
+     */
     List<TeamMemberStudent> selectTeamMyCreate(Long id);
 
+    /**
+     * 队伍学生互选
+     * @param teamMemberStudentInvitedDto
+     * @return
+     */
+    String TeamsStudentsSelectedEach(TeamMemberStudentInvitedDto teamMemberStudentInvitedDto);
 
+    /**
+     * 取消邀请
+     * @param id
+     * @return
+     */
+    String CancelInvited(long id);
 
+    /**
+     * 接受or拒绝邀请
+     * @param id
+     * @param isAgree
+     * @return
+     */
+    String agreeOrreject(long id, int isAgree);
+
+    /**
+     * 查询我的邀请列表
+     * @param dto
+     * @return
+     */
+    List<TeamMemberStudent> InvitedList(TeamMemberStudentInvitedListDto dto);
 }
