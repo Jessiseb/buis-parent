@@ -19,9 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Api(tags = "蓝桥杯Api")
+@RestController
 @RequestMapping("/api/lanqiao")
-
-
 public class LanQiaoApiController extends BaseController {
     @Autowired
     private IRaceLanqiaoStudentService raceLanqiaoStudentService;
