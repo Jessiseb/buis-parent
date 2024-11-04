@@ -21,7 +21,7 @@ public class TeamInfoVo extends TeamInfo {
      * 队伍老师人数
      */
     @ApiModelProperty(value = "队伍老师人数")
-    private Long teachaerCount;
+    private Long teacherCount;
 
     /**
      * 队伍学生人数

@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import java.util.*;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
@@ -125,6 +126,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
      */
     private TeamInfoVo createTeamInfoVo(TeamInfo team) {
         TeamInfoVo teamInfoVo = new TeamInfoVo();
+        BeanUtil.copyProperties(team, teamInfoVo);
         UserInfoVo userInfoVo = userInfoService.selectUserInfoById(team.getLeader());
         Long studentCount = teamStudentService.getJoinCountByTeamId(team.getId());
         Long teacherCount = teamTeacherService.getJoinCountByTeamId(team.getId());
@@ -140,7 +142,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
         // 获取学生人数
         teamInfoVo.setStudentCount(studentCount);
         // 获取老师人数
-        teamInfoVo.setTeachaerCount(teacherCount);
+        teamInfoVo.setTeacherCount(teacherCount);
         return teamInfoVo;
     }
 

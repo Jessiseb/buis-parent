@@ -10,6 +10,7 @@ import com.buis.domain.RaceType;
 import com.buis.service.*;
 import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.PreSignTeacherVo;
+import com.buis.vo.RaceInfoVo;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +41,7 @@ public class RaceApiController extends BaseController {
     @GetMapping("/raceList")
     public TableDataInfo list(@ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
         startPage();
-        List<RaceInfo> list = raceInfoService.selectRaceInfoList(raceInfo);
+        List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
         return getDataTable(list);
     }
     /**
