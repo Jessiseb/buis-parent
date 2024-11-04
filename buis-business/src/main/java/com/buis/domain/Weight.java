@@ -5,10 +5,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+
 /**
  * 分数权重对象 t_weight
  *
@@ -19,8 +20,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Weight extends BaseEntity
-{
+public class Weight extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /** id */

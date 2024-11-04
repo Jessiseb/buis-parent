@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,11 +24,13 @@ public class PreSignTeacher extends BaseEntity {
      * id
      */
     @Excel(name = "id")
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**
      * 老师
      */
+    @ApiModelProperty(value = "老师id")
     @Excel(name = "老师")
     private Long teacher;
 
@@ -35,29 +38,34 @@ public class PreSignTeacher extends BaseEntity {
      * 比赛
      */
     @Excel(name = "比赛")
+    @ApiModelProperty(value = "比赛id")
     private Long race;
 
     /**
      * 附件信息
      */
     @Excel(name = "附件信息")
+    @ApiModelProperty(value = "附件信息url")
     private String fileUrl;
 
     /**
      * 材料审核状态
      */
     @Excel(name = "材料审核状态")
+    @ApiModelProperty(value = "材料审核状态")
     private Long status;
 
     /**
      * 不合格原因
      */
     @Excel(name = "不合格原因")
+    @ApiModelProperty(value = "不合格原因")
     private String reason;
 
     /**
      * 标识是否被删除，0表示未删除
      */
+    @ApiModelProperty(value = "标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
 

@@ -1,101 +1,177 @@
 package com.buis.service.impl;
 
-import java.util.List;
 import com.buis.common.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.buis.mapper.TeamMemberTeacherMapper;
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.domain.UserInfo;
+import com.buis.mapper.TeamMemberTeacherMapper;
+import com.buis.mapper.UserInfoMapper;
+import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberTeacherService;
+import com.buis.service.IUserInfoService;
+import com.buis.vo.TeamInfoVo;
+import com.buis.vo.TeamMemberTeacherVo;
+import com.buis.vo.UserInfoVo;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 队伍老师管理Service业务层处理
- * 
+ *
  * @author buis
  * @date 2024-10-11
  */
 @Service
-public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService 
-{
-    @Autowired
+public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
+    @Resource
     private TeamMemberTeacherMapper teamMemberTeacherMapper;
+
+    @Resource
+    private UserInfoMapper userInfoMapper;
+
+    @Resource
+    private IUserInfoService userInfoService;
+    @Resource
+    private ITeamInfoService teamInfoService;
 
     /**
      * 查询队伍老师管理
-     * 
+     *
      * @param id 队伍老师管理主键
      * @return 队伍老师管理
      */
     @Override
-    public TeamMemberTeacher selectTeamMemberTeacherById(Long id)
-    {
-        return teamMemberTeacherMapper.selectTeamMemberTeacherById(id);
+    public TeamMemberTeacherVo selectTeamMemberTeacherById(Long id) {
+        TeamMemberTeacherVo teamMemberTeacherVo = teamMemberTeacherMapper.selectTeamMemberTeacherById(id);
+        setTeacherInfo(teamMemberTeacherVo);
+        return teamMemberTeacherVo;
     }
 
     /**
      * 查询队伍老师管理列表
-     * 
+     *
      * @param teamMemberTeacher 队伍老师管理
-     * @return 队伍老师管理
+     * @return 队伍老师管理列表
      */
     @Override
-    public List<TeamMemberTeacher> selectTeamMemberTeacherList(TeamMemberTeacher teamMemberTeacher)
-    {
-        return teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
+    public List<TeamMemberTeacherVo> selectTeamMemberTeacherList(TeamMemberTeacher teamMemberTeacher) {
+        List<TeamMemberTeacherVo> teamMemberTeacherVos = teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
+        for (TeamMemberTeacherVo teamMemberTeacherVo : teamMemberTeacherVos) {
+            setTeacherInfo(teamMemberTeacherVo);
+        }
+        return teamMemberTeacherVos;
     }
 
     /**
+     * 设置老师信息
+     *
+     * @param teamMemberTeacherVo 队伍老师管理对象
+     */
+    private void setTeacherInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
+        if (teamMemberTeacherVo != null) {
+            teamMemberTeacherVo.setTeacherInfo(userInfoService.selectUserInfoById(teamMemberTeacherVo.getTeacher()));
+        }
+    }
+
+
+    /**
      * 新增队伍老师管理
-     * 
+     *
      * @param teamMemberTeacher 队伍老师管理
      * @return 结果
      */
     @Override
-    public int insertTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher)
-    {
+    public int insertTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
         teamMemberTeacher.setCreateTime(DateUtils.getNowDate());
         return teamMemberTeacherMapper.insertTeamMemberTeacher(teamMemberTeacher);
     }
 
     /**
      * 修改队伍老师管理
-     * 
+     *
      * @param teamMemberTeacher 队伍老师管理
      * @return 结果
      */
     @Override
-    public int updateTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher)
-    {
+    public int updateTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
         teamMemberTeacher.setUpdateTime(DateUtils.getNowDate());
         return teamMemberTeacherMapper.updateTeamMemberTeacher(teamMemberTeacher);
     }
 
+
     /**
      * 批量删除队伍老师管理
-     * 
+     *
      * @param ids 需要删除的队伍老师管理主键
      * @return 结果
      */
     @Override
-    public int deleteTeamMemberTeacherByIds(Long[] ids)
-    {
+    public int deleteTeamMemberTeacherByIds(Long[] ids) {
         return teamMemberTeacherMapper.deleteTeamMemberTeacherByIds(ids);
     }
 
     /**
      * 删除队伍老师管理信息
-     * 
+     *
      * @param id 队伍老师管理主键
      * @return 结果
      */
     @Override
-    public int deleteTeamMemberTeacherById(Long id)
-    {
+    public int deleteTeamMemberTeacherById(Long id) {
         return teamMemberTeacherMapper.deleteTeamMemberTeacherById(id);
     }
 
+    /**
+     * 查询老师指导数量
+     *
+     * @param id 老师id
+     * @return 数量
+     */
     @Override
-    public List<TeamMemberTeacher> selectTeamMyInstruct(Long id) {
-        return teamMemberTeacherMapper.selectTeamMyInstruct(id);
+    public Long getGuideCount(Long id) {
+        return teamMemberTeacherMapper.getGuideCount(id);
     }
+
+    /**
+     * 根据teamId获取结对的个数，查老师个数
+     *
+     * @param id teamId
+     * @return
+     */
+    @Override
+    public Long getJoinCountByTeamId(Long id) {
+        return teamMemberTeacherMapper.getJoinCountByTeamId(id);
+    }
+
+    @Override
+    public List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId) {
+        Long[] teamIds = teamMemberTeacherMapper.selectJoinTeamByTeacherId(userId);
+        List<TeamInfoVo> teamInfoVos = new ArrayList<>();
+        if (teamIds != null && teamIds.length > 0) {
+            teamInfoVos = teamInfoService.selectTeamInfoByIds(teamIds);
+        }
+        return teamInfoVos;
+
+    }
+
+    /**
+     * 根据比赛id获取指导老师列表
+     *
+     * @param raceId
+     * @return
+     */
+    @Override
+    public List<UserInfoVo> getTeachersByRaceId(Long raceId) {
+        List<Long> ids = teamMemberTeacherMapper.getTeachersByRaceId(raceId);// 老师ids
+        List<UserInfoVo> userInfoVos = new ArrayList<>();
+        if (ids != null && ids.size() > 0) {
+            userInfoVos = userInfoService.selectUserInfoByIds(ids);
+        }
+        return userInfoVos;
+    }
+
+
 }

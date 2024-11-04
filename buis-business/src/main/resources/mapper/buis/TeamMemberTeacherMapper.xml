@@ -4,10 +4,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.TeamMemberTeacherMapper">
     
-    <resultMap type="TeamMemberTeacher" id="TeamMemberTeacherResult">
+    <resultMap type="com.buis.vo.TeamMemberTeacherVo" id="TeamMemberTeacherResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
+        <result property="raceName"    column="race_name"    />
         <result property="team"    column="team"    />
+        <result property="teamName"    column="team_name"    />
         <result property="teacher"    column="teacher"    />
         <result property="decider"    column="decider"    />
         <result property="isChoosed"    column="is_choosed"    />
@@ -18,34 +20,71 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTeamMemberTeacherVo">
-        select id, race, team, teacher, decider, is_choosed, reason, is_deleted, create_time, update_time from team_member_teacher
+        select t1.id, t1.race, t1.team,t2.name as team_name,t3.name as race_name, t1.teacher, t1.decider, t1.is_choosed, t1.reason, t1.is_deleted, t1.create_time, t1.update_time
+        from team_member_teacher t1
+                 left join team_info t2 on t1.team = t2.id
+                 left join race_info t3 on t1.race = t3.id
     </sql>
 
-    <select id="selectTeamMemberTeacherList" parameterType="TeamMemberTeacher" resultMap="TeamMemberTeacherResult">
+    <select id="selectTeamMemberTeacherList" parameterType="com.buis.domain.TeamMemberTeacher" resultMap="TeamMemberTeacherResult">
         <include refid="selectTeamMemberTeacherVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="team != null "> and team = #{team}</if>
-            <if test="teacher != null "> and teacher = #{teacher}</if>
-            <if test="decider != null "> and decider = #{decider}</if>
-            <if test="isChoosed != null "> and is_choosed = #{isChoosed}</if>
-            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="team != null "> and t1.team = #{team}</if>
+            <if test="teacher != null "> and t1.teacher = #{teacher}</if>
+            <if test="decider != null "> and t1.decider = #{decider}</if>
+            <if test="isChoosed != null "> and t1.is_choosed = #{isChoosed}</if>
+            <if test="reason != null  and reason != ''"> and t1.reason like concat('%', #{reason}, '%')</if>
         </where>
     </select>
     
     <select id="selectTeamMemberTeacherById" parameterType="Long" resultMap="TeamMemberTeacherResult">
         <include refid="selectTeamMemberTeacherVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
+    <select id="getCount" resultType="java.lang.Long">
+        SELECT
+            COUNT(team_member_teacher.teacher) AS teamNumbers,
+            (SELECT GROUP_CONCAT(user_info.`name`)
+             FROM user_info
+                      INNER JOIN team_member_teacher ON user_info.id = team_member_teacher.teacher
+             WHERE team_member_teacher.team = team_info.id AND team_member_teacher.is_deleted = 0) AS teacherNames
+        FROM
+            team_info
+                LEFT JOIN
+            team_member_teacher ON team_info.id = team_member_teacher.team
+        WHERE
+            team_info.id = #{id} AND team_member_teacher.is_deleted = 0
+    </select>
+    <select id="getCountAndTeachers" resultType="java.util.Map">
+        SELECT
+            COUNT(team_member_teacher.teacher) AS teamNumbers,
+            (SELECT GROUP_CONCAT(CONCAT(user_info.id, ':', user_info.`name`))
+             FROM user_info
+                      INNER JOIN team_member_teacher ON user_info.id = team_member_teacher.teacher
+             WHERE team_member_teacher.team = team_info.id AND team_member_teacher.is_deleted = 0) AS teamMembersNameWithIds
+        FROM
+            team_info
+                LEFT JOIN
+            team_member_teacher ON team_info.id = team_member_teacher.team
+        WHERE
+            team_info.id = #{id} AND team_member_teacher.is_deleted = 0
+    </select>
+
+
 
     <select id="selectTeamMyInstruct" resultType="com.buis.domain.TeamMemberTeacher">
         <include refid="selectTeamMemberTeacherVo"/>
-        where teacher = #{id}  and is_deleted = 0
+        where t1.teacher = #{id}  and t1.is_deleted = 0
     </select>
 
-    <insert id="insertTeamMemberTeacher" parameterType="TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
+    <select id="getTeachersByRaceId" resultType="java.lang.Long">
+        select distinct teacher from team_member_teacher where race = #{id} and is_deleted = 0
+    </select>
+
+    <insert id="insertTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into team_member_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
@@ -71,7 +110,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateTeamMemberTeacher" parameterType="TeamMemberTeacher">
+    <update id="updateTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher">
         update team_member_teacher
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>
@@ -87,6 +126,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+
     <delete id="deleteTeamMemberTeacherById" parameterType="Long">
         update team_member_teacher
         set is_deleted = 1
@@ -101,4 +141,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    <select id="getGuideCount" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM team_member_teacher
+        WHERE teacher = #{id} AND is_deleted = 0
+    </select>
+    <select id="getJoinCountByTeamId" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM team_member_teacher
+        WHERE team = #{id}
+          AND is_deleted = 0
+          AND is_choosed = 1
+    </select>
+    <select id="selectJoinTeamByTeacherId" resultType="java.lang.Long">
+        SELECT team
+        FROM team_member_teacher
+        WHERE (teacher = #{id} or decider = #{id})
+          AND is_deleted = 0
+          AND is_choosed = 1
+    </select>
+    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
+        <include refid="selectTeamMemberTeacherVo"/>
+        FROM team_info
+        WHERE t1.id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND t1.is_deleted = 0
+    </select>
+
 </mapper>

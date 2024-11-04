@@ -4,33 +4,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.PreSignStudentMapper">
     
-    <resultMap type="com.buis.domain.PreSignStudent" id="PreSignStudentResult">
+    <resultMap type="com.buis.vo.PreSignStudentVo" id="PreSignStudentResult">
         <result property="id"    column="id"    />
         <result property="student"    column="student"    />
         <result property="race"    column="race"    />
+        <result property="raceName"    column="race_name"    />
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectPreSignStudentVo">
-        select id, student, race, is_deleted, create_time, update_time from pre_sign_student
+        select t1.id, t1.student, t1.race,t2.name as race_name, t1.is_deleted, t1.create_time, t1.update_time
+        from pre_sign_student t1
+                 left join race_info t2 on t1.race = t2.id
     </sql>
 
     <select id="selectPreSignStudentList" parameterType="com.buis.domain.PreSignStudent" resultMap="PreSignStudentResult">
         <include refid="selectPreSignStudentVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="student != null "> and student = #{student}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="student != null "> and t1.student = #{student}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="updateTime != null "> and t1.update_time = #{updateTime}</if>
         </where>
     </select>
     
     <select id="selectPreSignStudentById" parameterType="Long" resultMap="PreSignStudentResult">
         <include refid="selectPreSignStudentVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
     <insert id="insertPreSignStudent" parameterType="com.buis.domain.PreSignStudent" useGeneratedKeys="true" keyProperty="id">

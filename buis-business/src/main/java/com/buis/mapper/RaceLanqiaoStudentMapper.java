@@ -64,5 +64,5 @@ public interface RaceLanqiaoStudentMapper
 
     RaceLanqiaoStudent selectRaceLanqiaoStudentByUserId(@Param("userId") Long loginId);
 
-    void deleteRaceLanqiaoStudentByUserId(@Param("userId") Long loginId);
+    int deleteRaceLanqiaoStudentByUserId(@Param("userId") Long loginId);
 }

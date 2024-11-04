@@ -3,8 +3,8 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.TeamInfoMapper">
-    
-    <resultMap type="TeamInfo" id="TeamInfoResult">
+
+    <resultMap type="com.buis.vo.TeamInfoVo" id="TeamInfoResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
         <result property="name"    column="name"    />
@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, race, name, description, leader, t_limit, capacity, start, end, r_rank, status, reason, is_deleted, create_time, update_time from team_info
     </sql>
 
-    <select id="selectTeamInfoList" parameterType="TeamInfo" resultMap="TeamInfoResult">
+    <select id="selectTeamInfoList" parameterType="com.buis.domain.TeamInfo" resultMap="TeamInfoResult">
         <include refid="selectTeamInfoVo"/>
         <where>
             is_deleted = 0
@@ -49,19 +49,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTeamInfoVo"/>
         where id = #{id} and is_deleted = 0
     </select>
-    <select id="listTeams" resultType="com.buis.domain.TeamInfo">
-        <include refid="selectTeamInfoVo"/>
-        <where>
-            is_deleted = 0
-            <if test="race != null ">and race = #{race}</if>
-            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
-            <if test="idList != null and idList != ''">and id in #{idList}</if>
-            <if test="id != null and id != ''">and id = #{id}</if>
-            <if test="leader != null and leader != ''">and leader = #{leader}</if>
-        </where>
-    </select>
 
-    <insert id="insertTeamInfo" parameterType="TeamInfo" useGeneratedKeys="true" keyProperty="id">
+
+
+    <insert id="insertTeamInfo" parameterType="com.buis.domain.TeamInfo" useGeneratedKeys="true" keyProperty="id">
         insert into team_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
@@ -97,7 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateTeamInfo" parameterType="TeamInfo">
+    <update id="updateTeamInfo" parameterType="com.buis.domain.TeamInfo">
         update team_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>
@@ -118,17 +109,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteTeamInfoById" parameterType="Long">
+    <delete id="deleteTeamInfoById" parameterType="java.lang.Long">
         update team_info
         set is_deleted = 1
         where id = #{id}
     </delete>
-
     <delete id="deleteTeamInfoByIds" parameterType="String">
         update team_info
         set is_deleted = 1
         where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="selectTeamInfoByIds" parameterType="java.lang.Long">
+        <include refid="selectTeamInfoVo"/>
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>

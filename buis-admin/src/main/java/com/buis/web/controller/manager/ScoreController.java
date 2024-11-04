@@ -26,19 +26,17 @@ import java.util.List;
 @Api(tags = "评分管理Controller")
 @RestController
 @RequestMapping("/buis/score")
-public class ScoreController extends BaseController
-{
+public class ScoreController extends BaseController {
     @Autowired
     private IScoreService scoreService;
 
-/**
- * 查询评分管理列表
- */
-@ApiOperation("查询评分管理列表")
-@PreAuthorize("@ss.hasPermi('buis:score:list')")
-@GetMapping("/list")
-    public TableDataInfo list(Score score)
-    {
+    /**
+     * 查询评分管理列表
+     */
+    @ApiOperation("查询评分管理列表")
+    @PreAuthorize("@ss.hasPermi('buis:score:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(Score score) {
         startPage();
         List<Score> list = scoreService.selectScoreList(score);
         return getDataTable(list);
@@ -51,8 +49,7 @@ public class ScoreController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:score:export')")
     @Log(title = "评分管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, Score score)
-    {
+    public void export(HttpServletResponse response, Score score) {
         List<Score> list = scoreService.selectScoreList(score);
         ExcelUtil<Score> util = new ExcelUtil<Score>(Score.class);
         util.exportExcel(response, list, "评分管理数据");
@@ -64,8 +61,7 @@ public class ScoreController extends BaseController
     @ApiOperation("获取评分管理详细信息")
     @PreAuthorize("@ss.hasPermi('buis:score:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(scoreService.selectScoreById(id));
     }
 
@@ -76,8 +72,7 @@ public class ScoreController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:score:add')")
     @Log(title = "评分管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Score score)
-    {
+    public AjaxResult add(@RequestBody Score score) {
         return toAjax(scoreService.insertScore(score));
     }
 
@@ -88,8 +83,7 @@ public class ScoreController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:score:edit')")
     @Log(title = "评分管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Score score)
-    {
+    public AjaxResult edit(@RequestBody Score score) {
         return toAjax(scoreService.updateScore(score));
     }
 
@@ -100,8 +94,7 @@ public class ScoreController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:score:remove')")
     @Log(title = "评分管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(scoreService.deleteScoreByIds(ids));
     }
 }

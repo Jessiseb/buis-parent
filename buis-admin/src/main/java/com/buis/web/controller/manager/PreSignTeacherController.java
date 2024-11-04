@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.vo.PreSignTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.PreSignTeacher;
 import com.buis.service.IPreSignTeacherService;
-import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.common.core.page.TableDataInfo;
 
 /**
  * 老师预报名Controller
@@ -33,21 +34,19 @@ import com.buis.common.core.page.TableDataInfo;
 @Api(tags = "老师预报名Controller")
 @RestController
 @RequestMapping("/buis/preTeacher")
-public class PreSignTeacherController extends BaseController
-{
+public class PreSignTeacherController extends BaseController {
     @Autowired
     private IPreSignTeacherService preSignTeacherService;
 
-/**
- * 查询老师预报名列表
- */
-@ApiOperation("查询老师预报名列表")
-@PreAuthorize("@ss.hasPermi('buis:preTeacher:list')")
-@GetMapping("/list")
-    public TableDataInfo list(PreSignTeacher preSignTeacher)
-    {
+    /**
+     * 查询老师预报名列表
+     */
+    @ApiOperation("查询老师预报名列表")
+    @PreAuthorize("@ss.hasPermi('buis:preTeacher:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(PreSignTeacher preSignTeacher) {
         startPage();
-        List<PreSignTeacher> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
+        List<PreSignTeacherVo> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
         return getDataTable(list);
     }
 
@@ -58,10 +57,9 @@ public class PreSignTeacherController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:preTeacher:export')")
     @Log(title = "老师预报名", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, PreSignTeacher preSignTeacher)
-    {
-        List<PreSignTeacher> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
-        ExcelUtil<PreSignTeacher> util = new ExcelUtil<PreSignTeacher>(PreSignTeacher.class);
+    public void export(HttpServletResponse response, PreSignTeacher preSignTeacher) {
+        List<PreSignTeacherVo> list = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
+        ExcelUtil<PreSignTeacherVo> util = new ExcelUtil<PreSignTeacherVo>(PreSignTeacherVo.class);
         util.exportExcel(response, list, "老师预报名数据");
     }
 
@@ -71,11 +69,9 @@ public class PreSignTeacherController extends BaseController
     @ApiOperation("获取老师预报名详细信息")
     @PreAuthorize("@ss.hasPermi('buis:preTeacher:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(preSignTeacherService.selectPreSignTeacherById(id));
     }
-
     /**
      * 新增老师预报名
      */
@@ -86,6 +82,7 @@ public class PreSignTeacherController extends BaseController
     public AjaxResult add(@RequestBody PreSignTeacher preSignTeacher)
     {
         return toAjax(preSignTeacherService.insertPreSignTeacher(preSignTeacher));
+
     }
 
     /**

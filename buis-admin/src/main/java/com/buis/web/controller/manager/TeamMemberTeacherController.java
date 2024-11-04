@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.vo.TeamMemberTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,11 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.service.ITeamMemberTeacherService;
-import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.common.core.page.TableDataInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 队伍老师管理Controller
@@ -33,21 +42,19 @@ import com.buis.common.core.page.TableDataInfo;
 @Api(tags = "队伍老师管理Controller")
 @RestController
 @RequestMapping("/buis/teamTeacher")
-public class TeamMemberTeacherController extends BaseController
-{
+public class TeamMemberTeacherController extends BaseController {
     @Autowired
     private ITeamMemberTeacherService teamMemberTeacherService;
 
-/**
- * 查询队伍老师管理列表
- */
-@ApiOperation("查询队伍老师管理列表")
-@PreAuthorize("@ss.hasPermi('buis:teamTeacher:list')")
-@GetMapping("/list")
-    public TableDataInfo list(TeamMemberTeacher teamMemberTeacher)
-    {
+    /**
+     * 查询队伍老师管理列表
+     */
+    @ApiOperation("查询队伍老师管理列表")
+    @PreAuthorize("@ss.hasPermi('buis:teamTeacher:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(TeamMemberTeacher teamMemberTeacher) {
         startPage();
-        List<TeamMemberTeacher> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
+        List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
         return getDataTable(list);
     }
 
@@ -58,10 +65,9 @@ public class TeamMemberTeacherController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:teamTeacher:export')")
     @Log(title = "队伍老师管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, TeamMemberTeacher teamMemberTeacher)
-    {
-        List<TeamMemberTeacher> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
-        ExcelUtil<TeamMemberTeacher> util = new ExcelUtil<TeamMemberTeacher>(TeamMemberTeacher.class);
+    public void export(HttpServletResponse response, TeamMemberTeacherVo teamMemberTeacher) {
+        List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
+        ExcelUtil<TeamMemberTeacherVo> util = new ExcelUtil<TeamMemberTeacherVo>(TeamMemberTeacherVo.class);
         util.exportExcel(response, list, "队伍老师管理数据");
     }
 
@@ -71,8 +77,7 @@ public class TeamMemberTeacherController extends BaseController
     @ApiOperation("获取队伍老师管理详细信息")
     @PreAuthorize("@ss.hasPermi('buis:teamTeacher:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(teamMemberTeacherService.selectTeamMemberTeacherById(id));
     }
 
@@ -83,8 +88,7 @@ public class TeamMemberTeacherController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:teamTeacher:add')")
     @Log(title = "队伍老师管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TeamMemberTeacher teamMemberTeacher)
-    {
+    public AjaxResult add(@RequestBody TeamMemberTeacher teamMemberTeacher) {
         return toAjax(teamMemberTeacherService.insertTeamMemberTeacher(teamMemberTeacher));
     }
 
@@ -95,8 +99,7 @@ public class TeamMemberTeacherController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:teamTeacher:edit')")
     @Log(title = "队伍老师管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody TeamMemberTeacher teamMemberTeacher)
-    {
+    public AjaxResult edit(@RequestBody TeamMemberTeacher teamMemberTeacher) {
         return toAjax(teamMemberTeacherService.updateTeamMemberTeacher(teamMemberTeacher));
     }
 
@@ -107,8 +110,7 @@ public class TeamMemberTeacherController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:teamTeacher:remove')")
     @Log(title = "队伍老师管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(teamMemberTeacherService.deleteTeamMemberTeacherByIds(ids));
     }
 }

@@ -2,7 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.TeamInfo;
-import com.buis.dto.TeamQueryDTO;
+import com.buis.vo.TeamInfoVo;
 
 /**
  * 队伍信息Service接口
@@ -18,7 +18,14 @@ public interface ITeamInfoService
      * @param id 队伍信息主键
      * @return 队伍信息
      */
-    public TeamInfo selectTeamInfoById(Long id);
+    public TeamInfoVo selectTeamInfoById(Long id);
+    /**
+     * 根据队伍ids查询队伍信息
+     *
+     * @param ids 队伍信息主键数组
+     * @return 队伍信息
+     */
+    public List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
 
     /**
      * 查询队伍信息列表
@@ -26,7 +33,7 @@ public interface ITeamInfoService
      * @param teamInfo 队伍信息
      * @return 队伍信息集合
      */
-    public List<TeamInfo> selectTeamInfoList(TeamInfo teamInfo);
+    public List<TeamInfoVo> selectTeamInfoList(TeamInfo teamInfo);
 
     /**
      * 新增队伍信息
@@ -60,5 +67,5 @@ public interface ITeamInfoService
      */
     public int deleteTeamInfoById(Long id);
 
-    List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO);
+
 }
