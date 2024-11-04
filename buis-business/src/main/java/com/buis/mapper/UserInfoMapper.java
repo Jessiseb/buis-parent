@@ -60,15 +60,19 @@ public interface UserInfoMapper
      */
     public int deleteUserInfoByIds(Long[] ids);
 
-    /**
-     *  用户注册
-     * @param member 用户信息
-     * @return 结果
-     */
-    public int register(UserInfo member);
 
     int selectCount(String email);
 
-    UserInfo getLoginInfoByUserId(Long id);
+    public UserInfo getLoginInfoByUserId(Long id);
 
+    public UserInfo selectUserInfoByEmail(String email);
+
+    List<UserInfo> listTeachersByIds(@Param("ids") List<Integer> ids);
+    /**
+     * 根据用户ID列表查询用户信息
+     *
+     * @param ids 用户信息主键列表
+     * @return 用户信息列表
+     */
+    List<UserInfo> selectUserInfoByIds(List<Long> ids);
 }

@@ -1,5 +1,7 @@
 package com.buis.vo;
 
+import com.buis.domain.PreSignStudent;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,44 +11,19 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class PreSignStudentVo implements Serializable {
-    private static final long serialVersionUID = 1L;
-    /**
-     * id
-     */
-    private Long id;
+public class PreSignStudentVo extends PreSignStudent {
 
     /**
-     * 学生
+     * 学生信息
      */
-    private Long student;
+    @ApiModelProperty(value = "学生信息")
+    private UserInfoVo studentInfo;
 
-    /**
-     * 学生姓名
-     */
-    private String studentName;
-
-    /**
-     * 比赛
-     */
-    private Long race;
 
     /**
      * 比赛名称
      */
+    @ApiModelProperty(value = "所属比赛的名称")
     private String raceName;
-
-    /**
-     * 预报名时间
-     */
-    private Date preTime;
-
-    /**
-     * 标识是否被删除，0表示未删除
-     */
-    private Integer isDeleted;
 
 }

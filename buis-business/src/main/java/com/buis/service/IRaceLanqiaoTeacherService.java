@@ -61,5 +61,5 @@ public interface IRaceLanqiaoTeacherService
 
     RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserId(Long loginId);
 
-    void deleteRaceLanqiaoTeacherByUserId(Long loginId);
+    int deleteRaceLanqiaoTeacherByUserId(Long loginId);
 }

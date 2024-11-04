@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.PreSignTeacher;
+import com.buis.vo.PreSignTeacherVo;
 
 /**
  * 老师预报名Service接口
@@ -17,7 +18,7 @@ public interface IPreSignTeacherService
      * @param id 老师预报名主键
      * @return 老师预报名
      */
-    public PreSignTeacher selectPreSignTeacherById(Long id);
+    public PreSignTeacherVo selectPreSignTeacherById(Long id);
 
     /**
      * 查询老师预报名列表
@@ -25,7 +26,7 @@ public interface IPreSignTeacherService
      * @param preSignTeacher 老师预报名
      * @return 老师预报名集合
      */
-    public List<PreSignTeacher> selectPreSignTeacherList(PreSignTeacher preSignTeacher);
+    public List<PreSignTeacherVo> selectPreSignTeacherList(PreSignTeacher preSignTeacher);
 
     /**
      * 新增老师预报名
@@ -58,4 +59,6 @@ public interface IPreSignTeacherService
      * @return 结果
      */
     public int deletePreSignTeacherById(Long id);
+
+
 }

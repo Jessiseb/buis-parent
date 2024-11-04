@@ -26,6 +26,7 @@ public class TeamInfo extends BaseEntity {
     /**
      * id
      */
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**

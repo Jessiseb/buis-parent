@@ -1,5 +1,8 @@
 package com.buis.vo;
 
+import com.buis.common.core.domain.BaseEntity;
+import com.buis.domain.UserInfo;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,78 +17,24 @@ import java.io.Serializable;
  * @date 2024-10-11
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class UserInfoVo implements Serializable {
-    private static final long serialVersionUID = 1L;
-    /**
-     * id
-     */
-    private Long id;
+public class UserInfoVo extends UserInfo {
 
     /**
-     * 学号或工号
+     * 学院名称
      */
-    private String number;
+    @ApiModelProperty(value = "学院的名称")
+    private String collegeName;
 
     /**
-     * 邮箱
+     * 专业名称
      */
-    private String email;
-
-    /**
-     * 手机号
-     */
-    private String phone;
-
-    /**
-     * 姓名
-     */
-    private String name;
-
-    /**
-     * 个人简介
-     */
-    private String description;
-
-    /**
-     * 用户性别
-     */
-    private Long sex;
-
-    /**
-     * 学院
-     */
-    private Long college;
-
-    /**
-     * 专业
-     */
-    private Long major;
-
-    /**
-     * 老师职称
-     */
-    private Long title;
-
-    /**
-     * 禁用状态
-     */
-    private Long isDisabled;
-
-    /**
-     * 标识是否被删除，0表示未删除
-     */
-    private Integer isDeleted;
-
-    /**
-     * 是否为老师
-     */
-    private Boolean isTeacher;
+    @ApiModelProperty(value = "专业的名称")
+    private String majorName;
 
     /**
      * 指导队伍数
      */
-    private Long teamNum;
+    @ApiModelProperty(value = "老师指导的队伍数量-仅老师有此字段")
+    private Long teamNum = 0L;
+
 }

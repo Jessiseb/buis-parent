@@ -1,15 +1,21 @@
 package com.buis.service.impl;
 
-import java.util.List;
+import java.util.*;
+
+import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.TeamMemberTeacher;
-import com.buis.dto.TeamQueryDTO;
-import com.buis.mapper.TeamMemberTeacherMapper;
+import com.buis.service.ITeamMemberStudentService;
+import com.buis.service.ITeamMemberTeacherService;
+import com.buis.service.IUserInfoService;
+import com.buis.vo.TeamInfoVo;
+import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.domain.TeamInfo;
 import com.buis.service.ITeamInfoService;
+
+import javax.annotation.Resource;
 
 /**
  * 队伍信息Service业务层处理
@@ -18,35 +24,18 @@ import com.buis.service.ITeamInfoService;
  * @date 2024-10-11
  */
 @Service
-public class TeamInfoServiceImpl implements ITeamInfoService 
+public class TeamInfoServiceImpl implements ITeamInfoService
 {
     @Autowired
     private TeamInfoMapper teamInfoMapper;
 
+    @Autowired
+    private IUserInfoService userInfoService;
+    @Autowired
+    private ITeamMemberStudentService teamStudentService;
+    @Autowired
+    private ITeamMemberTeacherService teamTeacherService;
 
-    /**
-     * 查询队伍信息
-     * 
-     * @param id 队伍信息主键
-     * @return 队伍信息
-     */
-    @Override
-    public TeamInfo selectTeamInfoById(Long id)
-    {
-        return teamInfoMapper.selectTeamInfoById(id);
-    }
-
-    /**
-     * 查询队伍信息列表
-     * 
-     * @param teamInfo 队伍信息
-     * @return 队伍信息
-     */
-    @Override
-    public List<TeamInfo> selectTeamInfoList(TeamInfo teamInfo)
-    {
-        return teamInfoMapper.selectTeamInfoList(teamInfo);
-    }
 
     /**
      * 新增队伍信息
@@ -98,9 +87,67 @@ public class TeamInfoServiceImpl implements ITeamInfoService
         return teamInfoMapper.deleteTeamInfoById(id);
     }
 
+
+    /**
+     * 查询队伍信息列表 Vo
+     * @param teamInfo
+     * @return
+     */
     @Override
-    public List<TeamInfo> listTeams(TeamQueryDTO teamQueryDTO) {
-        return teamInfoMapper.listTeams(teamQueryDTO);
+    public List<TeamInfoVo> selectTeamInfoList(TeamInfo teamInfo) {
+        List<TeamInfoVo> results = new ArrayList<>();
+        List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoList(teamInfo);
+        if (teamInfoList == null || teamInfoList.isEmpty()) {
+            return results; // 返回空列表
+        }
+        for (TeamInfo team : teamInfoList) {
+            results.add(createTeamInfoVo(team));
+        }
+        return results;
     }
 
+    /**
+     * 查询队伍信息
+     *
+     * @param id 队伍信息主键
+     * @return 队伍信息
+     */
+    @Override
+    public TeamInfoVo selectTeamInfoById(Long id) {
+        TeamInfo team = teamInfoMapper.selectTeamInfoById(id);
+        return team != null ? createTeamInfoVo(team) : new TeamInfoVo();
+    }
+
+    /**
+     * 创建 TeamInfoVo 对象
+     *
+     * @param team 队伍信息
+     * @return TeamInfoVo
+     */
+    private TeamInfoVo createTeamInfoVo(TeamInfo team) {
+        TeamInfoVo teamInfoVo = new TeamInfoVo();
+        BeanUtil.copyProperties(team, teamInfoVo);
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(team.getLeader());
+        Long studentCount = teamStudentService.getJoinCountByTeamId(team.getId());
+        Long teacherCount = teamTeacherService.getJoinCountByTeamId(team.getId());
+        if (userInfoVo!=null) { // 判断队长是学生还是老师，算上人数
+            if (userInfoVo.getTitle()!=null){
+                teacherCount++;
+            }else {
+                studentCount++;
+            }
+        }
+        // 获取队长信息
+        teamInfoVo.setLeaderInfo(userInfoVo);
+        // 获取学生人数
+        teamInfoVo.setStudentCount(studentCount);
+        // 获取老师人数
+        teamInfoVo.setTeacherCount(teacherCount);
+        return teamInfoVo;
+    }
+
+    @Override
+    public List<TeamInfoVo> selectTeamInfoByIds(Long[] ids) {
+        return teamInfoMapper.selectTeamInfoByIds(ids);
+    }
 }

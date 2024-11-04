@@ -4,10 +4,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.UserInfoMapper">
     
-    <resultMap type="com.buis.domain.UserInfo" id="UserInfoResult">
+    <resultMap type="com.buis.vo.UserInfoVo" id="UserInfoResult">
         <result property="id"    column="id"    />
         <result property="number"    column="number"    />
-        <result property="password"    column="password"    />
         <result property="email"    column="email"    />
         <result property="phone"    column="phone"    />
         <result property="name"    column="name"    />
@@ -15,6 +14,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sex"    column="sex"    />
         <result property="college"    column="college"    />
         <result property="major"    column="major"    />
+        <result property="collegeName"    column="college_name"    />
+        <result property="majorName"    column="major_name"    />
         <result property="title"    column="title"    />
         <result property="isDisabled"    column="is_disabled"    />
         <result property="isDeleted"    column="is_deleted"    />
@@ -23,40 +24,70 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectUserInfoVo">
-        select id, number, password, email, phone, name, description, sex, college, major, title, is_disabled, is_deleted, create_time, update_time from user_info
+        select t1.id, t1.number, t1.password, t1.email, t1.phone, t1.name, t1.description, t1.sex, t1.college,t2.name AS major_name,t3.name AS college_name, t1.title, t1.is_disabled, t1.is_deleted, t1.create_time, t1.update_time
+        from user_info t1
+        LEFT JOIN
+        t_college_major t2 ON t1.major = t2.id
+        LEFT JOIN
+             t_college_major t3 ON t1.college = t3.id
     </sql>
 
     <select id="selectUserInfoList" parameterType="com.buis.domain.UserInfo" resultMap="UserInfoResult">
         <include refid="selectUserInfoVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="number != null  and number != ''"> and number = #{number}</if>
-            <if test="password != null  and password != ''"> and password = #{password}</if>
-            <if test="email != null  and email != ''"> and email = #{email}</if>
-            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
-            <if test="sex != null "> and sex = #{sex}</if>
-            <if test="college != null "> and college = #{college}</if>
-            <if test="major != null ">and major = #{major}</if>
-            <if test="title != null ">and title = #{title}</if>
-            <if test="isDisabled != null ">and is_disabled = #{isDisabled}</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="number != null  and number != ''"> and t1.number = #{number}</if>
+            <if test="password != null  and password != ''"> and t1.password = #{password}</if>
+            <if test="email != null  and email != ''"> and t1.email = #{email}</if>
+            <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
+            <if test="name != null  and name != ''"> and t1.name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and t1.description like concat('%', #{description}, '%')</if>
+            <if test="sex != null "> and t1.sex = #{sex}</if>
+            <if test="college != null "> and t1.college = #{college}</if>
+            <if test="major != null ">and t1.major = #{major}</if>
+            <if test="title != null ">and t1.title = #{title}</if>
+            <if test="isDisabled != null ">and t1.is_disabled = #{isDisabled}</if>
         </where>
     </select>
 
     <select id="selectUserInfoById" parameterType="Long" resultMap="UserInfoResult">
         <include refid="selectUserInfoVo"/>
-        where id = #{id} and is_deleted = 0
+        where t1.id = #{id} and t1.is_deleted = 0
     </select>
     <select id="selectCount" resultType="java.lang.Integer">
-        select count(1) from user_info
-        where email = #{email} and is_deleted = 0
+        select count(1)
+        from user_info
+        where email = #{email}
+          and is_deleted = 0
     </select>
     <select id="getLoginInfoByUserId" resultType="com.buis.domain.UserInfo">
-        select email,password from user_info where id = #{id}
+        select email, password
+        from user_info
+        where id = #{id} and is_deleted = 0
     </select>
 
+    <select id="selectUserInfoByEmail" resultType="com.buis.domain.UserInfo">
+        <include refid="selectUserInfoVo"/>
+        where t1.email = #{email} and t1.is_deleted = 0
+    </select>
+
+    <select id="listTeachersByIds" resultType="com.buis.domain.UserInfo">
+        <include refid="selectUserInfoVo"/>
+        where t1.is_deleted = 0 and t1.id in
+        <foreach item="ids" collection="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </select>
+    <select id="selectUserInfoByIds" parameterType="java.util.List" resultType="com.buis.domain.UserInfo">
+        SELECT *
+        FROM user_info
+        WHERE id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND is_deleted = 0
+    </select>
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -92,41 +123,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
-    <insert id="register" parameterType="UserInfo" useGeneratedKeys="true" keyProperty="id">
-        insert into user_info
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="number != null and number != ''">number,</if>
-            <if test="password != null and password != ''">password,</if>
-            <if test="email != null and email != ''">email,</if>
-            <if test="phone != null and phone != ''">phone,</if>
-            <if test="name != null and name != ''">name,</if>
-            <if test="description != null and description != ''">description,</if>
-            <if test="sex != null">sex,</if>
-            <if test="college != null">college,</if>
-            <if test="major != null">major,</if>
-            <if test="title != null">title,</if>
-            <if test="isDisabled != null">is_disabled,</if>
-            <if test="isDeleted != null">is_deleted,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="number != null and number != ''">#{number},</if>
-            <if test="password != null and password != ''">#{password},</if>
-            <if test="email != null and email != ''">#{email},</if>
-            <if test="phone != null and phone != ''">#{phone},</if>
-            <if test="name != null and name != ''">#{name},</if>
-            <if test="description != null and description != ''">#{description},</if>
-            <if test="sex != null">#{sex},</if>
-            <if test="college != null">#{college},</if>
-            <if test="major != null">#{major},</if>
-            <if test="title != null">#{title},</if>
-            <if test="isDisabled != null">#{isDisabled},</if>
-            <if test="isDeleted != null">#{isDeleted},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-        </trim>
-    </insert>
+
 
     <update id="updateUserInfo" parameterType="com.buis.domain.UserInfo">
         update user_info
@@ -151,17 +148,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
 
-    <delete id="deleteUserInfoById" parameterType="Long">
+    <delete id="deleteUserInfoById" parameterType="java.lang.Long">
         update user_info
         set is_deleted = 1
         where id = #{id}
     </delete>
 
-    <delete id="deleteUserInfoByIds" parameterType="String">
+    <delete id="deleteUserInfoByIds" parameterType="java.lang.Long">
         update user_info
         set is_deleted = 1
         where id in
-        <foreach item="id" collection="array" open="(" separator="," close=")">
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>

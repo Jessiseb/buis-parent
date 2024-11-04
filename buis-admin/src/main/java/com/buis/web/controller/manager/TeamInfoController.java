@@ -8,6 +8,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.TeamInfo;
 import com.buis.service.ITeamInfoService;
+import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,9 @@ public class TeamInfoController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(TeamInfo teamInfo) {
         startPage();
-        List<TeamInfo> list = teamInfoService.selectTeamInfoList(teamInfo);
+        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return getDataTable(list);
     }
-
 
     /**
      * 导出队伍信息列表
@@ -51,8 +51,8 @@ public class TeamInfoController extends BaseController {
     @Log(title = "队伍信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, TeamInfo teamInfo) {
-        List<TeamInfo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        ExcelUtil<TeamInfo> util = new ExcelUtil<TeamInfo>(TeamInfo.class);
+        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
+        ExcelUtil<TeamInfoVo> util = new ExcelUtil<TeamInfoVo>(TeamInfoVo.class);
         util.exportExcel(response, list, "队伍信息数据");
     }
 
@@ -62,8 +62,7 @@ public class TeamInfoController extends BaseController {
     @ApiOperation("获取队伍信息详细信息")
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(teamInfoService.selectTeamInfoById(id));
     }
 
@@ -74,8 +73,7 @@ public class TeamInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:add')")
     @Log(title = "队伍信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TeamInfo teamInfo)
-    {
+    public AjaxResult add(@RequestBody TeamInfo teamInfo) {
         return toAjax(teamInfoService.insertTeamInfo(teamInfo));
     }
 
@@ -86,8 +84,7 @@ public class TeamInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:edit')")
     @Log(title = "队伍信息", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody TeamInfo teamInfo)
-    {
+    public AjaxResult edit(@RequestBody TeamInfo teamInfo) {
         return toAjax(teamInfoService.updateTeamInfo(teamInfo));
     }
 
@@ -98,8 +95,7 @@ public class TeamInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:remove')")
     @Log(title = "队伍信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(teamInfoService.deleteTeamInfoByIds(ids));
     }
 }

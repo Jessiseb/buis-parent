@@ -4,10 +4,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.PreSignTeacherMapper">
     
-    <resultMap type="PreSignTeacher" id="PreSignTeacherResult">
+    <resultMap type="com.buis.vo.PreSignTeacherVo" id="PreSignTeacherResult">
         <result property="id"    column="id"    />
         <result property="teacher"    column="teacher"    />
         <result property="race"    column="race"    />
+        <result property="raceName"    column="race_name"    />
         <result property="fileUrl"    column="file_url"    />
         <result property="status"    column="status"    />
         <result property="reason"    column="reason"    />
@@ -17,28 +18,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectPreSignTeacherVo">
-        select id, teacher, race, file_url, status, reason, is_deleted, create_time, update_time from pre_sign_teacher
+        select t1.id, t1.teacher,t1.race,t2.name as race_name, t1.file_url, t1.status, t1.reason, t1.is_deleted, t1.create_time, t1.update_time
+        from pre_sign_teacher t1
+                 left join race_info t2 on t1.race = t2.id
     </sql>
 
-    <select id="selectPreSignTeacherList" parameterType="PreSignTeacher" resultMap="PreSignTeacherResult">
+    <select id="selectPreSignTeacherList" parameterType="com.buis.domain.PreSignTeacher" resultMap="PreSignTeacherResult">
         <include refid="selectPreSignTeacherVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="teacher != null "> and teacher = #{teacher}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="fileUrl != null  and fileUrl != ''"> and file_url like concat('%', #{fileUrl}, '%')</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="reason != null  and reason != ''"> and reason like concat('%', #{reason}, '%')</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="teacher != null "> and t1.teacher = #{teacher}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="fileUrl != null  and fileUrl != ''"> and t1.file_url like concat('%', #{fileUrl}, '%')</if>
+            <if test="status != null "> and t1.status = #{status}</if>
+            <if test="reason != null  and reason != ''"> and t1.reason like concat('%', #{reason}, '%')</if>
         </where>
     </select>
     
     <select id="selectPreSignTeacherById" parameterType="Long" resultMap="PreSignTeacherResult">
         <include refid="selectPreSignTeacherVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
-    <insert id="insertPreSignTeacher" parameterType="PreSignTeacher" useGeneratedKeys="true" keyProperty="id">
+
+    <insert id="insertPreSignTeacher" parameterType="com.buis.domain.PreSignTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into pre_sign_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="teacher != null">teacher,</if>
@@ -62,7 +66,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updatePreSignTeacher" parameterType="PreSignTeacher">
+
+    <update id="updatePreSignTeacher" parameterType="com.buis.domain.PreSignTeacher">
         update pre_sign_teacher
         <trim prefix="SET" suffixOverrides=",">
             <if test="teacher != null">teacher = #{teacher},</if>
