@@ -8,6 +8,7 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
+import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.service.IUserInfoService;
@@ -74,4 +75,18 @@ public class UserInfoApiController extends BaseController {
         Long userId = SecurityUtils.getFrontLoginUserId();
         return R.ok(userInfoService.selectUserInfoById(userId));
     }
+
+    /**
+     * 编辑用户信息
+     * @return
+     */
+    @ApiOperation("编辑用户信息")
+    @PostMapping("/updateUsInfo")
+    public R updateUsInfo(@RequestBody UserInfo userInfo){
+        return R.ok(userInfoService.updateUserInfo(userInfo));
+    }
+
+
+
+
 }
