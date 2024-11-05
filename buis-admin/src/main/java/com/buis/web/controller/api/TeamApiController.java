@@ -1,6 +1,7 @@
 package com.buis.web.controller.api;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
@@ -9,6 +10,7 @@ import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
+import com.buis.dto.TeamMemberSelectDto;
 import com.buis.dto.TeamQueryDto;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
@@ -18,10 +20,7 @@ import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +41,40 @@ public class TeamApiController extends BaseController{
     private IUserInfoService userInfoService;
     @Autowired
     private TeamInfoServiceImpl teamInfoService;
+
+    @ApiOperation("学生与老师建立互选邀请")
+    @PostMapping("/mutualSelection")
+    public R mutualSelection(@RequestBody TeamMemberSelectDto teamMemberSelectDto){
+        //获取当前登录用户
+        UserInfo loginUser = userInfoService.getLoginUser();
+        Long loginUserId = loginUser.getId();
+        if (loginUser.getTitle() != null && loginUser != null){
+            //老师选学生
+            TeamMemberStudent teamMemberStudent = new TeamMemberStudent();
+            //将dto的比赛、队伍id和选择原因拷贝到TeamMemberTeacher
+            BeanUtil.copyProperties(teamMemberSelectDto, teamMemberStudent);
+            teamMemberStudent.setDecider(loginUserId);
+            //设置互选状态，默认为0，待选
+            teamMemberStudent.setIsChoosed(0L);
+            //写入被邀请人的id
+            teamMemberStudent.setStudent(teamMemberSelectDto.getInviteeId());
+            int result = teamMemberStudentService.insertTeamMemberStudent(teamMemberStudent);
+            return result==1?R.ok("新增互选成功") : R.fail("新增互选失败");
+        }else {
+            //学生选老师
+            TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
+            //将dto的比赛、队伍id和选择原因拷贝到TeamMemberTeacher
+            BeanUtil.copyProperties(teamMemberSelectDto, teamMemberTeacher);
+            teamMemberTeacher.setDecider(loginUserId);
+            //设置互选状态，默认为0，待选
+            teamMemberTeacher.setIsChoosed(0L);
+            //写入被邀请人的id
+            teamMemberTeacher.setTeacher(teamMemberSelectDto.getInviteeId());
+            int result = teamMemberTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
+            return result==1?R.ok("新增互选成功") : R.fail("新增互选失败");
+        }
+    }
+
 
     @ApiOperation("查询队伍成员学生列表")
     @GetMapping("/listMember/student/{race}/{team}")
