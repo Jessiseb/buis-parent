@@ -83,7 +83,9 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("新增蓝桥杯老师报名信息")
     @PostMapping("/teacher/{race}")
-    public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true) @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
+    public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race,
+                 @ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true)
+                 @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoTeacher.setUserId(userId);
         raceLanqiaoTeacher.setRaceId(race);
