@@ -6,7 +6,6 @@ import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.util.SaResult;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,19 +30,17 @@ public class SaTokenConfig {
 //                    System.out.println("---------- 进入Sa-Token全局认证 -----------");
                     // 登录认证 -- 拦截所有路由，并排除/api/user/login,/api/user/register和发邮箱验证码用于开放登录
                     SaRouter.match("/api/**")
-                            .notMatch("/api/user/login","/api/user/register","/api/email/sendEmail/{email}")
+                            .notMatch("/api/user/login", "/api/user/register", "/api/email/sendEmail/{email}")
                             .notMatch("/*.html")
                             .notMatch("/api/user/getToken")
                             .notMatch("/**/doc.html")
                             .check(r -> StpUtil.checkLogin());
-
                 })
-
                 // 异常处理函数：每次认证函数发生异常时执行此函数
-                .setError(e -> {
+//                .setError(e -> {
 //                    System.out.println("---------- 进入Sa-Token异常处理 -----------");
-                    return SaResult.error(e.getMessage());
-                })
+//                })
+
 
                 // 前置函数：在每次认证函数之前执行（BeforeAuth 不受 includeList 与 excludeList 的限制，所有请求都会进入）
                 .setBeforeAuth(r -> {

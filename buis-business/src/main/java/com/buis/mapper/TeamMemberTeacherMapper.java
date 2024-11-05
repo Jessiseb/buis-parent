@@ -2,9 +2,11 @@ package com.buis.mapper;
 
 import java.util.List;
 import java.util.Map;
-
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.vo.TeamMemberTeacherVo;
 import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * 队伍老师管理Mapper接口
@@ -20,7 +22,7 @@ public interface TeamMemberTeacherMapper
      * @param id 队伍老师管理主键
      * @return 队伍老师管理
      */
-    public TeamMemberTeacher selectTeamMemberTeacherById(Long id);
+    public TeamMemberTeacherVo selectTeamMemberTeacherById(Long id);
 
     /**
      * 查询队伍老师管理列表
@@ -28,7 +30,7 @@ public interface TeamMemberTeacherMapper
      * @param teamMemberTeacher 队伍老师管理
      * @return 队伍老师管理集合
      */
-    public List<TeamMemberTeacher> selectTeamMemberTeacherList(TeamMemberTeacher teamMemberTeacher);
+    public List<TeamMemberTeacherVo> selectTeamMemberTeacherList(TeamMemberTeacher teamMemberTeacher);
 
     /**
      * 新增队伍老师管理
@@ -62,15 +64,32 @@ public interface TeamMemberTeacherMapper
      */
     public int deleteTeamMemberTeacherByIds(Long[] ids);
 
-    int getCount(Long id);
-/* @MapKey("id")
-    Map<Long, Map<String, Object>> getCountAndTeachers(Long id);*/
-
+    Long getCount(Long id);
 
     Map<String, Object> getCountAndTeachers(Long id);
 
     List<TeamMemberTeacher> selectTeamMyInstruct(Long id);
 
     List<Integer> listTeacherIdByRaceId(Long id);
+    /**
+     * 查询老师指导数量
+     * @param id 老师id
+     * @return 数量
+     */
+    Long getGuideCount(Long id);
+    /**
+     * 根据teamId获取结对的个数，查老师个数
+     * @param id teamId
+     * @return
+     */
+    Long getJoinCountByTeamId(Long id);
+    /**
+     * 根据比赛id获取指导老师列表
+     *
+     * @param raceId
+     * @return
+     */
+    List<Long> getTeachersByRaceId(Long raceId);
 
+    Long[] selectJoinTeamByTeacherId(Long userId);
 }

@@ -45,12 +45,6 @@ public class PreSignStudent extends BaseEntity {
     private Long race;
 
     /**
-     * 预报名时间
-     */
-    @ApiModelProperty(value = "预报名时间")
-    private Date updateTime;
-
-    /**
      * 标识是否被删除，0表示未删除
      */
     @ApiModelProperty(value = "标识是否被删除，0表示未删除")

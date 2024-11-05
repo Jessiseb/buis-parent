@@ -4,7 +4,6 @@ import java.util.List;
 
 
 import com.buis.domain.TeamInfo;
-import com.buis.dto.TeamQueryDto;
 import com.buis.vo.TeamInfoVo;
 
 /**
@@ -64,10 +63,10 @@ public interface TeamInfoMapper
     public int deleteTeamInfoByIds(Long[] ids);
 
 
-
-    List<TeamInfoVo> selectTeamInfoVo(TeamInfo teamInfo);
-
-    TeamInfoVo selectTeamInfoVoById(Long id);
-
-    List<TeamInfo> listTeams(TeamQueryDto teamQueryDTO);
+    /**
+     * 根据ids获取队伍列表
+     * @param ids
+     * @return
+     */
+    List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
 }

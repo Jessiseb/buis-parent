@@ -1,7 +1,11 @@
 package com.buis.service.impl;
 
 import java.util.List;
+
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.RaceLanqiaoStudent;
+import com.buis.service.IRaceLanqiaoStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoTeacherMapper;
@@ -19,7 +23,8 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
 {
     @Autowired
     private RaceLanqiaoTeacherMapper raceLanqiaoTeacherMapper;
-
+    @Autowired
+    private IRaceLanqiaoStudentService lanqiaoStudentService;
     /**
      * 查询蓝桥杯老师报名信息
      * 
@@ -53,6 +58,10 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
     @Override
     public int insertRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher)
     {
+        RaceLanqiaoStudent raceLanqiaoStudent = lanqiaoStudentService.selectRaceLanqiaoStudentByUserId(raceLanqiaoTeacher.getUserId());
+        if (raceLanqiaoStudent!=null) {
+            throw new ServiceException("已提交过学生报名表，请取消后再次提交");
+        }
         raceLanqiaoTeacher.setCreateTime(DateUtils.getNowDate());
         return raceLanqiaoTeacherMapper.insertRaceLanqiaoTeacher(raceLanqiaoTeacher);
     }
@@ -92,5 +101,16 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
     public int deleteRaceLanqiaoTeacherById(Long id)
     {
         return raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherById(id);
+    }
+
+    @Override
+    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserId(Long loginId) {
+        RaceLanqiaoTeacher raceLanqiaoTeacher = raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherByUserId(loginId);
+        return raceLanqiaoTeacher;
+    }
+
+    @Override
+    public int deleteRaceLanqiaoTeacherByUserId(Long loginId) {
+        return raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherByUserId(loginId);
     }
 }

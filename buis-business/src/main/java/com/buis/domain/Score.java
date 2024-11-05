@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,41 +26,48 @@ public class Score extends BaseEntity {
      * id
      */
     @Excel(name = "id")
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**
      * 比赛
      */
     @Excel(name = "比赛")
+    @ApiModelProperty(value = "比赛id")
     private Long race;
 
     /**
      * 评委
      */
     @Excel(name = "评委")
+    @ApiModelProperty(value = "评委")
     private Long teacher;
 
     /**
      * 队伍
      */
     @Excel(name = "队伍")
+    @ApiModelProperty(value = "队伍")
     private Long team;
 
     /**
      * 分数构成
      */
     @Excel(name = "分数构成")
+    @ApiModelProperty(value = "分数构成")
     private String build;
 
     /**
      * 最终分数
      */
     @Excel(name = "最终分数")
+    @ApiModelProperty(value = "最终分数")
     private BigDecimal score;
 
     /**
      * 标识是否被删除，0表示未删除
      */
+    @ApiModelProperty(value = "是否被删除")
     private Integer isDeleted;
 
 

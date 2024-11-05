@@ -32,11 +32,6 @@ public class SwaggerConfig {
     @Value("${swagger.enabled}")
     private boolean enabled;
 
-    /**
-     * 设置请求的统一前缀
-     */
-    @Value("${swagger.pathMapping}")
-    private String pathMapping;
 
     /**
      * 创建API
@@ -44,31 +39,39 @@ public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.OAS_30)
-                // 是否启用Swagger
                 .enable(enabled)
-                // 用来创建该API的基本信息，展示在文档的页面中（自定义展示的信息）
+                .groupName("2. 后台管理系统") // Group name for management system APIs
                 .apiInfo(apiInfo())
-                // 设置哪些接口暴露给Swagger展示
                 .select()
-                // 扫描所有有注解的api，用这种方式更灵活
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                // 扫描指定包中的swagger注解
-                // .apis(RequestHandlerSelectors.basePackage("com.buis.project.tool.swagger"))
-                // 扫描所有 .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
+                // Management System APIs
+                .apis(RequestHandlerSelectors.basePackage("com.buis.web.controller.manager"))
+                .paths(PathSelectors.any()) // Adjusted for management paths
                 .build()
-                /* 设置安全模式，swagger可以设置访问token */
                 .securitySchemes(securitySchemes())
                 .securityContexts(securityContexts())
-                .pathMapping(pathMapping);
+                .useDefaultResponseMessages(false);
+    }
+
+    @Bean
+    public Docket createFrontendApi() {
+        return new Docket(DocumentationType.OAS_30)
+                .enable(enabled)
+                .groupName("1. 前台API") // Group name for frontend APIs
+                .apiInfo(apiInfo())
+                .select()
+                // Frontend APIs, excluding '/buis' prefix
+                .apis(RequestHandlerSelectors.basePackage("com.buis.web.controller.api"))
+                .paths(PathSelectors.any()) // Adjusted for management paths
+                .build()
+                .securitySchemes(securitySchemes())
+                .securityContexts(securityContexts());
     }
 
     /**
      * 安全模式，这里指定token通过Authorization头请求头传递
      */
-    private List<SecurityScheme> securitySchemes()
-    {
-        List<SecurityScheme> apiKeyList = new ArrayList<SecurityScheme>();
+    private List<SecurityScheme> securitySchemes() {
+        List<SecurityScheme> apiKeyList = new ArrayList<>();
         apiKeyList.add(new ApiKey("Authorization", "Authorization", In.HEADER.toValue()));
         return apiKeyList;
     }
@@ -78,11 +81,10 @@ public class SwaggerConfig {
      */
     private List<SecurityContext> securityContexts() {
         List<SecurityContext> securityContexts = new ArrayList<>();
-        securityContexts.add(
-                SecurityContext.builder()
-                        .securityReferences(defaultAuth())
-                        .operationSelector(o -> o.requestMappingPattern().matches("/.*"))
-                        .build());
+        securityContexts.add(SecurityContext.builder()
+                .securityReferences(defaultAuth())
+                .operationSelector(o -> o.requestMappingPattern().matches("/.*"))
+                .build());
         return securityContexts;
     }
 
@@ -101,9 +103,7 @@ public class SwaggerConfig {
     /**
      * 添加摘要信息
      */
-    private ApiInfo apiInfo()
-    {
-        // 用ApiInfoBuilder进行定制
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 // 设置标题
                 .title("标题：广白创新创业赛事平台管理系统_接口文档")

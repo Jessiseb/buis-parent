@@ -7,12 +7,15 @@ import cn.hutool.json.JSONUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
+import com.buis.common.utils.SecurityUtils;
+import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +36,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
-    public R<String> login(@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
+    public R<String> login(@ApiParam(name = "userLoginDTO", value = "用户登录信息", required = true)@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
         if (userLoginDTO == null) {
             throw new ServiceException("参数有误!");
         }
@@ -44,7 +47,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户注册功能")
     @PostMapping("/register")
-    public R<Long> register(@RequestBody RegisterDto registerDTO) {
+    public R<Long> register(@ApiParam(name = "registerDTO", value = "用户注册信息", required = true)@RequestBody RegisterDto registerDTO) {
         //判空
         if (registerDTO == null) {
             throw new ServiceException("参数错误!");
@@ -56,24 +59,34 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户退出登录功能")
     @PostMapping("/logout")
-    public R<String> logout(Long id) {
-        StpUtil.logout(id);
-        return R.ok("退出成功!");
+    public R logout() {
+        StpUtil.logout();
+        return R.ok(null,"退出成功!");
     }
 
 
-    @ApiOperation("检查用户是否登录功能")
-    @GetMapping("checkLogin")
-    public R<String> checkLogin() {
-        return R.ok("是否登录:" + StpUtil.isLogin());
+    /**
+     * 查询用户信息
+     * @return
+     */
+    @ApiOperation("查询用户信息")
+    @PostMapping("/getUsInfo")
+    public R<UserInfoVo> getUsInfo(){
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(userInfoService.selectUserInfoById(userId));
+    }
+
+    /**
+     * 编辑用户信息
+     * @return
+     */
+    @ApiOperation("编辑用户信息")
+    @PostMapping("/updateUsInfo")
+    public R updateUsInfo(@RequestBody UserInfo userInfo){
+        return R.ok(userInfoService.updateUserInfo(userInfo));
     }
 
 
-    @ApiOperation("获取登录用户token功能")
-    @GetMapping("/getToken")
-    public R<String> getToken() {
-        String tokenValue = StpUtil.getTokenValue();
-        System.out.println(tokenValue);
-        return R.ok(tokenValue);
-    }
+
+
 }

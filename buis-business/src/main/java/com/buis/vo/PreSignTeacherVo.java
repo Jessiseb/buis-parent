@@ -1,24 +1,23 @@
 package com.buis.vo;
 
 import com.buis.domain.PreSignTeacher;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class PreSignTeacherVo extends PreSignTeacher {
-    //老师所属学院
-    private String collegeName;
-    //专业名
-    private String majorName;
-    //老师邮箱
-    private  String teacherEmail;
-    //老师电话
-    private  String teacherPhone;
-    //老师名
-    private  String teacherName;
-    //比赛名
-    private  String raceName;
-    //学院id
-    private Integer collegeId;
-    //专业id
-    private Integer majorId;
+    /**
+     * 老师信息
+     */
+    @ApiModelProperty(value = "老师信息")
+    private UserInfoVo teacherInfo;
+
+    /**
+     * 比赛名
+     */
+    @ApiModelProperty(value = "所属比赛的名称")
+    private String raceName;
+
+
+
 }

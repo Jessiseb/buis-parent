@@ -16,8 +16,7 @@ public class TeamMemberSelectDto {
      * id
      * 被邀请人的id
      */
-    @Excel(name = "id")
-    private Long InviteeId;
+    private Long inviteeId;
 
     /**
      * 比赛
@@ -30,10 +29,6 @@ public class TeamMemberSelectDto {
      */
     @Excel(name = "队伍")
     private Long team;
-
-
-
-
 
     /**
      * 选择原因

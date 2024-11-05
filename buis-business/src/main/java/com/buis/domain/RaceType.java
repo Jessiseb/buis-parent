@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.TreeEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,23 +24,27 @@ public class RaceType extends TreeEntity {
      * id
      */
     @Excel(name = "id")
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**
      * 类型名称
      */
     @Excel(name = "类型名称")
+    @ApiModelProperty(value = "类型名称")
     private String name;
 
     /**
      * 排序号
      */
     @Excel(name = "排序号")
+    @ApiModelProperty(value = "排序号")
     private Long sort;
 
     /**
      * 标识是否被删除，0表示未删除
      */
+    @ApiModelProperty(value = "是否被删除")
     private Integer isDeleted;
 
 

@@ -5,12 +5,16 @@ import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
 import com.buis.mapper.TeamMemberTeacherMapper;
 import com.buis.mapper.UserInfoMapper;
+import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
+import com.buis.vo.TeamInfoVo;
+import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +34,8 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
 
     @Resource
     private IUserInfoService userInfoService;
+    @Resource
+    private ITeamInfoService teamInfoService;
 
     /**
      * 查询队伍老师管理
@@ -38,20 +44,38 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
      * @return 队伍老师管理
      */
     @Override
-    public TeamMemberTeacher selectTeamMemberTeacherById(Long id) {
-        return teamMemberTeacherMapper.selectTeamMemberTeacherById(id);
+    public TeamMemberTeacherVo selectTeamMemberTeacherById(Long id) {
+        TeamMemberTeacherVo teamMemberTeacherVo = teamMemberTeacherMapper.selectTeamMemberTeacherById(id);
+        setTeacherInfo(teamMemberTeacherVo);
+        return teamMemberTeacherVo;
     }
 
     /**
      * 查询队伍老师管理列表
      *
      * @param teamMemberTeacher 队伍老师管理
-     * @return 队伍老师管理
+     * @return 队伍老师管理列表
      */
     @Override
-    public List<TeamMemberTeacher> selectTeamMemberTeacherList(TeamMemberTeacher teamMemberTeacher) {
-        return teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
+    public List<TeamMemberTeacherVo> selectTeamMemberTeacherList(TeamMemberTeacher teamMemberTeacher) {
+        List<TeamMemberTeacherVo> teamMemberTeacherVos = teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
+        for (TeamMemberTeacherVo teamMemberTeacherVo : teamMemberTeacherVos) {
+            setTeacherInfo(teamMemberTeacherVo);
+        }
+        return teamMemberTeacherVos;
     }
+
+    /**
+     * 设置老师信息
+     *
+     * @param teamMemberTeacherVo 队伍老师管理对象
+     */
+    private void setTeacherInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
+        if (teamMemberTeacherVo != null) {
+            teamMemberTeacherVo.setTeacherInfo(userInfoService.selectUserInfoById(teamMemberTeacherVo.getTeacher()));
+        }
+    }
+
 
     /**
      * 新增队伍老师管理
@@ -77,6 +101,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
         return teamMemberTeacherMapper.updateTeamMemberTeacher(teamMemberTeacher);
     }
 
+
     /**
      * 批量删除队伍老师管理
      *
@@ -99,30 +124,54 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
         return teamMemberTeacherMapper.deleteTeamMemberTeacherById(id);
     }
 
+    /**
+     * 查询老师指导数量
+     *
+     * @param id 老师id
+     * @return 数量
+     */
     @Override
-    public List<TeamMemberTeacher> selectTeamMyInstruct(Long id) {
-        return teamMemberTeacherMapper.selectTeamMyInstruct(id);
+    public Long getGuideCount(Long id) {
+        return teamMemberTeacherMapper.getGuideCount(id);
     }
 
     /**
-     * 根据比赛id查出老师id
+     * 根据teamId获取结对的个数，查老师个数
      *
-     * @param id
+     * @param id teamId
      * @return
      */
     @Override
-    public List<Integer> listTeacherIdByRaceId(Long id) {
-        return teamMemberTeacherMapper.listTeacherIdByRaceId(id);
+    public Long getJoinCountByTeamId(Long id) {
+        return teamMemberTeacherMapper.getJoinCountByTeamId(id);
     }
 
     @Override
-    public List<UserInfoVo> listTeachersByIds(List<Integer> ids) {
-        List<UserInfo> userInfos = userInfoMapper.listTeachersByIds(ids);
-        return userInfos.stream()
-                .flatMap(userInfo -> userInfoService.selectUserInfoList(userInfo).stream())
-                .collect(Collectors.toList());
+    public List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId) {
+        Long[] teamIds = teamMemberTeacherMapper.selectJoinTeamByTeacherId(userId);
+        List<TeamInfoVo> teamInfoVos = new ArrayList<>();
+        if (teamIds != null && teamIds.length > 0) {
+            teamInfoVos = teamInfoService.selectTeamInfoByIds(teamIds);
+        }
+        return teamInfoVos;
+
     }
 
+    /**
+     * 根据比赛id获取指导老师列表
+     *
+     * @param raceId
+     * @return
+     */
+    @Override
+    public List<UserInfoVo> getTeachersByRaceId(Long raceId) {
+        List<Long> ids = teamMemberTeacherMapper.getTeachersByRaceId(raceId);// 老师ids
+        List<UserInfoVo> userInfoVos = new ArrayList<>();
+        if (ids != null && ids.size() > 0) {
+            userInfoVos = userInfoService.selectUserInfoByIds(ids);
+        }
+        return userInfoVos;
+    }
+
+
 }
-
-
