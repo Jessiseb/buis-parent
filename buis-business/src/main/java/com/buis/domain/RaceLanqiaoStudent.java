@@ -24,8 +24,13 @@ public class RaceLanqiaoStudent extends BaseEntity {
      * id
      */
     @Excel(name = "id")
-    @ApiModelProperty("id ")
+    @ApiModelProperty("id")
     private Long id;
+
+    /** 比赛id */
+    @Excel(name = "比赛id")
+    @ApiModelProperty("比赛id")
+    private Long raceId;
 
     /**
      * 学生id
