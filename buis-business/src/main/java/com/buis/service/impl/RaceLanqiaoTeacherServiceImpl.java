@@ -4,113 +4,157 @@ import java.util.List;
 
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.RaceLanqiaoStudent;
+import com.buis.domain.*;
+import com.buis.service.IPreSignTeacherService;
 import com.buis.service.IRaceLanqiaoStudentService;
+import com.buis.service.ITeamInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoTeacherMapper;
-import com.buis.domain.RaceLanqiaoTeacher;
 import com.buis.service.IRaceLanqiaoTeacherService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 蓝桥杯老师报名信息Service业务层处理
- * 
+ *
  * @author buis
  * @date 2024-10-24
  */
 @Service
-public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService 
-{
+public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService {
     @Autowired
     private RaceLanqiaoTeacherMapper raceLanqiaoTeacherMapper;
     @Autowired
     private IRaceLanqiaoStudentService lanqiaoStudentService;
+    @Autowired
+    private ITeamInfoService teamInfoService;
+    @Autowired
+    private IPreSignTeacherService preSignTeacherService;
+
     /**
      * 查询蓝桥杯老师报名信息
-     * 
+     *
      * @param id 蓝桥杯老师报名信息主键
      * @return 蓝桥杯老师报名信息
      */
     @Override
-    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherById(Long id)
-    {
+    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherById(Long id) {
         return raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherById(id);
     }
 
     /**
      * 查询蓝桥杯老师报名信息列表
-     * 
+     *
      * @param raceLanqiaoTeacher 蓝桥杯老师报名信息
      * @return 蓝桥杯老师报名信息
      */
     @Override
-    public List<RaceLanqiaoTeacher> selectRaceLanqiaoTeacherList(RaceLanqiaoTeacher raceLanqiaoTeacher)
-    {
+    public List<RaceLanqiaoTeacher> selectRaceLanqiaoTeacherList(RaceLanqiaoTeacher raceLanqiaoTeacher) {
         return raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
     }
 
     /**
      * 新增蓝桥杯老师报名信息
-     * 
+     *
      * @param raceLanqiaoTeacher 蓝桥杯老师报名信息
      * @return 结果
      */
     @Override
-    public int insertRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher)
-    {
-        RaceLanqiaoStudent raceLanqiaoStudent = lanqiaoStudentService.selectRaceLanqiaoStudentByUserId(raceLanqiaoTeacher.getUserId());
-        if (raceLanqiaoStudent!=null) {
+    @Transactional
+    public int insertRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher) {
+        Object o = lanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
+        if (o != null) {
             throw new ServiceException("已提交过学生报名表，请取消后再次提交");
         }
+        Object o1 = selectRaceLanqiaoTeacherByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
+        if (o1 != null) {
+            throw new ServiceException("已提交过老师报名表，请勿重复提交");
+        }
         raceLanqiaoTeacher.setCreateTime(DateUtils.getNowDate());
-        return raceLanqiaoTeacherMapper.insertRaceLanqiaoTeacher(raceLanqiaoTeacher);
+        raceLanqiaoTeacherMapper.insertRaceLanqiaoTeacher(raceLanqiaoTeacher);
+
+        //新增队伍
+        TeamInfo teamInfo = new TeamInfo();
+        teamInfo.setRace(raceLanqiaoTeacher.getRaceId());
+        teamInfo.setLeader(raceLanqiaoTeacher.getUserId());
+        teamInfoService.insertTeamInfo(teamInfo);
+
+        //新增老师预报名
+        PreSignTeacher preSignTeacher = new PreSignTeacher();
+        preSignTeacher.setRace(raceLanqiaoTeacher.getRaceId());
+        preSignTeacher.setTeacher(raceLanqiaoTeacher.getUserId());
+        preSignTeacherService.insertPreSignTeacher(preSignTeacher);
+
+        return 1;
     }
 
     /**
      * 修改蓝桥杯老师报名信息
-     * 
+     *
      * @param raceLanqiaoTeacher 蓝桥杯老师报名信息
      * @return 结果
      */
     @Override
-    public int updateRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher)
-    {
+    @Transactional
+    public int updateRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher) {
         raceLanqiaoTeacher.setUpdateTime(DateUtils.getNowDate());
-        return raceLanqiaoTeacherMapper.updateRaceLanqiaoTeacher(raceLanqiaoTeacher);
+        raceLanqiaoTeacherMapper.updateRaceLanqiaoTeacher(raceLanqiaoTeacher);
+        return 1;
     }
 
     /**
      * 批量删除蓝桥杯老师报名信息
-     * 
+     *
      * @param ids 需要删除的蓝桥杯老师报名信息主键
      * @return 结果
      */
     @Override
-    public int deleteRaceLanqiaoTeacherByIds(Long[] ids)
-    {
-        return raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherByIds(ids);
+    public int deleteRaceLanqiaoTeacherByIds(Long[] ids) {
+
+        raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherByIds(ids);
+
+
+        return 1;
     }
 
     /**
      * 删除蓝桥杯老师报名信息信息
-     * 
+     *
      * @param id 蓝桥杯老师报名信息主键
      * @return 结果
      */
     @Override
-    public int deleteRaceLanqiaoTeacherById(Long id)
-    {
-        return raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherById(id);
+    public int deleteRaceLanqiaoTeacherById(Long id) {
+        raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherById(id);
+        return 1;
     }
 
+    //查询比赛报名信息
     @Override
-    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserId(Long loginId) {
-        RaceLanqiaoTeacher raceLanqiaoTeacher = raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherByUserId(loginId);
-        return raceLanqiaoTeacher;
+    public Object selectRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId) {
+        RaceLanqiaoTeacher raceLanqiaoTeacher = new RaceLanqiaoTeacher();
+        raceLanqiaoTeacher.setRaceId(race);
+        raceLanqiaoTeacher.setUserId(userId);
+        List<RaceLanqiaoTeacher> raceLanqiaoTeachers = raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
+        RaceLanqiaoTeacher lanqiaoTeacher = null;
+        if (raceLanqiaoTeachers != null && raceLanqiaoTeachers.size() > 0) {
+            lanqiaoTeacher = raceLanqiaoTeachers.get(0);
+        }
+        return lanqiaoTeacher;
     }
 
+    //删除比赛报名信息
     @Override
-    public int deleteRaceLanqiaoTeacherByUserId(Long loginId) {
-        return raceLanqiaoTeacherMapper.deleteRaceLanqiaoTeacherByUserId(loginId);
+    public Integer deleteRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId) {
+
+        RaceLanqiaoTeacher lanqiaoTeacher = (RaceLanqiaoTeacher) selectRaceLanqiaoTeacherByUserIdAndRaceId(race, userId);
+        if (lanqiaoTeacher != null) {
+            int i = deleteRaceLanqiaoTeacherById(lanqiaoTeacher.getId());
+            //删除队伍
+            teamInfoService.deleteTeamInfoByUserIdAndRaceId(race, userId);
+            //删除预报名
+            preSignTeacherService.deletePreSignTeacherByUserIdAndRaceId(race, userId);
+        }
+        return 1;
     }
 }

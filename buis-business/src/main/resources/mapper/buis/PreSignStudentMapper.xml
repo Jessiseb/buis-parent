@@ -80,4 +80,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <delete id="deletePreSignStudentByUserIdAndRaceId">
+        update pre_sign_student
+        set is_deleted = 1
+        where student = #{userId} and race = #{race}
+    </delete>
 </mapper>

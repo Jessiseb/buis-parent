@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="RaceLanqiaoStudent" id="RaceLanqiaoStudentResult">
         <result property="id"    column="id"    />
+        <result property="raceId"    column="race_id"    />
         <result property="userId"    column="user_id"    />
         <result property="name"    column="name"    />
         <result property="number"    column="number"    />
@@ -27,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectRaceLanqiaoStudentVo">
-        select id, user_id, name, number, s_class, phone, email, identity, parent_tid, son_tid, teacher1, teacher2, teacher3, bank_number, bank_name, remark, is_deleted, create_time, update_time from race_lanqiao_student
+        select id, race_id, user_id, name, number, s_class, phone, email, identity, parent_tid, son_tid, teacher1, teacher2, teacher3, bank_number, bank_name, remark, is_deleted, create_time, update_time from race_lanqiao_student
     </sql>
 
     <select id="selectRaceLanqiaoStudentList" parameterType="RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResult">
@@ -35,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             is_deleted = 0
             <if test="id != null "> and id = #{id}</if>
+            <if test="raceId != null "> and race_id = #{raceId}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="number != null  and number != ''"> and number = #{number}</if>
@@ -69,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertRaceLanqiaoStudent" parameterType="RaceLanqiaoStudent" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="raceId != null">race_id,</if>
             <if test="userId != null">user_id,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="number != null and number != ''">number,</if>
@@ -89,6 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="raceId != null">#{raceId},</if>
             <if test="userId != null">#{userId},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="number != null and number != ''">#{number},</if>
@@ -113,6 +117,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateRaceLanqiaoStudent" parameterType="RaceLanqiaoStudent">
         update race_lanqiao_student
         <trim prefix="SET" suffixOverrides=",">
+            <if test="raceId != null">race_id = #{raceId},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="number != null and number != ''">number = #{number},</if>
