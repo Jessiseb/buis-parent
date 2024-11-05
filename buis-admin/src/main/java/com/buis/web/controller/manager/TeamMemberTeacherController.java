@@ -1,5 +1,21 @@
 package com.buis.web.controller.manager;
 
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+
+import com.buis.vo.TeamMemberTeacherVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -38,7 +54,7 @@ public class TeamMemberTeacherController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(TeamMemberTeacher teamMemberTeacher) {
         startPage();
-        List<TeamMemberTeacher> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
+        List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
         return getDataTable(list);
     }
 
@@ -49,9 +65,9 @@ public class TeamMemberTeacherController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamTeacher:export')")
     @Log(title = "队伍老师管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, TeamMemberTeacher teamMemberTeacher) {
-        List<TeamMemberTeacher> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
-        ExcelUtil<TeamMemberTeacher> util = new ExcelUtil<TeamMemberTeacher>(TeamMemberTeacher.class);
+    public void export(HttpServletResponse response, TeamMemberTeacherVo teamMemberTeacher) {
+        List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
+        ExcelUtil<TeamMemberTeacherVo> util = new ExcelUtil<TeamMemberTeacherVo>(TeamMemberTeacherVo.class);
         util.exportExcel(response, list, "队伍老师管理数据");
     }
 

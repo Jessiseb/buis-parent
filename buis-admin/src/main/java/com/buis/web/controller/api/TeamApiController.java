@@ -2,28 +2,33 @@ package com.buis.web.controller.api;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
+import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberSelectDto;
-import com.buis.dto.TeamQueryDto;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.TeamInfoServiceImpl;
+import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -32,16 +37,17 @@ import java.util.stream.Collectors;
 @Api(tags = "队伍管理Api")
 @RestController
 @RequestMapping("/api/team")
+@Slf4j
 public class TeamApiController extends BaseController{
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
     @Autowired
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
-    private IUserInfoService userInfoService;
-    @Autowired
     private TeamInfoServiceImpl teamInfoService;
 
+    @Autowired
+    private IUserInfoService userInfoService;
     @ApiOperation("学生与老师建立互选邀请")
     @PostMapping("/mutualSelection")
     public R mutualSelection(@RequestBody TeamMemberSelectDto teamMemberSelectDto){
@@ -56,6 +62,11 @@ public class TeamApiController extends BaseController{
             teamMemberStudent.setDecider(loginUserId);
             //设置互选状态，默认为0，待选
             teamMemberStudent.setIsChoosed(0L);
+            // 检查 inviteeId 是否为空
+            Long inviteeId = teamMemberSelectDto.getInviteeId();
+            if (inviteeId == null) {
+                return R.fail("被邀请人ID不能为空");
+            }
             //写入被邀请人的id
             teamMemberStudent.setStudent(teamMemberSelectDto.getInviteeId());
             int result = teamMemberStudentService.insertTeamMemberStudent(teamMemberStudent);
@@ -68,131 +79,158 @@ public class TeamApiController extends BaseController{
             teamMemberTeacher.setDecider(loginUserId);
             //设置互选状态，默认为0，待选
             teamMemberTeacher.setIsChoosed(0L);
+            // 检查 inviteeId 是否为空
+            Long inviteeId = teamMemberSelectDto.getInviteeId();
+            if (inviteeId == null) {
+                return R.fail("被邀请人ID不能为空");
+            }
             //写入被邀请人的id
-            teamMemberTeacher.setTeacher(teamMemberSelectDto.getInviteeId());
+            teamMemberTeacher.setTeacher(inviteeId);
             int result = teamMemberTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             return result==1?R.ok("新增互选成功") : R.fail("新增互选失败");
         }
     }
-
-
-    @ApiOperation("查询队伍成员学生列表")
-    @GetMapping("/listMember/student/{race}/{team}")
-    public TableDataInfo list(@PathVariable("race") Long race, @PathVariable("team") Long team) {
-        startPage();
-        List<UserInfoVo> result = teamMemberStudentService.selectTeamMemberStudentQueryList(race, team);
-        return getDataTable(result);
-    }
-
-//region 查询队伍
-    /**
-     * 查询所有队伍列表->也用户所有用户查询
-     *
-     * @param teamQueryDTO 查询参数
-     * @return 返回结果
-     */
-    @ApiOperation("查询所有队伍列表")
-    @GetMapping("/listTeams")
-    public R<List<TeamInfo>> listTeams(TeamQueryDto teamQueryDTO) {
-        startPage();
-        List<TeamInfo> list = teamInfoService.listTeams(teamQueryDTO);
-        return R.ok(list);
-    }
-
-
-    /**
-     * 查询我(老师)指导的队伍列表
-     *
-     * @param teamQueryDTO 查询参数
-     * @return 返回结果
-     */
-    @ApiOperation("查询我(老师)指导的队伍列表")
-    @GetMapping("/listTeam/my/instruct")
-    public R<List<TeamInfo>> listTeamMyInstruct(TeamQueryDto teamQueryDTO) {
-        //判断当前用户身份
-        //1.找出当前用户信息
-        UserInfo loginUser = userInfoService.getLoginUser();
-        //如果title为null,说明不是老师,不能查询
-        Long title = loginUser.getTitle();
-        if (title == null) {
-            throw new ServiceException("无权限");
-        }
-        //否则执行查询的方法
-        //根据当前用户id查询所在的队伍
-        List<TeamMemberTeacher> teamMemberTeacherList = teamMemberTeacherService.selectTeamMyInstruct(loginUser.getId());
-        //根据队伍老师表,获取到队伍ids
-        List<Long> teamIds = teamMemberTeacherList.stream().map(TeamMemberTeacher::getTeam).collect(Collectors.toList());
-        //根据ids查询队伍信息
-        teamQueryDTO.setIdList(teamIds);
-        List<TeamInfo> teamInfos = teamInfoService.listTeams(teamQueryDTO);
-        return R.ok(teamInfos);
-    }
-
-
-    /**
-     * 查询我创建的队伍列表
-     *
-     * @param teamQueryDTO 查询参数
-     * @return 返回结果
-     */
-    @ApiOperation("查询我创建的队伍列表")
-    @GetMapping("/listTeam/my/create")
-    public R<List<TeamInfo>> listTeamMyCreate(TeamQueryDto teamQueryDTO) {
+    @ApiOperation("学生与老师互选，取消邀请")
+    @DeleteMapping("/cancelSelection/{id}")
+    public R cancelSelection(@PathVariable(value = "id") Long id){
         //获取当前登录用户
         UserInfo loginUser = userInfoService.getLoginUser();
-        //获取登录用户id
-        Long userId = loginUser.getId();
-        Long title = loginUser.getTitle();
-
-        List<TeamInfo> myTeamsAsLeader = null;
-        //判断是老师还是学生
-        if (title == null) {
-            //是学生
-            //根据当前用户id查询所在的队伍
-            List<TeamMemberStudent> teamMemberStudentsList = teamMemberStudentService.selectTeamMyCreate(loginUser.getId());
-
-            //根据学生队伍表,获取到队伍ids
-            List<Long> teamIds = teamMemberStudentsList.stream().map(TeamMemberStudent::getTeam).collect(Collectors.toList());
-
-            //根据队伍ids查询到队伍信息
-            teamQueryDTO.setIdList(teamIds);
-            List<TeamInfo> teamInfos = teamInfoService.listTeams(teamQueryDTO);
-
-            //获取到所加入队伍的所有队长id
-            List<Long> LeaderIds = teamInfos.stream().map(TeamInfo::getLeader).collect(Collectors.toList());
-
-            //判断本用户id与队长id是否对应,对应说明是该队伍的队长,则是我创建的队伍
-            myTeamsAsLeader = teamInfos
-                    .stream()
-                    .filter(teamInfo -> userId.equals(LeaderIds))
-                    .collect(Collectors.toList());
+        Long loginUserId = loginUser.getId();
+        if (loginUser.getTitle() != null){
+            // 老师取消邀请
+            TeamMemberStudent teamMemberStudent = teamMemberStudentService.selectTeamMemberStudentById(id);
+            if (teamMemberStudent != null && teamMemberStudent.getDecider().equals(loginUserId)) {
+                teamMemberStudentService.deleteTeamMemberStudentById(id);
+                return R.ok("取消邀请成功");
+            } else {
+                throw new ServiceException("无权限取消此邀请");
+            }
         } else {
-            //是老师
-            //根据当前用户id查询所在的队伍
-            List<TeamMemberTeacher> teamMemberTeacherList = teamMemberTeacherService.selectTeamMyInstruct(loginUser.getId());
-
-            //根据队伍老师表,获取到队伍ids
-            List<Long> teamIds = teamMemberTeacherList.stream().map(TeamMemberTeacher::getTeam).collect(Collectors.toList());
-
-            //根据队伍ids获得所有加入的队伍
-            teamQueryDTO.setIdList(teamIds);
-
-            //本用户已加入的队伍
-            List<TeamInfo> teamInfos = teamInfoService.listTeams(teamQueryDTO);
-
-            //获取到所有的队长id
-            List<Long> LeaderIds = teamInfos.stream().map(TeamInfo::getLeader).collect(Collectors.toList());
-            //根据队长id和本用户id做对比,一样的说明本用户就是队长-->查出所在的队伍并返回
-//            teamInfoService.selectTeamMyCreate(LeaderIds);
-            myTeamsAsLeader = teamInfos.stream()
-                    .filter(teamInfo -> userId.equals(LeaderIds))
-                    .collect(Collectors.toList());
+            // 学生取消邀请
+            TeamMemberTeacher teamMemberTeacher = teamMemberTeacherService.selectTeamMemberTeacherById(id);
+            if (teamMemberTeacher != null && teamMemberTeacher.getDecider().equals(loginUserId)) {
+                teamMemberTeacherService.deleteTeamMemberTeacherById(id);
+                return R.ok("取消邀请成功");
+            } else {
+                throw new ServiceException("无权限取消此邀请");
+            }
         }
-        return R.ok(myTeamsAsLeader);
     }
 
-    //endregion
+    @ApiOperation("学生与老师互选，接受或拒绝邀请")
+    @PutMapping("/updateSelection/{id}")
+    public R updateSelection(@PathVariable("id") Long id, @RequestParam("isChoosed") Long isChoosed) {
+        // 获取当前登录用户
+        UserInfo loginUser = userInfoService.getLoginUser();
+        Long loginUserId = loginUser.getId();
+        System.out.println(isChoosed);
+        if (loginUser.getTitle() != null) {
+            // 老师处理邀请
+            TeamMemberTeacher teamMemberTeacher = teamMemberTeacherService.selectTeamMemberTeacherById(id);
+            System.out.println(teamMemberTeacher);
+            if (teamMemberTeacher != null && teamMemberTeacher.getTeacher().equals(loginUserId)) {
+                // 更新状态
+                teamMemberTeacher.setIsChoosed(isChoosed);
+                teamMemberTeacherService.updateTeamMemberTeacher(teamMemberTeacher);
+                return R.ok("更新邀请状态成功");
+            } else {
+                throw new ServiceException("无权限处理此邀请");
+            }
+        } else {
+            // 学生处理邀请
+            TeamMemberStudent teamMemberStudent = teamMemberStudentService.selectTeamMemberStudentById(id);
+            if (teamMemberStudent != null && teamMemberStudent.getStudent().equals(loginUserId)) {
+                // 更新状态
+                teamMemberStudent.setIsChoosed(isChoosed);
+                teamMemberStudentService.updateTeamMemberStudent(teamMemberStudent);
+                return R.ok("更新邀请状态成功");
+            } else {
+                throw new ServiceException("无权限处理此邀请");
+            }
+
+        }
+    }
+
+   /* @ApiOperation("查询我的邀请列表")
+    @GetMapping("/myInvitations")
+    public R<List<TeamMemberSelectDto>> getMyInvitations(@RequestParam(value = "type", required = false) String type) {
+        // 获取当前登录用户
+        UserInfo loginUser = userInfoService.getLoginUser();
+        Long loginUserId = loginUser.getId();
+
+        List<TeamMemberSelectDto> invitations = new ArrayList<>();
+
+        if (loginUser.getTitle() != null) {
+            // 老师查询邀请
+            List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.list(Wrappers.<TeamMemberStudent>lambdaQuery()
+                    .eq(TeamMemberStudent::getDecider, loginUserId)
+                    .or()
+                    .eq(TeamMemberStudent::getTargetUser, loginUserId));
+
+            for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
+                if (type == null || (type.equals("sent") && teamMemberStudent.getDecider().equals(loginUserId)) ||
+                        (type.equals("received") && teamMemberStudent.getTargetUser().equals(loginUserId))) {
+                    TeamMemberSelectDto dto = new TeamMemberSelectDto();
+                    BeanUtil.copyProperties(teamMemberStudent, dto);
+                    invitations.add(dto);
+                }
+            }
+        } else {
+            // 学生查询邀请
+            List<TeamMemberTeacher> teamMemberTeachers = teamMemberTeacherService.list(Wrappers.<TeamMemberTeacher>lambdaQuery()
+                    .eq(TeamMemberTeacher::getDecider, loginUserId)
+                    .or()
+                    .eq(TeamMemberTeacher::getTargetUser, loginUserId));
+
+            for (TeamMemberTeacher teamMemberTeacher : teamMemberTeachers) {
+                if (type == null || (type.equals("sent") && teamMemberTeacher.getDecider().equals(loginUserId)) ||
+                        (type.equals("received") && teamMemberTeacher.getTargetUser().equals(loginUserId))) {
+                    TeamMemberSelectDto dto = new TeamMemberSelectDto();
+                    BeanUtil.copyProperties(teamMemberTeacher, dto);
+                    invitations.add(dto);
+                }
+            }
+        }
+        return R.ok(invitations);
+    }*/
 
 
+    @ApiOperation("根据队伍id查询队伍成员列表")
+    @GetMapping("/Member/{team}")
+    public R getMemberStudentByTeamId(
+                              @ApiParam(name = "team", value = "队伍id", required = true)@PathVariable("team") Long team) {
+        List<UserInfoVo> student = teamMemberStudentService.getMemberStudentByTeamId(team);
+        List<UserInfoVo> teacher = teamMemberTeacherService.getTeachersByRaceId(team);
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("student", student);
+        map.put("teacher", teacher);
+        return R.ok(map);
+    }
+
+
+    /**
+     * 查询队伍信息列表
+     */
+    @ApiOperation("带条件分页查询队伍列表")
+    @PostMapping("/teamList")
+    public TableDataInfo list(@RequestBody TeamInfo teamInfo) {
+        startPage();
+        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
+        return getDataTable(list);
+    }
+
+
+    /**
+     * 根据老师id查询老师指导的队伍列表
+     *
+     * @return 返回结果
+     */
+    @ApiOperation("根据老师id查询老师指导的队伍列表")
+    @GetMapping("/guide")
+    public R guide() {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId);
+        return R.ok(teamInfoVos);
+    }
 
 }

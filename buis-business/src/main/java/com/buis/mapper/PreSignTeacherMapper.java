@@ -20,7 +20,7 @@ public interface PreSignTeacherMapper
      * @param id 老师预报名主键
      * @return 老师预报名
      */
-    public PreSignTeacher selectPreSignTeacherById(Long id);
+    public PreSignTeacherVo selectPreSignTeacherById(Long id);
 
     /**
      * 查询老师预报名列表
@@ -28,7 +28,7 @@ public interface PreSignTeacherMapper
      * @param preSignTeacher 老师预报名
      * @return 老师预报名集合
      */
-    public List<PreSignTeacher> selectPreSignTeacherList(PreSignTeacher preSignTeacher);
+    public List<PreSignTeacherVo> selectPreSignTeacherList(PreSignTeacher preSignTeacher);
 
     /**
      * 新增老师预报名
@@ -62,8 +62,4 @@ public interface PreSignTeacherMapper
      */
     public int deletePreSignTeacherByIds(Long[] ids);
 
-    List<PreSignTeacherVo> selectPreSignTeacherVoList(PreSignTeacher preSignTeacher);
-
-
-    PreSignTeacherVo selectPreSignTeacherVoById(Long id);
 }

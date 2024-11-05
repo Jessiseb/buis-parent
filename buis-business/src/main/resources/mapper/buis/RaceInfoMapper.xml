@@ -4,10 +4,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceInfoMapper">
     
-    <resultMap type="RaceInfo" id="RaceInfoResult">
+    <resultMap type="com.buis.vo.RaceInfoVo" id="RaceInfoResult">
         <result property="id"    column="id"    />
         <result property="parentTid"    column="parent_tid"    />
         <result property="sonTid"    column="son_tid"    />
+        <result property="sonName"    column="son_name"    />
+        <result property="parentName"    column="parent_name"    />
         <result property="name"    column="name"    />
         <result property="description"    column="description"    />
         <result property="joinStart"    column="join_start"    />
@@ -29,11 +31,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </collection>
     </resultMap>
 
-    <resultMap id="RaceInfoRewardResult" type="RaceInfo" extends="RaceInfoResult">
-        <collection property="rewardList" ofType="Reward" column="id" select="selectRewardList" />
+    <resultMap id="RaceInfoRewardResult" type="com.buis.vo.RaceInfoVo" extends="RaceInfoResult">
+        <collection property="rewardList" ofType="com.buis.domain.Reward" column="id" select="selectRewardList" />
     </resultMap>
 
-    <resultMap type="Reward" id="RewardResult">
+    <resultMap type="com.buis.domain.Reward" id="RewardResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
         <result property="rRank"    column="r_rank"    />
@@ -46,14 +48,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectRaceInfoVo">
-        select id, parent_tid, son_tid, name, description, join_start, join_end, race_start, race_end, status, level, is_deleted, create_time, update_time from race_info
+        select t1.id, t1.parent_tid, t1.son_tid,t2.name as son_name,t3.name as parent_name, t1.name, t1.description, t1.join_start,
+               t1.join_end, t1.race_start, t1.race_end, t1.status, t1.level, t1.is_deleted, t1.create_time, t1.update_time
+        from race_info t1
+left join race_type t2 on t2.id = t1.son_tid
+        left join race_type t3 on t3.id = t2.parent_id
     </sql>
 
-    <select id="selectRaceInfoList" parameterType="RaceInfo" resultMap="RaceInfoResult">
+    <select id="selectRaceInfoList" parameterType="com.buis.vo.RaceInfoVo" resultMap="RaceInfoResult">
         <include refid="selectRaceInfoVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
             <if test="parentTid != null "> and parent_tid = #{parentTid}</if>
             <if test="sonTid != null "> and son_tid = #{sonTid}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
@@ -68,9 +74,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectRaceInfoById" parameterType="Long" resultMap="RaceInfoRewardResult">
-        select id, parent_tid, son_tid, name, description, join_start, join_end, race_start, race_end, status, level, is_deleted, create_time, update_time
-        from race_info
-        where id = #{id} and is_deleted = 0
+        <include refid="selectRaceInfoVo"/>
+        where t1.id = #{id} and t1.is_deleted = 0
     </select>
 
     <select id="selectRewardList" resultMap="RewardResult">
@@ -79,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where race = #{race} and is_deleted = 0
     </select>
 
-    <insert id="insertRaceInfo" parameterType="RaceInfo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">
         insert into race_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="parentTid != null">parent_tid,</if>
@@ -113,7 +118,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceInfo" parameterType="RaceInfo">
+    <update id="updateRaceInfo" parameterType="com.buis.domain.RaceInfo">
         update race_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="parentTid != null">parent_tid = #{parentTid},</if>

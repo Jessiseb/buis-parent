@@ -2,17 +2,20 @@ package com.buis.service.impl;
 
 import java.util.*;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
-import com.buis.dto.TeamQueryDto;
-import com.buis.mapper.TeamMemberTeacherMapper;
-import com.buis.bo.MemberInfoBO;
+import com.buis.service.ITeamMemberStudentService;
+import com.buis.service.ITeamMemberTeacherService;
+import com.buis.service.IUserInfoService;
 import com.buis.vo.TeamInfoVo;
-import com.buis.mapper.TeamMemberStudentMapper;
+import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.domain.TeamInfo;
 import com.buis.service.ITeamInfoService;
+
+import javax.annotation.Resource;
 
 /**
  * 队伍信息Service业务层处理
@@ -27,33 +30,12 @@ public class TeamInfoServiceImpl implements ITeamInfoService
     private TeamInfoMapper teamInfoMapper;
 
     @Autowired
-    private TeamMemberStudentMapper teamMemberStudentMapper;
-
+    private IUserInfoService userInfoService;
     @Autowired
-    private TeamMemberTeacherMapper teamMemberTeacherMapper;
-    /**
-     * 查询队伍信息
-     * 
-     * @param id 队伍信息主键
-     * @return 队伍信息
-     */
-    @Override
-    public TeamInfo selectTeamInfoById(Long id)
-    {
-        return teamInfoMapper.selectTeamInfoById(id);
-    }
+    private ITeamMemberStudentService teamStudentService;
+    @Autowired
+    private ITeamMemberTeacherService teamTeacherService;
 
-    /**
-     * 查询队伍信息列表
-     * 
-     * @param teamInfo 队伍信息
-     * @return 队伍信息
-     */
-    @Override
-    public List<TeamInfo> selectTeamInfoList(TeamInfo teamInfo)
-    {
-        return teamInfoMapper.selectTeamInfoList(teamInfo);
-    }
 
     /**
      * 新增队伍信息
@@ -105,12 +87,6 @@ public class TeamInfoServiceImpl implements ITeamInfoService
         return teamInfoMapper.deleteTeamInfoById(id);
     }
 
-    @Override
-    public List<TeamInfo> listTeams(TeamQueryDto teamQueryDTO) {
-        //TODO 需要在查出来的时候判断我是否加入该队伍吗?
-        return teamInfoMapper.listTeams(teamQueryDTO);
-    }
-
 
     /**
      * 查询队伍信息列表 Vo
@@ -118,104 +94,60 @@ public class TeamInfoServiceImpl implements ITeamInfoService
      * @return
      */
     @Override
-    public List<TeamInfoVo> selectTeamInfoVoList(TeamInfo teamInfo) {
-        List<TeamInfoVo> teamInfoVo=teamInfoMapper.selectTeamInfoVo(teamInfo);
-        if (teamInfoVo == null || teamInfoVo.isEmpty()) {
-            return Collections.emptyList(); // 返回空列表
+    public List<TeamInfoVo> selectTeamInfoList(TeamInfo teamInfo) {
+        List<TeamInfoVo> results = new ArrayList<>();
+        List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoList(teamInfo);
+        if (teamInfoList == null || teamInfoList.isEmpty()) {
+            return results; // 返回空列表
         }
-        //根据返回的title判断队长是否为老师
-        for (TeamInfoVo infoVo : teamInfoVo) {
-            // 获取老师队伍人数及队伍已有老师名称
-            Map<String, Object> teacherResultMap = teamMemberTeacherMapper.getCountAndTeachers(infoVo.getId());
-            // 获取学生队伍人数及已有成员名称
-            Map<String, Object> studentResultMap = teamMemberStudentMapper.getCountAndStudents(infoVo.getId());
-
-            Long teamNumbers = 0L;
-            List<MemberInfoBO> teamMembers = new ArrayList<>();
-
-            if (teacherResultMap != null) {
-                Long teacherNumbers = (Long) teacherResultMap.get("teamNumbers");
-                String teacherMembersNameWithIdsStr = (String) teacherResultMap.get("teamMembersNameWithIds");
-                teamNumbers += teacherNumbers;
-                if (teacherMembersNameWithIdsStr != null) {
-                    teamMembers.addAll(parseTeamMembersNameWithIds(teacherMembersNameWithIdsStr));
-                }
-            }
-
-            if (studentResultMap != null) {
-                Long studentNumbers = (Long) studentResultMap.get("teamNumbers");
-                String studentMembersNameWithIdsStr = (String) studentResultMap.get("teamMembersNameWithIds");
-                teamNumbers += studentNumbers;
-                if (studentMembersNameWithIdsStr != null) {
-                    teamMembers.addAll(parseTeamMembersNameWithIds(studentMembersNameWithIdsStr));
-                }
-            }
-
-            infoVo.setTeamNumbers(teamNumbers);
-            infoVo.setTeamMemberList(teamMembers);
+        for (TeamInfo team : teamInfoList) {
+            results.add(createTeamInfoVo(team));
         }
-        return teamInfoVo;
+        return results;
     }
 
     /**
-     * 查询单个队伍信息 vo
-     * @param id
-     * @return
+     * 查询队伍信息
+     *
+     * @param id 队伍信息主键
+     * @return 队伍信息
      */
     @Override
-    public TeamInfoVo selectTeamInfoVoById(Long id) {
-        TeamInfoVo teamInfoVo = teamInfoMapper.selectTeamInfoVoById(id);
-        // 获取老师队伍人数及队伍已有老师名称
-        Map<String, Object> teacherResultMap = teamMemberTeacherMapper.getCountAndTeachers(teamInfoVo.getId());
-        // 获取学生队伍人数及已有成员名称
-        Map<String, Object> studentResultMap = teamMemberStudentMapper.getCountAndStudents(teamInfoVo.getId());
+    public TeamInfoVo selectTeamInfoById(Long id) {
+        TeamInfo team = teamInfoMapper.selectTeamInfoById(id);
+        return team != null ? createTeamInfoVo(team) : new TeamInfoVo();
+    }
 
-        Long teamNumbers = 0L;
-        List<MemberInfoBO> teamMembers = new ArrayList<>();
-
-        if (teacherResultMap != null) {
-            Long teacherNumbers = (Long) teacherResultMap.get("teamNumbers");
-            String teacherMembersNameWithIdsStr = (String) teacherResultMap.get("teamMembersNameWithIds");
-            teamNumbers += teacherNumbers;
-            if (teacherMembersNameWithIdsStr != null) {
-                // parseTeamMembersNameWithIds方法解析并添加到列表
-                teamMembers.addAll(parseTeamMembersNameWithIds(teacherMembersNameWithIdsStr));
+    /**
+     * 创建 TeamInfoVo 对象
+     *
+     * @param team 队伍信息
+     * @return TeamInfoVo
+     */
+    private TeamInfoVo createTeamInfoVo(TeamInfo team) {
+        TeamInfoVo teamInfoVo = new TeamInfoVo();
+        BeanUtil.copyProperties(team, teamInfoVo);
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(team.getLeader());
+        Long studentCount = teamStudentService.getJoinCountByTeamId(team.getId());
+        Long teacherCount = teamTeacherService.getJoinCountByTeamId(team.getId());
+        if (userInfoVo!=null) { // 判断队长是学生还是老师，算上人数
+            if (userInfoVo.getTitle()!=null){
+                teacherCount++;
+            }else {
+                studentCount++;
             }
         }
-
-        if (studentResultMap != null) {
-            Long studentNumbers = (Long) studentResultMap.get("teamNumbers");
-            String studentMembersNameWithIdsStr = (String) studentResultMap.get("teamMembersNameWithIds");
-            teamNumbers += studentNumbers;
-            if (studentMembersNameWithIdsStr != null) {
-                teamMembers.addAll(parseTeamMembersNameWithIds(studentMembersNameWithIdsStr));
-            }
-        }
-
-        teamInfoVo.setTeamNumbers(teamNumbers);
-        teamInfoVo.setTeamMemberList(teamMembers);
+        // 获取队长信息
+        teamInfoVo.setLeaderInfo(userInfoVo);
+        // 获取学生人数
+        teamInfoVo.setStudentCount(studentCount);
+        // 获取老师人数
+        teamInfoVo.setTeacherCount(teacherCount);
         return teamInfoVo;
     }
 
-
-
-    private List<MemberInfoBO> parseTeamMembersNameWithIds(String teamMembersNameWithIdsStr) {
-        List<MemberInfoBO> teamMembers = new ArrayList<>();
-        // 将输入字符串按逗号分割，得到每个成员的ID和名字对
-        String[] pairs = teamMembersNameWithIdsStr.split(",");
-        // 遍历每个成员的ID和名字对
-        for (String pair : pairs) {
-            // 将每个成员的ID和名字对按冒号分割，得到ID和名字
-            String[] parts = pair.split(":");
-            // 检查分割后的数组长度是否为2，确保每个成员的ID和名字都存在
-            if (parts.length == 2) {
-                MemberInfoBO member = new MemberInfoBO();
-                member.setId(Long.parseLong(parts[0]));
-                member.setName(parts[1]);
-                teamMembers.add(member);
-            }
-        }
-        return teamMembers;
+    @Override
+    public List<TeamInfoVo> selectTeamInfoByIds(Long[] ids) {
+        return teamInfoMapper.selectTeamInfoByIds(ids);
     }
-
 }

@@ -60,6 +60,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
+    <select id="selectRaceLanqiaoTeacherByUserId" resultType="com.buis.domain.RaceLanqiaoTeacher">
+        select id, user_id, name, sex, college, major, title, office, phone, email,
+            identity, course, type, t_class, bank_number, guidance, remark, is_deleted, create_time, update_time
+        from race_lanqiao_teacher
+        where user_id = #{userId}
+            and is_deleted = 0
+    </select>
+
     <insert id="insertRaceLanqiaoTeacher" parameterType="RaceLanqiaoTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -145,5 +153,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+    <delete id="deleteRaceLanqiaoTeacherByUserId">
+        update race_lanqiao_teacher
+        set is_deleted = 1
+        where user_id = #{userId}
     </delete>
 </mapper>
