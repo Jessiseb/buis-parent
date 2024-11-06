@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.vo.RaceInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService
      * @return 比赛信息
      */
     @Override
-    public RaceInfo selectRaceInfoById(Long id)
+    public RaceInfoVo selectRaceInfoById(Long id)
     {
         return raceInfoMapper.selectRaceInfoById(id);
     }
@@ -43,7 +44,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService
      * @return 比赛信息
      */
     @Override
-    public List<RaceInfo> selectRaceInfoList(RaceInfo raceInfo)
+    public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo)
     {
         return raceInfoMapper.selectRaceInfoList(raceInfo);
     }

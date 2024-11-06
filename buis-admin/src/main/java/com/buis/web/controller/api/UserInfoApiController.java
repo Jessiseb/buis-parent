@@ -7,6 +7,8 @@ import cn.hutool.json.JSONUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
+import com.buis.common.utils.SecurityUtils;
+import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.service.IUserInfoService;
@@ -57,23 +59,34 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户退出登录功能")
     @PostMapping("/logout")
-    public R<String> logout() {
+    public R logout() {
         StpUtil.logout();
-        return R.ok("退出成功!");
-    }
-
-    @ApiOperation("检查用户是否登录功能")
-    @GetMapping("checkLogin")
-    public R<String> checkLogin() {
-        return R.ok("是否登录:" + StpUtil.isLogin());
+        return R.ok(null,"退出成功!");
     }
 
 
-    @ApiOperation("获取登录用户token功能")
-    @GetMapping("/getToken")
-    public R<String> getToken() {
-        String tokenValue = StpUtil.getTokenValue();
-        System.out.println(tokenValue);
-        return R.ok(tokenValue);
+    /**
+     * 查询用户信息
+     * @return
+     */
+    @ApiOperation("查询用户信息")
+    @PostMapping("/getUsInfo")
+    public R<UserInfoVo> getUsInfo(){
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(userInfoService.selectUserInfoById(userId));
     }
+
+    /**
+     * 编辑用户信息
+     * @return
+     */
+    @ApiOperation("编辑用户信息")
+    @PostMapping("/updateUsInfo")
+    public R updateUsInfo(@RequestBody UserInfo userInfo){
+        return R.ok(userInfoService.updateUserInfo(userInfo));
+    }
+
+
+
+
 }

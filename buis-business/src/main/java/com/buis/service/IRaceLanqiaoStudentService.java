@@ -58,4 +58,14 @@ public interface IRaceLanqiaoStudentService
      * @return 结果
      */
     public int deleteRaceLanqiaoStudentById(Long id);
+
+    RaceLanqiaoStudent selectRaceLanqiaoStudentByUserId(Long loginId);
+
+//    获取蓝桥杯学生报名信息详细信息
+
+
+
+    Object selectRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId);
+
+    Integer deleteRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId);
 }

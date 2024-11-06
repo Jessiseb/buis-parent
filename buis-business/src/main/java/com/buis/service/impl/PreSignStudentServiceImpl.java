@@ -1,31 +1,29 @@
 package com.buis.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.buis.common.utils.DateUtils;
-import com.buis.common.utils.bean.BeanUtils;
-import com.buis.domain.RaceInfo;
-import com.buis.domain.UserInfo;
+import com.buis.domain.PreSignStudent;
+import com.buis.mapper.PreSignStudentMapper;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.mapper.UserInfoMapper;
+import com.buis.service.IPreSignStudentService;
+import com.buis.service.IUserInfoService;
 import com.buis.vo.PreSignStudentVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.buis.mapper.PreSignStudentMapper;
-import com.buis.domain.PreSignStudent;
-import com.buis.service.IPreSignStudentService;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 学生预报名Service业务层处理
- * 
+ *
  * @author buis
  * @date 2024-10-11
  */
 @Service
 @Slf4j
-public class PreSignStudentServiceImpl implements IPreSignStudentService 
-{
+public class PreSignStudentServiceImpl implements IPreSignStudentService {
     @Autowired
     private PreSignStudentMapper preSignStudentMapper;
     @Autowired
@@ -33,123 +31,97 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService
     @Autowired
     private RaceInfoMapper raceInfoMapper;
 
+    @Resource
+    private IUserInfoService userInfoService;
+
     /**
      * 查询学生预报名
-     * 
+     *
      * @param id 学生预报名主键
      * @return 学生预报名
      */
     @Override
-    public PreSignStudentVo selectPreSignStudentById(Long id)
-    {
-        PreSignStudent preSignStudent = preSignStudentMapper.selectPreSignStudentById(id);
-
-        UserInfo user = userInfoMapper.selectUserInfoById(preSignStudent.getStudent());
-        RaceInfo race = raceInfoMapper.selectRaceInfoById(preSignStudent.getRace());
-
-        PreSignStudentVo vo = new PreSignStudentVo();
-        BeanUtils.copyProperties(preSignStudent, vo);
-
-        if (user != null) {
-            vo.setStudentName(user.getName());
-        } else {
-            log.error("用户不存在 id:{}",preSignStudent.getStudent());
-        }
-
-        if (race != null) {
-            vo.setRaceName(race.getName());
-        } else {
-            log.error("比赛不存在 id:{}",preSignStudent.getRace());
-        }
-
-        vo.setPreTime(preSignStudent.getUpdateTime());
-
-        return vo;
+    public PreSignStudentVo selectPreSignStudentById(Long id) {
+        PreSignStudentVo preSignStudentVo = preSignStudentMapper.selectPreSignStudentById(id);
+        setStudentInfo(preSignStudentVo);
+        return preSignStudentVo;
     }
 
     /**
      * 查询学生预报名列表
-     * 
+     *
      * @param preSignStudent 学生预报名
-     * @return 学生预报名
+     * @return 学生预报名列表
      */
     @Override
     public List<PreSignStudentVo> selectPreSignStudentList(PreSignStudent preSignStudent) {
-        List<PreSignStudent> preSignStudents = preSignStudentMapper.selectPreSignStudentList(preSignStudent);
-        List<PreSignStudentVo> preSignStudentVos = new ArrayList<>();
-        for (PreSignStudent student : preSignStudents) {
-            UserInfo user = userInfoMapper.selectUserInfoById(student.getStudent());
-            RaceInfo race = raceInfoMapper.selectRaceInfoById(student.getRace());
-
-            PreSignStudentVo vo = new PreSignStudentVo();
-            BeanUtils.copyProperties(student, vo);
-
-            if (user != null) {
-                vo.setStudentName(user.getName());
-            } else {
-                log.error("用户不存在 id:{}",student.getStudent());
-            }
-
-            if (race != null) {
-                vo.setRaceName(race.getName());
-            } else {
-                log.error("比赛不存在 id:{}",student.getRace());
-            }
-
-            vo.setPreTime(preSignStudent.getUpdateTime());
-
-            preSignStudentVos.add(vo);
+        List<PreSignStudentVo> preSignStudents = preSignStudentMapper.selectPreSignStudentList(preSignStudent);
+        for (PreSignStudentVo signStudent : preSignStudents) {
+            setStudentInfo(signStudent);
         }
-        return preSignStudentVos;
+        return preSignStudents;
     }
 
     /**
+     * 设置学生信息
+     *
+     * @param preSignStudentVo 学生预报名对象
+     */
+    private void setStudentInfo(PreSignStudentVo preSignStudentVo) {
+        if (preSignStudentVo != null) {
+            preSignStudentVo.setStudentInfo(userInfoService.selectUserInfoById(preSignStudentVo.getStudent()));
+        }
+    }
+
+
+    /**
      * 新增学生预报名
-     * 
+     *
      * @param preSignStudent 学生预报名
      * @return 结果
      */
     @Override
-    public int insertPreSignStudent(PreSignStudent preSignStudent)
-    {
+    public int insertPreSignStudent(PreSignStudent preSignStudent) {
         preSignStudent.setCreateTime(DateUtils.getNowDate());
         return preSignStudentMapper.insertPreSignStudent(preSignStudent);
     }
 
     /**
      * 修改学生预报名
-     * 
+     *
      * @param preSignStudent 学生预报名
      * @return 结果
      */
     @Override
-    public int updatePreSignStudent(PreSignStudent preSignStudent)
-    {
+    public int updatePreSignStudent(PreSignStudent preSignStudent) {
         preSignStudent.setUpdateTime(DateUtils.getNowDate());
         return preSignStudentMapper.updatePreSignStudent(preSignStudent);
     }
 
     /**
      * 批量删除学生预报名
-     * 
+     *
      * @param ids 需要删除的学生预报名主键
      * @return 结果
      */
     @Override
-    public int deletePreSignStudentByIds(Long[] ids)
-    {
+    public int deletePreSignStudentByIds(Long[] ids) {
         return preSignStudentMapper.deletePreSignStudentByIds(ids);
     }
 
     /**
      * 删除学生预报名信息
-     * 
+     *
      * @param id 学生预报名主键
      * @return 结果
      */
     @Override
-    public int deletePreSignStudentById(Long id)
-    {
+    public int deletePreSignStudentById(Long id) {
         return preSignStudentMapper.deletePreSignStudentById(id);
+    }
+
+    @Override
+    public void deletePreSignStudentByUserIdAndRaceId(Long race, Long userId) {
+        preSignStudentMapper.deletePreSignStudentByUserIdAndRaceId(race, userId);
     }
 }

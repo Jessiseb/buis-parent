@@ -58,4 +58,8 @@ public interface IRaceLanqiaoTeacherService
      * @return 结果
      */
     public int deleteRaceLanqiaoTeacherById(Long id);
+
+    public Object selectRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId);
+
+    public Integer deleteRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId);
 }

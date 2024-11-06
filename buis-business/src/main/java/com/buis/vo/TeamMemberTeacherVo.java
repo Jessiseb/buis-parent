@@ -1,0 +1,40 @@
+package com.buis.vo;
+
+import com.buis.common.annotation.Excel;
+import com.buis.common.core.domain.BaseEntity;
+import com.buis.domain.TeamMemberStudent;
+import com.buis.domain.TeamMemberTeacher;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 队伍老师管理对象 team_member_teacher
+ *
+ * @author buis
+ * @date 2024-10-11
+ */
+@Data
+
+public class TeamMemberTeacherVo extends TeamMemberTeacher {
+    /**
+     * 老师信息
+     */
+    @ApiModelProperty(value = "老师信息")
+    private UserInfoVo teacherInfo;
+
+    /**
+     * 比赛名称
+     */
+    @ApiModelProperty(value = "所属比赛的名称")
+    private String raceName;
+    /**
+     * 队伍名称
+     */
+    @ApiModelProperty(value = "所属队伍的名称")
+    private String teamName;
+
+
+}

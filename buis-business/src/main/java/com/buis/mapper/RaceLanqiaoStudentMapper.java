@@ -2,7 +2,10 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.RaceLanqiaoStudent;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+@Mapper
 /**
  * 蓝桥杯学生报名信息Mapper接口
  * 
@@ -58,4 +61,8 @@ public interface RaceLanqiaoStudentMapper
      * @return 结果
      */
     public int deleteRaceLanqiaoStudentByIds(Long[] ids);
+
+    RaceLanqiaoStudent selectRaceLanqiaoStudentByUserId(@Param("userId") Long loginId);
+
+    int deleteRaceLanqiaoStudentByUserId(@Param("userId") Long loginId);
 }
