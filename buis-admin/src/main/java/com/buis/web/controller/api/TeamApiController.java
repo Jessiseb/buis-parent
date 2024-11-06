@@ -62,7 +62,6 @@ public class TeamApiController extends BaseController{
 
     /**
      * 根据老师id查询老师指导的队伍列表
-     *
      * @return 返回结果
      */
     @ApiOperation("根据老师id查询老师指导的队伍列表")
@@ -71,6 +70,59 @@ public class TeamApiController extends BaseController{
         Long userId = SecurityUtils.getFrontLoginUserId();
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId);
         return R.ok(teamInfoVos);
+    }
+
+
+    /**
+     * 新增队伍信息
+     * @param teamInfo 队伍信息对象
+     * @return R
+     */
+    @ApiOperation("新增队伍信息")
+    @PostMapping("/teams")
+    public R addTeamInfo(@RequestBody TeamInfo teamInfo){
+        try {
+            int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);
+            return R.ok(insertTeamInfo, "操作成功");
+        }catch (Exception e){
+            return R.fail("新增队伍信息失败！");
+        }
+    }
+
+
+    /**
+     * 修改队伍信息
+     * @param teamInfo 队伍信息对象
+     * @param id 队伍ID
+     * @return R
+     */
+    @ApiOperation("修改队伍信息")
+    @PutMapping("/teams/{id}")
+    public R editTeamInfo(@RequestBody TeamInfo teamInfo,@PathVariable Long id){
+        try {
+            teamInfo.setId(id);
+            int result = teamInfoService.updateTeamInfo(teamInfo);
+            return R.ok(result, "操作成功");
+        }catch (Exception e){
+            return R.fail("修改队伍信息失败！");
+        }
+    }
+
+
+    /**
+     * 删除队伍信息
+     * @param id 队伍ID
+     * @return R
+     */
+    @ApiOperation("删除队伍信息")
+    @DeleteMapping("/teams/{id}")
+    public R removeTeamInfo(@PathVariable Long id){
+        try {
+            int result = teamInfoService.deleteTeamInfoById(id);
+            return R.ok(result, "操作成功");
+        }catch (Exception e){
+             return R.fail("删除队伍信息失败！");
+        }
     }
 
 }
