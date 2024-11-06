@@ -8,6 +8,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.service.ITeamMemberStudentService;
+import com.buis.vo.TeamMemberStudentVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,9 @@ public class TeamMemberStudentController extends BaseController {
     @ApiOperation("查询队伍成员管理列表")
     @PreAuthorize("@ss.hasPermi('buis:teamStudent:list')")
     @GetMapping("/list")
-    public TableDataInfo list(TeamMemberStudent teamMemberStudent) {
+    public TableDataInfo list(TeamMemberStudentVo teamMemberStudent) {
         startPage();
-        List<TeamMemberStudent> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
+        List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return getDataTable(list);
     }
 
@@ -51,9 +52,9 @@ public class TeamMemberStudentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamStudent:export')")
     @Log(title = "队伍成员管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, TeamMemberStudent teamMemberStudent) {
-        List<TeamMemberStudent> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
-        ExcelUtil<TeamMemberStudent> util = new ExcelUtil<TeamMemberStudent>(TeamMemberStudent.class);
+    public void export(HttpServletResponse response, TeamMemberStudentVo teamMemberStudent) {
+        List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
+        ExcelUtil<TeamMemberStudentVo> util = new ExcelUtil<TeamMemberStudentVo>(TeamMemberStudentVo.class);
         util.exportExcel(response, list, "队伍成员管理数据");
     }
 

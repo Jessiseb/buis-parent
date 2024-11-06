@@ -27,6 +27,11 @@ public class RaceLanqiaoTeacher extends BaseEntity {
     @ApiModelProperty("id ")
     private Long id;
 
+    /** 比赛id */
+    @Excel(name = "比赛id")
+    @ApiModelProperty("比赛id")
+    private Long raceId;
+
     /**
      * 老师id
      */

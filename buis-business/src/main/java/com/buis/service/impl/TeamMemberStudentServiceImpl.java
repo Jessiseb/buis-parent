@@ -2,13 +2,15 @@ package com.buis.service.impl;
 
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamMemberStudent;
-import com.buis.dto.TeamMemberStudentDto;
 import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.service.ITeamMemberStudentService;
+import com.buis.service.IUserInfoService;
+import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -21,7 +23,8 @@ import java.util.List;
 public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     @Autowired
     private TeamMemberStudentMapper teamMemberStudentMapper;
-
+    @Resource
+    private IUserInfoService userInfoService;
     /**
      * 查询队伍成员管理
      *
@@ -29,8 +32,10 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
      * @return 队伍成员管理
      */
     @Override
-    public TeamMemberStudent selectTeamMemberStudentById(Long id) {
-        return teamMemberStudentMapper.selectTeamMemberStudentById(id);
+    public TeamMemberStudentVo selectTeamMemberStudentById(Long id) {
+        TeamMemberStudentVo teamMemberStudentVo = teamMemberStudentMapper.selectTeamMemberStudentById(id);
+        setStudentInfo(teamMemberStudentVo);
+        return teamMemberStudentVo;
     }
 
     /**
@@ -40,10 +45,23 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
      * @return 队伍成员管理
      */
     @Override
-    public List<TeamMemberStudent> selectTeamMemberStudentList(TeamMemberStudent teamMemberStudent) {
-        return teamMemberStudentMapper.selectTeamMemberStudentList(teamMemberStudent);
+    public List<TeamMemberStudentVo> selectTeamMemberStudentList(TeamMemberStudent teamMemberStudent) {
+        List<TeamMemberStudentVo> teamMemberStudentVos = teamMemberStudentMapper.selectTeamMemberStudentList(teamMemberStudent);
+        for (TeamMemberStudentVo teamMemberStudentVo : teamMemberStudentVos) {
+            setStudentInfo(teamMemberStudentVo);
+        }
+        return teamMemberStudentVos;
     }
-
+    /**
+     * 设置学生信息
+     *
+     * @param teamMemberStudentVo 队伍学生管理对象
+     */
+    private void setStudentInfo(TeamMemberStudentVo teamMemberStudentVo) {
+        if (teamMemberStudentVo != null) {
+            teamMemberStudentVo.setStudentInfo(userInfoService.selectUserInfoById(teamMemberStudentVo.getStudent()));
+        }
+    }
     /**
      * 新增队伍成员管理
      *
@@ -90,23 +108,29 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return teamMemberStudentMapper.deleteTeamMemberStudentById(id);
     }
 
+    /**
+     * 根据teamId获取结对的个数，查成员个数
+     * @param id teamId
+     * @return
+     */
     @Override
-    public TeamMemberStudentDto selectTeamMemberStudentQueryById(Long id) {
-        return teamMemberStudentMapper.selectTeamMemberStudentQueryById(id);
+    public Long getJoinCountByTeamId(Long id) {
+        return teamMemberStudentMapper.getJoinCountByTeamId(id);
     }
 
     /**
-     * 查询队伍成员管理列表
-     *
-     * @return 队伍成员管理
+     * 查询队伍内学生列表
+     * @param team
+     * @return
      */
     @Override
-    public List<UserInfoVo> selectTeamMemberStudentQueryList(Long race, Long team) {
-        return teamMemberStudentMapper.selectTeamMemberStudentQueryList(race, team);
+    public List<UserInfoVo> getMemberStudentByTeamId(Long team) {
+        List<Long> ids = teamMemberStudentMapper.getMemberStudentByTeamId(team);
+        List<UserInfoVo> userInfoVos = null;
+        if (ids!=null&& ids.size()>0) {
+            userInfoVos = userInfoService.selectUserInfoByIds(ids);
+        }
+        return userInfoVos;
     }
 
-    @Override
-    public List<TeamMemberStudent> selectTeamMyCreate(Long id) {
-        return teamMemberStudentMapper.selectTeamMyCreate(id);
-    }
 }
