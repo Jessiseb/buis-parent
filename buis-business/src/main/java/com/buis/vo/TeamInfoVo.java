@@ -10,7 +10,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@ApiModel("队伍信息")
+@ApiModel("队伍信息VO")
 public class TeamInfoVo extends TeamInfo {
 
     /**

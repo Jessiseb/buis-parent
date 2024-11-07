@@ -3,6 +3,7 @@ package com.buis.web.controller.api;
 
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.TeamInfo;
@@ -54,10 +55,10 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("带条件分页查询队伍列表")
     @PostMapping("/teamList")
-    public TableDataInfo list(@RequestBody TeamInfo teamInfo) {
+    public MyPageVo<List<TeamInfoVo>> list(@RequestBody TeamInfo teamInfo) {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        return new TableDataInfo(list, (int) new PageInfo(list).getTotal());
+        return new MyPageVo(list, (int) new PageInfo(list).getTotal());
     }
 
 

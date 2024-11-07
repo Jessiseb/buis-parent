@@ -22,7 +22,7 @@ import java.util.List;
  * @date 2024-10-23
  */
 @Data
-@ApiModel("比赛信息")
+@ApiModel("比赛信息VO")
 public class RaceInfoVo extends RaceInfo
         {
             /**
