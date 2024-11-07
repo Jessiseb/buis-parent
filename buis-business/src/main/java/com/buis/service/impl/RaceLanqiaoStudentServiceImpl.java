@@ -125,7 +125,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     }
 
     @Override
-    public Object selectRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId) {
+    public RaceLanqiaoStudent selectRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId) {
         RaceLanqiaoStudent raceLanqiaoStudent = new RaceLanqiaoStudent();
         raceLanqiaoStudent.setRaceId(race);
         raceLanqiaoStudent.setUserId(userId);

@@ -50,21 +50,25 @@ public class LanQiaoApiController extends BaseController {
     }
 
     /**
-     * 获取蓝桥杯报名信息
+     * 获取学生蓝桥杯报名信息
      */
-    @ApiOperation("获取蓝桥杯报名信息")
-    @GetMapping("/{race}/{flag}")
-    public R getInfo(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "flag", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer flag) {
+    @ApiOperation("获取学生蓝桥杯报名信息")
+    @GetMapping("/student/{race}")
+    public R<RaceLanqiaoStudent> getStudent(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
-        Object result = null;
-        if (flag == 0) {
-            result = raceLanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(race, userId);
-        } else if (flag == 1) {
-            result = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(race, userId);
-        }
-        return R.ok(result);
+        RaceLanqiaoStudent raceLanqiaoStudent = raceLanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(race, userId);
+        return R.ok(raceLanqiaoStudent);
     }
-
+    /**
+     * 获取老师蓝桥杯报名信息
+     */
+    @ApiOperation("获取老师蓝桥杯报名信息")
+    @GetMapping("/teacher/{race}")
+    public R<RaceLanqiaoTeacher> getTeacher(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        RaceLanqiaoTeacher raceLanqiaoTeacher = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(race, userId);
+        return R.ok(raceLanqiaoTeacher);
+    }
 
     /**
      * 新增蓝桥杯学生报名信息
@@ -123,7 +127,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("查询蓝桥杯赛道类型列表")
     @PostMapping("/typeList")
-    public R typeList(@ApiParam(name = "raceLanqiaoType", value = "赛道类型条件过滤", required = false) @RequestBody RaceLanqiaoType raceLanqiaoType) {
+    public R<List<RaceLanqiaoType>> typeList(@ApiParam(name = "raceLanqiaoType", value = "赛道类型条件过滤", required = false) @RequestBody RaceLanqiaoType raceLanqiaoType) {
 
         List<RaceLanqiaoType> list = raceLanqiaoTypeService.selectRaceLanqiaoTypeList(raceLanqiaoType);
 

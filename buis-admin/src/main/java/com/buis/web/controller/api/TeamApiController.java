@@ -37,11 +37,11 @@ public class TeamApiController extends BaseController{
 
     @ApiOperation("根据队伍id查询队伍成员列表")
     @GetMapping("/Member/{team}")
-    public R getMemberStudentByTeamId(
+    public R<HashMap<String, List<UserInfoVo>>> getMemberStudentByTeamId(
                               @ApiParam(name = "team", value = "队伍id", required = true)@PathVariable("team") Long team) {
         List<UserInfoVo> student = teamMemberStudentService.getMemberStudentByTeamId(team);
         List<UserInfoVo> teacher = teamMemberTeacherService.getTeachersByRaceId(team);
-        HashMap<Object, Object> map = new HashMap<>();
+        HashMap<String, List<UserInfoVo>> map = new HashMap<>();
         map.put("student", student);
         map.put("teacher", teacher);
         return R.ok(map);
@@ -67,7 +67,7 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("根据老师id查询老师指导的队伍列表")
     @GetMapping("/guide")
-    public R guide() {
+    public R<List<TeamInfoVo>> guide() {
         Long userId = SecurityUtils.getFrontLoginUserId();
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId);
         return R.ok(teamInfoVos);

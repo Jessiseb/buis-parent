@@ -2,6 +2,7 @@ package com.buis.web.controller.api;
 
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.domain.PreSignStudent;
 import com.buis.domain.PreSignTeacher;
@@ -49,9 +50,9 @@ public class RaceApiController extends BaseController {
      */
     @ApiOperation("查询比赛类型列表")
     @GetMapping("/typeList")
-    public AjaxResult list(@ApiParam(name = "raceType", value = "比赛类型信息", required = false)RaceType raceType) {
+    public R<List<RaceType>> list(@ApiParam(name = "raceType", value = "比赛类型信息", required = false)RaceType raceType) {
         List<RaceType> list = raceTypeService.selectRaceTypeList(raceType);
-        return success(list);
+        return R.ok(list);
     }
     @ApiOperation("根据比赛id分页查询预报名老师列表")
     @PostMapping("/teacher/{RaceId}")
