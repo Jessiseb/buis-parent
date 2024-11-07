@@ -59,7 +59,7 @@ public interface IRaceLanqiaoTeacherService
      */
     public int deleteRaceLanqiaoTeacherById(Long id);
 
-    public Object selectRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId);
+    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId);
 
     public Integer deleteRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId);
 }

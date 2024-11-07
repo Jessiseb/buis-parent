@@ -3,6 +3,7 @@ package com.buis.domain;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel("队伍信息对象")
 @Builder
 public class TeamInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;

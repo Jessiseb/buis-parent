@@ -5,6 +5,7 @@ import com.buis.common.core.domain.BaseEntity;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.Reward;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ import java.util.List;
  * @date 2024-10-23
  */
 @Data
-
+@ApiModel("比赛信息")
 public class RaceInfoVo extends RaceInfo
         {
             /**

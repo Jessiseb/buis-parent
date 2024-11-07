@@ -131,7 +131,7 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
 
     //查询比赛报名信息
     @Override
-    public Object selectRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId) {
+    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId) {
         RaceLanqiaoTeacher raceLanqiaoTeacher = new RaceLanqiaoTeacher();
         raceLanqiaoTeacher.setRaceId(race);
         raceLanqiaoTeacher.setUserId(userId);

@@ -1,9 +1,11 @@
 package com.buis.dto;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@ApiModel("用户注册信息")
 public class RegisterDto {
 
     /**
