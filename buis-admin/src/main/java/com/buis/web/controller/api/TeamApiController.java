@@ -11,6 +11,7 @@ import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.impl.TeamInfoServiceImpl;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -56,7 +57,7 @@ public class TeamApiController extends BaseController{
     public TableDataInfo list(@RequestBody TeamInfo teamInfo) {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        return getDataTable(list);
+        return new TableDataInfo(list, (int) new PageInfo(list).getTotal());
     }
 
 

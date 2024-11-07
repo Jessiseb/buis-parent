@@ -13,6 +13,7 @@ import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.PreSignTeacherVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.UserInfoVo;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,7 +44,7 @@ public class RaceApiController extends BaseController {
     public TableDataInfo list(@ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
         startPage();
         List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
-        return getDataTable(list);
+        return new TableDataInfo(list, (int) new PageInfo(list).getTotal());
     }
     /**
      * 查询比赛类型列表
@@ -63,7 +64,7 @@ public class RaceApiController extends BaseController {
         prevTeacher.setRace(RaceId);
         List<PreSignTeacherVo> preSignTeacherVos = preTeacherService.selectPreSignTeacherList(prevTeacher);
         //返回结果
-        return getDataTable(preSignTeacherVos);
+        return new TableDataInfo(preSignTeacherVos, (int) new PageInfo(preSignTeacherVos).getTotal());
     }
     @ApiOperation("根据比赛id分页查询预报名学生列表")
     @PostMapping("/student/{RaceId}")
@@ -74,6 +75,6 @@ public class RaceApiController extends BaseController {
         preSignStudent.setRace(RaceId);
         List<PreSignStudentVo> preSignStudentVos = preStudentService.selectPreSignStudentList(preSignStudent);
         //返回结果
-        return getDataTable(preSignStudentVos);
+        return new TableDataInfo(preSignStudentVos, (int) new PageInfo(preSignStudentVos).getTotal());
     }
 }
