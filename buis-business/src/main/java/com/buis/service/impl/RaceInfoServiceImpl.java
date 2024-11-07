@@ -2,6 +2,8 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.RaceDetail;
+import com.buis.service.IRaceDetailService;
 import com.buis.vo.RaceInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService
 {
     @Autowired
     private RaceInfoMapper raceInfoMapper;
+    @Autowired
+    private IRaceDetailService raceDetailService;
 
     /**
      * 查询比赛信息
@@ -33,8 +37,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService
      */
     @Override
     public RaceInfoVo selectRaceInfoById(Long id)
+
     {
-        return raceInfoMapper.selectRaceInfoById(id);
+        RaceInfoVo raceInfoVo = raceInfoMapper.selectRaceInfoById(id);
+
+        RaceDetail raceDetail = new RaceDetail();
+        raceDetail.setRace(raceInfoVo.getId());
+        List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+        if (raceDetailVos!=null && raceDetailVos.size() > 0) {
+            raceInfoVo.setRaceDetail(raceDetailVos.get(0));
+        }
+
+        return raceInfoVo;
     }
 
     /**
