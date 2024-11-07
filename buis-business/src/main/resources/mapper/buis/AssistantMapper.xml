@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.AssistantMapper">
     
-    <resultMap type="Assistant" id="AssistantResult">
+    <resultMap type="com.buis.domain.Assistant" id="AssistantResult">
         <result property="id"    column="id"    />
         <result property="student"    column="student"    />
         <result property="race"    column="race"    />
@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, student, race, is_deleted, create_time, update_time from t_assistant
     </sql>
 
-    <select id="selectAssistantList" parameterType="Assistant" resultMap="AssistantResult">
+    <select id="selectAssistantList" parameterType="com.buis.domain.Assistant" resultMap="AssistantResult">
         <include refid="selectAssistantVo"/>
         <where>
             is_deleted = 0
@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertAssistant" parameterType="Assistant" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertAssistant" parameterType="com.buis.domain.Assistant" useGeneratedKeys="true" keyProperty="id">
         insert into t_assistant
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="student != null">student,</if>
@@ -50,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateAssistant" parameterType="Assistant">
+    <update id="updateAssistant" parameterType="com.buis.domain.Assistant">
         update t_assistant
         <trim prefix="SET" suffixOverrides=",">
             <if test="student != null">student = #{student},</if>
