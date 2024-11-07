@@ -32,4 +32,10 @@ public class RegisterDto {
     @ApiModelProperty(value = "注册时的验证码")
     private String code;
 
+    /**
+     * 是否是老师
+     */
+    @ApiModelProperty(value = "是否是老师")
+    private Integer isTeacher;
+
 }
