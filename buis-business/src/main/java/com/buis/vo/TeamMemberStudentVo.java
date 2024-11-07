@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
  * @date 2024-10-11
  */
 @Data
-@ApiModel("互选信息-队伍学生")
+@ApiModel("互选信息-队伍学生VO")
 public class TeamMemberStudentVo extends TeamMemberStudent {
     /**
      * 学生信息

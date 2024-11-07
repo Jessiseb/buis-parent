@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @date 2024-10-11
  */
 @Data
-@ApiModel("用户信息")
+@ApiModel("用户信息VO")
 public class UserInfoVo extends UserInfo {
 
     /**

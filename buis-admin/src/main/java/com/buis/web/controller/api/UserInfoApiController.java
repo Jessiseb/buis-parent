@@ -30,8 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserInfoApiController extends BaseController {
     @Resource
     private IUserInfoService userInfoService;
-    @Resource
-    private RedisTemplate redisTemplate;
+
 
 
     @ApiOperation("用户登录功能")

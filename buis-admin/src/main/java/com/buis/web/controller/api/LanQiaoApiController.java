@@ -130,9 +130,7 @@ public class LanQiaoApiController extends BaseController {
     @ApiOperation("查询蓝桥杯赛道类型列表")
     @PostMapping("/typeList")
     public R<List<RaceLanqiaoType>> typeList(@ApiParam(name = "raceLanqiaoType", value = "赛道类型条件过滤", required = false) @RequestBody RaceLanqiaoType raceLanqiaoType) {
-
         List<RaceLanqiaoType> list = raceLanqiaoTypeService.selectRaceLanqiaoTypeList(raceLanqiaoType);
-
         return R.ok(list);
 
     }

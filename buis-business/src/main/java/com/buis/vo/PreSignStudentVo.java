@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel("学生预报名信息")
+@ApiModel("学生预报名信息VO")
 public class PreSignStudentVo extends PreSignStudent {
 
     /**

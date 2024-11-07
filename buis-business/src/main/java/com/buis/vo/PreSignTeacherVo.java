@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel("老师预报名信息")
+@ApiModel("老师预报名信息VO")
 public class PreSignTeacherVo extends PreSignTeacher {
     /**
      * 老师信息
