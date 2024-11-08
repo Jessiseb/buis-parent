@@ -112,5 +112,12 @@ public class UserInfo extends BaseEntity {
     @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
+    /**
+     * 是否为老师标识 0 - 学生 1 - 老师
+     */
+    @ApiModelProperty("是否为老师标识 0 - 学生 1 - 老师")
+    private Integer isTeacher;
+
+
 
 }

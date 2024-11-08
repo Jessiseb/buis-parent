@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceLanqiaoTeacherMapper">
     
-    <resultMap type="RaceLanqiaoTeacher" id="RaceLanqiaoTeacherResult">
+    <resultMap type="com.buis.domain.RaceLanqiaoTeacher" id="RaceLanqiaoTeacherResult">
         <result property="id"    column="id"    />
         <result property="raceId"    column="race_id"    />
         <result property="userId"    column="user_id"    />
@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, race_id, user_id, name, sex, college, major, title, office, phone, email, identity, course, type, t_class, bank_number, guidance, remark, is_deleted, create_time, update_time from race_lanqiao_teacher
     </sql>
 
-    <select id="selectRaceLanqiaoTeacherList" parameterType="RaceLanqiaoTeacher" resultMap="RaceLanqiaoTeacherResult">
+    <select id="selectRaceLanqiaoTeacherList" parameterType="com.buis.domain.RaceLanqiaoTeacher" resultMap="RaceLanqiaoTeacherResult">
         <include refid="selectRaceLanqiaoTeacherVo"/>
         <where>
             is_deleted = 0
@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and is_deleted = 0
     </select>
 
-    <insert id="insertRaceLanqiaoTeacher" parameterType="RaceLanqiaoTeacher" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceLanqiaoTeacher" parameterType="com.buis.domain.RaceLanqiaoTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="raceId != null">race_id,</if>
@@ -118,7 +118,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceLanqiaoTeacher" parameterType="RaceLanqiaoTeacher">
+    <update id="updateRaceLanqiaoTeacher" parameterType="com.buis.domain.RaceLanqiaoTeacher">
         update race_lanqiao_teacher
         <trim prefix="SET" suffixOverrides=",">
             <if test="raceId != null">race_id = #{raceId},</if>

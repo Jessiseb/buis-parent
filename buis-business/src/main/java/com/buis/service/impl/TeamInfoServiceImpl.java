@@ -136,7 +136,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService
         Long studentCount = teamStudentService.getJoinCountByTeamId(team.getId());
         Long teacherCount = teamTeacherService.getJoinCountByTeamId(team.getId());
         if (userInfoVo!=null) { // 判断队长是学生还是老师，算上人数
-            if (userInfoVo.getTitle()!=null){
+            if (userInfoVo.getIsTeacher() == 1){
                 teacherCount++;
             }else {
                 studentCount++;

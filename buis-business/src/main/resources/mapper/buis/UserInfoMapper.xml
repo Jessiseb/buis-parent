@@ -21,10 +21,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="isTeacher"    column="is_teacher"    />
     </resultMap>
 
     <sql id="selectUserInfoVo">
-        select t1.id, t1.number, t1.password, t1.email, t1.phone, t1.name, t1.description, t1.sex, t1.college,t2.name AS major_name,t3.name AS college_name, t1.title, t1.is_disabled, t1.is_deleted, t1.create_time, t1.update_time
+        select t1.id, t1.number, t1.password, t1.email, t1.phone, t1.name, t1.description, t1.sex, t1.college, t1.is_teacher,t2.name AS major_name,t3.name AS college_name, t1.title, t1.is_disabled, t1.is_deleted, t1.create_time, t1.update_time
         from user_info t1
         LEFT JOIN
         t_college_major t2 ON t1.major = t2.id
@@ -46,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null "> and t1.sex = #{sex}</if>
             <if test="college != null "> and t1.college = #{college}</if>
             <if test="major != null ">and t1.major = #{major}</if>
+            <if test="is_teacher != null ">and t1.is_teacher=#{isTeacher}</if>
             <if test="title != null ">and t1.title = #{title}</if>
             <if test="isDisabled != null ">and t1.is_disabled = #{isDisabled}</if>
         </where>
