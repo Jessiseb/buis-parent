@@ -38,7 +38,12 @@ public class RaceApiController extends BaseController {
     private IPreSignTeacherService preTeacherService;
     @Autowired
     private IPreSignStudentService preStudentService;
-
+    @ApiOperation("根据比赛id查询比赛信息")
+    @GetMapping("/detail/{RaceId}")
+    public R<RaceInfoVo> list(@ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(RaceId);
+        return R.ok(raceInfoVo);
+    }
     @ApiOperation("带条件分页查询比赛列表")
     @GetMapping("/raceList")
     public MyPageVo<List<RaceInfoVo>> list(@ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {

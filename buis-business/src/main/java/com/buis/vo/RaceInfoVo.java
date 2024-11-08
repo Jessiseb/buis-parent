@@ -2,6 +2,7 @@ package com.buis.vo;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import com.buis.domain.RaceDetail;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.Reward;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -37,5 +38,9 @@ public class RaceInfoVo extends RaceInfo
             @Excel(name = "二级类型名称")
             @ApiModelProperty(value = "二级类型名称")
             private String sonName;
-
+            /**
+             * 比赛实体
+             */
+            @ApiModelProperty(value = "比赛详情")
+            private RaceDetail raceDetail;
         }

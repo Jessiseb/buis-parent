@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.JudgeMapper">
     
-    <resultMap type="Judge" id="JudgeResult">
+    <resultMap type="com.buis.domain.Judge" id="JudgeResult">
         <result property="id"    column="id"    />
         <result property="teacher"    column="teacher"    />
         <result property="race"    column="race"    />
@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, teacher, race, is_deleted, create_time, update_time from t_judge
     </sql>
 
-    <select id="selectJudgeList" parameterType="Judge" resultMap="JudgeResult">
+    <select id="selectJudgeList" parameterType="com.buis.domain.Judge" resultMap="JudgeResult">
         <include refid="selectJudgeVo"/>
         <where>
             is_deleted = 0
@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertJudge" parameterType="Judge" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertJudge" parameterType="com.buis.domain.Judge" useGeneratedKeys="true" keyProperty="id">
         insert into t_judge
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="teacher != null">teacher,</if>
@@ -50,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateJudge" parameterType="Judge">
+    <update id="updateJudge" parameterType="com.buis.domain.Judge">
         update t_judge
         <trim prefix="SET" suffixOverrides=",">
             <if test="teacher != null">teacher = #{teacher},</if>
