@@ -34,7 +34,7 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("删除蓝桥杯报名信息")
     @DeleteMapping("/{race}/{flag}")
-    public R remove(@ApiParam(name = "race", value = "标识（0-学生，1-老师）", required = true) @PathVariable Long race, @ApiParam(name = "flag", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer flag) {
+    public R remove(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "flag", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer flag) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         Integer res = 0;
         if (flag == 0) {
