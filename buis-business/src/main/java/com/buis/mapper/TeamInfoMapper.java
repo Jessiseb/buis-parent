@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.buis.domain.TeamInfo;
 import com.buis.vo.TeamInfoVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 队伍信息Mapper接口
@@ -69,4 +70,6 @@ public interface TeamInfoMapper
      * @return
      */
     List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
+
+    void deleteTeamInfoByUserIdAndRaceId(@Param("race") Long race, @Param("userId")Long userId);
 }

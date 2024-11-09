@@ -2,9 +2,11 @@ package com.buis.vo;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import com.buis.domain.RaceDetail;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.Reward;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +23,7 @@ import java.util.List;
  * @date 2024-10-23
  */
 @Data
-
+@ApiModel("比赛信息VO")
 public class RaceInfoVo extends RaceInfo
         {
             /**
@@ -36,5 +38,9 @@ public class RaceInfoVo extends RaceInfo
             @Excel(name = "二级类型名称")
             @ApiModelProperty(value = "二级类型名称")
             private String sonName;
-
+            /**
+             * 比赛实体
+             */
+            @ApiModelProperty(value = "比赛详情")
+            private RaceDetail raceDetail;
         }

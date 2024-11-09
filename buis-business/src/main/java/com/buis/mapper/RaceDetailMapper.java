@@ -3,7 +3,6 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.PreSignTeacher;
 import com.buis.domain.RaceDetail;
 import com.buis.domain.Weight;
 
@@ -25,7 +24,7 @@ public interface RaceDetailMapper
 
     /**
      * 查询比赛详情列表
-     * 
+     *
      * @param raceDetail 比赛详情
      * @return 比赛详情集合
      */

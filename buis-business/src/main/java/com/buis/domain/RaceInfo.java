@@ -5,6 +5,7 @@ package com.buis.domain;
     import com.fasterxml.jackson.annotation.JsonFormat;
     import com.buis.common.annotation.Excel;
             import com.buis.common.core.domain.BaseEntity;
+        import io.swagger.annotations.ApiModel;
         import io.swagger.annotations.ApiModelProperty;
         import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ApiModel("比赛信息对象")
 public class RaceInfo extends BaseEntity
         {   private static final long serialVersionUID = 1L;
         /** id */

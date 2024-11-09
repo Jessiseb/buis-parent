@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.ScoreMapper">
     
-    <resultMap type="Score" id="ScoreResult">
+    <resultMap type="com.buis.domain.Score" id="ScoreResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
         <result property="teacher"    column="teacher"    />
@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, race, teacher, team, build, score, is_deleted, create_time, update_time from t_score
     </sql>
 
-    <select id="selectScoreList" parameterType="Score" resultMap="ScoreResult">
+    <select id="selectScoreList" parameterType="com.buis.domain.Score" resultMap="ScoreResult">
         <include refid="selectScoreVo"/>
         <where>
             is_deleted = 0
@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertScore" parameterType="Score" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertScore" parameterType="com.buis.domain.Score" useGeneratedKeys="true" keyProperty="id">
         insert into t_score
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateScore" parameterType="Score">
+    <update id="updateScore" parameterType="com.buis.domain.Score">
         update t_score
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>

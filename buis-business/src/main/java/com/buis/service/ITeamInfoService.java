@@ -68,4 +68,5 @@ public interface ITeamInfoService
     public int deleteTeamInfoById(Long id);
 
 
+    void deleteTeamInfoByUserIdAndRaceId(Long race, Long userId);
 }

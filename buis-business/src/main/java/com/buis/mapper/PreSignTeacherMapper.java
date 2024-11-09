@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.buis.domain.PreSignTeacher;
 import com.buis.vo.PreSignTeacherVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 老师预报名Mapper接口
@@ -62,4 +63,5 @@ public interface PreSignTeacherMapper
      */
     public int deletePreSignTeacherByIds(Long[] ids);
 
+    void deletePreSignTeacherByUserIdAndR(@Param("race") Long race, @Param("userId") Long userId);
 }

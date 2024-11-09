@@ -2,6 +2,7 @@ package com.buis.vo;
 
 import com.buis.common.core.domain.BaseEntity;
 import com.buis.domain.UserInfo;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ import java.io.Serializable;
  * @date 2024-10-11
  */
 @Data
+@ApiModel("用户信息VO")
 public class UserInfoVo extends UserInfo {
 
     /**
