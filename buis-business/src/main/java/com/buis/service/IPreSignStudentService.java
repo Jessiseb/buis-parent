@@ -59,4 +59,6 @@ public interface IPreSignStudentService
      * @return 结果
      */
     public int deletePreSignStudentById(Long id);
+
+    void deletePreSignStudentByUserIdAndRaceId(Long race, Long userId);
 }

@@ -4,8 +4,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceLanqiaoTeacherMapper">
     
-    <resultMap type="RaceLanqiaoTeacher" id="RaceLanqiaoTeacherResult">
+    <resultMap type="com.buis.domain.RaceLanqiaoTeacher" id="RaceLanqiaoTeacherResult">
         <result property="id"    column="id"    />
+        <result property="raceId"    column="race_id"    />
         <result property="userId"    column="user_id"    />
         <result property="name"    column="name"    />
         <result property="sex"    column="sex"    />
@@ -28,14 +29,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectRaceLanqiaoTeacherVo">
-        select id, user_id, name, sex, college, major, title, office, phone, email, identity, course, type, t_class, bank_number, guidance, remark, is_deleted, create_time, update_time from race_lanqiao_teacher
+        select id, race_id, user_id, name, sex, college, major, title, office, phone, email, identity, course, type, t_class, bank_number, guidance, remark, is_deleted, create_time, update_time from race_lanqiao_teacher
     </sql>
 
-    <select id="selectRaceLanqiaoTeacherList" parameterType="RaceLanqiaoTeacher" resultMap="RaceLanqiaoTeacherResult">
+    <select id="selectRaceLanqiaoTeacherList" parameterType="com.buis.domain.RaceLanqiaoTeacher" resultMap="RaceLanqiaoTeacherResult">
         <include refid="selectRaceLanqiaoTeacherVo"/>
         <where>
             is_deleted = 0
             <if test="id != null "> and id = #{id}</if>
+            <if test="raceId != null "> and race_id = #{raceId}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="sex != null "> and sex = #{sex}</if>
@@ -68,9 +70,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and is_deleted = 0
     </select>
 
-    <insert id="insertRaceLanqiaoTeacher" parameterType="RaceLanqiaoTeacher" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceLanqiaoTeacher" parameterType="com.buis.domain.RaceLanqiaoTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="raceId != null">race_id,</if>
             <if test="userId != null">user_id,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="sex != null">sex,</if>
@@ -92,6 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="raceId != null">#{raceId},</if>
             <if test="userId != null">#{userId},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="sex != null">#{sex},</if>
@@ -114,9 +118,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceLanqiaoTeacher" parameterType="RaceLanqiaoTeacher">
+    <update id="updateRaceLanqiaoTeacher" parameterType="com.buis.domain.RaceLanqiaoTeacher">
         update race_lanqiao_teacher
         <trim prefix="SET" suffixOverrides=",">
+            <if test="raceId != null">race_id = #{raceId},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="sex != null">sex = #{sex},</if>

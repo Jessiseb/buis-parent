@@ -3,6 +3,7 @@ package com.buis.vo;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.buis.domain.TeamMemberStudent;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
  * @date 2024-10-11
  */
 @Data
+@ApiModel("互选信息-队伍学生VO")
 public class TeamMemberStudentVo extends TeamMemberStudent {
     /**
      * 学生信息

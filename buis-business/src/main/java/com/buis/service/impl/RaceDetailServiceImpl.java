@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.service.IRaceInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import com.buis.mapper.RaceDetailMapper;
 import com.buis.domain.RaceDetail;
 import com.buis.service.IRaceDetailService;
 
+import javax.annotation.Resource;
+
 /**
  * 比赛详情Service业务层处理
  * 
@@ -21,7 +24,7 @@ import com.buis.service.IRaceDetailService;
 @Service
 public class RaceDetailServiceImpl implements IRaceDetailService 
 {
-    @Autowired
+    @Resource
     private RaceDetailMapper raceDetailMapper;
 
     /**
@@ -33,19 +36,21 @@ public class RaceDetailServiceImpl implements IRaceDetailService
     @Override
     public RaceDetail selectRaceDetailById(Long id)
     {
-        return raceDetailMapper.selectRaceDetailById(id);
+        RaceDetail raceDetailVo = raceDetailMapper.selectRaceDetailById(id);
+        return raceDetailVo;
     }
 
     /**
      * 查询比赛详情列表
-     * 
+     *
      * @param raceDetail 比赛详情
      * @return 比赛详情
      */
     @Override
     public List<RaceDetail> selectRaceDetailList(RaceDetail raceDetail)
     {
-        return raceDetailMapper.selectRaceDetailList(raceDetail);
+        List<RaceDetail> raceDetailVos = raceDetailMapper.selectRaceDetailList(raceDetail);
+        return raceDetailVos;
     }
 
     /**

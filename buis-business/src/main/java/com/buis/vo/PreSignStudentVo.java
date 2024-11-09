@@ -1,6 +1,7 @@
 package com.buis.vo;
 
 import com.buis.domain.PreSignStudent;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
+@ApiModel("学生预报名信息VO")
 public class PreSignStudentVo extends PreSignStudent {
 
     /**

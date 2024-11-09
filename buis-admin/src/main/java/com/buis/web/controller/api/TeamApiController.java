@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
@@ -19,6 +20,7 @@ import com.buis.service.IUserInfoService;
 import com.buis.service.impl.TeamInfoServiceImpl;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -197,11 +199,11 @@ public class TeamApiController extends BaseController{
 
     @ApiOperation("根据队伍id查询队伍成员列表")
     @GetMapping("/Member/{team}")
-    public R getMemberStudentByTeamId(
+    public R<HashMap<String, List<UserInfoVo>>> getMemberStudentByTeamId(
                               @ApiParam(name = "team", value = "队伍id", required = true)@PathVariable("team") Long team) {
         List<UserInfoVo> student = teamMemberStudentService.getMemberStudentByTeamId(team);
         List<UserInfoVo> teacher = teamMemberTeacherService.getTeachersByRaceId(team);
-        HashMap<Object, Object> map = new HashMap<>();
+        HashMap<String, List<UserInfoVo>> map = new HashMap<>();
         map.put("student", student);
         map.put("teacher", teacher);
         return R.ok(map);
@@ -213,10 +215,10 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("带条件分页查询队伍列表")
     @PostMapping("/teamList")
-    public TableDataInfo list(@RequestBody TeamInfo teamInfo) {
+    public MyPageVo<List<TeamInfoVo>> list(@RequestBody TeamInfo teamInfo) {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        return getDataTable(list);
+        return new MyPageVo(list, (int) new PageInfo(list).getTotal());
     }
 
 
@@ -227,7 +229,7 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("根据老师id查询老师指导的队伍列表")
     @GetMapping("/guide")
-    public R guide() {
+    public R<List<TeamInfoVo>> guide() {
         Long userId = SecurityUtils.getFrontLoginUserId();
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId);
         return R.ok(teamInfoVos);

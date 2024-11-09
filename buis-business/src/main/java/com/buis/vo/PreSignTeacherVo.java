@@ -1,10 +1,12 @@
 package com.buis.vo;
 
 import com.buis.domain.PreSignTeacher;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@ApiModel("老师预报名信息VO")
 public class PreSignTeacherVo extends PreSignTeacher {
     /**
      * 老师信息

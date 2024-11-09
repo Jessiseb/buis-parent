@@ -4,6 +4,7 @@ import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
  * @date 2024-10-11
  */
 @Data
-
+@ApiModel("互选信息-队伍指导老师VO")
 public class TeamMemberTeacherVo extends TeamMemberTeacher {
     /**
      * 老师信息

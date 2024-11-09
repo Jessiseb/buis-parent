@@ -6,6 +6,7 @@ import java.util.List;
 import com.buis.domain.Judge;
 import com.buis.domain.PreSignStudent;
 import com.buis.vo.PreSignStudentVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 学生预报名Mapper接口
@@ -62,4 +63,6 @@ public interface PreSignStudentMapper
      * @return 结果
      */
     public int deletePreSignStudentByIds(Long[] ids);
+
+    void deletePreSignStudentByUserIdAndRaceId(@Param("race") Long race, @Param("userId") Long userId);
 }

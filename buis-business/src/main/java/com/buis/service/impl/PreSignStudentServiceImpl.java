@@ -119,4 +119,9 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     public int deletePreSignStudentById(Long id) {
         return preSignStudentMapper.deletePreSignStudentById(id);
     }
+
+    @Override
+    public void deletePreSignStudentByUserIdAndRaceId(Long race, Long userId) {
+        preSignStudentMapper.deletePreSignStudentByUserIdAndRaceId(race, userId);
+    }
 }
