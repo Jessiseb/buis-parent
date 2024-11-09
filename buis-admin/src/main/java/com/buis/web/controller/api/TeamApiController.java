@@ -9,10 +9,9 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
-import com.buis.domain.TeamInfo;
-import com.buis.domain.TeamMemberStudent;
-import com.buis.domain.TeamMemberTeacher;
-import com.buis.domain.UserInfo;
+import com.buis.domain.*;
+import com.buis.domain.InvitationVo;
+import com.buis.dto.InvitationQueryDto;
 import com.buis.dto.TeamMemberSelectDto;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
@@ -50,13 +49,32 @@ public class TeamApiController extends BaseController{
 
     @Autowired
     private IUserInfoService userInfoService;
+    /**
+     * 学生与老师互选，建立邀请
+     * @param teamMemberSelectDto
+     * @return
+     */
     @ApiOperation("学生与老师建立互选邀请")
     @PostMapping("/mutualSelection")
     public R mutualSelection(@RequestBody TeamMemberSelectDto teamMemberSelectDto){
         //获取当前登录用户
         UserInfo loginUser = userInfoService.getLoginUser();
         Long loginUserId = loginUser.getId();
-        if (loginUser.getTitle() != null && loginUser != null){
+        Long race = teamMemberSelectDto.getRace();
+        Long team = teamMemberSelectDto.getTeam();
+        Long inviteeId = teamMemberSelectDto.getInviteeId();
+        System.out.println(inviteeId);
+        //判断被邀请人在数据库中是否存在
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(inviteeId);
+        if (userInfoVo.getId()==null || inviteeId == null){
+            return R.fail("被邀请人不存在或输入为空");
+        }
+        //判断比赛信息是否合法
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
+        if (teamInfoVo.getId()==null || !teamInfoVo.getRace().equals(race)){
+            return R.fail("比赛、队伍信息不存在或输入为空");
+        }
+        if (loginUser.getIsTeacher() == 1 && loginUser != null){
             //老师选学生
             TeamMemberStudent teamMemberStudent = new TeamMemberStudent();
             //将dto的比赛、队伍id和选择原因拷贝到TeamMemberTeacher
@@ -64,15 +82,15 @@ public class TeamApiController extends BaseController{
             teamMemberStudent.setDecider(loginUserId);
             //设置互选状态，默认为0，待选
             teamMemberStudent.setIsChoosed(0L);
-            // 检查 inviteeId 是否为空
-            Long inviteeId = teamMemberSelectDto.getInviteeId();
-            if (inviteeId == null) {
-                return R.fail("被邀请人ID不能为空");
-            }
             //写入被邀请人的id
             teamMemberStudent.setStudent(teamMemberSelectDto.getInviteeId());
             int result = teamMemberStudentService.insertTeamMemberStudent(teamMemberStudent);
-            return result==1?R.ok("新增互选成功") : R.fail("新增互选失败");
+            if (result==1){
+                //将数据存入redis
+//                stringRedisTemplate.opsForValue().set(KEY_PREFIX+loginUserId, teamMemberStudent.toString());
+                return R.ok("新增互选成功");
+            }
+            return R.fail("新增互选失败");
         }else {
             //学生选老师
             TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
@@ -81,24 +99,20 @@ public class TeamApiController extends BaseController{
             teamMemberTeacher.setDecider(loginUserId);
             //设置互选状态，默认为0，待选
             teamMemberTeacher.setIsChoosed(0L);
-            // 检查 inviteeId 是否为空
-            Long inviteeId = teamMemberSelectDto.getInviteeId();
-            if (inviteeId == null) {
-                return R.fail("被邀请人ID不能为空");
-            }
             //写入被邀请人的id
             teamMemberTeacher.setTeacher(inviteeId);
             int result = teamMemberTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             return result==1?R.ok("新增互选成功") : R.fail("新增互选失败");
         }
     }
+
     @ApiOperation("学生与老师互选，取消邀请")
     @DeleteMapping("/cancelSelection/{id}")
     public R cancelSelection(@PathVariable(value = "id") Long id){
         //获取当前登录用户
         UserInfo loginUser = userInfoService.getLoginUser();
         Long loginUserId = loginUser.getId();
-        if (loginUser.getTitle() != null){
+        if (loginUser.getIsTeacher() == 1){
             // 老师取消邀请
             TeamMemberStudent teamMemberStudent = teamMemberStudentService.selectTeamMemberStudentById(id);
             if (teamMemberStudent != null && teamMemberStudent.getDecider().equals(loginUserId)) {
@@ -119,17 +133,21 @@ public class TeamApiController extends BaseController{
         }
     }
 
+    /**
+     * 学生与老师互选，接受或拒绝邀请
+     * @param id
+     * @param isChoosed 互选状态
+     * @return
+     */
     @ApiOperation("学生与老师互选，接受或拒绝邀请")
     @PutMapping("/updateSelection/{id}")
-    public R updateSelection(@PathVariable("id") Long id, @RequestParam("isChoosed") Long isChoosed) {
+    public R updateSelection(@ApiParam(name = "id",value = "要修改的数据id")@PathVariable("id") Long id, @ApiParam(name = "isChoosed",value = "要修改的状态,0待选,1接受,2拒绝")@RequestParam("isChoosed") Long isChoosed) {
         // 获取当前登录用户
         UserInfo loginUser = userInfoService.getLoginUser();
         Long loginUserId = loginUser.getId();
-        System.out.println(isChoosed);
-        if (loginUser.getTitle() != null) {
-            // 老师处理邀请
+        if (loginUser.getIsTeacher() == 1) {
+            // 用户为老师，处理学生选择老师的邀请
             TeamMemberTeacher teamMemberTeacher = teamMemberTeacherService.selectTeamMemberTeacherById(id);
-            System.out.println(teamMemberTeacher);
             if (teamMemberTeacher != null && teamMemberTeacher.getTeacher().equals(loginUserId)) {
                 // 更新状态
                 teamMemberTeacher.setIsChoosed(isChoosed);
@@ -139,7 +157,7 @@ public class TeamApiController extends BaseController{
                 throw new ServiceException("无权限处理此邀请");
             }
         } else {
-            // 学生处理邀请
+            // 用户为学生，处理老师选择学生的邀请
             TeamMemberStudent teamMemberStudent = teamMemberStudentService.selectTeamMemberStudentById(id);
             if (teamMemberStudent != null && teamMemberStudent.getStudent().equals(loginUserId)) {
                 // 更新状态
@@ -149,52 +167,26 @@ public class TeamApiController extends BaseController{
             } else {
                 throw new ServiceException("无权限处理此邀请");
             }
-
         }
     }
 
-   /* @ApiOperation("查询我的邀请列表")
-    @GetMapping("/myInvitations")
-    public R<List<TeamMemberSelectDto>> getMyInvitations(@RequestParam(value = "type", required = false) String type) {
+    @ApiOperation("带条件分页查询学生与老师互选邀请")
+    @PostMapping("/invitationList")
+    public MyPageVo<List<InvitationVo>> invitationList(@RequestBody InvitationQueryDto query) {
         // 获取当前登录用户
         UserInfo loginUser = userInfoService.getLoginUser();
-        Long loginUserId = loginUser.getId();
-
-        List<TeamMemberSelectDto> invitations = new ArrayList<>();
-
-        if (loginUser.getTitle() != null) {
-            // 老师查询邀请
-            List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.list(Wrappers.<TeamMemberStudent>lambdaQuery()
-                    .eq(TeamMemberStudent::getDecider, loginUserId)
-                    .or()
-                    .eq(TeamMemberStudent::getTargetUser, loginUserId));
-
-            for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
-                if (type == null || (type.equals("sent") && teamMemberStudent.getDecider().equals(loginUserId)) ||
-                        (type.equals("received") && teamMemberStudent.getTargetUser().equals(loginUserId))) {
-                    TeamMemberSelectDto dto = new TeamMemberSelectDto();
-                    BeanUtil.copyProperties(teamMemberStudent, dto);
-                    invitations.add(dto);
-                }
-            }
-        } else {
-            // 学生查询邀请
-            List<TeamMemberTeacher> teamMemberTeachers = teamMemberTeacherService.list(Wrappers.<TeamMemberTeacher>lambdaQuery()
-                    .eq(TeamMemberTeacher::getDecider, loginUserId)
-                    .or()
-                    .eq(TeamMemberTeacher::getTargetUser, loginUserId));
-
-            for (TeamMemberTeacher teamMemberTeacher : teamMemberTeachers) {
-                if (type == null || (type.equals("sent") && teamMemberTeacher.getDecider().equals(loginUserId)) ||
-                        (type.equals("received") && teamMemberTeacher.getTargetUser().equals(loginUserId))) {
-                    TeamMemberSelectDto dto = new TeamMemberSelectDto();
-                    BeanUtil.copyProperties(teamMemberTeacher, dto);
-                    invitations.add(dto);
-                }
-            }
+        List<InvitationVo> list = new ArrayList<>();
+        startPage();
+        if (loginUser.getIsTeacher()==1){
+            //用户为老师，查询所有老师对学生的邀请
+            list = teamMemberStudentService.selectInvitationList(query);
+        }else {
+            //用户为学生，查询所有学生对老师的邀请
+            list = teamMemberTeacherService.selectInvitationList(query);
         }
-        return R.ok(invitations);
-    }*/
+        return new MyPageVo<>(list, (int) new PageInfo(list).getTotal());
+    }
+
 
 
     @ApiOperation("根据队伍id查询队伍成员列表")
