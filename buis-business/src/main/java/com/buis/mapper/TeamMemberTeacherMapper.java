@@ -3,6 +3,7 @@ package com.buis.mapper;
 import java.util.List;
 import java.util.Map;
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.dto.InvitationQueryDto;
 import com.buis.vo.TeamMemberTeacherVo;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
@@ -92,4 +93,6 @@ public interface TeamMemberTeacherMapper
     List<Long> getTeachersByRaceId(Long raceId);
 
     Long[] selectJoinTeamByTeacherId(Long userId);
+
+    List<TeamMemberTeacher> selectInvitationList(InvitationQueryDto query);
 }

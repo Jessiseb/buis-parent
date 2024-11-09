@@ -1,6 +1,7 @@
 package com.buis.mapper;
 
 import com.buis.domain.TeamMemberStudent;
+import com.buis.dto.InvitationQueryDto;
 import com.buis.vo.TeamMemberStudentVo;
 import java.util.List;
 
@@ -66,4 +67,6 @@ public interface TeamMemberStudentMapper {
      * @return
      */
     List<Long> getMemberStudentByTeamId(Long team);
+
+    List<TeamMemberStudent> selectInvitationList(InvitationQueryDto query);
 }

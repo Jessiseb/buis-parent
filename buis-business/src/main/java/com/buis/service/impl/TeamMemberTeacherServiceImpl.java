@@ -1,8 +1,11 @@
 package com.buis.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.InvitationVo;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
+import com.buis.dto.InvitationQueryDto;
 import com.buis.mapper.TeamMemberTeacherMapper;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.ITeamInfoService;
@@ -156,6 +159,31 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
         return teamInfoVos;
 
     }
+
+    @Override
+    public List<InvitationVo> selectInvitationList(InvitationQueryDto query) {
+        List<InvitationVo> results = new ArrayList<>();
+        List<TeamMemberTeacher> teacherList = teamMemberTeacherMapper.selectInvitationList(query);
+        if (teacherList != null && !teacherList.isEmpty()) {
+            for (TeamMemberTeacher teacher : teacherList) {
+//                results.add(createInvitationVo(teacher));
+                results.add(BeanUtil.copyProperties(teacher,InvitationVo.class));
+            }
+        }
+        return results;
+    }
+
+ /*   private InvitationVo createInvitationVo(TeamMemberTeacher teacher) {
+        return InvitationVo.builder()
+                .id(teacher.getId())
+                .race(teacher.getRace())
+                .team(teacher.getTeam())
+                .teacher(teacher.getTeacher())
+                .decider(teacher.getDecider())
+                .isChoosed(teacher.getIsChoosed())
+                .reason(teacher.getReason())
+                .build();
+    }*/
 
     /**
      * 根据比赛id获取指导老师列表
