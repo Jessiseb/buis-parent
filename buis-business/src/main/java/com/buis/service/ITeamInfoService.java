@@ -73,11 +73,12 @@ public interface ITeamInfoService
      * @param userId
      */
     void deleteTeamInfoByUserIdAndRaceId(Long race, Long userId);
+
     /**
      * 判断用户是否已加入
      * @param userId
      * @param raceId
      * @return
      */
-    int checkJoin(Long userId, Long raceId, Long teamId);
+    int checkJoin(Long userId, Long raceId, Long team);
 }

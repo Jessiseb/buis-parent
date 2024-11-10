@@ -2,6 +2,8 @@ package com.buis.mapper;
 
 import com.buis.domain.TeamMemberStudent;
 import com.buis.vo.TeamMemberStudentVo;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -66,4 +68,12 @@ public interface TeamMemberStudentMapper {
      * @return
      */
     List<Long> getMemberStudentByTeamId(Long team);
+
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId, @Param("team") Long team);
 }

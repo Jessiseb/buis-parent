@@ -86,6 +86,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfoMapper.deleteTeamInfoByUserIdAndRaceId(race, userId);
     }
 
+    @Override
+    public int checkJoin(Long userId, Long raceId, Long team) {
+        return teamInfoMapper.checkJoin(userId,raceId,team);
+    }
+
 
     /**
      * 查询队伍信息列表 Vo
