@@ -40,7 +40,9 @@ public class TeamApiController extends BaseController{
     @ApiOperation("根据队伍id查询队伍成员列表")
     @GetMapping("/Member/{team}")
     public R<HashMap<String, List<UserInfoVo>>> getMemberStudentByTeamId(
-                              @ApiParam(name = "team", value = "队伍id", required = true)@PathVariable("team") Long team) {
+            @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+            @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
+            @ApiParam(name = "team", value = "队伍id", required = true)@PathVariable("team") Long team) {
         List<UserInfoVo> student = teamMemberStudentService.getMemberStudentByTeamId(team);
         List<UserInfoVo> teacher = teamMemberTeacherService.getTeachersByRaceId(team);
         HashMap<String, List<UserInfoVo>> map = new HashMap<>();
@@ -55,7 +57,10 @@ public class TeamApiController extends BaseController{
      */
     @ApiOperation("带条件分页查询队伍列表")
     @PostMapping("/teamList")
-    public MyPageVo<List<TeamInfoVo>> list(@RequestBody TeamInfo teamInfo) {
+    public MyPageVo<List<TeamInfoVo>> list(
+            @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+            @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
+            @RequestBody TeamInfo teamInfo) {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return new MyPageVo(list, (int) new PageInfo(list).getTotal());
