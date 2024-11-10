@@ -40,7 +40,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService
 
     {
         RaceInfoVo raceInfoVo = raceInfoMapper.selectRaceInfoById(id);
-
         RaceDetail raceDetail = new RaceDetail();
         raceDetail.setRace(raceInfoVo.getId());
         List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);

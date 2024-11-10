@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null "> and t1.sex = #{sex}</if>
             <if test="college != null "> and t1.college = #{college}</if>
             <if test="major != null ">and t1.major = #{major}</if>
-            <if test="is_teacher != null ">and t1.is_teacher=#{isTeacher}</if>
+            <if test="isTeacher != null ">and t1.is_teacher=#{isTeacher}</if>
             <if test="title != null ">and t1.title = #{title}</if>
             <if test="isDisabled != null ">and t1.is_disabled = #{isDisabled}</if>
         </where>
