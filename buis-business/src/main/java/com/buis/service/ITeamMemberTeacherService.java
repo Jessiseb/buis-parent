@@ -89,4 +89,11 @@ public interface ITeamMemberTeacherService
      * @return
      */
     List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId);
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    int checkJoin(Long userId, Long raceId, Long teamId);
 }
