@@ -67,6 +67,17 @@ public interface ITeamInfoService
      */
     public int deleteTeamInfoById(Long id);
 
-
+    /**
+     * 根据用户id和比赛id删除队伍信息
+     * @param race
+     * @param userId
+     */
     void deleteTeamInfoByUserIdAndRaceId(Long race, Long userId);
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    int checkJoin(Long userId, Long raceId, Long teamId);
 }

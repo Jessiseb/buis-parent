@@ -27,11 +27,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="parentId != null "> and parent_id = #{parentId}</if>
             <if test="sort != null "> and sort = #{sort}</if>
         </where>
+        order by sort asc
     </select>
     
     <select id="selectRaceLanqiaoTypeById" parameterType="Long" resultMap="RaceLanqiaoTypeResult">
         <include refid="selectRaceLanqiaoTypeVo"/>
         where id = #{id}  and is_deleted = 0
+        order by sort asc
     </select>
 
     <insert id="insertRaceLanqiaoType" parameterType="com.buis.domain.RaceLanqiaoType" useGeneratedKeys="true" keyProperty="id">

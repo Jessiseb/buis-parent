@@ -3,7 +3,7 @@ package com.buis.service.impl;
 import java.util.List;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.RaceDetail;
-import com.buis.service.IRaceDetailService;
+import com.buis.service.*;
 import com.buis.vo.RaceInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.buis.domain.Reward;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.domain.RaceInfo;
-import com.buis.service.IRaceInfoService;
+
+import javax.annotation.Resource;
 
 /**
  * 比赛信息Service业务层处理
@@ -24,11 +25,16 @@ import com.buis.service.IRaceInfoService;
 @Service
 public class RaceInfoServiceImpl implements IRaceInfoService 
 {
-    @Autowired
+    @Resource
     private RaceInfoMapper raceInfoMapper;
     @Autowired
     private IRaceDetailService raceDetailService;
-
+    @Autowired
+    private ITeamInfoService teamInfoService;
+    @Autowired
+    private ITeamMemberTeacherService teamMemberTeacherService;
+    @Autowired
+    private ITeamMemberStudentService teamMemberStudentService;
     /**
      * 查询比赛信息
      * 
@@ -122,6 +128,29 @@ public class RaceInfoServiceImpl implements IRaceInfoService
         return raceInfoMapper.deleteRaceInfoById(id);
     }
 
+    /**
+     * 判断用户是否已报名
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    @Override
+    public int checkJoin(Long userId, Long raceId) {
+        if (userId == null || raceId == null) {
+            throw new IllegalArgumentException("userId and raceId cannot be null");
+        }
+        int res = 0;
+        // 判断互选表有没有信息
+        res = teamMemberTeacherService.checkJoin(userId, raceId, null);
+        if (res <= 0) {
+            res = teamMemberStudentService.checkJoin(userId, raceId, null);
+            if (res <= 0) {
+                // 判断队伍有没有信息
+                res = teamInfoService.checkJoin(userId, raceId, null);
+            }
+        }
+        return res;
+    }
     /**
      * 新增奖项信息
      * 
