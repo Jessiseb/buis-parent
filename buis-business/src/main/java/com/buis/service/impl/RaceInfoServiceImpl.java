@@ -1,20 +1,23 @@
 package com.buis.service.impl;
 
-import java.util.List;
+import com.buis.common.constant.HttpStatus;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
+import com.buis.common.utils.SecurityUtils;
+import com.buis.common.utils.StringUtils;
 import com.buis.domain.RaceDetail;
+import com.buis.domain.RaceInfo;
+import com.buis.domain.Reward;
+import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.vo.RaceInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import com.buis.common.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
-import com.buis.domain.Reward;
-import com.buis.mapper.RaceInfoMapper;
-import com.buis.domain.RaceInfo;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 比赛信息Service业务层处理
@@ -35,36 +38,64 @@ public class RaceInfoServiceImpl implements IRaceInfoService
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
+
     /**
      * 查询比赛信息
-     * 
+     *
      * @param id 比赛信息主键
      * @return 比赛信息
      */
     @Override
-    public RaceInfoVo selectRaceInfoById(Long id)
-
-    {
+    public RaceInfoVo selectRaceInfoById(Long id) {
         RaceInfoVo raceInfoVo = raceInfoMapper.selectRaceInfoById(id);
-        RaceDetail raceDetail = new RaceDetail();
-        raceDetail.setRace(raceInfoVo.getId());
-        List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
-        if (raceDetailVos!=null && raceDetailVos.size() > 0) {
-            raceInfoVo.setRaceDetail(raceDetailVos.get(0));
-        }
 
+        RaceDetail raceDetail = new RaceDetail();
+        if (raceInfoVo != null) {
+            // 设置是否已报名
+            setIsJoin(raceInfoVo);
+            // 设置比赛详情
+            raceDetail.setRace(raceInfoVo.getId());
+            List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+            if (raceDetailVos != null && raceDetailVos.size() > 0) {
+                raceInfoVo.setRaceDetail(raceDetailVos.get(0));
+            }
+        }
         return raceInfoVo;
     }
 
     /**
+     * 为isJoin赋值
+     */
+    public void setIsJoin(RaceInfoVo raceInfoVo) {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        raceInfoVo.setIsJoin(checkJoin(userId, raceInfoVo.getId(),null));
+    }
+
+    /**
      * 查询比赛信息列表
-     * 
+     *
      * @param raceInfo 比赛信息
      * @return 比赛信息
      */
     @Override
-    public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo)
-    {
+    public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo) {
+        Long id = raceInfo.getId();
+        if (id == null) {
+            throw new ServiceException("参数错误", HttpStatus.BAD_REQUEST);
+        }
+        // 根据id获取比赛信息
+        RaceInfoVo raceInfoVo = raceInfoMapper.selectRaceInfoById(id);
+        if (raceInfoVo != null) {
+            // 设置是否已报名
+            setIsJoin(raceInfoVo);
+            // 设置比赛详情
+            RaceDetail raceDetail = new RaceDetail();
+            raceDetail.setRace(raceInfoVo.getId());
+            List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+            if (raceDetailVos != null && raceDetailVos.size() > 0) {
+                raceInfoVo.setRaceDetail(raceDetailVos.get(0));
+            }
+        }
         return raceInfoMapper.selectRaceInfoList(raceInfo);
     }
 
@@ -135,18 +166,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService
      * @return
      */
     @Override
-    public int checkJoin(Long userId, Long raceId) {
+    public int checkJoin(Long userId, Long raceId, Long team) {
         if (userId == null || raceId == null) {
             throw new IllegalArgumentException("userId and raceId cannot be null");
         }
         int res = 0;
         // 判断互选表有没有信息
-        res = teamMemberTeacherService.checkJoin(userId, raceId, null);
+        res = teamMemberTeacherService.checkJoin(userId, raceId, team);
         if (res <= 0) {
-            res = teamMemberStudentService.checkJoin(userId, raceId, null);
+            res = teamMemberStudentService.checkJoin(userId, raceId,team);
             if (res <= 0) {
                 // 判断队伍有没有信息
-                res = teamInfoService.checkJoin(userId, raceId, null);
+                res = teamInfoService.checkJoin(userId, raceId,team);
             }
         }
         return res;
