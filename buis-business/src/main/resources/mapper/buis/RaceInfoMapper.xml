@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectRaceInfoVo">
-        select t1.id, t1.parent_tid,ti.is_lanqiao, t1.son_tid,t2.name as son_name,t3.name as parent_name, t1.name, t1.description, t1.join_start,
+        select t1.id, t1.parent_tid,t1.is_lanqiao, t1.son_tid,t2.name as son_name,t3.name as parent_name, t1.name, t1.description, t1.join_start,
                t1.join_end, t1.race_start, t1.race_end, t1.status, t1.level, t1.is_deleted, t1.create_time, t1.update_time
         from race_info t1
 left join race_type t2 on t2.id = t1.son_tid
