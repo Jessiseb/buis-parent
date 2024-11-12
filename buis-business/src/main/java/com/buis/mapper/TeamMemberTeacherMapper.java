@@ -7,6 +7,7 @@ import com.buis.dto.InvitationQueryDto;
 import com.buis.vo.TeamMemberTeacherVo;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -95,4 +96,12 @@ public interface TeamMemberTeacherMapper
     Long[] selectJoinTeamByTeacherId(Long userId);
 
     List<TeamMemberTeacher> selectInvitationList(InvitationQueryDto query);
+
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
 }

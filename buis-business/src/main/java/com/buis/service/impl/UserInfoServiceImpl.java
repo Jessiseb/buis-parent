@@ -109,7 +109,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         UserInfoVo vo = new UserInfoVo();
         if (userInfo != null) {
             BeanUtils.copyProperties(userInfo, vo);
-            if (vo.getIsTeacher()==1) { // 判断是否为老师
+            if (vo.getIsTeacher() != null && vo.getIsTeacher() == 1) { // 判断是否为老师
                 //是老师
                 Long count = teamMemberTeacherService.getGuideCount(userInfo.getId());
                 vo.setTeamNum(count);

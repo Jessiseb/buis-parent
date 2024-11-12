@@ -185,6 +185,19 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
                 .build();
     }*/
 
+
+
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    @Override
+    public int checkJoin(Long userId, Long raceId, Long team) {
+        return teamMemberTeacherMapper.checkJoin(userId,raceId, team);
+    }
+
     /**
      * 根据比赛id获取指导老师列表
      *

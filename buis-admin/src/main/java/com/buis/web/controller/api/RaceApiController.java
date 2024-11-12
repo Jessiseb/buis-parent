@@ -38,15 +38,20 @@ public class RaceApiController extends BaseController {
     private IPreSignTeacherService preTeacherService;
     @Autowired
     private IPreSignStudentService preStudentService;
+
     @ApiOperation("根据比赛id查询比赛信息")
     @GetMapping("/detail/{RaceId}")
     public R<RaceInfoVo> list(@ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(RaceId);
         return R.ok(raceInfoVo);
     }
+
     @ApiOperation("带条件分页查询比赛列表")
     @GetMapping("/raceList")
-    public MyPageVo<List<RaceInfoVo>> list(@ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
+    public MyPageVo<List<RaceInfoVo>> list(
+            @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+            @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
+            @ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
         startPage();
         List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
         return new MyPageVo(list, (int) new PageInfo(list).getTotal());
@@ -76,7 +81,10 @@ public class RaceApiController extends BaseController {
 
     @ApiOperation("根据比赛id分页查询预报名学生列表")
     @PostMapping("/student/{RaceId}")
-    public MyPageVo<List<PreSignStudentVo>> getStudentsByRaceId(@ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
+    public MyPageVo<List<PreSignStudentVo>> getStudentsByRaceId(
+            @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+            @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
+            @ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
         //开始分页
         startPage();
         PreSignStudent preSignStudent = new PreSignStudent();

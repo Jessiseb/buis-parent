@@ -69,8 +69,8 @@ public class UserInfoApiController extends BaseController {
      * @return
      */
     @ApiOperation("查询用户信息")
-    @PostMapping("/getUsInfo")
-    public R<UserInfoVo> getUsInfo(){
+    @PostMapping("/getUserInfo")
+    public R<UserInfoVo> getUserInfo(){
         Long userId = SecurityUtils.getFrontLoginUserId();
         return R.ok(userInfoService.selectUserInfoById(userId));
     }
@@ -80,8 +80,10 @@ public class UserInfoApiController extends BaseController {
      * @return
      */
     @ApiOperation("编辑用户信息")
-    @PostMapping("/updateUsInfo")
-    public R updateUsInfo(@RequestBody UserInfo userInfo){
+    @PostMapping("/updateUserInfo")
+    public R updateUserInfo(@RequestBody UserInfo userInfo){
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        userInfo.setId(userId);
         return R.ok(userInfoService.updateUserInfo(userInfo));
     }
 
