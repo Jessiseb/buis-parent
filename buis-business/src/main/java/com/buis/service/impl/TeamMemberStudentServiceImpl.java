@@ -151,4 +151,15 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     }
 
 
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    @Override
+    public int checkJoin(Long userId, Long raceId, Long teamId) {
+        return teamMemberStudentMapper.checkJoin(userId,raceId,teamId);
+    }
+
 }

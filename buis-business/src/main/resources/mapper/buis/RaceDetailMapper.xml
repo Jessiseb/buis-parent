@@ -47,14 +47,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectRaceDetail"/>
         <where>
             is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
-            <if test="email != null  and email != ''"> and email = #{email}</if>
-            <if test="capacity != null "> and capacity = #{capacity}</if>
-            <if test="rRank != null "> and r_rank = #{rRank}</if>
-            <if test="tLimit != null "> and t_limit = #{tLimit}</if>
+            <if test="raceDetail.id != null "> and id = #{raceDetail.id}</if>
+            <if test="raceDetail.race != null "> and race = #{raceDetail.race}</if>
+            <if test="raceDetail.name != null  and name != ''"> and name like concat('%', #{raceDetail.name}, '%')</if>
+            <if test="raceDetail.phone != null  and phone != ''"> and phone = #{raceDetail.phone}</if>
+            <if test="raceDetail.email != null  and email != ''"> and email = #{raceDetail.email}</if>
+            <if test="raceDetail.capacity != null "> and capacity = #{raceDetail.capacity}</if>
+            <if test="raceDetail.rRank != null "> and r_rank = #{raceDetail.rRank}</if>
+            <if test="raceDetail.tLimit != null "> and t_limit = #{raceDetail.tLimit}</if>
         </where>
     </select>
     

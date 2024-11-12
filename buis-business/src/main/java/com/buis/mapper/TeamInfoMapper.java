@@ -72,4 +72,6 @@ public interface TeamInfoMapper
     List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
 
     void deleteTeamInfoByUserIdAndRaceId(@Param("race") Long race, @Param("userId")Long userId);
+
+    int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
 }

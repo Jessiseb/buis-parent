@@ -80,4 +80,12 @@ public interface ITeamMemberStudentService {
     List<UserInfoVo> getMemberStudentByTeamId(Long team);
 
     List<InvitationVo> selectInvitationList(InvitationQueryDto query);
+
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    int checkJoin(Long userId, Long raceId, Long team);
 }
