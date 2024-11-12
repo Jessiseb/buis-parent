@@ -1,12 +1,12 @@
 package com.buis.web.controller.api;
 
-import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.json.JSONUtil;
 import com.buis.common.core.controller.BaseController;
-import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.domain.entity.SysDictData;
+import com.buis.common.core.page.MyPageVo;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.CollegeMajor;
@@ -16,15 +16,14 @@ import com.buis.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
 import com.buis.system.service.ISysDictDataService;
-import com.buis.system.service.ISysDictTypeService;
+import com.buis.vo.SysDictDataVo;
 import com.buis.vo.UserInfoVo;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -114,15 +113,17 @@ public class UserInfoApiController extends BaseController {
      */
     @ApiOperation("查询职称信息")
     @GetMapping("/getTitle")
-    public R<String> getDepartment() {
-        //获取到登录用户
-        Long userId = SecurityUtils.getFrontLoginUserId();
-        UserInfo userInfo =userInfoService.selectUserInfoById(userId);
-        Long title = userInfo.getTitle();
-        if (title == null) {
-            return R.fail("用户未设置职称!");
-        }
-        String titleName = sysDictDataService.selectDictLabel("teacher_title", title.toString());
-        return R.ok(titleName);
+    public MyPageVo<List<SysDictDataVo>> list(){
+        //查出所有职称
+        SysDictData dictData = new SysDictData();
+        dictData.setDictType("teacher_title");
+        List<SysDictData> list = sysDictDataService.selectDictDataList(dictData);
+        //把list转为vo
+        List<SysDictDataVo> sysDictDataVo = BeanUtil.copyToList(list, SysDictDataVo.class);
+
+        return new MyPageVo(sysDictDataVo, (int) new PageInfo(sysDictDataVo).getTotal());
     }
+
+
+
 }
