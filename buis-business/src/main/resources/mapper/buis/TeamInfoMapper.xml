@@ -56,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             is_deleted = 0 and is_choosed = 1
             <if test="raceId != null">and race = #{raceId}</if>
             <if test="team != null">and team = #{team}</if>
-            <if test="userId != null">and studnet = #{userId}</if>
+            <if test="userId != null">and student = #{userId}</if>
         </where>
     </select>
 

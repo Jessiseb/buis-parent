@@ -93,7 +93,8 @@ public class LanQiaoApiController extends BaseController {
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoTeacher.setUserId(userId);
         raceLanqiaoTeacher.setRaceId(race);
-        return R.ok(raceLanqiaoTeacherService.insertRaceLanqiaoTeacher(raceLanqiaoTeacher));
+        int res = raceLanqiaoTeacherService.insertRaceLanqiaoTeacher(raceLanqiaoTeacher);
+        return R.ok(res);
     }
 
     /**

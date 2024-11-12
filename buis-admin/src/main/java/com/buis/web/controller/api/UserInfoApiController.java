@@ -15,6 +15,8 @@ import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
+import com.buis.system.service.ISysDictDataService;
+import com.buis.system.service.ISysDictTypeService;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +40,8 @@ public class UserInfoApiController extends BaseController {
     private IUserInfoService userInfoService;
     @Autowired
     private ICollegeMajorService collegeMajorService;
+    @Autowired
+    private ISysDictDataService sysDictDataService;
 
 
 
@@ -95,8 +99,6 @@ public class UserInfoApiController extends BaseController {
         return R.ok(userInfoService.updateUserInfo(userInfo));
     }
 
-
-
     /**
      * 查询专业信息列表
      */
@@ -107,4 +109,20 @@ public class UserInfoApiController extends BaseController {
         return R.ok(list);
     }
 
+    /**
+     * 查询职称信息
+     */
+    @ApiOperation("查询职称信息")
+    @GetMapping("/getTitle")
+    public R<String> getDepartment() {
+        //获取到登录用户
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        UserInfo userInfo =userInfoService.selectUserInfoById(userId);
+        Long title = userInfo.getTitle();
+        if (title == null) {
+            return R.fail("用户未设置职称!");
+        }
+        String titleName = sysDictDataService.selectDictLabel("teacher_title", title.toString());
+        return R.ok(titleName);
+    }
 }
