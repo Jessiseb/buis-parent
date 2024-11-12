@@ -1,9 +1,10 @@
 package com.buis.service.impl;
 
-import java.util.*;
-
 import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.TeamInfo;
+import com.buis.mapper.TeamInfoMapper;
+import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
@@ -11,21 +12,18 @@ import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.buis.mapper.TeamInfoMapper;
-import com.buis.domain.TeamInfo;
-import com.buis.service.ITeamInfoService;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 队伍信息Service业务层处理
- * 
+ *
  * @author buis
  * @date 2024-10-11
  */
 @Service
-public class TeamInfoServiceImpl implements ITeamInfoService
-{
+public class TeamInfoServiceImpl implements ITeamInfoService {
     @Autowired
     private TeamInfoMapper teamInfoMapper;
 
@@ -39,51 +37,47 @@ public class TeamInfoServiceImpl implements ITeamInfoService
 
     /**
      * 新增队伍信息
-     * 
+     *
      * @param teamInfo 队伍信息
      * @return 结果
      */
     @Override
-    public int insertTeamInfo(TeamInfo teamInfo)
-    {
+    public int insertTeamInfo(TeamInfo teamInfo) {
         teamInfo.setCreateTime(DateUtils.getNowDate());
         return teamInfoMapper.insertTeamInfo(teamInfo);
     }
 
     /**
      * 修改队伍信息
-     * 
+     *
      * @param teamInfo 队伍信息
      * @return 结果
      */
     @Override
-    public int updateTeamInfo(TeamInfo teamInfo)
-    {
+    public int updateTeamInfo(TeamInfo teamInfo) {
         teamInfo.setUpdateTime(DateUtils.getNowDate());
         return teamInfoMapper.updateTeamInfo(teamInfo);
     }
 
     /**
      * 批量删除队伍信息
-     * 
+     *
      * @param ids 需要删除的队伍信息主键
      * @return 结果
      */
     @Override
-    public int deleteTeamInfoByIds(Long[] ids)
-    {
+    public int deleteTeamInfoByIds(Long[] ids) {
         return teamInfoMapper.deleteTeamInfoByIds(ids);
     }
 
     /**
      * 删除队伍信息信息
-     * 
+     *
      * @param id 队伍信息主键
      * @return 结果
      */
     @Override
-    public int deleteTeamInfoById(Long id)
-    {
+    public int deleteTeamInfoById(Long id) {
         return teamInfoMapper.deleteTeamInfoById(id);
     }
 
@@ -92,9 +86,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService
         teamInfoMapper.deleteTeamInfoByUserIdAndRaceId(race, userId);
     }
 
+    @Override
+    public int checkJoin(Long userId, Long raceId, Long team) {
+        return teamInfoMapper.checkJoin(userId,raceId,team);
+    }
+
 
     /**
      * 查询队伍信息列表 Vo
+     *
      * @param teamInfo
      * @return
      */
@@ -135,10 +135,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService
         UserInfoVo userInfoVo = userInfoService.selectUserInfoById(team.getLeader());
         Long studentCount = teamStudentService.getJoinCountByTeamId(team.getId());
         Long teacherCount = teamTeacherService.getJoinCountByTeamId(team.getId());
-        if (userInfoVo!=null) { // 判断队长是学生还是老师，算上人数
-            if (userInfoVo.getIsTeacher() == 1){
+        if (userInfoVo != null) { // 判断队长是学生还是老师，算上人数
+            if (userInfoVo.getIsTeacher() != null && userInfoVo.getIsTeacher() == 1) {
                 teacherCount++;
-            }else {
+            } else {
                 studentCount++;
             }
         }
