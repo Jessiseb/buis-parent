@@ -103,6 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="college != null">college,</if>
             <if test="major != null">major,</if>
             <if test="title != null">title,</if>
+            <if test="isTeacher != null ">is_teacher,</if>
             <if test="isDisabled != null">is_disabled,</if>
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
@@ -119,6 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="college != null">#{college},</if>
             <if test="major != null">#{major},</if>
             <if test="title != null">#{title},</if>
+            <if test="isTeacher != null ">#{isTeacher},</if>
             <if test="isDisabled != null">#{isDisabled},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -139,6 +141,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null">sex = #{sex},</if>
             <if test="college != null">college = #{college},</if>
             <if test="major != null">major = #{major},</if>
+            <if test="is_teacher != null ">is_teacher=#{isTeacher},</if>
             <if test="title != null">title = #{title},</if>
             <if test="isDisabled != null">is_disabled = #{isDisabled},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
