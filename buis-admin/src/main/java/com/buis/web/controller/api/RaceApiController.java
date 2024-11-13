@@ -54,7 +54,7 @@ public class RaceApiController extends BaseController {
             @ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
         startPage();
         List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
-        return new MyPageVo(list, (int) new PageInfo(list).getTotal());
+        return new MyPageVo(list,  new PageInfo(list).getTotal());
     }
 
     /**
@@ -76,7 +76,7 @@ public class RaceApiController extends BaseController {
         prevTeacher.setRace(RaceId);
         List<PreSignTeacherVo> preSignTeacherVos = preTeacherService.selectPreSignTeacherList(prevTeacher);
         //返回结果
-        return new MyPageVo(preSignTeacherVos, (int) new PageInfo(preSignTeacherVos).getTotal());
+        return new MyPageVo(preSignTeacherVos, new PageInfo(preSignTeacherVos).getTotal());
     }
 
     @ApiOperation("根据比赛id分页查询预报名学生列表")
@@ -91,6 +91,6 @@ public class RaceApiController extends BaseController {
         preSignStudent.setRace(RaceId);
         List<PreSignStudentVo> preSignStudentVos = preStudentService.selectPreSignStudentList(preSignStudent);
         //返回结果
-        return new MyPageVo(preSignStudentVos, (int) new PageInfo(preSignStudentVos).getTotal());
+        return new MyPageVo(preSignStudentVos, new PageInfo(preSignStudentVos).getTotal());
     }
 }

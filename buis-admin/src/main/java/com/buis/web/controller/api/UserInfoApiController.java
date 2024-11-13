@@ -39,8 +39,7 @@ public class UserInfoApiController extends BaseController {
     private IUserInfoService userInfoService;
     @Autowired
     private ICollegeMajorService collegeMajorService;
-    @Autowired
-    private ISysDictDataService sysDictDataService;
+
 
 
 
@@ -102,28 +101,12 @@ public class UserInfoApiController extends BaseController {
      * 查询专业信息列表
      */
     @ApiOperation("查询专业信息列表")
-    @GetMapping("/listCollegeMajor")
-    public R<List<CollegeMajor>> listCollegeMajor(CollegeMajor collegeMajor) {
+    @GetMapping("/getCollegeMajor")
+    public R<List<CollegeMajor>> getCollegeMajor(
+            @ApiParam(name = "collegeMajor", value = "筛选条件", required = false) CollegeMajor collegeMajor) {
         List<CollegeMajor> list = collegeMajorService.selectCollegeMajorList(collegeMajor);
         return R.ok(list);
     }
-
-    /**
-     * 查询职称信息
-     */
-    @ApiOperation("查询职称信息")
-    @GetMapping("/getTitle")
-    public MyPageVo<List<SysDictDataVo>> list(){
-        //查出所有职称
-        SysDictData dictData = new SysDictData();
-        dictData.setDictType("teacher_title");
-        List<SysDictData> list = sysDictDataService.selectDictDataList(dictData);
-        //把list转为vo
-        List<SysDictDataVo> sysDictDataVo = BeanUtil.copyToList(list, SysDictDataVo.class);
-
-        return new MyPageVo(sysDictDataVo, (int) new PageInfo(sysDictDataVo).getTotal());
-    }
-
 
 
 }
