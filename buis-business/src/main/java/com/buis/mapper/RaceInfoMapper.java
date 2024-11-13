@@ -6,6 +6,8 @@ import java.util.List;
 import com.buis.domain.RaceDetail;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.Reward;
+import com.buis.vo.RaceInfoVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 比赛信息Mapper接口
@@ -21,7 +23,7 @@ public interface RaceInfoMapper
      * @param id 比赛信息主键
      * @return 比赛信息
      */
-    public RaceInfo selectRaceInfoById(Long id);
+    public RaceInfoVo selectRaceInfoById(@Param("id") Long id);
 
     /**
      * 查询比赛信息列表
@@ -29,7 +31,7 @@ public interface RaceInfoMapper
      * @param raceInfo 比赛信息
      * @return 比赛信息集合
      */
-    public List<RaceInfo> selectRaceInfoList(RaceInfo raceInfo);
+    public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo);
 
     /**
      * 新增比赛信息

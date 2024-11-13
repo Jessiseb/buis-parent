@@ -1,11 +1,13 @@
 package com.buis.dto;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
+@ApiModel("用户登录信息")
 public class UserLoginDto implements Serializable {
     private static final long serialVersionUID = 1L;
 

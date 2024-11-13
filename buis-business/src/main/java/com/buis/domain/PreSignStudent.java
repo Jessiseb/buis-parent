@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ApiModel("学生预报名对象")
 public class PreSignStudent extends BaseEntity {
     private static final long serialVersionUID = 1L;
     /**
@@ -43,12 +45,6 @@ public class PreSignStudent extends BaseEntity {
     @Excel(name = "比赛")
     @ApiModelProperty(value = "比赛id")
     private Long race;
-
-    /**
-     * 预报名时间
-     */
-    @ApiModelProperty(value = "预报名时间")
-    private Date updateTime;
 
     /**
      * 标识是否被删除，0表示未删除

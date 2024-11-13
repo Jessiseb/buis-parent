@@ -1,25 +1,34 @@
 package com.buis.web.controller.api;
 
-import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.json.JSONUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.domain.entity.SysDictData;
+import com.buis.common.core.page.MyPageVo;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
+import com.buis.common.utils.SecurityUtils;
+import com.buis.domain.CollegeMajor;
+import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
+import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
+import com.buis.system.service.ISysDictDataService;
+import com.buis.vo.SysDictDataVo;
 import com.buis.vo.UserInfoVo;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Api(tags = "用户信息Api")
 @RestController
@@ -28,8 +37,10 @@ import javax.servlet.http.HttpServletRequest;
 public class UserInfoApiController extends BaseController {
     @Resource
     private IUserInfoService userInfoService;
-    @Resource
-    private RedisTemplate redisTemplate;
+    @Autowired
+    private ICollegeMajorService collegeMajorService;
+
+
 
 
     @ApiOperation("用户登录功能")
@@ -57,26 +68,45 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户退出登录功能")
     @PostMapping("/logout")
-    public R<String> logout() {
+    public R logout() {
         StpUtil.logout();
-        return R.ok("退出成功!");
-    }
-
-    @ApiOperation("检查用户是否登录功能")
-    @GetMapping("checkLogin")
-    public R<String> checkLogin() {
-        return R.ok("是否登录:" + StpUtil.isLogin());
+        return R.ok(null,"退出成功!");
     }
 
 
-    @ApiOperation("获取登录用户token功能")
-    @GetMapping("/getToken")
-    public R<String> getToken() {
-        String tokenValue = StpUtil.getTokenValue();
-        System.out.println(tokenValue);
-        return R.ok(tokenValue);
+    /**
+     * 查询用户信息
+     * @return
+     */
+    @ApiOperation("查询用户信息")
+    @PostMapping("/getUserInfo")
+    public R<UserInfoVo> getUserInfo(){
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(userInfoService.selectUserInfoById(userId));
+    }
+
+    /**
+     * 编辑用户信息
+     * @return
+     */
+    @ApiOperation("编辑用户信息")
+    @PostMapping("/updateUserInfo")
+    public R updateUserInfo(@RequestBody UserInfo userInfo){
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        userInfo.setId(userId);
+        return R.ok(userInfoService.updateUserInfo(userInfo));
+    }
+
+    /**
+     * 查询专业信息列表
+     */
+    @ApiOperation("查询专业信息列表")
+    @GetMapping("/getCollegeMajor")
+    public R<List<CollegeMajor>> getCollegeMajor(
+            @ApiParam(name = "collegeMajor", value = "筛选条件", required = false) CollegeMajor collegeMajor) {
+        List<CollegeMajor> list = collegeMajorService.selectCollegeMajorList(collegeMajor);
+        return R.ok(list);
     }
 
 
-    //TODO 查询用户信息
 }

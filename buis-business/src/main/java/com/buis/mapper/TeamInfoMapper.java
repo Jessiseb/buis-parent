@@ -4,8 +4,8 @@ import java.util.List;
 
 
 import com.buis.domain.TeamInfo;
-import com.buis.dto.TeamQueryDto;
 import com.buis.vo.TeamInfoVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 队伍信息Mapper接口
@@ -64,10 +64,14 @@ public interface TeamInfoMapper
     public int deleteTeamInfoByIds(Long[] ids);
 
 
+    /**
+     * 根据ids获取队伍列表
+     * @param ids
+     * @return
+     */
+    List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
 
-    List<TeamInfoVo> selectTeamInfoVo(TeamInfo teamInfo);
+    void deleteTeamInfoByUserIdAndRaceId(@Param("race") Long race, @Param("userId")Long userId);
 
-    TeamInfoVo selectTeamInfoVoById(Long id);
-
-    List<TeamInfo> listTeams(TeamQueryDto teamQueryDTO);
+    int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
 }

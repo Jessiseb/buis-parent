@@ -1,11 +1,8 @@
 package com.buis.service;
 
 import com.buis.domain.TeamMemberStudent;
-import com.buis.dto.TeamMemberStudentDto;
-import com.buis.dto.TeamMemberStudentInvitedDto;
-import com.buis.dto.TeamMemberStudentInvitedListDto;
+import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,7 +20,7 @@ public interface ITeamMemberStudentService {
      * @param id 队伍成员管理主键
      * @return 队伍成员管理
      */
-    public TeamMemberStudent selectTeamMemberStudentById(Long id);
+    public TeamMemberStudentVo selectTeamMemberStudentById(Long id);
 
     /**
      * 查询队伍成员管理列表
@@ -31,7 +28,7 @@ public interface ITeamMemberStudentService {
      * @param teamMemberStudent 队伍成员管理
      * @return 队伍成员管理集合
      */
-    public List<TeamMemberStudent> selectTeamMemberStudentList(TeamMemberStudent teamMemberStudent);
+    public List<TeamMemberStudentVo> selectTeamMemberStudentList(TeamMemberStudent teamMemberStudent);
 
     /**
      * 新增队伍成员管理
@@ -65,18 +62,26 @@ public interface ITeamMemberStudentService {
      */
     public int deleteTeamMemberStudentById(Long id);
 
-    //    查询队伍学生id
-    public TeamMemberStudentDto selectTeamMemberStudentQueryById(Long id);
-
-    //    查询队伍学生列表
-    List<UserInfoVo> selectTeamMemberStudentQueryList(@Param("race") Long race, @Param("team") Long team);
 
     /**
-     * 查询我创建的队伍
-     * @param id
+     * 根据teamId获取结对的个数，查成员个数
+     * @param id teamId
      * @return
      */
-    List<TeamMemberStudent> selectTeamMyCreate(Long id);
+    Long getJoinCountByTeamId(Long id);
 
+    /**
+     * 查询队伍内学生列表
+     * @param team
+     * @return
+     */
+    List<UserInfoVo> getMemberStudentByTeamId(Long team);
 
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    int checkJoin(Long userId, Long raceId, Long team);
 }

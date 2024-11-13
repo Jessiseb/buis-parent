@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ApiModel("用户信息对象")
 public class UserInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
     /**
@@ -110,5 +112,10 @@ public class UserInfo extends BaseEntity {
     @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
+    /**
+     * 是否为老师标识 0 - 学生 1 - 老师
+     */
+    @ApiModelProperty("是否为老师标识 0 - 学生 1 - 老师")
+    private Integer isTeacher;
 
 }

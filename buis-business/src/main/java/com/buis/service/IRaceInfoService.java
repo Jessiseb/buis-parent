@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.RaceInfo;
+import com.buis.vo.RaceInfoVo;
 
 /**
  * 比赛信息Service接口
@@ -17,7 +18,7 @@ public interface IRaceInfoService
      * @param id 比赛信息主键
      * @return 比赛信息
      */
-    public RaceInfo selectRaceInfoById(Long id);
+    public RaceInfoVo selectRaceInfoById(Long id);
 
     /**
      * 查询比赛信息列表
@@ -25,7 +26,7 @@ public interface IRaceInfoService
      * @param raceInfo 比赛信息
      * @return 比赛信息集合
      */
-    public List<RaceInfo> selectRaceInfoList(RaceInfo raceInfo);
+    public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo);
 
     /**
      * 新增比赛信息
@@ -58,4 +59,8 @@ public interface IRaceInfoService
      * @return 结果
      */
     public int deleteRaceInfoById(Long id);
+    /**
+     * 根据userId和raceId判断用户是否报名过
+     */
+    public int checkJoin(Long userId,Long raceId, Long team);
 }
