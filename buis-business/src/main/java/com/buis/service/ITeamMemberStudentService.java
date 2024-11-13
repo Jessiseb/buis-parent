@@ -78,32 +78,5 @@ public interface ITeamMemberStudentService {
      */
     List<TeamMemberStudent> selectTeamMyCreate(Long id);
 
-    /**
-     * 队伍学生互选
-     * @param teamMemberStudentInvitedDto
-     * @return
-     */
-    String TeamsStudentsSelectedEach(TeamMemberStudentInvitedDto teamMemberStudentInvitedDto);
 
-    /**
-     * 取消邀请
-     * @param id
-     * @return
-     */
-    String CancelInvited(long id);
-
-    /**
-     * 接受or拒绝邀请
-     * @param id
-     * @param isAgree
-     * @return
-     */
-    String agreeOrreject(long id, int isAgree);
-
-    /**
-     * 查询我的邀请列表
-     * @param dto
-     * @return
-     */
-    List<TeamMemberStudent> InvitedList(TeamMemberStudentInvitedListDto dto);
 }
