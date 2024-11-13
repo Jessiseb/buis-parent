@@ -79,23 +79,24 @@ public class RaceInfoServiceImpl implements IRaceInfoService
      */
     @Override
     public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo) {
-        Long id = raceInfo.getId();
-        if (id == null) {
-            throw new ServiceException("参数错误", HttpStatus.BAD_REQUEST);
-        }
-        // 根据id获取比赛信息
-        RaceInfoVo raceInfoVo = raceInfoMapper.selectRaceInfoById(id);
-        if (raceInfoVo != null) {
-            // 设置是否已报名
-            setIsJoin(raceInfoVo);
-            // 设置比赛详情
-            RaceDetail raceDetail = new RaceDetail();
-            raceDetail.setRace(raceInfoVo.getId());
-            List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
-            if (raceDetailVos != null && raceDetailVos.size() > 0) {
-                raceInfoVo.setRaceDetail(raceDetailVos.get(0));
+
+        // 根据传入参数获取比赛信息
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+
+        for (RaceInfoVo raceInfoVo : raceInfoVos) {
+            if (raceInfoVo != null) {
+                // 设置是否已报名
+                setIsJoin(raceInfoVo);
+                // 设置比赛详情
+                RaceDetail raceDetail = new RaceDetail();
+                raceDetail.setRace(raceInfoVo.getId());
+                List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+                if (raceDetailVos != null && raceDetailVos.size() > 0) {
+                    raceInfoVo.setRaceDetail(raceDetailVos.get(0));
+                }
             }
         }
+
         return raceInfoMapper.selectRaceInfoList(raceInfo);
     }
 

@@ -53,7 +53,6 @@ public class RaceLanqiaoTeacher extends BaseEntity {
      */
     @Excel(name = "性别", readConverterExp = "字=典")
     @ApiModelProperty("性别 ")
-
     private Long sex;
 
     /**
@@ -68,7 +67,6 @@ public class RaceLanqiaoTeacher extends BaseEntity {
      */
     @Excel(name = "所在系")
     @ApiModelProperty("所在系")
-
     private Long major;
 
     /**
@@ -76,7 +74,7 @@ public class RaceLanqiaoTeacher extends BaseEntity {
      */
     @Excel(name = "职称", readConverterExp = "字=典")
     @ApiModelProperty("职称")
-    private Long title;
+    private String title;
 
     /**
      * 职务
