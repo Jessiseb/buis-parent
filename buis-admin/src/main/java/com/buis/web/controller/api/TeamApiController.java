@@ -163,52 +163,6 @@ public class TeamApiController extends BaseController{
 
     //endregion
 
-    /**
-     * 队伍学生互选
-     * @param teamMemberStudentInvitedDto
-     * @return
-     */
-    @ApiOperation("队伍学生互选")
-    @PostMapping("/invited")
-    public R<String> TeamsStudentsSelectedEach(@ApiParam(name = "teamMemberStudentInvitedDto", value = "队伍学生互选dto", required = true)@RequestBody TeamMemberStudentInvitedDto teamMemberStudentInvitedDto) {
-        String s = teamMemberStudentService.TeamsStudentsSelectedEach(teamMemberStudentInvitedDto);
-        return R.ok(s);
-    }
 
-    /**
-     * 取消邀请
-     * @param
-     * @return
-     */
-    @ApiOperation("取消邀请")
-    @DeleteMapping("/cancel/invited")
-    public R<String> CancelInvited(@ApiParam(name = "id", value = "学生队伍中间表id", required = true)long id) {
-        String s = teamMemberStudentService.CancelInvited(id);
-        return R.ok(s);
-    }
-
-    /**
-     * 接受or拒绝邀请
-     * @param
-     * @return
-     */
-    @ApiOperation("接受/拒绝邀请")
-    @PutMapping("/agreeOrreject/invited")
-    public R<String> AgreeOrReject(@ApiParam(name = "id", value = "学生队伍中间表id", required = true)long id,
-                                   @ApiParam(name = "isAgree", value = "1接受 0拒绝", required = true)int isAgree) {
-        String s = teamMemberStudentService.agreeOrreject(id,isAgree);
-        return R.ok(s);
-    }
-
-    /**
-     * 查询我的邀请列表
-     */
-    @ApiOperation("查询我的邀请列表")
-    @PostMapping("/list/invited")
-    public TableDataInfo InvitedList(@ApiParam(name = "TeamMemberStudentInvitedListDto", value = "学生队伍中间表查询列表dto", required = false)@RequestBody TeamMemberStudentInvitedListDto dto) {
-        startPage();
-        List<TeamMemberStudent> list = teamMemberStudentService.InvitedList(dto);
-        return getDataTable(list);
-    }
 
 }
