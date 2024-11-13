@@ -118,6 +118,4 @@ public class UserInfo extends BaseEntity {
     @ApiModelProperty("是否为老师标识 0 - 学生 1 - 老师")
     private Integer isTeacher;
 
-
-
 }
