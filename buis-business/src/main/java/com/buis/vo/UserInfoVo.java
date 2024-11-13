@@ -1,5 +1,6 @@
 package com.buis.vo;
 
+import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.buis.domain.UserInfo;
 import io.swagger.annotations.ApiModel;
@@ -38,5 +39,19 @@ public class UserInfoVo extends UserInfo {
      */
     @ApiModelProperty(value = "老师指导的队伍数量-仅老师有此字段")
     private Long teamNum = 0L;
+
+    /**
+     * 是否为老师标识 0 - 学生 1 - 老师
+     */
+    @ApiModelProperty("是否为老师标识 0 - 学生 1 - 老师")
+    private Integer isTeacher;
+
+
+    /**
+     * 老师职称
+     */
+    @ApiModelProperty("老师职称")
+    @Excel(name = "老师职称")
+    private Long title;
 
 }
