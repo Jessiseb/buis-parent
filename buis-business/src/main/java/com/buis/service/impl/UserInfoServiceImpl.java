@@ -11,7 +11,6 @@ import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.mapper.UserInfoMapper;
-import com.buis.service.ICollegeMajorService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
@@ -174,6 +173,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         String code = registerDTO.getCode();
         String password = registerDTO.getPassword();
         String name = registerDTO.getName();
+        Integer isTeacher = registerDTO.getIsTeacher();
 
         //校验邮箱格式
         //邮箱的正则表达式
@@ -210,7 +210,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         member.setName(name);
         member.setEmail(email);
         member.setPassword(encryptPassword);
-        member.setIsTeacher(registerDTO.getIsTeacher());
+        member.setIsTeacher(isTeacher);
         member.setIsDisabled(0L);
         return userInfoMapper.insertUserInfo(member);
     }
