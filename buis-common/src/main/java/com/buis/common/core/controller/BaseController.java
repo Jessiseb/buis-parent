@@ -79,6 +79,8 @@ public class BaseController
     /**
      * 响应请求分页数据
      */
+    //？变成泛型T
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected TableDataInfo getDataTable(List<?> list)
     {

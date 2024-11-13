@@ -1,13 +1,10 @@
 package com.buis.mapper;
 
 import com.buis.domain.TeamMemberStudent;
-import com.buis.domain.UserInfo;
-import com.buis.dto.TeamMemberStudentDto;
-import com.buis.vo.UserInfoVo;
+import com.buis.vo.TeamMemberStudentVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 队伍成员管理Mapper接口
@@ -22,7 +19,7 @@ public interface TeamMemberStudentMapper {
      * @param id 队伍成员管理主键
      * @return 队伍成员管理
      */
-    public TeamMemberStudent selectTeamMemberStudentById(Long id);
+    public TeamMemberStudentVo selectTeamMemberStudentById(Long id);
 
     /**
      * 查询队伍成员管理列表
@@ -30,10 +27,7 @@ public interface TeamMemberStudentMapper {
      * @param teamMemberStudent 队伍成员管理
      * @return 队伍成员管理集合
      */
-    public List<TeamMemberStudent> selectTeamMemberStudentList(TeamMemberStudent teamMemberStudent);
-
-
-    public TeamMemberStudentDto selectTeamMemberStudentQueryById(Long id);
+    public List<TeamMemberStudentVo> selectTeamMemberStudentList(TeamMemberStudent teamMemberStudent);
 
     /**
      * 新增队伍成员管理
@@ -67,16 +61,19 @@ public interface TeamMemberStudentMapper {
      */
     public int deleteTeamMemberStudentByIds(Long[] ids);
 
+    Long getJoinCountByTeamId(Long id);
+    /**
+     * 查询队伍内学生列表
+     * @param team
+     * @return
+     */
+    List<Long> getMemberStudentByTeamId(Long team);
 
-    int getCount(Long id);
-
-    Map<String, Object> getCountAndStudents(Long id);
-
-//    Map<String, Object> getCountAndStudents(Long id);
-
-
-    List<UserInfoVo> selectTeamMemberStudentQueryList(@Param("race") Long race, @Param("team") Long team);
-
-    List<TeamMemberStudent> selectTeamMyCreate(Long id);
-
+    /**
+     * 判断用户是否已加入
+     * @param userId
+     * @param raceId
+     * @return
+     */
+    int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId, @Param("team") Long team);
 }

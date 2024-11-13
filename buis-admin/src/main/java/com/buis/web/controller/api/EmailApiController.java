@@ -59,7 +59,7 @@ public class EmailApiController {
             return R.fail("发送邮箱验证码失败!");
         }
         //不管有无发过,,直接更新缓存的验证码
-        redisTemplate.opsForValue().set(RedisConstant.EMAIL + email,code,RedisConstant.EMAIL_TTL, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(RedisConstant.EMAIL + email, code, RedisConstant.EMAIL_TTL, TimeUnit.MINUTES);
         return R.ok("验证码发送成功!!");
     }
 }

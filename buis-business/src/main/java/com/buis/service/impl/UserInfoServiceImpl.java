@@ -7,12 +7,11 @@ import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.bean.BeanUtils;
-import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
-import com.buis.mapper.TeamMemberTeacherMapper;
 import com.buis.mapper.UserInfoMapper;
+import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.buis.common.constant.UserConstants.USER_LOGIN_STATE;
 
 /**
  * 用户信息Service业务层处理
@@ -41,7 +38,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     private UserInfoMapper userInfoMapper;
 
     @Resource
-    private TeamMemberTeacherMapper teamMemberTeacherMapper;
+    private ITeamMemberTeacherService teamMemberTeacherService;
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -56,54 +53,70 @@ public class UserInfoServiceImpl implements IUserInfoService {
      */
     @Override
     public UserInfoVo selectUserInfoById(Long id) {
-        UserInfoVo vo = new UserInfoVo();
         UserInfo userInfo = userInfoMapper.selectUserInfoById(id);
-        BeanUtils.copyProperties(userInfo,vo);
-        if (vo.getTitle() != null) {
-            TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
-            teamMemberTeacher.setTeacher(id);
-            teamMemberTeacher.setIsChoosed(1L);
-            List<TeamMemberTeacher> teamMemberTeachers = teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
-            long teamNum = teamMemberTeachers.stream().count();
-            vo.setTeamNum(teamNum);
-            vo.setIsTeacher(true);
-        } else {
-            vo.setIsTeacher(false);
-            vo.setTeamNum(0L);
+        return convertToUserInfoVo(userInfo);
+    }
+
+    /**
+     * 根据用户ID列表查询用户信息
+     *
+     * @param ids 用户信息主键列表
+     * @return 用户信息列表
+     */
+    @Override
+    public List<UserInfoVo> selectUserInfoByIds(List<Long> ids) {
+        List<UserInfoVo> userInfoVos = new ArrayList<>();
+        if (ids == null || ids.isEmpty()) {
+            return userInfoVos;
         }
-        return vo;
+        List<UserInfo> userInfos = userInfoMapper.selectUserInfoByIds(ids);
+        for (UserInfo user : userInfos) {
+            if (user != null) {
+                UserInfoVo vo = convertToUserInfoVo(user);
+                userInfoVos.add(vo);
+            }
+        }
+        return userInfoVos;
     }
 
     /**
      * 查询用户信息列表
      *
      * @param userInfo 用户信息
-     * @return 用户信息
+     * @return 用户信息列表
      */
     @Override
-    public List<UserInfoVo> selectUserInfoList(UserInfo userInfo)
-    {
+    public List<UserInfoVo> selectUserInfoList(UserInfo userInfo) {
         List<UserInfoVo> userInfoVos = new ArrayList<>();
-        UserInfoVo vo = new UserInfoVo();
         List<UserInfo> userInfos = userInfoMapper.selectUserInfoList(userInfo);
         for (UserInfo user : userInfos) {
-            BeanUtils.copyProperties(user,vo);
-            if (vo.getTitle() != null) {
-                TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
-                teamMemberTeacher.setTeacher(userInfo.getId());
-                teamMemberTeacher.setIsChoosed(1L);
-                List<TeamMemberTeacher> teamMemberTeachers = teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
-                long teamNum = teamMemberTeachers.stream().count();
-                vo.setTeamNum(teamNum);
-                vo.setIsTeacher(true);
-            } else {
-                vo.setIsTeacher(false);
-                vo.setTeamNum(0L);
+            if (user != null) {
+                UserInfoVo vo = convertToUserInfoVo(user);
+                userInfoVos.add(vo);
             }
-            userInfoVos.add(vo);
         }
         return userInfoVos;
     }
+
+    /**
+     * 将 UserInfo 转换为 UserInfoVo
+     *
+     * @param userInfo 用户信息
+     * @return 用户信息视图对象
+     */
+    private UserInfoVo convertToUserInfoVo(UserInfo userInfo) {
+        UserInfoVo vo = new UserInfoVo();
+        if (userInfo != null) {
+            BeanUtils.copyProperties(userInfo, vo);
+            if (vo.getIsTeacher() != null && vo.getIsTeacher() == 1) { // 判断是否为老师
+                //是老师
+                Long count = teamMemberTeacherService.getGuideCount(userInfo.getId());
+                vo.setTeamNum(count);
+            }
+        }
+        return vo;
+    }
+
 
     /**
      * 新增用户信息
@@ -152,7 +165,6 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
 
-
     @Override
     public int register(RegisterDto registerDTO) {
         //TODO 封装错误信息
@@ -161,6 +173,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         String code = registerDTO.getCode();
         String password = registerDTO.getPassword();
         String name = registerDTO.getName();
+        Integer isTeacher = registerDTO.getIsTeacher();
 
         //校验邮箱格式
         //邮箱的正则表达式
@@ -197,11 +210,14 @@ public class UserInfoServiceImpl implements IUserInfoService {
         member.setName(name);
         member.setEmail(email);
         member.setPassword(encryptPassword);
+        member.setIsTeacher(isTeacher);
+        member.setIsDisabled(0L);
         return userInfoMapper.insertUserInfo(member);
     }
 
     /**
      * 获取当前登录用户
+     *
      * @return
      */
     @Override
@@ -209,7 +225,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         //获取当前用户id
         Long loginId = (Long) StpUtil.getLoginId();
         UserInfo userInfo = userInfoMapper.selectUserInfoById(loginId);
-        if (userInfo == null){
+        if (userInfo == null) {
             throw new ServiceException("用户不存在!");
         }
         return userInfo;
@@ -268,24 +284,8 @@ public class UserInfoServiceImpl implements IUserInfoService {
             throw new ServiceException("邮箱格式有误,请重新输入!");
         }
 
-//        //用户脱敏
-//        UserInfoVo safetyUser = new UserInfoVo();
-//        safetyUser.setId(userInfo.getId());
-//        safetyUser.setNumber(userInfo.getNumber());
-//        safetyUser.setEmail(userInfo.getEmail());
-//        safetyUser.setPhone(userInfo.getPhone());
-//        safetyUser.setName(userInfo.getName());
-//        safetyUser.setDescription(userInfo.getDescription());
-//        safetyUser.setSex(userInfo.getSex());
-//        safetyUser.setCollege(userInfo.getCollege());
-//        safetyUser.setMajor(userInfo.getMajor());
-//        safetyUser.setTitle(userInfo.getTitle());
-
-        //5.记录用户的登录态
-//        request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
         StpUtil.login(userInfo.getId());
         String token = StpUtil.getTokenValue();
-
         return token;
 
     }

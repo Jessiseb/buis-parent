@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceLanqiaoTypeMapper">
     
-    <resultMap type="RaceLanqiaoType" id="RaceLanqiaoTypeResult">
+    <resultMap type="com.buis.domain.RaceLanqiaoType" id="RaceLanqiaoTypeResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
         <result property="parentId"    column="parent_id"    />
@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, name, parent_id, sort, is_deleted, create_time, update_time from race_lanqiao_type
     </sql>
 
-    <select id="selectRaceLanqiaoTypeList" parameterType="RaceLanqiaoType" resultMap="RaceLanqiaoTypeResult">
+    <select id="selectRaceLanqiaoTypeList" parameterType="com.buis.domain.RaceLanqiaoType" resultMap="RaceLanqiaoTypeResult">
         <include refid="selectRaceLanqiaoTypeVo"/>
         <where>
             is_deleted = 0
@@ -27,14 +27,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="parentId != null "> and parent_id = #{parentId}</if>
             <if test="sort != null "> and sort = #{sort}</if>
         </where>
+        order by sort asc
     </select>
     
     <select id="selectRaceLanqiaoTypeById" parameterType="Long" resultMap="RaceLanqiaoTypeResult">
         <include refid="selectRaceLanqiaoTypeVo"/>
         where id = #{id}  and is_deleted = 0
+        order by sort asc
     </select>
 
-    <insert id="insertRaceLanqiaoType" parameterType="RaceLanqiaoType" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceLanqiaoType" parameterType="com.buis.domain.RaceLanqiaoType" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_type
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">name,</if>
@@ -54,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceLanqiaoType" parameterType="RaceLanqiaoType">
+    <update id="updateRaceLanqiaoType" parameterType="com.buis.domain.RaceLanqiaoType">
         update race_lanqiao_type
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>

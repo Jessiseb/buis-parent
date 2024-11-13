@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.CollegeMajorMapper">
     
-    <resultMap type="CollegeMajor" id="CollegeMajorResult">
+    <resultMap type="com.buis.domain.CollegeMajor" id="CollegeMajorResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
         <result property="college"    column="college"    />
@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, name, college, sort, is_deleted, create_time, update_time from t_college_major
     </sql>
 
-    <select id="selectCollegeMajorList" parameterType="CollegeMajor" resultMap="CollegeMajorResult">
+    <select id="selectCollegeMajorList" parameterType="com.buis.domain.CollegeMajor" resultMap="CollegeMajorResult">
         <include refid="selectCollegeMajorVo"/>
         <where>
             is_deleted = 0
@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="college != null "> and college = #{college}</if>
             <if test="sort != null "> and sort = #{sort}</if>
         </where>
-        order by asc sort;
+        order by sort asc;
     </select>
     
     <select id="selectCollegeMajorById" parameterType="Long" resultMap="CollegeMajorResult">
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertCollegeMajor" parameterType="CollegeMajor" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertCollegeMajor" parameterType="com.buis.domain.CollegeMajor" useGeneratedKeys="true" keyProperty="id">
         insert into t_college_major
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">name,</if>
@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateCollegeMajor" parameterType="CollegeMajor">
+    <update id="updateCollegeMajor" parameterType="com.buis.domain.CollegeMajor">
         update t_college_major
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>

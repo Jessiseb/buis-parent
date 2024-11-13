@@ -21,7 +21,7 @@ public interface IRaceDetailService
 
     /**
      * 查询比赛详情列表
-     * 
+     *
      * @param raceDetail 比赛详情
      * @return 比赛详情集合
      */

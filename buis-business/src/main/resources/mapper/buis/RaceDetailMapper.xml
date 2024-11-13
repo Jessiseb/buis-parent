@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceDetailMapper">
     
-    <resultMap type="RaceDetail" id="RaceDetailResult">
+    <resultMap type="com.buis.domain.RaceDetail" id="RaceDetailResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
         <result property="name"    column="name"    />
@@ -25,11 +25,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
-    <resultMap id="RaceDetailWeightResult" type="RaceDetail" extends="RaceDetailResult">
-        <collection property="weightList" ofType="Weight" column="id" select="selectWeightList" />
+    <resultMap id="RaceDetailWeightResult" type="com.buis.domain.RaceDetail" extends="RaceDetailResult">
+        <collection property="weightList" ofType="com.buis.domain.Weight" column="id" select="selectWeightList" />
     </resultMap>
 
-    <resultMap type="Weight" id="WeightResult">
+    <resultMap type="com.buis.domain.Weight" id="WeightResult">
         <result property="id"    column="id"    />
         <result property="raceD"    column="race_d"    />
         <result property="name"    column="name"    />
@@ -39,22 +39,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
-    <sql id="selectRaceDetailVo">
+    <sql id="selectRaceDetail">
         select id, race, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time from race_detail
     </sql>
 
-    <select id="selectRaceDetailList" parameterType="RaceDetail" resultMap="RaceDetailResult">
-        <include refid="selectRaceDetailVo"/>
+    <select id="selectRaceDetailList" parameterType="com.buis.domain.RaceDetail" resultMap="RaceDetailResult">
+        <include refid="selectRaceDetail"/>
         <where>
             is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
-            <if test="email != null  and email != ''"> and email = #{email}</if>
-            <if test="capacity != null "> and capacity = #{capacity}</if>
-            <if test="rRank != null "> and r_rank = #{rRank}</if>
-            <if test="tLimit != null "> and t_limit = #{tLimit}</if>
+            <if test="raceDetail.id != null "> and id = #{raceDetail.id}</if>
+            <if test="raceDetail.race != null "> and race = #{raceDetail.race}</if>
+            <if test="raceDetail.name != null  and name != ''"> and name like concat('%', #{raceDetail.name}, '%')</if>
+            <if test="raceDetail.phone != null  and phone != ''"> and phone = #{raceDetail.phone}</if>
+            <if test="raceDetail.email != null  and email != ''"> and email = #{raceDetail.email}</if>
+            <if test="raceDetail.capacity != null "> and capacity = #{raceDetail.capacity}</if>
+            <if test="raceDetail.rRank != null "> and r_rank = #{raceDetail.rRank}</if>
+            <if test="raceDetail.tLimit != null "> and t_limit = #{raceDetail.tLimit}</if>
         </where>
     </select>
     
@@ -69,8 +69,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from t_weight
         where race_d = #{race_d} and is_deleted = 0
     </select>
-
-    <insert id="insertRaceDetail" parameterType="RaceDetail" useGeneratedKeys="true" keyProperty="id">
+   
+    <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
         insert into race_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
@@ -112,7 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceDetail" parameterType="RaceDetail">
+    <update id="updateRaceDetail" parameterType="com.buis.domain.RaceDetail">
         update race_detail
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>
