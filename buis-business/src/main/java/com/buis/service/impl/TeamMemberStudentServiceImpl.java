@@ -119,5 +119,5 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return teamMemberStudentMapper.selectTeamMyCreate(id);
     }
 
-    
+
 }
