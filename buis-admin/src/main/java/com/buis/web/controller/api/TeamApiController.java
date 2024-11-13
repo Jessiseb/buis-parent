@@ -63,7 +63,7 @@ public class TeamApiController extends BaseController{
             @RequestBody TeamInfo teamInfo) {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        return new MyPageVo(list, (int) new PageInfo(list).getTotal());
+        return new MyPageVo(list, new PageInfo(list).getTotal());
     }
 
 
