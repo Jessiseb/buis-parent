@@ -245,6 +245,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         String email = userLoginDTO.getEmail();
         String passWord = userLoginDTO.getPassWord();
         String code = userLoginDTO.getCode();
+        Integer isTeacher = userLoginDTO.getIsTeacher();
         //1.对参数做校验
         if (StringUtils.isEmpty(email)) {
             throw new ServiceException("邮箱账号不能为空!");
@@ -256,6 +257,16 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (userInfo == null) {
             log.info("user login fail,userAccount cannot match userPassword");
             throw new ServiceException("用户不存在,请先注册!");
+        }
+        Integer isTeacher1 = userInfo.getIsTeacher();
+
+        //判断isTeacher是否对应
+        if (isTeacher != null && !isTeacher.equals(isTeacher1)) {
+            if(isTeacher==0){
+            throw new ServiceException("您还未注册比赛成员~");
+            }else if (isTeacher==1){
+                throw new ServiceException("您还未注册比赛指导老师~");
+            }
         }
 
         //2.判断是密码还是验证码登录
