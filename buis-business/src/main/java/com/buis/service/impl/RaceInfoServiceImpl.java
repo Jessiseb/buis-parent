@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
@@ -64,8 +65,12 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * 为isJoin赋值
      */
     public void setIsJoin(RaceInfoVo raceInfoVo) {
-        Long userId = SecurityUtils.getFrontLoginUserId();
-        raceInfoVo.setIsJoin(checkJoin(userId, raceInfoVo.getId(), null));
+        Long userId = null;
+        try {
+            userId = SecurityUtils.getFrontLoginUserId();
+            raceInfoVo.setIsJoin(checkJoin(userId, raceInfoVo.getId(), null));
+        } catch (ServiceException e) {
+        }
     }
 
     /**
