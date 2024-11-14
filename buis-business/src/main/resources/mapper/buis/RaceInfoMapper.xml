@@ -173,7 +173,7 @@ left join race_type t2 on t2.id = t1.son_tid
     <insert id="batchReward">
         insert into t_reward(race, r_rank, name, quantity, remark, is_deleted, create_time, update_time) values
         <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.id}, #{item.race}, #{item.rRank}, #{item.name}, #{item.quantity}, #{item.remark}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
+            ( #{item.race}, #{item.rRank}, #{item.name}, #{item.quantity}, #{item.remark}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
         </foreach>
     </insert>
 </mapper>
