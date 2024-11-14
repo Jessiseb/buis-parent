@@ -1,7 +1,10 @@
 package com.buis.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.InvitationVo;
 import com.buis.domain.TeamMemberStudent;
+import com.buis.dto.InvitationQueryDto;
 import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +25,7 @@ import java.util.List;
  */
 @Service
 public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
-    @Autowired
+    @Resource
     private TeamMemberStudentMapper teamMemberStudentMapper;
     @Resource
     private IUserInfoService userInfoService;
@@ -132,6 +136,20 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         }
         return userInfoVos;
     }
+
+    @Override
+    public List<InvitationVo> selectInvitationList(InvitationQueryDto query) {
+        List<InvitationVo> results = new ArrayList<>();
+        List<TeamMemberStudent> studentList = teamMemberStudentMapper.selectInvitationList(query);
+
+        if (studentList != null && !studentList.isEmpty()) {
+            for (TeamMemberStudent student : studentList) {
+                results.add(BeanUtil.copyProperties(student,InvitationVo.class));
+            }
+        }
+        return results;
+    }
+
 
     /**
      * 判断用户是否已加入

@@ -223,7 +223,14 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public UserInfo getLoginUser() {
         //获取当前用户id
-        Long loginId = (Long) StpUtil.getLoginId();
+//        Long loginId = (Long) StpUtil.getLoginId();
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
         UserInfo userInfo = userInfoMapper.selectUserInfoById(loginId);
         if (userInfo == null) {
             throw new ServiceException("用户不存在!");

@@ -1,6 +1,8 @@
 package com.buis.service;
 
+import com.buis.domain.InvitationVo;
 import com.buis.domain.TeamMemberStudent;
+import com.buis.dto.InvitationQueryDto;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
 
@@ -76,6 +78,8 @@ public interface ITeamMemberStudentService {
      * @return
      */
     List<UserInfoVo> getMemberStudentByTeamId(Long team);
+
+    List<InvitationVo> selectInvitationList(InvitationQueryDto query);
 
     /**
      * 判断用户是否已加入
