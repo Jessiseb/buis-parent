@@ -196,6 +196,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             List<Reward> list = new ArrayList<Reward>();
             for (Reward reward : rewardList) {
                 reward.setRace(id);
+                reward.setIsDeleted(0);
+                reward.setCreateTime(DateUtils.getNowDate());
                 list.add(reward);
             }
             if (list.size() > 0) {
