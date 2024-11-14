@@ -80,7 +80,7 @@ left join race_type t2 on t2.id = t1.son_tid
         where t1.id = #{id} and t1.is_deleted = 0
     </select>
 
-    <select id="selectRewardList" resultMap="RaceInfoRewardResult">
+    <select id="selectRewardList" resultMap="RewardResult">
         select id, race, r_rank, name, quantity, remark, is_deleted, create_time, update_time
         from t_reward
         where race = #{race} and is_deleted = 0
