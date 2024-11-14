@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <collection property="rewardList" ofType="com.buis.domain.Reward">
             <id property="id" column="id"></id>
             <result property="race" column="race"></result>
-            <result property="rRank" column="rRank"></result>
+            <result property="rRank" column="r_rank"></result>
             <result property="name" column="name"></result>
             <result property="quantity" column="quantity"></result>
             <result property="isDeleted" column="is_deleted"></result>
