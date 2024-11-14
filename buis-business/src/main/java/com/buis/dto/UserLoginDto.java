@@ -29,4 +29,10 @@ public class UserLoginDto implements Serializable {
     @ApiModelProperty(value = "登录时的验证码")
     private String code;
 
+    /**
+     * 是否为老师
+     */
+    @ApiModelProperty(value = "是否为老师")
+    private  Integer isTeacher;
+
 }
