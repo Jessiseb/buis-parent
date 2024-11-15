@@ -17,7 +17,7 @@ public class RaceLanqiaoStudentVo extends RaceLanqiaoStudent {
      * 赛道父类别
      */
     @ApiModelProperty(value = "赛道父类别")
-    private String fatherTname;
+    private String parentTname;
 
 
 
