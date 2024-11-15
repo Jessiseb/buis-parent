@@ -2,6 +2,7 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.RaceLanqiaoStudent;
+import com.buis.vo.RaceLanqiaoStudentVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,7 +21,7 @@ public interface RaceLanqiaoStudentMapper
      * @param id 蓝桥杯学生报名信息主键
      * @return 蓝桥杯学生报名信息
      */
-    public RaceLanqiaoStudent selectRaceLanqiaoStudentById(Long id);
+    public RaceLanqiaoStudentVo selectRaceLanqiaoStudentById(Long id);
 
     /**
      * 查询蓝桥杯学生报名信息列表
@@ -28,7 +29,7 @@ public interface RaceLanqiaoStudentMapper
      * @param raceLanqiaoStudent 蓝桥杯学生报名信息
      * @return 蓝桥杯学生报名信息集合
      */
-    public List<RaceLanqiaoStudent> selectRaceLanqiaoStudentList(RaceLanqiaoStudent raceLanqiaoStudent);
+    public List<RaceLanqiaoStudentVo> selectRaceLanqiaoStudentList(RaceLanqiaoStudent raceLanqiaoStudent);
 
     /**
      * 新增蓝桥杯学生报名信息

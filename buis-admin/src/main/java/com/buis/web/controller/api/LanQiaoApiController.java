@@ -12,6 +12,7 @@ import com.buis.service.IRaceDetailService;
 import com.buis.service.IRaceLanqiaoStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IRaceLanqiaoTypeService;
+import com.buis.vo.RaceLanqiaoStudentVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -158,8 +159,8 @@ public class LanQiaoApiController extends BaseController {
     @PostMapping("/exportStudent")
     public void exportStudent(@ApiParam(name = "raceLanqiaoStudent", value = "蓝桥杯报名学生条件过滤", required = false) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent,
                               HttpServletResponse response) {
-        List<RaceLanqiaoStudent> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
-        ExcelUtil<RaceLanqiaoStudent> util = new ExcelUtil<>(RaceLanqiaoStudent.class);
+        List<RaceLanqiaoStudentVo> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
+        ExcelUtil<RaceLanqiaoStudentVo> util = new ExcelUtil<>(RaceLanqiaoStudentVo.class);
         util.exportExcel(response, list, "蓝桥杯报名学生数据");
     }
 
