@@ -4,7 +4,7 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
-import com.buis.domain.RaceDetail;
+import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceLanqiaoStudent;
 import com.buis.domain.RaceLanqiaoTeacher;
 import com.buis.domain.RaceLanqiaoType;
@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "蓝桥杯Api")
@@ -136,7 +137,30 @@ public class LanQiaoApiController extends BaseController {
     public R<List<RaceLanqiaoType>> typeList(@ApiParam(name = "raceLanqiaoType", value = "赛道类型条件过滤", required = false) @RequestBody RaceLanqiaoType raceLanqiaoType) {
         List<RaceLanqiaoType> list = raceLanqiaoTypeService.selectRaceLanqiaoTypeList(raceLanqiaoType);
         return R.ok(list);
+    }
 
+    /**
+     * 导出蓝桥杯指导老师信息
+     */
+    @ApiOperation("导出蓝桥杯指导老师信息")
+    @PostMapping("/export")
+    public void exportTeacher(@ApiParam(name = "raceLanqiaoTeacher", value = "蓝桥杯指导老师条件过滤", required = false) @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher,
+                              HttpServletResponse response) {
+        List<RaceLanqiaoTeacher> list = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
+        ExcelUtil<RaceLanqiaoTeacher> util = new ExcelUtil<>(RaceLanqiaoTeacher.class);
+        util.exportExcel(response, list, "蓝桥杯指导老师数据");
+    }
+
+    /**
+     * 导出蓝桥杯报名学生信息
+     */
+    @ApiOperation("导出蓝桥杯报名学生信息")
+    @PostMapping("/exportStudent")
+    public void exportStudent(@ApiParam(name = "raceLanqiaoStudent", value = "蓝桥杯报名学生条件过滤", required = false) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent,
+                              HttpServletResponse response) {
+        List<RaceLanqiaoStudent> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
+        ExcelUtil<RaceLanqiaoStudent> util = new ExcelUtil<>(RaceLanqiaoStudent.class);
+        util.exportExcel(response, list, "蓝桥杯报名学生数据");
     }
 
 
