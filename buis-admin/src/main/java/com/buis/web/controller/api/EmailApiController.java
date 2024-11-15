@@ -35,6 +35,11 @@ public class EmailApiController {
     @Resource
     private RedisTemplate redisTemplate;
 
+    /**
+     * 发送邮箱验证码
+     * @param email
+     * @return
+     */
     @ApiOperation("邮箱发送")
     @PostMapping("/sendEmail/{email}")
     public R<String> sendEmail(@PathVariable("email") String email) {

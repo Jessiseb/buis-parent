@@ -58,22 +58,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
             team_info.id = #{id} AND team_member_teacher.is_deleted = 0
     </select>
-    <select id="getCountAndTeachers" resultType="java.util.Map">
-        SELECT
-            COUNT(team_member_teacher.teacher) AS teamNumbers,
-            (SELECT GROUP_CONCAT(CONCAT(user_info.id, ':', user_info.`name`))
-             FROM user_info
-                      INNER JOIN team_member_teacher ON user_info.id = team_member_teacher.teacher
-             WHERE team_member_teacher.team = team_info.id AND team_member_teacher.is_deleted = 0) AS teamMembersNameWithIds
-        FROM
-            team_info
-                LEFT JOIN
-            team_member_teacher ON team_info.id = team_member_teacher.team
-        WHERE
-            team_info.id = #{id} AND team_member_teacher.is_deleted = 0
-    </select>
-
-
 
     <select id="selectTeamMyInstruct" resultType="com.buis.domain.TeamMemberTeacher">
         <include refid="selectTeamMemberTeacherVo"/>
@@ -141,6 +125,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    <delete id="deleteTeamMemberTeacherByTeamAndTeacher">
+        update team_member_teacher
+        set is_deleted = 1
+        where team = #{team} and teacher = #{teacher}
+    </delete>
     <select id="getGuideCount" resultType="java.lang.Long">
         SELECT COUNT(1)
         FROM team_member_teacher
@@ -169,6 +158,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
         AND t1.is_deleted = 0
     </select>
+
     <select id="checkJoin" resultType="java.lang.Integer">
         select count(1)
         from team_member_teacher
