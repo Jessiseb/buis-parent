@@ -37,7 +37,7 @@ public class Reward extends BaseEntity
     /** 等级 */
     @Excel(name = "等级")
     @ApiModelProperty(value = "等级")
-    private String r_rank;
+    private String rRank;
 
     /** 奖品名称 */
     @Excel(name = "奖品名称")
