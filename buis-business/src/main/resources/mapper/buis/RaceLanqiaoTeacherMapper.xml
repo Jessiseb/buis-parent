@@ -43,8 +43,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null "> and sex = #{sex}</if>
             <if test="college != null "> and college = #{college}</if>
             <if test="major != null "> and major = #{major}</if>
-            <if test="title != null "> and title = #{title}</if>
-            <if test="office != null  and office != ''"> and office = #{office}</if>
+            <if test="title != null and title != ''"> and title = #{title}</if>
+            <if test="office != null and office != ''"> and office = #{office}</if>
             <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
             <if test="email != null  and email != ''"> and email = #{email}</if>
             <if test="identity != null  and identity != ''"> and identity = #{identity}</if>
@@ -79,7 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null">sex,</if>
             <if test="college != null">college,</if>
             <if test="major != null">major,</if>
-            <if test="title != null">title,</if>
+            <if test="title != null and title != ''">title,</if>
             <if test="office != null and office != ''">office,</if>
             <if test="phone != null and phone != ''">phone,</if>
             <if test="email != null and email != ''">email,</if>
@@ -101,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null">#{sex},</if>
             <if test="college != null">#{college},</if>
             <if test="major != null">#{major},</if>
-            <if test="title != null">#{title},</if>
+            <if test="title != null and title != ''">#{title},</if>
             <if test="office != null and office != ''">#{office},</if>
             <if test="phone != null and phone != ''">#{phone},</if>
             <if test="email != null and email != ''">#{email},</if>
@@ -127,7 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null">sex = #{sex},</if>
             <if test="college != null">college = #{college},</if>
             <if test="major != null">major = #{major},</if>
-            <if test="title != null">title = #{title},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
             <if test="office != null and office != ''">office = #{office},</if>
             <if test="phone != null and phone != ''">phone = #{phone},</if>
             <if test="email != null and email != ''">email = #{email},</if>

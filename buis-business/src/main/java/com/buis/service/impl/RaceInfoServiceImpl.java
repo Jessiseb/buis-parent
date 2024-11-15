@@ -1,6 +1,5 @@
 package com.buis.service.impl;
 
-import com.buis.common.constant.HttpStatus;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
@@ -21,13 +20,12 @@ import java.util.List;
 
 /**
  * 比赛信息Service业务层处理
- * 
+ *
  * @author kaven
  * @date 2024-10-23
  */
 @Service
-public class RaceInfoServiceImpl implements IRaceInfoService 
-{
+public class RaceInfoServiceImpl implements IRaceInfoService {
     @Resource
     private RaceInfoMapper raceInfoMapper;
     @Autowired
@@ -67,8 +65,12 @@ public class RaceInfoServiceImpl implements IRaceInfoService
      * 为isJoin赋值
      */
     public void setIsJoin(RaceInfoVo raceInfoVo) {
-        Long userId = SecurityUtils.getFrontLoginUserId();
-        raceInfoVo.setIsJoin(checkJoin(userId, raceInfoVo.getId(),null));
+        Long userId = null;
+        try {
+            userId = SecurityUtils.getFrontLoginUserId();
+            raceInfoVo.setIsJoin(checkJoin(userId, raceInfoVo.getId(), null));
+        } catch (ServiceException e) {
+        }
     }
 
     /**
@@ -82,7 +84,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService
 
         // 根据传入参数获取比赛信息
         List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
-
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             if (raceInfoVo != null) {
                 // 设置是否已报名
@@ -96,20 +97,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService
                 }
             }
         }
-
-        return raceInfoMapper.selectRaceInfoList(raceInfo);
+        return raceInfoVos;
     }
 
     /**
      * 新增比赛信息
-     * 
+     *
      * @param raceInfo 比赛信息
      * @return 结果
      */
     @Transactional
     @Override
-    public int insertRaceInfo(RaceInfo raceInfo)
-    {
+    public int insertRaceInfo(RaceInfo raceInfo) {
         raceInfo.setCreateTime(DateUtils.getNowDate());
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         insertReward(raceInfo);
@@ -118,14 +117,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService
 
     /**
      * 修改比赛信息
-     * 
+     *
      * @param raceInfo 比赛信息
      * @return 结果
      */
     @Transactional
     @Override
-    public int updateRaceInfo(RaceInfo raceInfo)
-    {
+    public int updateRaceInfo(RaceInfo raceInfo) {
         raceInfo.setUpdateTime(DateUtils.getNowDate());
         raceInfoMapper.deleteRewardByRace(raceInfo.getId());
         insertReward(raceInfo);
@@ -134,34 +132,33 @@ public class RaceInfoServiceImpl implements IRaceInfoService
 
     /**
      * 批量删除比赛信息
-     * 
+     *
      * @param ids 需要删除的比赛信息主键
      * @return 结果
      */
     @Transactional
     @Override
-    public int deleteRaceInfoByIds(Long[] ids)
-    {
+    public int deleteRaceInfoByIds(Long[] ids) {
         raceInfoMapper.deleteRewardByRaces(ids);
         return raceInfoMapper.deleteRaceInfoByIds(ids);
     }
 
     /**
      * 删除比赛信息信息
-     * 
+     *
      * @param id 比赛信息主键
      * @return 结果
      */
     @Transactional
     @Override
-    public int deleteRaceInfoById(Long id)
-    {
+    public int deleteRaceInfoById(Long id) {
         raceInfoMapper.deleteRewardByRace(id);
         return raceInfoMapper.deleteRaceInfoById(id);
     }
 
     /**
      * 判断用户是否已报名
+     *
      * @param userId
      * @param raceId
      * @return
@@ -175,33 +172,35 @@ public class RaceInfoServiceImpl implements IRaceInfoService
         // 判断互选表有没有信息
         res = teamMemberTeacherService.checkJoin(userId, raceId, team);
         if (res <= 0) {
-            res = teamMemberStudentService.checkJoin(userId, raceId,team);
+            res = teamMemberStudentService.checkJoin(userId, raceId, team);
             if (res <= 0) {
                 // 判断队伍有没有信息
-                res = teamInfoService.checkJoin(userId, raceId,team);
+                res = teamInfoService.checkJoin(userId, raceId, team);
             }
+        }
+        if (res > 0) {
+            res = 1;
         }
         return res;
     }
+
     /**
      * 新增奖项信息
-     * 
+     *
      * @param raceInfo 比赛信息对象
      */
-    public void insertReward(RaceInfo raceInfo)
-    {
+    public void insertReward(RaceInfo raceInfo) {
         List<Reward> rewardList = raceInfo.getRewardList();
         Long id = raceInfo.getId();
-        if (StringUtils.isNotNull(rewardList))
-        {
+        if (StringUtils.isNotNull(rewardList)) {
             List<Reward> list = new ArrayList<Reward>();
-            for (Reward reward : rewardList)
-            {
+            for (Reward reward : rewardList) {
                 reward.setRace(id);
+                reward.setIsDeleted(0);
+                reward.setCreateTime(DateUtils.getNowDate());
                 list.add(reward);
             }
-            if (list.size() > 0)
-            {
+            if (list.size() > 0) {
                 raceInfoMapper.batchReward(list);
             }
         }

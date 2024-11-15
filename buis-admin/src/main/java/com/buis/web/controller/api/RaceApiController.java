@@ -39,6 +39,11 @@ public class RaceApiController extends BaseController {
     @Autowired
     private IPreSignStudentService preStudentService;
 
+    /**
+     * 根据比赛id查询比赛信息
+     * @param RaceId
+     * @return
+     */
     @ApiOperation("根据比赛id查询比赛信息")
     @GetMapping("/detail/{RaceId}")
     public R<RaceInfoVo> list(@ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
@@ -46,6 +51,13 @@ public class RaceApiController extends BaseController {
         return R.ok(raceInfoVo);
     }
 
+    /**
+     * 带条件分页查询比赛列表
+     * @param pageNum
+     * @param pageSize
+     * @param raceInfo
+     * @return
+     */
     @ApiOperation("带条件分页查询比赛列表")
     @GetMapping("/raceList")
     public MyPageVo<List<RaceInfoVo>> list(
@@ -54,7 +66,7 @@ public class RaceApiController extends BaseController {
             @ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
         startPage();
         List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
-        return new MyPageVo(list, (int) new PageInfo(list).getTotal());
+        return new MyPageVo(list,  new PageInfo(list).getTotal());
     }
 
     /**
@@ -67,6 +79,11 @@ public class RaceApiController extends BaseController {
         return R.ok(list);
     }
 
+    /**
+     * 根据比赛id分页查询预报名老师列表
+     * @param RaceId
+     * @return
+     */
     @ApiOperation("根据比赛id分页查询预报名老师列表")
     @PostMapping("/teacher/{RaceId}")
     public MyPageVo<List<PreSignTeacherVo>> getTeachersByRaceId(@ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
@@ -76,9 +93,16 @@ public class RaceApiController extends BaseController {
         prevTeacher.setRace(RaceId);
         List<PreSignTeacherVo> preSignTeacherVos = preTeacherService.selectPreSignTeacherList(prevTeacher);
         //返回结果
-        return new MyPageVo(preSignTeacherVos, (int) new PageInfo(preSignTeacherVos).getTotal());
+        return new MyPageVo(preSignTeacherVos, new PageInfo(preSignTeacherVos).getTotal());
     }
 
+    /**
+     * 根据比赛id分页查询预报名学生列表
+     * @param pageNum
+     * @param pageSize
+     * @param RaceId
+     * @return
+     */
     @ApiOperation("根据比赛id分页查询预报名学生列表")
     @PostMapping("/student/{RaceId}")
     public MyPageVo<List<PreSignStudentVo>> getStudentsByRaceId(
@@ -91,6 +115,6 @@ public class RaceApiController extends BaseController {
         preSignStudent.setRace(RaceId);
         List<PreSignStudentVo> preSignStudentVos = preStudentService.selectPreSignStudentList(preSignStudent);
         //返回结果
-        return new MyPageVo(preSignStudentVos, (int) new PageInfo(preSignStudentVos).getTotal());
+        return new MyPageVo(preSignStudentVos, new PageInfo(preSignStudentVos).getTotal());
     }
 }

@@ -11,7 +11,6 @@ import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.mapper.UserInfoMapper;
-import com.buis.service.ICollegeMajorService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
@@ -174,6 +173,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         String code = registerDTO.getCode();
         String password = registerDTO.getPassword();
         String name = registerDTO.getName();
+        Integer isTeacher = registerDTO.getIsTeacher();
 
         //校验邮箱格式
         //邮箱的正则表达式
@@ -210,7 +210,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         member.setName(name);
         member.setEmail(email);
         member.setPassword(encryptPassword);
-        member.setIsTeacher(registerDTO.getIsTeacher());
+        member.setIsTeacher(isTeacher);
         member.setIsDisabled(0L);
         return userInfoMapper.insertUserInfo(member);
     }
@@ -223,7 +223,14 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public UserInfo getLoginUser() {
         //获取当前用户id
-        Long loginId = (Long) StpUtil.getLoginId();
+//        Long loginId = (Long) StpUtil.getLoginId();
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
         UserInfo userInfo = userInfoMapper.selectUserInfoById(loginId);
         if (userInfo == null) {
             throw new ServiceException("用户不存在!");
@@ -245,6 +252,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         String email = userLoginDTO.getEmail();
         String passWord = userLoginDTO.getPassWord();
         String code = userLoginDTO.getCode();
+        Integer isTeacher = userLoginDTO.getIsTeacher();
         //1.对参数做校验
         if (StringUtils.isEmpty(email)) {
             throw new ServiceException("邮箱账号不能为空!");
@@ -256,6 +264,16 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (userInfo == null) {
             log.info("user login fail,userAccount cannot match userPassword");
             throw new ServiceException("用户不存在,请先注册!");
+        }
+        Integer isTeacher1 = userInfo.getIsTeacher();
+
+        //判断isTeacher是否对应
+        if (isTeacher != null && !isTeacher.equals(isTeacher1)) {
+            if(isTeacher==0){
+            throw new ServiceException("您还未注册比赛成员~");
+            }else if (isTeacher==1){
+                throw new ServiceException("您还未注册比赛指导老师~");
+            }
         }
 
         //2.判断是密码还是验证码登录

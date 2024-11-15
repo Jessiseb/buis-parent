@@ -69,6 +69,7 @@ public interface TeamMemberStudentMapper {
      */
     List<Long> getMemberStudentByTeamId(Long team);
 
+
     /**
      * 判断用户是否已加入
      * @param userId
@@ -76,4 +77,10 @@ public interface TeamMemberStudentMapper {
      * @return
      */
     int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId, @Param("team") Long team);
+    /**
+     * 根据team和user删除用户与队伍的关联
+     * @param team
+     * @param user
+     */
+    void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
 }
