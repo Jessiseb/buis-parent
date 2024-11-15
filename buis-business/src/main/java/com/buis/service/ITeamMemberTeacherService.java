@@ -1,8 +1,8 @@
 package com.buis.service;
 
 import java.util.List;
+
 import com.buis.domain.TeamMemberTeacher;
-import com.buis.domain.UserInfo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
@@ -97,4 +97,12 @@ public interface ITeamMemberTeacherService
      * @return
      */
     int checkJoin(Long userId, Long raceId, Long team);
+
+
+    /**
+     * 根据team和user删除邀请
+     * @param team
+     * @param user
+     */
+    void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 }
