@@ -79,7 +79,6 @@ public interface ITeamMemberStudentService {
      */
     List<UserInfoVo> getMemberStudentByTeamId(Long team);
 
-    List<InvitationVo> selectInvitationList(InvitationQueryDto query);
 
     /**
      * 判断用户是否已加入
@@ -88,4 +87,11 @@ public interface ITeamMemberStudentService {
      * @return
      */
     int checkJoin(Long userId, Long raceId, Long team);
+
+    /**
+     * 根据team和user删除用户与队伍的关联
+     * @param team
+     * @param user
+     */
+    void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
 }
