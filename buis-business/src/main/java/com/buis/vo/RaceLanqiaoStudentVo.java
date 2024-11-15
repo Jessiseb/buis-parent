@@ -11,7 +11,7 @@ public class RaceLanqiaoStudentVo extends RaceLanqiaoStudent {
     /**
      * 赛道子类别
      */
-    @Excel(name = "报名科目")
+    @Excel(name = "报名科目",sort = 4)
     @ApiModelProperty(value = "赛道子类别")
     private String sonTname;
 
