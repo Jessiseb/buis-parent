@@ -7,10 +7,10 @@ import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Service
 public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
-    @Autowired
+    @Resource
     private TeamMemberStudentMapper teamMemberStudentMapper;
     @Resource
     private IUserInfoService userInfoService;
@@ -131,6 +131,16 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
             userInfoVos = userInfoService.selectUserInfoByIds(ids);
         }
         return userInfoVos;
+    }
+
+    /**
+     * 根据team和user删除用户与队伍的关联
+     * @param team
+     * @param user
+     */
+    @Override
+    public void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user) {
+        teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
     }
 
     /**

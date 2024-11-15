@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectUserInfoVo">
-        select t1.id, t1.number, t1.password, t1.email, t1.phone, t1.name, t1.description, t1.sex, t1.college, t1.is_teacher,t2.name AS major_name,t3.name AS college_name, t1.title, t1.is_disabled, t1.is_deleted, t1.create_time, t1.update_time
+        select t1.id, t1.number, t1.password, t1.email, t1.phone, t1.name, t1.description, t1.sex, t1.college,t1.major, t1.is_teacher,t2.name AS major_name,t3.name AS college_name, t1.title, t1.is_disabled, t1.is_deleted, t1.create_time, t1.update_time
         from user_info t1
         LEFT JOIN
         t_college_major t2 ON t1.major = t2.id
@@ -57,12 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectUserInfoVo"/>
         where t1.id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="selectCount" resultType="java.lang.Integer">
-        select count(1)
-        from user_info
-        where email = #{email}
-          and is_deleted = 0
-    </select>
+
     <select id="getLoginInfoByUserId" resultType="com.buis.domain.UserInfo">
         select email, password
         from user_info
@@ -74,21 +69,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where t1.email = #{email} and t1.is_deleted = 0
     </select>
 
-    <select id="listTeachersByIds" resultType="com.buis.domain.UserInfo">
-        <include refid="selectUserInfoVo"/>
-        where t1.is_deleted = 0 and t1.id in
-        <foreach item="ids" collection="ids" open="(" separator="," close=")">
-            #{ids}
-        </foreach>
-    </select>
     <select id="selectUserInfoByIds" parameterType="java.util.List" resultType="com.buis.domain.UserInfo">
-        SELECT *
-        FROM user_info
-        WHERE id IN
+        <include refid="selectUserInfoVo"/>
+        WHERE t1.id IN
         <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}
         </foreach>
-        AND is_deleted = 0
+        AND t1.is_deleted = 0
     </select>
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info
@@ -141,7 +128,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null">sex = #{sex},</if>
             <if test="college != null">college = #{college},</if>
             <if test="major != null">major = #{major},</if>
-            <if test="is_teacher != null ">is_teacher=#{isTeacher},</if>
+            <if test="isTeacher != null ">is_teacher=#{isTeacher},</if>
             <if test="title != null">title = #{title},</if>
             <if test="isDisabled != null">is_disabled = #{isDisabled},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>

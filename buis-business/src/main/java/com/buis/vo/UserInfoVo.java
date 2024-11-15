@@ -1,5 +1,6 @@
 package com.buis.vo;
 
+import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.buis.domain.UserInfo;
 import io.swagger.annotations.ApiModel;

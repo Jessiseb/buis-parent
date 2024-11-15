@@ -40,7 +40,7 @@ public class MyPageVo<T> implements Serializable
      * @param list 列表数据
      * @param total 总记录数
      */
-    public MyPageVo(T list, int total)
+    public MyPageVo(T list, long total)
     {
         this.rows = list;
         this.total = total;

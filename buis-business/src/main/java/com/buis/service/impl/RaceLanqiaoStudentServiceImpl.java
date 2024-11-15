@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
+import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
@@ -70,6 +71,12 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
         Object o1 = selectRaceLanqiaoStudentByUserIdAndRaceId(raceLanqiaoStudent.getRaceId(), raceLanqiaoStudent.getUserId());
         if (o1 != null) {
             throw new ServiceException("已提交过学生报名表，请勿重复提交");
+        }
+        //获取银行卡号
+        String bankNumber = raceLanqiaoStudent.getBankNumber();
+        //银行卡号不能超过20
+        if(StringUtils.isNotEmpty(bankNumber) && bankNumber.length()>20){
+            throw new ServiceException("银行卡号过长!");
         }
         raceLanqiaoStudent.setCreateTime(DateUtils.getNowDate());
         raceLanqiaoStudentMapper.insertRaceLanqiaoStudent(raceLanqiaoStudent);
