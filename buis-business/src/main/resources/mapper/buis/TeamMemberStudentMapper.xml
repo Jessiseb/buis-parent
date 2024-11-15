@@ -63,6 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND is_deleted = 0
           and is_choosed = 1
     </select>
+
     <select id="checkJoin" resultType="java.lang.Integer">
         select count(1)
 
@@ -76,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <insert id="insertTeamMemberStudent" parameterType="TeamMemberStudent" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true" keyProperty="id">
         insert into team_member_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
@@ -102,7 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateTeamMemberStudent" parameterType="TeamMemberStudent">
+    <update id="updateTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent">
         update team_member_student
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>
@@ -131,5 +132,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+    <delete id="deleteTeamMemberStudentByTeamAndStudent">
+        update team_member_student
+        set is_deleted = 1
+        where team = #{team} and student = #{user}
     </delete>
 </mapper>

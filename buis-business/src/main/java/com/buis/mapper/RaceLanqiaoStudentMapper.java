@@ -62,7 +62,17 @@ public interface RaceLanqiaoStudentMapper
      */
     public int deleteRaceLanqiaoStudentByIds(Long[] ids);
 
+    /**
+     * 根据用户id查询报名信息
+     * @param loginId
+     * @return
+     */
     RaceLanqiaoStudent selectRaceLanqiaoStudentByUserId(@Param("userId") Long loginId);
 
+    /**
+     * 根据用户id删除报名信息
+     * @param loginId
+     * @return
+     */
     int deleteRaceLanqiaoStudentByUserId(@Param("userId") Long loginId);
 }

@@ -60,14 +60,14 @@ public interface UserInfoMapper
      */
     public int deleteUserInfoByIds(Long[] ids);
 
-
-    int selectCount(String email);
-
+    /**
+     * 根据用户ID获取登录信息,只有邮箱和密码
+     * @param id
+     * @return
+     */
     public UserInfo getLoginInfoByUserId(Long id);
 
     public UserInfo selectUserInfoByEmail(String email);
-
-    List<UserInfo> listTeachersByIds(@Param("ids") List<Integer> ids);
     /**
      * 根据用户ID列表查询用户信息
      *
