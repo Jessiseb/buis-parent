@@ -2,6 +2,8 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -25,54 +27,46 @@ public class RaceLanqiaoTeacher extends BaseEntity {
     /**
      * id
      */
-    @Excel(name = "id")
     @ApiModelProperty("id ")
     private Long id;
 
     /** 比赛id */
-    @Excel(name = "比赛id")
     @ApiModelProperty("比赛id")
     private Long raceId;
 
     /**
      * 老师id
      */
-    @Excel(name = "老师id")
     @ApiModelProperty("老师id  ")
     private Long userId;
 
     /**
      * 姓名
      */
-    @Excel(name = "姓名")
     @ApiModelProperty("姓名 ")
     private String name;
 
     /**
      * 性别（字典）
      */
-    @Excel(name = "性别", readConverterExp = "字=典")
     @ApiModelProperty("性别 ")
     private Long sex;
 
     /**
      * 部门
      */
-    @Excel(name = "部门")
     @ApiModelProperty("部门")
     private Long college;
 
     /**
      * 所在系
      */
-    @Excel(name = "所在系")
     @ApiModelProperty("所在系")
     private Long major;
 
     /**
      * 职称（字典）
      */
-    @Excel(name = "职称", readConverterExp = "字=典")
     @ApiModelProperty("职称")
     private String title;
 
@@ -94,7 +88,6 @@ public class RaceLanqiaoTeacher extends BaseEntity {
      * 邮箱
      */
     @Excel(name = "邮箱")
-
     @ApiModelProperty("邮箱 ")
     private String email;
 
@@ -124,6 +117,7 @@ public class RaceLanqiaoTeacher extends BaseEntity {
      */
     @Excel(name = "本学期任课班级")
     @ApiModelProperty("本学期任课班级")
+    @JsonProperty("tClass")
     private String tClass;
 
     /**
@@ -136,7 +130,6 @@ public class RaceLanqiaoTeacher extends BaseEntity {
     /**
      * 指导经验
      */
-    @Excel(name = "指导经验")
     @ApiModelProperty("指导经验")
     private String guidance;
 
