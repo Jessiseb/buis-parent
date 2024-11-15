@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceLanqiaoStudentMapper">
     
-    <resultMap type="com.buis.domain.RaceLanqiaoStudent" id="RaceLanqiaoStudentResult">
+    <resultMap type="com.buis.vo.RaceLanqiaoStudentVo" id="RaceLanqiaoStudentResultVo">
         <result property="id"    column="id"    />
         <result property="raceId"    column="race_id"    />
         <result property="userId"    column="user_id"    />
@@ -25,37 +25,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <association property="fatherTname" column="parent_tid" select="com.buis.mapper.RaceLanqiaoTopicMapper.selectRaceLanqiaoTopicById" />
+        <association property="sonTname" column="son_tid" select="com.buis.mapper.RaceLanqiaoTopicMapper.selectRaceLanqiaoTopicById" />
     </resultMap>
 
     <sql id="selectRaceLanqiaoStudentVo">
-        select id, race_id, user_id, name, number, s_class, phone, email, identity, parent_tid, son_tid, teacher1, teacher2, teacher3, bank_number, bank_name, remark, is_deleted, create_time, update_time from race_lanqiao_student
+        select t1.id, t1.race_id, t1.user_id, t1.name, t1.number, t1.s_class, t1.phone, t1.email, t1.identity, t1.parent_tid, t1.son_tid, t1.teacher1, t1.teacher2, t1.teacher3, t1.bank_number, t1.bank_name, t1.remark, t1.is_deleted, t1.create_time, t1.update_time
+        from race_lanqiao_student t1
+            left join race_lanqiao_student t2 on t1.son_tid = t2.id
     </sql>
 
-    <select id="selectRaceLanqiaoStudentList" parameterType="com.buis.domain.RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResult">
+    <select id="selectRaceLanqiaoStudentList" parameterType="com.buis.domain.RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResultVo">
         <include refid="selectRaceLanqiaoStudentVo"/>
         <where>
             is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="raceId != null "> and race_id = #{raceId}</if>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="number != null  and number != ''"> and number = #{number}</if>
-            <if test="sClass != null  and sClass != ''"> and s_class like concat('%', #{sClass}, '%')</if>
-            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
-            <if test="email != null  and email != ''"> and email = #{email}</if>
-            <if test="identity != null  and identity != ''"> and identity = #{identity}</if>
-            <if test="parentTid != null "> and parent_tid = #{parentTid}</if>
-            <if test="sonTid != null "> and son_tid = #{sonTid}</if>
-            <if test="teacher1 != null  and teacher1 != ''"> and teacher1 = #{teacher1}</if>
-            <if test="teacher2 != null  and teacher2 != ''"> and teacher2 = #{teacher2}</if>
-            <if test="teacher3 != null  and teacher3 != ''"> and teacher3 = #{teacher3}</if>
-            <if test="bankNumber != null  and bankNumber != ''"> and bank_number = #{bankNumber}</if>
-            <if test="bankName != null  and bankName != ''"> and bank_name like concat('%', #{bankName}, '%')</if>
-            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="raceId != null "> and t1.race_id = #{raceId}</if>
+            <if test="userId != null "> and t1.user_id = #{userId}</if>
+            <if test="name != null  and name != ''"> and t1.name like concat('%', #{name}, '%')</if>
+            <if test="number != null  and number != ''"> and t1.number = #{number}</if>
+            <if test="sClass != null  and sClass != ''"> and t1.s_class like concat('%', #{sClass}, '%')</if>
+            <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and t1.email = #{email}</if>
+            <if test="identity != null  and identity != ''"> and t1.identity = #{identity}</if>
+            <if test="parentTid != null "> and t1.parent_tid = #{parentTid}</if>
+            <if test="sonTid != null "> and t1.son_tid = #{sonTid}</if>
+            <if test="teacher1 != null  and teacher1 != ''"> and t1.teacher1 = #{teacher1}</if>
+            <if test="teacher2 != null  and teacher2 != ''"> and t1.teacher2 = #{teacher2}</if>
+            <if test="teacher3 != null  and teacher3 != ''"> and t1.teacher3 = #{teacher3}</if>
+            <if test="bankNumber != null  and bankNumber != ''"> and t1.bank_number = #{bankNumber}</if>
+            <if test="bankName != null  and bankName != ''"> and t1.bank_name like concat('%', #{bankName}, '%')</if>
+            <if test="remark != null  and remark != ''"> and t1.remark = #{remark}</if>
         </where>
     </select>
     
-    <select id="selectRaceLanqiaoStudentById" parameterType="Long" resultMap="RaceLanqiaoStudentResult">
+    <select id="selectRaceLanqiaoStudentById" parameterType="Long" resultMap="RaceLanqiaoStudentResultVo">
         <include refid="selectRaceLanqiaoStudentVo"/>
         where id = #{id}  and is_deleted = 0
     </select>
@@ -71,25 +75,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertRaceLanqiaoStudent" parameterType="com.buis.domain.RaceLanqiaoStudent" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="raceId != null">race_id,</if>
-            <if test="userId != null">user_id,</if>
-            <if test="name != null and name != ''">name,</if>
-            <if test="number != null and number != ''">number,</if>
-            <if test="sClass != null and sClass != ''">s_class,</if>
-            <if test="phone != null and phone != ''">phone,</if>
-            <if test="email != null and email != ''">email,</if>
-            <if test="identity != null and identity != ''">identity,</if>
-            <if test="parentTid != null">parent_tid,</if>
-            <if test="sonTid != null">son_tid,</if>
-            <if test="teacher1 != null">teacher1,</if>
-            <if test="teacher2 != null">teacher2,</if>
-            <if test="teacher3 != null">teacher3,</if>
-            <if test="bankNumber != null">bank_number,</if>
-            <if test="bankName != null">bank_name,</if>
-            <if test="remark != null">remark,</if>
-            <if test="isDeleted != null">is_deleted,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
+            <if test="raceId != null">t1.race_id,</if>
+            <if test="userId != null">t1.user_id,</if>
+            <if test="name != null and name != ''">t1.name,</if>
+            <if test="number != null and number != ''">t1.number,</if>
+            <if test="sClass != null and sClass != ''">t1.s_class,</if>
+            <if test="phone != null and phone != ''">t1.phone,</if>
+            <if test="email != null and email != ''">t1.email,</if>
+            <if test="identity != null and identity != ''">t1.identity,</if>
+            <if test="parentTid != null">t1.parent_tid,</if>
+            <if test="sonTid != null">t1.son_tid,</if>
+            <if test="teacher1 != null">t1.teacher1,</if>
+            <if test="teacher2 != null">t1.teacher2,</if>
+            <if test="teacher3 != null">t1.teacher3,</if>
+            <if test="bankNumber != null">t1.bank_number,</if>
+            <if test="bankName != null">t1.bank_name,</if>
+            <if test="remark != null">t1.remark,</if>
+            <if test="isDeleted != null">t1.is_deleted,</if>
+            <if test="createTime != null">t1.create_time,</if>
+            <if test="updateTime != null">t1.update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="raceId != null">#{raceId},</if>
@@ -117,46 +121,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateRaceLanqiaoStudent" parameterType="com.buis.domain.RaceLanqiaoStudent">
         update race_lanqiao_student
         <trim prefix="SET" suffixOverrides=",">
-            <if test="raceId != null">race_id = #{raceId},</if>
-            <if test="userId != null">user_id = #{userId},</if>
-            <if test="name != null and name != ''">name = #{name},</if>
-            <if test="number != null and number != ''">number = #{number},</if>
-            <if test="sClass != null and sClass != ''">s_class = #{sClass},</if>
-            <if test="phone != null and phone != ''">phone = #{phone},</if>
-            <if test="email != null and email != ''">email = #{email},</if>
-            <if test="identity != null and identity != ''">identity = #{identity},</if>
-            <if test="parentTid != null">parent_tid = #{parentTid},</if>
-            <if test="sonTid != null">son_tid = #{sonTid},</if>
-            <if test="teacher1 != null">teacher1 = #{teacher1},</if>
-            <if test="teacher2 != null">teacher2 = #{teacher2},</if>
-            <if test="teacher3 != null">teacher3 = #{teacher3},</if>
-            <if test="bankNumber != null">bank_number = #{bankNumber},</if>
-            <if test="bankName != null">bank_name = #{bankName},</if>
-            <if test="remark != null">remark = #{remark},</if>
-            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="raceId != null">t1.race_id = #{raceId},</if>
+            <if test="userId != null">t1.user_id = #{userId},</if>
+            <if test="name != null and name != ''">t1.name = #{name},</if>
+            <if test="number != null and number != ''">t1.number = #{number},</if>
+            <if test="sClass != null and sClass != ''">t1.s_class = #{sClass},</if>
+            <if test="phone != null and phone != ''">t1.phone = #{phone},</if>
+            <if test="email != null and email != ''">t1.mail = #{email},</if>
+            <if test="identity != null and identity != ''">t1.identity = #{identity},</if>
+            <if test="parentTid != null">t1.parent_tid = #{parentTid},</if>
+            <if test="sonTid != null">t1.son_tid = #{sonTid},</if>
+            <if test="teacher1 != null">t1.teacher1 = #{teacher1},</if>
+            <if test="teacher2 != null">t1.teacher2 = #{teacher2},</if>
+            <if test="teacher3 != null">t1.teacher3 = #{teacher3},</if>
+            <if test="bankNumber != null">t1.bank_number = #{bankNumber},</if>
+            <if test="bankName != null">t1.bank_name = #{bankName},</if>
+            <if test="remark != null">t1.remark = #{remark},</if>
+            <if test="isDeleted != null">t1.is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">t1.create_time = #{createTime},</if>
+            <if test="updateTime != null">t1.update_time = #{updateTime},</if>
         </trim>
-        where id = #{id}
+        where t1.id = #{id}
     </update>
 
     <delete id="deleteRaceLanqiaoStudentById" parameterType="Long">
         update race_lanqiao_student
-        set is_deleted = 1
-        where id = #{id}
+        set t1.is_deleted = 1
+        where t1.id = #{id}
     </delete>
 
     <delete id="deleteRaceLanqiaoStudentByIds" parameterType="String">
         update race_lanqiao_student
-        set is_deleted = 1
-        where id in
+        set t1.is_deleted = 1
+        where t1.id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
     <delete id="deleteRaceLanqiaoStudentByUserId">
         update race_lanqiao_student
-        set is_deleted = 1
-        where user_id = #{userId}
+        set t1.is_deleted = 1
+        where t1.user_id = #{userId}
     </delete>
 </mapper>
