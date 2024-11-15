@@ -60,9 +60,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-
-
-
     <insert id="insertTeamInfo" parameterType="com.buis.domain.TeamInfo" useGeneratedKeys="true" keyProperty="id">
         insert into team_info
         <trim prefix="(" suffix=")" suffixOverrides=",">

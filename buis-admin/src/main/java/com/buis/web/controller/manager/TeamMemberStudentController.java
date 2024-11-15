@@ -38,7 +38,7 @@ public class TeamMemberStudentController extends BaseController {
     @ApiOperation("查询队伍成员管理列表")
     @PreAuthorize("@ss.hasPermi('buis:teamStudent:list')")
     @GetMapping("/list")
-    public TableDataInfo list(TeamMemberStudentVo teamMemberStudent) {
+    public TableDataInfo list(TeamMemberStudent teamMemberStudent) {
         startPage();
         List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return getDataTable(list);
@@ -52,7 +52,7 @@ public class TeamMemberStudentController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamStudent:export')")
     @Log(title = "队伍成员管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, TeamMemberStudentVo teamMemberStudent) {
+    public void export(HttpServletResponse response, TeamMemberStudent teamMemberStudent) {
         List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         ExcelUtil<TeamMemberStudentVo> util = new ExcelUtil<TeamMemberStudentVo>(TeamMemberStudentVo.class);
         util.exportExcel(response, list, "队伍成员管理数据");

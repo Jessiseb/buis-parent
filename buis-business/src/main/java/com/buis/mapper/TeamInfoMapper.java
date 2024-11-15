@@ -71,7 +71,19 @@ public interface TeamInfoMapper
      */
     List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
 
+    /**
+     * 根据userId和raceId删除队伍信息
+     * @param race
+     * @param userId
+     */
     void deleteTeamInfoByUserIdAndRaceId(@Param("race") Long race, @Param("userId")Long userId);
 
+    /**
+     * 检查是否已加入
+     * @param userId
+     * @param raceId
+     * @param team
+     * @return
+     */
     int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
 }

@@ -63,5 +63,5 @@ public interface PreSignTeacherMapper
      */
     public int deletePreSignTeacherByIds(Long[] ids);
 
-    void deletePreSignTeacherByUserIdAndR(@Param("race") Long race, @Param("userId") Long userId);
+    void deletePreSignTeacherByUserIdAndRaceId(@Param("race") Long race, @Param("userId") Long userId);
 }
