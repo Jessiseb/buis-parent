@@ -25,19 +25,16 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * id
      */
-    @Excel(name = "id")
     @ApiModelProperty("id")
     private Long id;
 
     /** 比赛id */
-    @Excel(name = "比赛id")
     @ApiModelProperty("比赛id")
     private Long raceId;
 
     /**
      * 学生id
      */
-    @Excel(name = "学生id")
     @ApiModelProperty("学生id")
     private Long userId;
 
@@ -58,7 +55,6 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 班级
      */
-    @Excel(name = "班级")
     @ApiModelProperty("班级 ")
     private String sClass;
 
@@ -72,7 +68,6 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 邮箱
      */
-    @Excel(name = "邮箱")
     @ApiModelProperty("邮箱 ")
     private String email;
 
@@ -86,7 +81,6 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 赛道父类别
      */
-    @Excel(name = "赛道父类别")
     @ApiModelProperty("赛道父类别")
 
     private Long parentTid;
@@ -94,7 +88,7 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 赛道子类别（报名科目）
      */
-    @Excel(name = "赛道子类别", readConverterExp = "报=名科目")
+    @Excel(name = "赛道子类别", readConverterExp = "报名科目")
     @ApiModelProperty("赛道子类别")
     private Long sonTid;
 
