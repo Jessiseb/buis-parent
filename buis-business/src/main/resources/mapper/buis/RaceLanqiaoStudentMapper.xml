@@ -38,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectRaceLanqiaoStudentList" parameterType="com.buis.domain.RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResultVo">
         <include refid="selectRaceLanqiaoStudentVo"/>
         <where>
-            is_deleted = 0
+            t1.is_deleted = 0
             <if test="id != null "> and t1.id = #{id}</if>
             <if test="raceId != null "> and t1.race_id = #{raceId}</if>
             <if test="userId != null "> and t1.user_id = #{userId}</if>
@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectRaceLanqiaoStudentById" parameterType="Long" resultMap="RaceLanqiaoStudentResultVo">
         <include refid="selectRaceLanqiaoStudentVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
     <select id="selectRaceLanqiaoStudentByUserId" resultType="com.buis.domain.RaceLanqiaoStudent">
