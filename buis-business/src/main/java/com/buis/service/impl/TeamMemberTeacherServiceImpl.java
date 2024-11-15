@@ -159,32 +159,15 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
         return teamInfoVos;
 
     }
-
+    /**
+     * 根据team和user删除邀请
+     * @param team
+     * @param user
+     */
     @Override
-    public List<InvitationVo> selectInvitationList(InvitationQueryDto query) {
-        List<InvitationVo> results = new ArrayList<>();
-        List<TeamMemberTeacher> teacherList = teamMemberTeacherMapper.selectInvitationList(query);
-        if (teacherList != null && !teacherList.isEmpty()) {
-            for (TeamMemberTeacher teacher : teacherList) {
-//                results.add(createInvitationVo(teacher));
-                results.add(BeanUtil.copyProperties(teacher,InvitationVo.class));
-            }
-        }
-        return results;
+    public void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user) {
+        teamMemberTeacherMapper.deleteTeamMemberTeacherByTeamAndTeacher(team, user);
     }
-
- /*   private InvitationVo createInvitationVo(TeamMemberTeacher teacher) {
-        return InvitationVo.builder()
-                .id(teacher.getId())
-                .race(teacher.getRace())
-                .team(teacher.getTeam())
-                .teacher(teacher.getTeacher())
-                .decider(teacher.getDecider())
-                .isChoosed(teacher.getIsChoosed())
-                .reason(teacher.getReason())
-                .build();
-    }*/
-
 
 
     /**

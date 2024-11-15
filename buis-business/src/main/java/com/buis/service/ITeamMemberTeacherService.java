@@ -101,5 +101,11 @@ public interface ITeamMemberTeacherService
      */
     int checkJoin(Long userId, Long raceId, Long team);
 
-    List<InvitationVo> selectInvitationList(InvitationQueryDto query);
+
+    /**
+     * 根据team和user删除邀请
+     * @param team
+     * @param user
+     */
+    void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 }

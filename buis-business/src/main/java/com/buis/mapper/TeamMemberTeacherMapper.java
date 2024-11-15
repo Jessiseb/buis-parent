@@ -104,4 +104,10 @@ public interface TeamMemberTeacherMapper
      * @return
      */
     int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
+    /**
+     * 根据team和user删除邀请
+     * @param team
+     * @param user
+     */
+    void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 }

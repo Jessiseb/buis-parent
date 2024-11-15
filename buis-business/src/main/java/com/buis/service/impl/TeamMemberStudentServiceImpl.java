@@ -10,7 +10,6 @@ import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -137,19 +136,15 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return userInfoVos;
     }
 
+    /**
+     * 根据team和user删除用户与队伍的关联
+     * @param team
+     * @param user
+     */
     @Override
-    public List<InvitationVo> selectInvitationList(InvitationQueryDto query) {
-        List<InvitationVo> results = new ArrayList<>();
-        List<TeamMemberStudent> studentList = teamMemberStudentMapper.selectInvitationList(query);
-
-        if (studentList != null && !studentList.isEmpty()) {
-            for (TeamMemberStudent student : studentList) {
-                results.add(BeanUtil.copyProperties(student,InvitationVo.class));
-            }
-        }
-        return results;
+    public void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user) {
+        teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
     }
-
 
     /**
      * 判断用户是否已加入
