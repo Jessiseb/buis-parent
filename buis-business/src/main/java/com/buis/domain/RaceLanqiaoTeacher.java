@@ -43,30 +43,35 @@ public class RaceLanqiaoTeacher extends BaseEntity {
     /**
      * 姓名
      */
+    @Excel(name = "姓名")
     @ApiModelProperty("姓名 ")
     private String name;
 
     /**
      * 性别（字典）
      */
+    @Excel(name = "性别",dictType = "sys_user_sex")
     @ApiModelProperty("性别 ")
     private Long sex;
 
     /**
      * 部门
      */
+    @Excel(name = "职务")
     @ApiModelProperty("部门")
     private Long college;
 
     /**
      * 所在系
      */
+    @Excel(name = "所在系")
     @ApiModelProperty("所在系")
     private Long major;
 
     /**
      * 职称（字典）
      */
+    @Excel(name = "职称")
     @ApiModelProperty("职称")
     private String title;
 
