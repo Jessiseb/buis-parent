@@ -4,9 +4,11 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
+import com.buis.domain.RaceDetail;
 import com.buis.domain.RaceLanqiaoStudent;
 import com.buis.domain.RaceLanqiaoTeacher;
 import com.buis.domain.RaceLanqiaoType;
+import com.buis.service.IRaceDetailService;
 import com.buis.service.IRaceLanqiaoStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IRaceLanqiaoTypeService;
@@ -28,7 +30,8 @@ public class LanQiaoApiController extends BaseController {
     private IRaceLanqiaoTypeService raceLanqiaoTypeService;
     @Autowired
     private IRaceLanqiaoTeacherService raceLanqiaoTeacherService;
-
+    @Autowired
+    private IRaceDetailService raceDetailService;
     /**
      * 删除蓝桥杯报名信息
      */
