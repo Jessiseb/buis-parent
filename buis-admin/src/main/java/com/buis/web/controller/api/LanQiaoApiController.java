@@ -13,6 +13,7 @@ import com.buis.service.IRaceLanqiaoStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IRaceLanqiaoTypeService;
 import com.buis.vo.RaceLanqiaoStudentVo;
+import com.buis.vo.RaceLanqiaoTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,6 +35,7 @@ public class LanQiaoApiController extends BaseController {
     private IRaceLanqiaoTeacherService raceLanqiaoTeacherService;
     @Autowired
     private IRaceDetailService raceDetailService;
+
     /**
      * 删除蓝桥杯报名信息
      */
@@ -64,6 +66,7 @@ public class LanQiaoApiController extends BaseController {
         RaceLanqiaoStudent raceLanqiaoStudent = raceLanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(race, userId);
         return R.ok(raceLanqiaoStudent);
     }
+
     /**
      * 获取老师蓝桥杯报名信息
      */
@@ -147,8 +150,8 @@ public class LanQiaoApiController extends BaseController {
     @PostMapping("/export")
     public void exportTeacher(@ApiParam(name = "raceLanqiaoTeacher", value = "蓝桥杯指导老师条件过滤", required = false) @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher,
                               HttpServletResponse response) {
-        List<RaceLanqiaoTeacher> list = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
-        ExcelUtil<RaceLanqiaoTeacher> util = new ExcelUtil<>(RaceLanqiaoTeacher.class);
+        List<RaceLanqiaoTeacherVo> list = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
+        ExcelUtil<RaceLanqiaoTeacherVo> util = new ExcelUtil<>(RaceLanqiaoTeacherVo.class);
         util.exportExcel(response, list, "蓝桥杯指导老师数据");
     }
 
