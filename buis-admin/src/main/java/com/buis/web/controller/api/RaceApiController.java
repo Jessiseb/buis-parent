@@ -34,10 +34,6 @@ public class RaceApiController extends BaseController {
     private IRaceInfoService raceInfoService;
     @Autowired
     private IRaceTypeService raceTypeService;
-    @Autowired
-    private IPreSignTeacherService preTeacherService;
-    @Autowired
-    private IPreSignStudentService preStudentService;
 
     /**
      * 根据比赛id查询比赛信息
@@ -79,42 +75,5 @@ public class RaceApiController extends BaseController {
         return R.ok(list);
     }
 
-    /**
-     * 根据比赛id分页查询预报名老师列表
-     * @param RaceId
-     * @return
-     */
-    @ApiOperation("根据比赛id分页查询预报名老师列表")
-    @PostMapping("/teacher/{RaceId}")
-    public MyPageVo<List<PreSignTeacherVo>> getTeachersByRaceId(@ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
-        //开始分页
-        startPage();
-        PreSignTeacher prevTeacher = new PreSignTeacher();
-        prevTeacher.setRace(RaceId);
-        List<PreSignTeacherVo> preSignTeacherVos = preTeacherService.selectPreSignTeacherList(prevTeacher);
-        //返回结果
-        return new MyPageVo(preSignTeacherVos, new PageInfo(preSignTeacherVos).getTotal());
-    }
 
-    /**
-     * 根据比赛id分页查询预报名学生列表
-     * @param pageNum
-     * @param pageSize
-     * @param RaceId
-     * @return
-     */
-    @ApiOperation("根据比赛id分页查询预报名学生列表")
-    @PostMapping("/student/{RaceId}")
-    public MyPageVo<List<PreSignStudentVo>> getStudentsByRaceId(
-            @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
-            @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
-            @ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
-        //开始分页
-        startPage();
-        PreSignStudent preSignStudent = new PreSignStudent();
-        preSignStudent.setRace(RaceId);
-        List<PreSignStudentVo> preSignStudentVos = preStudentService.selectPreSignStudentList(preSignStudent);
-        //返回结果
-        return new MyPageVo(preSignStudentVos, new PageInfo(preSignStudentVos).getTotal());
-    }
 }
