@@ -88,7 +88,7 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 赛道子类别（报名科目）
      */
-    @Excel(name = "赛道子类别", readConverterExp = "报名科目")
+    @Excel(name = "报名科目")
     @ApiModelProperty("赛道子类别")
     private Long sonTid;
 
