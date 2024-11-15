@@ -105,6 +105,12 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
     @Transactional
     public int updateRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher) {
         raceLanqiaoTeacher.setUpdateTime(DateUtils.getNowDate());
+        //获取银行卡号
+        String bankNumber = raceLanqiaoTeacher.getBankNumber();
+        //银行卡号不能超过20
+        if(StringUtils.isNotEmpty(bankNumber) && bankNumber.length()>20){
+            throw new ServiceException("银行卡号过长!");
+        }
         raceLanqiaoTeacherMapper.updateRaceLanqiaoTeacher(raceLanqiaoTeacher);
         return 1;
     }

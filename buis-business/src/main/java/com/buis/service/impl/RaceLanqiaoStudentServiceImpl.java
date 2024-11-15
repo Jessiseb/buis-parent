@@ -103,6 +103,12 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     @Override
     public int updateRaceLanqiaoStudent(RaceLanqiaoStudent raceLanqiaoStudent) {
         raceLanqiaoStudent.setUpdateTime(DateUtils.getNowDate());
+        //获取银行卡号
+        String bankNumber = raceLanqiaoStudent.getBankNumber();
+        //银行卡号不能超过20
+        if(StringUtils.isNotEmpty(bankNumber) && bankNumber.length()>20){
+            throw new ServiceException("银行卡号过长!");
+        }
         return raceLanqiaoStudentMapper.updateRaceLanqiaoStudent(raceLanqiaoStudent);
     }
 
