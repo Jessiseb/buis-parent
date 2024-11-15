@@ -63,20 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND is_deleted = 0
           and is_choosed = 1
     </select>
-    <select id="selectInvitationList" resultType="com.buis.domain.TeamMemberStudent">
-        select id, race, team, student, decider, is_choosed, reason,
-               is_deleted, create_time, update_time
-        from team_member_student
-        <where>
-            is_deleted = 0
-            <if test="userId != null ">and decider = #{userId}</if>
-            <if test="isChoosed != null ">and is_choosed = #{isChoosed}</if>
-            <if test="inviteeId !=null">and student = #{inviteeId}</if>
-            <if test="race != null ">and race = #{race}</if>
-            <if test="team != null ">and team = #{team}</if>
-            <if test="reason != null  and reason != ''">and reason like concat('%', #{reason}, '%')</if>
-        </where>
-    </select>
+
     <select id="checkJoin" resultType="java.lang.Integer">
         select count(1)
 

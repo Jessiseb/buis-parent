@@ -1,10 +1,7 @@
 package com.buis.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.InvitationVo;
 import com.buis.domain.TeamMemberStudent;
-import com.buis.dto.InvitationQueryDto;
 import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;

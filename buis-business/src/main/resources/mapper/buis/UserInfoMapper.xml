@@ -57,12 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectUserInfoVo"/>
         where t1.id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="selectCount" resultType="java.lang.Integer">
-        select count(1)
-        from user_info
-        where email = #{email}
-          and is_deleted = 0
-    </select>
+
     <select id="getLoginInfoByUserId" resultType="com.buis.domain.UserInfo">
         select email, password
         from user_info
@@ -74,13 +69,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where t1.email = #{email} and t1.is_deleted = 0
     </select>
 
-    <select id="listTeachersByIds" resultType="com.buis.domain.UserInfo">
-        <include refid="selectUserInfoVo"/>
-        where t1.is_deleted = 0 and t1.id in
-        <foreach item="ids" collection="ids" open="(" separator="," close=")">
-            #{ids}
-        </foreach>
-    </select>
     <select id="selectUserInfoByIds" parameterType="java.util.List" resultType="com.buis.domain.UserInfo">
         <include refid="selectUserInfoVo"/>
         WHERE t1.id IN

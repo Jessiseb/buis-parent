@@ -4,15 +4,13 @@ package com.buis.web.controller.api;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
-import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
-import com.buis.domain.*;
-import com.buis.domain.InvitationVo;
-import com.buis.dto.InvitationQueryDto;
+import com.buis.domain.TeamInfo;
+import com.buis.domain.TeamMemberStudent;
+import com.buis.domain.TeamMemberTeacher;
 import com.buis.dto.TeamMemberDto;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
-import com.buis.service.IUserInfoService;
 import com.buis.service.impl.TeamInfoServiceImpl;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberStudentVo;
@@ -26,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,6 +67,12 @@ public class TeamApiController extends BaseController {
         return R.ok();
     }
 
+    /**
+     * 修改用户与队伍互选关系
+     * @param isTeacher
+     * @param teamMemberDto
+     * @return
+     */
     @ApiOperation("修改用户与队伍互选关系")
     @PutMapping("/updateSelection/{isTeacher}")
     public R updateSelection(
@@ -130,6 +133,11 @@ public class TeamApiController extends BaseController {
         return R.ok();
     }
 
+    /**
+     * 带条件分页查询学生与队伍互选邀请
+     * @param teamMemberStudent
+     * @return
+     */
     @ApiOperation("带条件分页查询学生与队伍互选邀请")
     @PostMapping("/getStudentSelection")
     public MyPageVo<List<TeamMemberStudentVo>> getStudentSelection(TeamMemberStudent teamMemberStudent) {
@@ -137,6 +145,12 @@ public class TeamApiController extends BaseController {
         List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return new MyPageVo<>(list, new PageInfo(list).getTotal());
     }
+
+    /**
+     * 带条件分页查询老师与队伍互选邀请
+     * @param teamMemberTeacher
+     * @return
+     */
     @ApiOperation("带条件分页查询老师与队伍互选邀请")
     @PostMapping("/getTeacherSelection")
     public MyPageVo<List<TeamMemberTeacherVo>> getTeacherSelection(TeamMemberTeacher teamMemberTeacher) {
@@ -145,6 +159,13 @@ public class TeamApiController extends BaseController {
         return new MyPageVo<>(list, new PageInfo(list).getTotal());
     }
 
+    /**
+     * 根据队伍id查询队伍成员列表
+     * @param pageNum
+     * @param pageSize
+     * @param team
+     * @return
+     */
     @ApiOperation("根据队伍id查询队伍成员列表")
     @GetMapping("/Member/{team}")
     public R<HashMap<String, List<UserInfoVo>>> getMemberStudentByTeamId(
@@ -177,6 +198,7 @@ public class TeamApiController extends BaseController {
 
     /**
      * 根据老师id查询老师指导的队伍列表
+     *
      * @return 返回结果
      */
     @ApiOperation("根据老师id查询老师指导的队伍列表")
@@ -190,54 +212,46 @@ public class TeamApiController extends BaseController {
 
     /**
      * 新增队伍信息
+     *
      * @param teamInfo 队伍信息对象
      * @return R
      */
     @ApiOperation("新增队伍信息")
     @PostMapping("/teams")
-    public R addTeamInfo(@RequestBody TeamInfo teamInfo){
-        try {
-            int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);
-            return R.ok(insertTeamInfo, "操作成功");
-        }catch (Exception e){
-            return R.fail("新增队伍信息失败！");
-        }
+    public R addTeamInfo(@RequestBody TeamInfo teamInfo) {
+        int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);
+        return R.ok(insertTeamInfo, "操作成功");
+
     }
 
 
     /**
      * 修改队伍信息
+     *
      * @param teamInfo 队伍信息对象
-     * @param id 队伍ID
+     * @param id       队伍ID
      * @return R
      */
     @ApiOperation("修改队伍信息")
     @PutMapping("/teams/{id}")
-    public R editTeamInfo(@RequestBody TeamInfo teamInfo,@PathVariable Long id){
-        try {
-            teamInfo.setId(id);
-            int result = teamInfoService.updateTeamInfo(teamInfo);
-            return R.ok(result, "操作成功");
-        }catch (Exception e){
-            return R.fail("修改队伍信息失败！");
-        }
+    public R editTeamInfo(@RequestBody TeamInfo teamInfo, @PathVariable Long id) {
+        teamInfo.setId(id);
+        int result = teamInfoService.updateTeamInfo(teamInfo);
+        return R.ok(result, "操作成功");
     }
 
 
     /**
      * 删除队伍信息
+     *
      * @param id 队伍ID
      * @return R
      */
     @ApiOperation("删除队伍信息")
     @DeleteMapping("/teams/{id}")
-    public R removeTeamInfo(@PathVariable Long id){
-        try {
-            int result = teamInfoService.deleteTeamInfoById(id);
-            return R.ok(result, "操作成功");
-        }catch (Exception e){
-             return R.fail("删除队伍信息失败！");
-        }
+    public R removeTeamInfo(@PathVariable Long id) {
+        int result = teamInfoService.deleteTeamInfoById(id);
+        return R.ok(result, "操作成功");
     }
 
 }

@@ -2,10 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 
-import com.buis.domain.InvitationVo;
 import com.buis.domain.TeamMemberTeacher;
-import com.buis.domain.UserInfo;
-import com.buis.dto.InvitationQueryDto;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;

@@ -1,14 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
-import java.util.Map;
 import com.buis.domain.TeamMemberTeacher;
-import com.buis.dto.InvitationQueryDto;
 import com.buis.vo.TeamMemberTeacherVo;
-import org.apache.ibatis.annotations.MapKey;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 /**
  * 队伍老师管理Mapper接口
@@ -68,11 +63,9 @@ public interface TeamMemberTeacherMapper
 
     Long getCount(Long id);
 
-    Map<String, Object> getCountAndTeachers(Long id);
 
     List<TeamMemberTeacher> selectTeamMyInstruct(Long id);
 
-    List<Integer> listTeacherIdByRaceId(Long id);
     /**
      * 查询老师指导数量
      * @param id 老师id
@@ -94,8 +87,6 @@ public interface TeamMemberTeacherMapper
     List<Long> getTeachersByRaceId(Long raceId);
 
     Long[] selectJoinTeamByTeacherId(Long userId);
-
-    List<TeamMemberTeacher> selectInvitationList(InvitationQueryDto query);
 
     /**
      * 判断用户是否已加入

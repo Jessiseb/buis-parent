@@ -64,5 +64,10 @@ public interface PreSignStudentMapper
      */
     public int deletePreSignStudentByIds(Long[] ids);
 
+    /**
+     * 删除学生预报名
+     * @param race
+     * @param userId
+     */
     void deletePreSignStudentByUserIdAndRaceId(@Param("race") Long race, @Param("userId") Long userId);
 }

@@ -1,7 +1,6 @@
 package com.buis.mapper;
 
 import com.buis.domain.TeamMemberStudent;
-import com.buis.dto.InvitationQueryDto;
 import com.buis.vo.TeamMemberStudentVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -70,7 +69,6 @@ public interface TeamMemberStudentMapper {
      */
     List<Long> getMemberStudentByTeamId(Long team);
 
-    List<TeamMemberStudent> selectInvitationList(InvitationQueryDto query);
 
     /**
      * 判断用户是否已加入
