@@ -118,7 +118,7 @@ public class PreSignTeacherServiceImpl implements IPreSignTeacherService
 
     @Override
     public void deletePreSignTeacherByUserIdAndRaceId(Long race, Long userId) {
-        preSignTeacherMapper.deletePreSignTeacherByUserIdAndR(race, userId);
+        preSignTeacherMapper.deletePreSignTeacherByUserIdAndRaceId(race, userId);
     }
 
 }

@@ -1,13 +1,8 @@
 package com.buis.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.InvitationVo;
 import com.buis.domain.TeamMemberTeacher;
-import com.buis.domain.UserInfo;
-import com.buis.dto.InvitationQueryDto;
 import com.buis.mapper.TeamMemberTeacherMapper;
-import com.buis.mapper.UserInfoMapper;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
@@ -15,11 +10,9 @@ import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 队伍老师管理Service业务层处理
@@ -31,10 +24,6 @@ import java.util.stream.Collectors;
 public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
     @Resource
     private TeamMemberTeacherMapper teamMemberTeacherMapper;
-
-    @Resource
-    private UserInfoMapper userInfoMapper;
-
     @Resource
     private IUserInfoService userInfoService;
     @Resource

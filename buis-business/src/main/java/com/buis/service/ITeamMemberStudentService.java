@@ -1,8 +1,6 @@
 package com.buis.service;
 
-import com.buis.domain.InvitationVo;
 import com.buis.domain.TeamMemberStudent;
-import com.buis.dto.InvitationQueryDto;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
 
