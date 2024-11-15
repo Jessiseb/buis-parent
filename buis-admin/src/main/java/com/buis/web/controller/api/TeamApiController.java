@@ -74,8 +74,8 @@ public class TeamApiController extends BaseController {
      * @return
      */
     @ApiOperation("修改用户与队伍互选关系")
-    @PutMapping("/updateSelection/{isTeacher}")
-    public R updateSelection(
+    @PutMapping("/updateTeamMember/{isTeacher}")
+    public R updateTeamMember(
             @ApiParam(name = "isTeacher", value = "用户类型，0学生，1老师", required = true) @PathVariable(value = "isTeacher") Long isTeacher,
             @RequestBody TeamMemberDto teamMemberDto) {
 
@@ -121,7 +121,7 @@ public class TeamApiController extends BaseController {
 
     @ApiOperation("删除用户与队伍互选关系")
     @DeleteMapping("/delectTeamMember/{team}/{user}/{isTeacher}")
-    public R cancelSelection(
+    public R delectTeamMember(
             @ApiParam(name = "team", value = "队伍id", required = true) @PathVariable(value = "team") Long team,
             @ApiParam(name = "user", value = "用户id", required = true) @PathVariable(value = "user") Long user,
             @ApiParam(name = "isTeacher", value = "用户类型，0学生，1老师", required = true) @PathVariable(value = "isTeacher") Long isTeacher) {
@@ -139,8 +139,8 @@ public class TeamApiController extends BaseController {
      * @return
      */
     @ApiOperation("带条件分页查询学生与队伍互选邀请")
-    @PostMapping("/getStudentSelection")
-    public MyPageVo<List<TeamMemberStudentVo>> getStudentSelection(TeamMemberStudent teamMemberStudent) {
+    @PostMapping("/getTeamMemberStudent")
+    public MyPageVo<List<TeamMemberStudentVo>> getTeamMemberStudent(TeamMemberStudent teamMemberStudent) {
         startPage();
         List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return new MyPageVo<>(list, new PageInfo(list).getTotal());
@@ -152,8 +152,8 @@ public class TeamApiController extends BaseController {
      * @return
      */
     @ApiOperation("带条件分页查询老师与队伍互选邀请")
-    @PostMapping("/getTeacherSelection")
-    public MyPageVo<List<TeamMemberTeacherVo>> getTeacherSelection(TeamMemberTeacher teamMemberTeacher) {
+    @PostMapping("/getTeamMemberTeacher")
+    public MyPageVo<List<TeamMemberTeacherVo>> getTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
         startPage();
         List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
         return new MyPageVo<>(list, new PageInfo(list).getTotal());
@@ -185,7 +185,7 @@ public class TeamApiController extends BaseController {
      * 查询队伍信息列表
      */
     @ApiOperation("带条件分页查询队伍列表")
-    @PostMapping("/teamList")
+    @PostMapping("/list")
     public MyPageVo<List<TeamInfoVo>> list(
             @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
@@ -217,7 +217,7 @@ public class TeamApiController extends BaseController {
      * @return R
      */
     @ApiOperation("新增队伍信息")
-    @PostMapping("/teams")
+    @PostMapping
     public R addTeamInfo(@RequestBody TeamInfo teamInfo) {
         int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);
         return R.ok(insertTeamInfo, "操作成功");
@@ -233,7 +233,7 @@ public class TeamApiController extends BaseController {
      * @return R
      */
     @ApiOperation("修改队伍信息")
-    @PutMapping("/teams/{id}")
+    @PutMapping("/{id}")
     public R editTeamInfo(@RequestBody TeamInfo teamInfo, @PathVariable Long id) {
         teamInfo.setId(id);
         int result = teamInfoService.updateTeamInfo(teamInfo);
@@ -248,7 +248,7 @@ public class TeamApiController extends BaseController {
      * @return R
      */
     @ApiOperation("删除队伍信息")
-    @DeleteMapping("/teams/{id}")
+    @DeleteMapping("/{id}")
     public R removeTeamInfo(@PathVariable Long id) {
         int result = teamInfoService.deleteTeamInfoById(id);
         return R.ok(result, "操作成功");
