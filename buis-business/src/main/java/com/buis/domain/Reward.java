@@ -1,5 +1,8 @@
 package com.buis.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,6 +40,7 @@ public class Reward extends BaseEntity
     /** 等级 */
     @Excel(name = "等级")
     @ApiModelProperty(value = "等级")
+    @JsonProperty("rRank")
     private String rRank;
 
     /** 奖品名称 */
