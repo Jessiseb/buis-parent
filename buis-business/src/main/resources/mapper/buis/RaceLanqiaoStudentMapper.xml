@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceLanqiaoStudentMapper">
     
-    <resultMap type="com.buis.vo.RaceLanqiaoStudentVo" id="RaceLanqiaoStudentResultVo">
+    <resultMap type="com.buis.vo.RaceLanqiaoStudentVo" id="RaceLanqiaoStudentResult">
         <result property="id"    column="id"    />
         <result property="raceId"    column="race_id"    />
         <result property="userId"    column="user_id"    />
@@ -25,8 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
-        <association property="fatherTname" column="parent_tid" select="com.buis.mapper.RaceLanqiaoTopicMapper.selectRaceLanqiaoTopicById" />
-        <association property="sonTname" column="son_tid" select="com.buis.mapper.RaceLanqiaoTopicMapper.selectRaceLanqiaoTopicById" />
+        <association property="fatherTname" column="parent_tid" select="com.buis.mapper.RaceLanqiaoStudentMapper.selectRaceLanqiaoStudentById" />
+        <association property="sonTname" column="son_tid" select="com.buis.mapper.RaceLanqiaoStudentMapper.selectRaceLanqiaoStudentById" />
     </resultMap>
 
     <sql id="selectRaceLanqiaoStudentVo">
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             left join race_lanqiao_student t2 on t1.son_tid = t2.id
     </sql>
 
-    <select id="selectRaceLanqiaoStudentList" parameterType="com.buis.domain.RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResultVo">
+    <select id="selectRaceLanqiaoStudentList" parameterType="com.buis.domain.RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResult">
         <include refid="selectRaceLanqiaoStudentVo"/>
         <where>
             t1.is_deleted = 0
@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectRaceLanqiaoStudentById" parameterType="Long" resultMap="RaceLanqiaoStudentResultVo">
+    <select id="selectRaceLanqiaoStudentById" parameterType="Long" resultMap="RaceLanqiaoStudentResult">
         <include refid="selectRaceLanqiaoStudentVo"/>
         where t1.id = #{id}  and t1.is_deleted = 0
     </select>
