@@ -9,6 +9,7 @@ import com.buis.domain.*;
 import com.buis.service.IPreSignTeacherService;
 import com.buis.service.IRaceLanqiaoStudentService;
 import com.buis.service.ITeamInfoService;
+import com.buis.vo.RaceLanqiaoTeacherVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoTeacherMapper;
@@ -50,7 +51,7 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
      * @return 蓝桥杯老师报名信息
      */
     @Override
-    public List<RaceLanqiaoTeacher> selectRaceLanqiaoTeacherList(RaceLanqiaoTeacher raceLanqiaoTeacher) {
+    public List<RaceLanqiaoTeacherVo> selectRaceLanqiaoTeacherList(RaceLanqiaoTeacher raceLanqiaoTeacher) {
         return raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
     }
 
@@ -105,6 +106,12 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
     @Transactional
     public int updateRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher) {
         raceLanqiaoTeacher.setUpdateTime(DateUtils.getNowDate());
+        //获取银行卡号
+        String bankNumber = raceLanqiaoTeacher.getBankNumber();
+        //银行卡号不能超过20
+        if(StringUtils.isNotEmpty(bankNumber) && bankNumber.length()>20){
+            throw new ServiceException("银行卡号过长!");
+        }
         raceLanqiaoTeacherMapper.updateRaceLanqiaoTeacher(raceLanqiaoTeacher);
         return 1;
     }
@@ -142,7 +149,7 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
         RaceLanqiaoTeacher raceLanqiaoTeacher = new RaceLanqiaoTeacher();
         raceLanqiaoTeacher.setRaceId(race);
         raceLanqiaoTeacher.setUserId(userId);
-        List<RaceLanqiaoTeacher> raceLanqiaoTeachers = raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
+        List<RaceLanqiaoTeacherVo> raceLanqiaoTeachers = raceLanqiaoTeacherMapper.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
         RaceLanqiaoTeacher lanqiaoTeacher = null;
         if (raceLanqiaoTeachers != null && raceLanqiaoTeachers.size() > 0) {
             lanqiaoTeacher = raceLanqiaoTeachers.get(0);

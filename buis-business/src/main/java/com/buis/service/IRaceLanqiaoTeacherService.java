@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.RaceLanqiaoTeacher;
+import com.buis.vo.RaceLanqiaoTeacherVo;
 
 /**
  * 蓝桥杯老师报名信息Service接口
@@ -25,7 +26,7 @@ public interface IRaceLanqiaoTeacherService
      * @param raceLanqiaoTeacher 蓝桥杯老师报名信息
      * @return 蓝桥杯老师报名信息集合
      */
-    public List<RaceLanqiaoTeacher> selectRaceLanqiaoTeacherList(RaceLanqiaoTeacher raceLanqiaoTeacher);
+    public List<RaceLanqiaoTeacherVo> selectRaceLanqiaoTeacherList(RaceLanqiaoTeacher raceLanqiaoTeacher);
 
     /**
      * 新增蓝桥杯老师报名信息
