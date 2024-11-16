@@ -9,6 +9,7 @@ import com.buis.domain.*;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.ITeamInfoService;
+import com.buis.vo.RaceLanqiaoStudentVo;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
      * @return 蓝桥杯学生报名信息
      */
     @Override
-    public RaceLanqiaoStudent selectRaceLanqiaoStudentById(Long id) {
+    public RaceLanqiaoStudentVo selectRaceLanqiaoStudentById(Long id) {
         return raceLanqiaoStudentMapper.selectRaceLanqiaoStudentById(id);
     }
 
@@ -51,7 +52,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
      * @return 蓝桥杯学生报名信息
      */
     @Override
-    public List<RaceLanqiaoStudent> selectRaceLanqiaoStudentList(RaceLanqiaoStudent raceLanqiaoStudent) {
+    public List<RaceLanqiaoStudentVo> selectRaceLanqiaoStudentList(RaceLanqiaoStudent raceLanqiaoStudent) {
         return raceLanqiaoStudentMapper.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
     }
 
@@ -103,6 +104,12 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     @Override
     public int updateRaceLanqiaoStudent(RaceLanqiaoStudent raceLanqiaoStudent) {
         raceLanqiaoStudent.setUpdateTime(DateUtils.getNowDate());
+        //获取银行卡号
+        String bankNumber = raceLanqiaoStudent.getBankNumber();
+        //银行卡号不能超过20
+        if(StringUtils.isNotEmpty(bankNumber) && bankNumber.length()>20){
+            throw new ServiceException("银行卡号过长!");
+        }
         return raceLanqiaoStudentMapper.updateRaceLanqiaoStudent(raceLanqiaoStudent);
     }
 
@@ -132,12 +139,12 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     }
 
     @Override
-    public RaceLanqiaoStudent selectRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId) {
+    public RaceLanqiaoStudentVo selectRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId) {
         RaceLanqiaoStudent raceLanqiaoStudent = new RaceLanqiaoStudent();
         raceLanqiaoStudent.setRaceId(race);
         raceLanqiaoStudent.setUserId(userId);
-        List<RaceLanqiaoStudent> raceLanqiaoStudents = raceLanqiaoStudentMapper.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
-        RaceLanqiaoStudent LanqiaoStudent = null;
+        List<RaceLanqiaoStudentVo> raceLanqiaoStudents = raceLanqiaoStudentMapper.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
+        RaceLanqiaoStudentVo LanqiaoStudent = null;
         if (raceLanqiaoStudents != null && raceLanqiaoStudents.size() > 0) {
             LanqiaoStudent = raceLanqiaoStudents.get(0);
         }

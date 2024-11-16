@@ -2,6 +2,7 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.RaceLanqiaoTeacher;
+import com.buis.vo.RaceLanqiaoTeacherVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,7 +29,7 @@ public interface RaceLanqiaoTeacherMapper
      * @param raceLanqiaoTeacher 蓝桥杯老师报名信息
      * @return 蓝桥杯老师报名信息集合
      */
-    public List<RaceLanqiaoTeacher> selectRaceLanqiaoTeacherList(RaceLanqiaoTeacher raceLanqiaoTeacher);
+    public List<RaceLanqiaoTeacherVo> selectRaceLanqiaoTeacherList(RaceLanqiaoTeacher raceLanqiaoTeacher);
 
     /**
      * 新增蓝桥杯老师报名信息
