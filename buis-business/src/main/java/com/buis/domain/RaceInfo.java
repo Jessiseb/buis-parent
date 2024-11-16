@@ -118,8 +118,8 @@ public class RaceInfo extends BaseEntity {
     @ApiModelProperty("奖项信息")
     private List<Reward> rewardList;
 
-    @ApiModelProperty("是否为蓝桥杯比赛（0-否1-是）")
-    private Integer isLanqiao;
+    @ApiModelProperty("比赛类型(0-创新创业类比赛，1-蓝桥杯，2-第二课堂)")
+    private Integer raceType;
 
 
 }
