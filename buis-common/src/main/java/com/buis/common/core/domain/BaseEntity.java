@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.buis.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,6 +27,7 @@ public class BaseEntity implements Serializable
     private String createBy;
 
     /** 创建时间 */
+    @Excel(name = "创建时间",sort = 14)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
@@ -32,6 +35,7 @@ public class BaseEntity implements Serializable
     private String updateBy;
 
     /** 更新时间 */
+    @Excel(name = "更新时间",sort = 15)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 

@@ -11,14 +11,14 @@ public class RaceLanqiaoTeacherVo extends RaceLanqiaoTeacher {
     /**
      * 学院名称
      */
-    @Excel(name = "学院名称",sort = 2)
+    @Excel(name = "学院名称",sort = 3)
     @ApiModelProperty(value = "学院名称")
     private String collegeName;
 
     /**
      * 专业名称
      */
-    @Excel(name = "专业名称",sort = 3)
+    @Excel(name = "专业名称",sort = 4)
     @ApiModelProperty(value = "专业名称")
     private String majorName;
 
