@@ -8,10 +8,7 @@ import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceLanqiaoStudent;
 import com.buis.domain.RaceLanqiaoTeacher;
 import com.buis.domain.RaceLanqiaoType;
-import com.buis.service.IRaceDetailService;
-import com.buis.service.IRaceLanqiaoStudentService;
-import com.buis.service.IRaceLanqiaoTeacherService;
-import com.buis.service.IRaceLanqiaoTypeService;
+import com.buis.service.*;
 import com.buis.vo.RaceLanqiaoStudentVo;
 import com.buis.vo.RaceLanqiaoTeacherVo;
 import io.swagger.annotations.Api;
@@ -34,7 +31,7 @@ public class LanQiaoApiController extends BaseController {
     @Autowired
     private IRaceLanqiaoTeacherService raceLanqiaoTeacherService;
     @Autowired
-    private IRaceDetailService raceDetailService;
+    private IRaceInfoService raceInfoService;
 
     /**
      * 删除蓝桥杯报名信息
@@ -84,6 +81,10 @@ public class LanQiaoApiController extends BaseController {
     @ApiOperation("新增蓝桥杯学生报名信息")
     @PostMapping("/student/{race}")
     public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
+        boolean b = raceInfoService.checkJoinCondition(race);
+        if (!b) {
+            throw new ServiceException("比赛时间未到，暂不能报名");
+        }
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoStudent.setUserId(userId);
         raceLanqiaoStudent.setRaceId(race);
@@ -98,6 +99,10 @@ public class LanQiaoApiController extends BaseController {
     public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race,
                  @ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true)
                  @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
+        boolean b = raceInfoService.checkJoinCondition(race);
+        if (!b) {
+            throw new ServiceException("比赛时间未到，暂不能报名");
+        }
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoTeacher.setUserId(userId);
         raceLanqiaoTeacher.setRaceId(race);

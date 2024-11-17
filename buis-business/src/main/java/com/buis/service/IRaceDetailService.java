@@ -58,4 +58,6 @@ public interface IRaceDetailService
      * @return 结果
      */
     public int deleteRaceDetailById(Long id);
+
+    RaceDetail selectRaceDetailByRaceId(Long raceId);
 }

@@ -69,7 +69,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from t_weight
         where race_d = #{race_d} and is_deleted = 0
     </select>
-   
+    <select id="selectRaceDetailByRaceId" resultType="com.buis.domain.RaceDetail">
+-- 查询比赛信息
+        select id, race, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
+        from race_detail
+        where race = #{raceId} and is_deleted = 0
+    </select>
+
     <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
         insert into race_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
