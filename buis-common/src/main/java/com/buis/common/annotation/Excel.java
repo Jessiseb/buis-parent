@@ -61,12 +61,12 @@ public @interface Excel
     /**
      * 导出时在excel中每个列的高度
      */
-    public double height() default 14;
+    public double height() default 20;
 
     /**
      * 导出时在excel中每个列的宽度
      */
-    public double width() default 16;
+    public double width() default 22;
 
     /**
      * 文字后缀,如% 90 变成90%

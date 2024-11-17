@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.vo.RaceLanqiaoStudentVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,7 +48,7 @@ public class RaceLanqiaoStudentController extends BaseController
     public TableDataInfo list(RaceLanqiaoStudent raceLanqiaoStudent)
     {
         startPage();
-        List<RaceLanqiaoStudent> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
+        List<RaceLanqiaoStudentVo> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
         return getDataTable(list);
     }
 
@@ -60,8 +61,8 @@ public class RaceLanqiaoStudentController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, RaceLanqiaoStudent raceLanqiaoStudent)
     {
-        List<RaceLanqiaoStudent> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
-        ExcelUtil<RaceLanqiaoStudent> util = new ExcelUtil<RaceLanqiaoStudent>(RaceLanqiaoStudent.class);
+        List<RaceLanqiaoStudentVo> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
+        ExcelUtil<RaceLanqiaoStudentVo> util = new ExcelUtil<RaceLanqiaoStudentVo>(RaceLanqiaoStudentVo.class);
         util.exportExcel(response, list, "蓝桥杯学生报名信息数据");
     }
 

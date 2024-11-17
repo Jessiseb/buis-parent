@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -119,6 +120,7 @@ public class RaceDetail extends BaseEntity {
      */
     @Excel(name = "限制老师最大指导数量")
     @ApiModelProperty("限制老师最大指导数量")
+    @JsonProperty("tLimit")
     private Long tLimit;
 
     /**
