@@ -77,6 +77,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="getJoinCountByRaceId" resultType="java.lang.Long">
+        select count(1)
+        from team_member_student
+        where race = #{id} and is_deleted = 0 and is_choosed = 1
+    </select>
+
     <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true" keyProperty="id">
         insert into team_member_student
         <trim prefix="(" suffix=")" suffixOverrides=",">

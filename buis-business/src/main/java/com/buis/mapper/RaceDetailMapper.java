@@ -87,4 +87,6 @@ public interface RaceDetailMapper
      * @return 结果
      */
     public int deleteWeightByRaceD(Long id);
+
+    RaceDetail selectRaceDetailByRaceId(@Param("raceId") Long raceId);
 }

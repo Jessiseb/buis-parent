@@ -143,6 +143,12 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
     }
 
+//    查询学生已报名人数
+    @Override
+    public Long getJoinCountByRaceId(Long raceId) {
+        return teamMemberStudentMapper.getJoinCountByRaceId(raceId);
+    }
+
     /**
      * 判断用户是否已加入
      * @param userId

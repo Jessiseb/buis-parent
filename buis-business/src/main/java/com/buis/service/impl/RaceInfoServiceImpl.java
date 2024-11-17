@@ -4,9 +4,7 @@ import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
-import com.buis.domain.RaceDetail;
-import com.buis.domain.RaceInfo;
-import com.buis.domain.Reward;
+import com.buis.domain.*;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.vo.RaceInfoVo;
@@ -16,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,6 +35,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
+    @Autowired
+    private IRaceLanqiaoStudentService LanqiaoStudentService;
+    @Autowired
+    private IRaceLanqiaoTeacherService lanqiaoTeacherService;
 
     /**
      * 查询比赛信息
@@ -116,6 +119,29 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     /**
+     * 新增奖项信息
+     *
+     * @param raceInfo 比赛信息对象
+     */
+    private void insertReward(RaceInfo raceInfo) {
+        List<Reward> rewardList = raceInfo.getRewardList();
+        Long id = raceInfo.getId();
+        if (StringUtils.isNotNull(rewardList)) {
+            List<Reward> list = new ArrayList<Reward>();
+            for (Reward reward : rewardList) {
+                reward.setRace(id);
+                reward.setIsDeleted(0);
+                reward.setCreateTime(DateUtils.getNowDate());
+                list.add(reward);
+            }
+            if (list.size() > 0) {
+                raceInfoMapper.batchReward(list);
+            }
+        }
+    }
+
+
+    /**
      * 修改比赛信息
      *
      * @param raceInfo 比赛信息
@@ -185,24 +211,82 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     /**
-     * 新增奖项信息
-     *
-     * @param raceInfo 比赛信息对象
+     * 判断报名是否符合条件
      */
-    public void insertReward(RaceInfo raceInfo) {
-        List<Reward> rewardList = raceInfo.getRewardList();
-        Long id = raceInfo.getId();
-        if (StringUtils.isNotNull(rewardList)) {
-            List<Reward> list = new ArrayList<Reward>();
-            for (Reward reward : rewardList) {
-                reward.setRace(id);
-                reward.setIsDeleted(0);
-                reward.setCreateTime(DateUtils.getNowDate());
-                list.add(reward);
-            }
-            if (list.size() > 0) {
-                raceInfoMapper.batchReward(list);
-            }
+    public boolean checkJoinCondition(Long raceId) {
+        if (checkJoinTime(raceId)) {
+            throw new ServiceException("当前时间不在报名时间内");
         }
+        if (checkJoinFull(raceId)) {
+            throw new ServiceException("当前比赛已满");
+        }
+        if (checkJoinStudentTable(new RaceLanqiaoStudent())) {
+            return true;
+        }
+        if (checkJoinTeacherTable(new RaceLanqiaoTeacher())) {
+            return true;
+        }
+
+        return true;
+    }
+
+    /**
+     * 判断当前时间是否在报名时间内
+     *
+     * @param raceId
+     * @return
+     */
+    private boolean checkJoinTime(Long raceId) {
+        // 查询比赛报名时间
+        RaceInfo raceInfo = raceInfoMapper.selectRaceInfoById(raceId);
+        if (raceInfo != null) {
+            Date joinStart = raceInfo.getJoinStart();
+            Date joinEnd = raceInfo.getJoinEnd();
+            // 获取当前系统时间
+            Date now = DateUtils.getNowDate();
+            return now.getTime() >= joinStart.getTime() && now.getTime() <= joinEnd.getTime();
+        }
+        return false;
+    }
+
+    /**
+     * 检查活动报名是否已满
+     */
+    private boolean checkJoinFull(Long raceId) {
+        // 查询已报名人数
+        Long teacher = teamMemberTeacherService.getJoinCountByRaceId(raceId);
+        Long student = teamMemberStudentService.getJoinCountByRaceId(raceId);
+        // 查询比赛信息
+        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+        if (raceDetail != null) {
+            Long tLimit = raceDetail.getTLimit();
+            return (teacher + student) >= tLimit;
+        }
+        return false;
+    }
+
+    private boolean checkJoinStudentTable(RaceLanqiaoStudent raceLanqiaoStudent) {
+        Object o = lanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(raceLanqiaoStudent.getRaceId(), raceLanqiaoStudent.getUserId());
+        if (o != null) {
+            throw new ServiceException("已提交过老师报名表，请取消后再次提交");
+        }
+        Object o1 = LanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceLanqiaoStudent.getRaceId(), raceLanqiaoStudent.getUserId());
+        if (o1 != null) {
+            throw new ServiceException("已提交过学生报名表，请勿重复提交");
+        }
+        return true;
+    }
+
+    private boolean checkJoinTeacherTable(RaceLanqiaoTeacher raceLanqiaoTeacher) {
+        Object o = LanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
+        if (o != null) {
+            throw new ServiceException("已提交过学生报名表，请取消后再次提交");
+        }
+        Object o1 = lanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
+        if (o1 != null) {
+            throw new ServiceException("已提交过老师报名表，请勿重复提交");
+        }
+        return true;
     }
 }
+

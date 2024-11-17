@@ -64,14 +64,14 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
     @Override
     @Transactional
     public int insertRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher) {
-        Object o = lanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
-        if (o != null) {
-            throw new ServiceException("已提交过学生报名表，请取消后再次提交");
-        }
-        Object o1 = selectRaceLanqiaoTeacherByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
-        if (o1 != null) {
-            throw new ServiceException("已提交过老师报名表，请勿重复提交");
-        }
+//        Object o = lanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
+//        if (o != null) {
+//            throw new ServiceException("已提交过学生报名表，请取消后再次提交");
+//        }
+//        Object o1 = selectRaceLanqiaoTeacherByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
+//        if (o1 != null) {
+//            throw new ServiceException("已提交过老师报名表，请勿重复提交");
+//        }
         //获取银行卡号
         String bankNumber = raceLanqiaoTeacher.getBankNumber();
         //银行卡号不能超过20

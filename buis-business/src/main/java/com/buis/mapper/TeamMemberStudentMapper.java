@@ -83,4 +83,6 @@ public interface TeamMemberStudentMapper {
      * @param user
      */
     void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
+
+    Long getJoinCountByRaceId(@Param("id") Long raceId);
 }
