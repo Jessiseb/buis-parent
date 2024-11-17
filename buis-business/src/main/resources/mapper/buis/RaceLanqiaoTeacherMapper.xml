@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceLanqiaoTeacherMapper">
     
-    <resultMap type="com.buis.domain.RaceLanqiaoTeacher" id="RaceLanqiaoTeacherResult">
+    <resultMap type="com.buis.vo.RaceLanqiaoTeacherVo" id="RaceLanqiaoTeacherResult">
         <result property="id"    column="id"    />
         <result property="raceId"    column="race_id"    />
         <result property="userId"    column="user_id"    />
@@ -26,40 +26,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="collegeName" column="college_name" />
+        <result property="majorName" column="major_name" />
     </resultMap>
 
     <sql id="selectRaceLanqiaoTeacherVo">
-        select id, race_id, user_id, name, sex, college, major, title, office, phone, email, identity, course, type, t_class, bank_number, guidance, remark, is_deleted, create_time, update_time from race_lanqiao_teacher
+        select t2.name as college_name, t3.name as major_name,t1.id, t1.race_id, t1.user_id, t1.name, t1.sex, t1.college, t1.major, t1.title, t1.office, t1.phone, t1.email, t1.identity, t1.course, t1.type, t1.t_class, t1.bank_number, t1.guidance, t1.remark, t1.is_deleted, t1.create_time, t1.update_time
+        from race_lanqiao_teacher t1
+         left join t_college_major t2 on t1.college = t2.id
+         left join t_college_major t3 on t1.major = t3.id
     </sql>
 
     <select id="selectRaceLanqiaoTeacherList" parameterType="com.buis.domain.RaceLanqiaoTeacher" resultMap="RaceLanqiaoTeacherResult">
         <include refid="selectRaceLanqiaoTeacherVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="raceId != null "> and race_id = #{raceId}</if>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="sex != null "> and sex = #{sex}</if>
-            <if test="college != null "> and college = #{college}</if>
-            <if test="major != null "> and major = #{major}</if>
-            <if test="title != null and title != ''"> and title = #{title}</if>
-            <if test="office != null and office != ''"> and office = #{office}</if>
-            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
-            <if test="email != null  and email != ''"> and email = #{email}</if>
-            <if test="identity != null  and identity != ''"> and identity = #{identity}</if>
-            <if test="course != null  and course != ''"> and course = #{course}</if>
-            <if test="type != null  and type != ''"> and type like concat('%', #{type}, '%')</if>
-            <if test="tClass != null  and tClass != ''"> and t_class like concat('%', #{tClass}, '%')</if>
-            <if test="bankNumber != null  and bankNumber != ''"> and bank_number = #{bankNumber}</if>
-            <if test="guidance != null  and guidance != ''"> and guidance = #{guidance}</if>
-            <if test="remark != null  and remark != ''"> and remark like concat('%', #{remark}, '%')</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="raceId != null "> and t1.race_id = #{raceId}</if>
+            <if test="userId != null "> and t1.user_id = #{userId}</if>
+            <if test="name != null  and name != ''"> and t1.name like concat('%', #{name}, '%')</if>
+            <if test="sex != null "> and t1.sex = #{sex}</if>
+            <if test="college != null "> and t1.college = #{college}</if>
+            <if test="major != null "> and t1.major = #{major}</if>
+            <if test="title != null and title != ''"> and t1.title = #{title}</if>
+            <if test="office != null and office != ''"> and t1.office = #{office}</if>
+            <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and t1.email = #{email}</if>
+            <if test="identity != null  and identity != ''"> and t1.identity = #{identity}</if>
+            <if test="course != null  and course != ''"> and t1.course = #{course}</if>
+            <if test="type != null  and type != ''"> and t1.type like concat('%', #{type}, '%')</if>
+            <if test="tClass != null  and tClass != ''"> and t1.t_class like concat('%', #{tClass}, '%')</if>
+            <if test="bankNumber != null  and bankNumber != ''"> and t1.bank_number = #{bankNumber}</if>
+            <if test="guidance != null  and guidance != ''"> and t1.guidance = #{guidance}</if>
+            <if test="remark != null  and remark != ''"> and t1.remark like concat('%', #{remark}, '%')</if>
         </where>
     </select>
     
     <select id="selectRaceLanqiaoTeacherById" parameterType="Long" resultMap="RaceLanqiaoTeacherResult">
         <include refid="selectRaceLanqiaoTeacherVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
     <select id="selectRaceLanqiaoTeacherByUserId" resultType="com.buis.domain.RaceLanqiaoTeacher">

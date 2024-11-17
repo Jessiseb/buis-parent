@@ -33,7 +33,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <resultMap id="RaceInfoRewardResult" type="com.buis.vo.RaceInfoVo" extends="RaceInfoResult">
-        <collection property="rewardList" ofType="com.buis.domain.Reward" column="id" select="selectRewardList" />
+        <collection property="rewardList" ofType="com.buis.domain.Reward" column="id" select="selectRewardList">
+            <id property="id" column="id"></id>
+            <result property="race" column="race"></result>
+            <result property="rRank" column="r_rank"></result>
+            <result property="name" column="name"></result>
+            <result property="quantity" column="quantity"></result>
+            <result property="isDeleted" column="is_deleted"></result>
+        </collection>
     </resultMap>
 
     <resultMap type="com.buis.domain.Reward" id="RewardResult">
@@ -81,9 +88,19 @@ left join race_type t2 on t2.id = t1.son_tid
     </select>
 
     <select id="selectRewardList" resultMap="RewardResult">
-        select id, race, r_rank, name, quantity, remark, is_deleted, create_time, update_time
+        select id,
+               race,
+               r_rank,
+               name,
+               quantity,
+               remark,
+               is_deleted,
+               create_time,
+               update_time
         from t_reward
-        where race = #{race} and is_deleted = 0
+        where race = #{race}
+          and is_deleted = 0
+        order by id
     </select>
 
     <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">

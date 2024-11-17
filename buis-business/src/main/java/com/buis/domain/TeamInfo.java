@@ -3,6 +3,7 @@ package com.buis.domain;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -64,6 +65,7 @@ public class TeamInfo extends BaseEntity {
      */
     @ApiModelProperty("招募要求")
     @Excel(name = "招募要求")
+    @JsonProperty("tLimit")
     private String tLimit;
 
     /**
@@ -93,6 +95,7 @@ public class TeamInfo extends BaseEntity {
      * 奖项
      */
     @ApiModelProperty("奖项")
+    @JsonProperty("rRank")
     private String rRank;
 
     /**
