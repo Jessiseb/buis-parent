@@ -130,7 +130,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="number != null and number != ''">number = #{number},</if>
             <if test="sClass != null and sClass != ''">s_class = #{sClass},</if>
             <if test="phone != null and phone != ''">phone = #{phone},</if>
-            <if test="email != null and email != ''">mail = #{email},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
             <if test="identity != null and identity != ''">identity = #{identity},</if>
             <if test="parentTid != null">parent_tid = #{parentTid},</if>
             <if test="sonTid != null">son_tid = #{sonTid},</if>
