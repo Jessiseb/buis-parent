@@ -52,7 +52,12 @@ public class RaceLanqiaoTeacher extends BaseEntity {
     @Excel(name = "性别", dictType = "sys_user_sex", sort = 2)
     @ApiModelProperty("性别 ")
     private Long sex;
-
+    /**
+     * 工号
+     */
+    @Excel(name = "工号",sort = 2)
+    @ApiModelProperty(" 工号")
+    private String number;
     /**
      * 部门(学院)
      */
