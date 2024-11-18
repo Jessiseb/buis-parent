@@ -74,17 +74,20 @@ public class TeamApiController extends BaseController {
      * @return
      */
     @ApiOperation("修改用户与队伍互选关系")
-    @PutMapping("/updateTeamMember/{isTeacher}")
+    @PutMapping("/updateTeamMember/{isTeacher}/{id}")
     public R updateTeamMember(
             @ApiParam(name = "isTeacher", value = "用户类型，0学生，1老师", required = true) @PathVariable(value = "isTeacher") Long isTeacher,
+             @ApiParam(name = "id", value = "记录ID", required = true) @PathVariable(value = "id") Long id,
             @RequestBody TeamMemberDto teamMemberDto) {
 
         if (isTeacher != null) {
             if (isTeacher == 0) { // 用户是学生
                 TeamMemberStudent teamMemberStudent = buildTeamMemberStudent(teamMemberDto);
+                teamMemberStudent.setId(id);
                 teamMemberStudentService.updateTeamMemberStudent(teamMemberStudent);
             } else if (isTeacher == 1) { // 用户是老师
                 TeamMemberTeacher teamMemberTeacher = buildTeamMemberTeacher(teamMemberDto);
+                teamMemberTeacher.setId(id);
                 teamMemberTeacherService.updateTeamMemberTeacher(teamMemberTeacher);
             }
         }
@@ -120,7 +123,7 @@ public class TeamApiController extends BaseController {
     }
 
     @ApiOperation("删除用户与队伍互选关系")
-    @DeleteMapping("/delectTeamMember/{team}/{user}/{isTeacher}")
+    @DeleteMapping("/deleteTeamMember/{team}/{user}/{isTeacher}")
     public R delectTeamMember(
             @ApiParam(name = "team", value = "队伍id", required = true) @PathVariable(value = "team") Long team,
             @ApiParam(name = "user", value = "用户id", required = true) @PathVariable(value = "user") Long user,

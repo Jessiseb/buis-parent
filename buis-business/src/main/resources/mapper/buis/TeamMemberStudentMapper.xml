@@ -119,6 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+
     <delete id="deleteTeamMemberStudentById" parameterType="Long">
         update team_member_student
         set is_deleted = 1
@@ -133,7 +134,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <delete id="deleteTeamMemberStudentByTeamAndStudent">
+    <delete id="deleteTeamMemberStudentByTeamAndStudent" parameterType="map">
         update team_member_student
         set is_deleted = 1
         where team = #{team} and student = #{user}

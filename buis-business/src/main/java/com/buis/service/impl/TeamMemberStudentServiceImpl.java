@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 队伍成员管理Service业务层处理
@@ -140,8 +142,13 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
      */
     @Override
     public void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user) {
-        teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
+           Map<String, Object> params = new HashMap<>();
+        params.put("team", team);
+        params.put("user", user);
+//        teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
+        teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(params);
     }
+
 
     /**
      * 判断用户是否已加入

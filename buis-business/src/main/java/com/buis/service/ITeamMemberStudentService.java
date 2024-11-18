@@ -92,4 +92,6 @@ public interface ITeamMemberStudentService {
      * @param user
      */
     void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
+
+
 }
