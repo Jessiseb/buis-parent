@@ -8,7 +8,10 @@ import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceLanqiaoStudent;
 import com.buis.domain.RaceLanqiaoTeacher;
 import com.buis.domain.RaceLanqiaoType;
-import com.buis.service.*;
+import com.buis.service.IRaceInfoService;
+import com.buis.service.IRaceLanqiaoStudentService;
+import com.buis.service.IRaceLanqiaoTeacherService;
+import com.buis.service.IRaceLanqiaoTypeService;
 import com.buis.vo.RaceLanqiaoStudentVo;
 import com.buis.vo.RaceLanqiaoTeacherVo;
 import io.swagger.annotations.Api;
@@ -37,20 +40,15 @@ public class LanQiaoApiController extends BaseController {
      * 删除蓝桥杯报名信息
      */
     @ApiOperation("删除蓝桥杯报名信息")
-    @DeleteMapping("/{race}/{flag}")
-    public R remove(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "flag", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer flag) {
+    @DeleteMapping("/{race}/{isTeacher}")
+    public R remove(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer isTeacher) {
         Long userId = SecurityUtils.getFrontLoginUserId();
-        Integer res = 0;
-        if (flag == 0) {
-            res = raceLanqiaoStudentService.deleteRaceLanqiaoStudentByUserIdAndRaceId(race, userId);
-        } else if (flag == 1) {
-            res = raceLanqiaoTeacherService.deleteRaceLanqiaoTeacherByUserIdAndRaceId(race, userId);
+        if (isTeacher == 0) {
+            raceLanqiaoStudentService.deleteRaceLanqiaoStudentByUserIdAndRaceId(race, userId);
+        } else if (isTeacher == 1) {
+            raceLanqiaoTeacherService.deleteRaceLanqiaoTeacherByUserIdAndRaceId(race, userId);
         }
-        if (res > 0) {
-            return R.ok();
-        } else {
-            return R.fail();
-        }
+        return R.ok();
     }
 
     /**

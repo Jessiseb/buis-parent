@@ -1,10 +1,9 @@
 package com.buis.web.controller.api;
 
 import com.buis.common.core.controller.BaseController;
-import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
-import com.buis.common.core.page.TableDataInfo;
+import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.PreSignStudent;
 import com.buis.domain.PreSignTeacher;
 import com.buis.service.IPreSignStudentService;
@@ -17,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -34,6 +34,7 @@ public class JoinApiController extends BaseController {
 
     /**
      * 根据比赛id分页查询预报名老师列表
+     *
      * @param RaceId
      * @return
      */
@@ -50,22 +51,39 @@ public class JoinApiController extends BaseController {
     }
 
     /**
-     * 获取老师预报名详细信息
-     */
-    @ApiOperation("获取老师预报名详细信息")
-    @GetMapping(value = "/preTeacher/{id}")
-    public R<PreSignTeacherVo> getTeacherInfo(@PathVariable("id") Long id) {
-        return R.ok(preTeacherService.selectPreSignTeacherById(id));
-    }
-    /**
      * 新增老师预报名
      */
-    @ApiOperation("新增老师预报名")
-    @PostMapping("/preTeacher")
-    public R addPreTeacher(@RequestBody PreSignTeacher preSignTeacher)
-    {
-        return R.ok(preTeacherService.insertPreSignTeacher(preSignTeacher));
+    @ApiOperation("新增预报名")
+    @PostMapping("/addPre/{isTeacher}/{race}")
+    public R addPre(@ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer isTeacher, @ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable Long race) {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        if (isTeacher == 1) {
+            PreSignTeacher preSignTeacher = new PreSignTeacher();
+            preSignTeacher.setTeacher(userId);
+            preSignTeacher.setRace(race);
+            preTeacherService.insertPreSignTeacher(preSignTeacher);
+        } else if (isTeacher == 0) {
+            PreSignStudent preSignStudent = new PreSignStudent();
+            preSignStudent.setStudent(userId);
+            preSignStudent.setRace(race);
+            preStudentService.insertPreSignStudent(preSignStudent);
+        }
+        return R.ok();
 
+    }
+    /**
+     * 删除老师预报名
+     */
+    @ApiOperation("删除老师预报名")
+    @DeleteMapping("/removePre/{isTeacher}/{race}")
+    public R removePre(@ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer isTeacher, @ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable Long race) {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        if (isTeacher == 1) {
+            preTeacherService.deletePreSignTeacherByUserIdAndRaceId(race,userId);
+        } else if (isTeacher == 0) {
+            preStudentService.deletePreSignStudentByUserIdAndRaceId(race,userId);
+        }
+        return R.ok();
     }
 
     /**
@@ -73,22 +91,22 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("修改老师预报名")
     @PutMapping("/preTeacher")
-    public R editPreTeacher(@RequestBody PreSignTeacher preSignTeacher)
-    {
+    public R editPreTeacher(@RequestBody PreSignTeacher preSignTeacher) {
         return R.ok(preTeacherService.updatePreSignTeacher(preSignTeacher));
     }
 
     /**
-     * 删除老师预报名
+     * 修改学生预报名
      */
-    @ApiOperation("删除老师预报名")
-    @DeleteMapping("/preTeacher/{id}")
-    public R removePreTeacher(@PathVariable Long id)
-    {
-        return R.ok(preTeacherService.deletePreSignTeacherById(id));
+    @ApiOperation("修改学生预报名")
+    @PutMapping("/preStudent")
+    public R editPreStudent(@RequestBody PreSignStudent preSignStudent) {
+        return R.ok(preStudentService.updatePreSignStudent(preSignStudent));
     }
+
     /**
      * 根据比赛id分页查询预报名学生列表
+     *
      * @param pageNum
      * @param pageSize
      * @param RaceId
@@ -109,40 +127,8 @@ public class JoinApiController extends BaseController {
         return new MyPageVo(preSignStudentVos, new PageInfo(preSignStudentVos).getTotal());
     }
 
-    /**
-     * 获取学生预报名详细信息
-     */
-    @ApiOperation("获取学生预报名详细信息")
-    @GetMapping(value = "/preStudent/{id}")
-    public R<PreSignStudentVo> getStudentInfo(@PathVariable("id") Long id) {
-        return R.ok(preStudentService.selectPreSignStudentById(id));
-    }
 
-    /**
-     * 新增学生预报名
-     */
-    @ApiOperation("新增学生预报名")
-    @PostMapping("/preStudent")
-    public R addPreStudent(@RequestBody PreSignStudent preSignStudent) {
-        return R.ok(preStudentService.insertPreSignStudent(preSignStudent));
-    }
 
-    /**
-     * 修改学生预报名
-     */
-    @ApiOperation("修改学生预报名")
-    @PutMapping("/preStudent")
-    public R editPreStudent(@RequestBody PreSignStudent preSignStudent) {
-        return R.ok(preStudentService.updatePreSignStudent(preSignStudent));
-    }
 
-    /**
-     * 删除学生预报名
-     */
-    @ApiOperation("删除学生预报名")
-    @DeleteMapping("/preStudent/{ids}")
-    public R removePreStudent(@PathVariable Long[] ids) {
-        return R.ok(preStudentService.deletePreSignStudentByIds(ids));
-    }
 
 }
