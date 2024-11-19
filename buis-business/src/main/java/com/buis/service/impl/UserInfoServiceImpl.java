@@ -173,6 +173,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         String code = registerDTO.getCode();
         String password = registerDTO.getPassword();
         String name = registerDTO.getName();
+        String number = registerDTO.getNumber();
         Integer isTeacher = registerDTO.getIsTeacher();
 
         //校验邮箱格式
@@ -209,6 +210,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         UserInfo member = new UserInfo();
         member.setName(name);
         member.setEmail(email);
+        member.setNumber(number);
         member.setPassword(encryptPassword);
         member.setIsTeacher(isTeacher);
         member.setIsDisabled(0L);

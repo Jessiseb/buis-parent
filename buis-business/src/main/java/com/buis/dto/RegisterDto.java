@@ -19,7 +19,11 @@ public class RegisterDto {
      */
     @ApiModelProperty(value = "用户邮箱")
     private String email;
-
+    /**
+     * 学号或工号
+     */
+    @ApiModelProperty(value = "用户邮箱")
+    private String number;
     /**
      * 姓名
      */
