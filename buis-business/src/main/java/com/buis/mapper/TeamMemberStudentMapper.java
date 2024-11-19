@@ -5,7 +5,6 @@ import com.buis.vo.TeamMemberStudentVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 队伍成员管理Mapper接口
@@ -78,12 +77,4 @@ public interface TeamMemberStudentMapper {
      * @return
      */
     int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId, @Param("team") Long team);
-
-    /**
-     * 根据team和user删除用户与队伍的关联
-     * @param params
-     */
-    void deleteTeamMemberStudentByTeamAndStudent(Map<String, Object> params);
-
-    int updateTeamMemberStudentWithId(Long id, TeamMemberStudent teamMemberStudent);
 }

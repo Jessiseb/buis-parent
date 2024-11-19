@@ -105,4 +105,6 @@ public interface ITeamMemberTeacherService
      * @param user
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
+
+    Long getJoinCountByRaceId(Long raceId);
 }

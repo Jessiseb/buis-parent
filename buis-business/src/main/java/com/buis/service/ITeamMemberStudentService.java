@@ -93,5 +93,4 @@ public interface ITeamMemberStudentService {
      */
     void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
 
-
 }

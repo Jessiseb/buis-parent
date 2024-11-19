@@ -113,6 +113,12 @@ public class RaceDetailServiceImpl implements IRaceDetailService
         return raceDetailMapper.deleteRaceDetailById(id);
     }
 
+//    查询比赛信息
+    @Override
+    public RaceDetail selectRaceDetailByRaceId(Long raceId) {
+        return raceDetailMapper.selectRaceDetailByRaceId(raceId);
+    }
+
     /**
      * 新增分数权重信息
      * 
