@@ -227,14 +227,10 @@ public class TeamApiController extends BaseController {
     @ApiOperation("新增队伍信息")
     @PostMapping
     public R addTeamInfo(@RequestBody TeamInfo teamInfo) {
-
-        boolean b = raceInfoService.checkJoinCondition(teamInfo.getRace());
-        if (!b) {
-            throw new ServiceException("比赛时间未到，暂不能报名");
-        }
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        teamInfo.setLeader(userId);
         int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);
         return R.ok(insertTeamInfo, "操作成功");
-
     }
 
 

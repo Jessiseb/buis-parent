@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and is_choosed = 1
     </select>
 
-    <select id="checkJoin" resultType="java.lang.Integer">
+    <select id="getCountJoin" resultType="java.lang.Integer">
         select count(1)
 
         from team_member_student

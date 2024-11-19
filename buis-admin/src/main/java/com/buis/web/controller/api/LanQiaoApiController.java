@@ -81,10 +81,6 @@ public class LanQiaoApiController extends BaseController {
     @ApiOperation("新增蓝桥杯学生报名信息")
     @PostMapping("/student/{race}")
     public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
-        boolean b = raceInfoService.checkJoinCondition(race);
-        if (!b) {
-            throw new ServiceException("比赛时间未到，暂不能报名");
-        }
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoStudent.setUserId(userId);
         raceLanqiaoStudent.setRaceId(race);
@@ -99,10 +95,6 @@ public class LanQiaoApiController extends BaseController {
     public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race,
                  @ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true)
                  @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
-        boolean b = raceInfoService.checkJoinCondition(race);
-        if (!b) {
-            throw new ServiceException("比赛时间未到，暂不能报名");
-        }
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoTeacher.setUserId(userId);
         raceLanqiaoTeacher.setRaceId(race);

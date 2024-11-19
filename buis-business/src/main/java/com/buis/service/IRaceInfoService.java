@@ -59,15 +59,11 @@ public interface IRaceInfoService
      * @return 结果
      */
     public int deleteRaceInfoById(Long id);
-    /**
-     * 根据userId和raceId判断用户是否报名过
-     */
-    public int checkJoin(Long userId,Long raceId, Long team);
 
     /**
      * 判断比赛是否已结束
      * @param raceId
      * @return
      */
-    public boolean checkJoinCondition(Long raceId);
+    public boolean checkJoinCondition(Long userId,Long raceId);
 }
