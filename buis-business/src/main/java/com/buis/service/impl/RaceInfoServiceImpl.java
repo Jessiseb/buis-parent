@@ -196,9 +196,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         }
         int res = 0;
         // 判断互选表有没有信息
-        res = teamMemberTeacherService.checkJoin(userId, raceId, team);
+        res = teamMemberTeacherService.getJoinCount(userId, raceId, team);
         if (res <= 0) {
-            res = teamMemberStudentService.checkJoin(userId, raceId, team);
+            res = teamMemberStudentService.getJoinCount(userId, raceId, team);
             if (res <= 0) {
                 // 判断队伍有没有信息
                 res = teamInfoService.checkJoin(userId, raceId, team);
@@ -254,8 +254,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     private boolean checkJoinFull(Long raceId) {
         // 查询已报名人数
-        Long teacher = teamMemberTeacherService.getJoinCountByRaceId(raceId);
-        Long student = teamMemberStudentService.getJoinCountByRaceId(raceId);
+        int teacher = teamMemberTeacherService.getJoinCount(null,raceId,null);
+        int student = teamMemberStudentService.getJoinCount(null,raceId,null);
         // 查询比赛信息
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
         if (raceDetail != null) {

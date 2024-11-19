@@ -96,7 +96,7 @@ public interface ITeamMemberTeacherService
      * @param raceId
      * @return
      */
-    int checkJoin(Long userId, Long raceId, Long team);
+    int getJoinCount(Long userId, Long raceId, Long team);
 
 
     /**
@@ -106,5 +106,4 @@ public interface ITeamMemberTeacherService
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 
-    Long getJoinCountByRaceId(Long raceId);
 }
