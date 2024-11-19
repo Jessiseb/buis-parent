@@ -125,7 +125,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <delete id="deleteTeamMemberTeacherByTeamAndTeacher" parameterType="map">
+    <delete id="deleteTeamMemberTeacherByTeamAndTeacher">
         update team_member_teacher
         set is_deleted = 1
         where team = #{team} and teacher = #{user}
@@ -170,10 +170,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="getJoinCountByRaceId" resultType="java.lang.Long">
-        select count(1)
-        from team_member_teacher
-        where race = #{id} and is_deleted = 0 and is_choosed = 1
-    </select>
 
 </mapper>

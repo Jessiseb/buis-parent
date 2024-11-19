@@ -84,7 +84,7 @@ public interface ITeamMemberStudentService {
      * @param raceId
      * @return
      */
-    int checkJoin(Long userId, Long raceId, Long team);
+    int getJoinCount(Long userId, Long raceId, Long team);
 
     /**
      * 根据team和user删除用户与队伍的关联

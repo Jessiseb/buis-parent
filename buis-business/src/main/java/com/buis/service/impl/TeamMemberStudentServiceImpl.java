@@ -150,7 +150,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
      * @return
      */
     @Override
-    public int checkJoin(Long userId, Long raceId, Long teamId) {
+    public int getJoinCount(Long userId, Long raceId, Long teamId) {
         return teamMemberStudentMapper.checkJoin(userId,raceId,teamId);
     }
 

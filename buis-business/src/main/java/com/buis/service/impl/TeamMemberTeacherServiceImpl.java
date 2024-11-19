@@ -157,17 +157,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
      */
     @Override
     public void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("team", team);
-        params.put("user", user);
-//        teamMemberTeacherMapper.deleteTeamMemberTeacherByTeamAndTeacher(team, user);
-        teamMemberTeacherMapper.deleteTeamMemberTeacherByTeamAndTeacher(params);
-    }
-
-
-    @Override
-    public Long getJoinCountByRaceId(Long raceId) {
-        return teamMemberTeacherMapper.getJoinCountByRaceId(raceId);
+        teamMemberTeacherMapper.deleteTeamMemberTeacherByTeamAndTeacher(team, user);
     }
 
     /**
@@ -177,7 +167,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
      * @return
      */
     @Override
-    public int checkJoin(Long userId, Long raceId, Long team) {
+    public int getJoinCount(Long userId, Long raceId, Long team) {
         return teamMemberTeacherMapper.checkJoin(userId,raceId, team);
     }
 
