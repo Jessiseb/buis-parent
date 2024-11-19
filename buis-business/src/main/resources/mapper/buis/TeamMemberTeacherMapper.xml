@@ -159,7 +159,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND t1.is_deleted = 0
     </select>
 
-    <select id="checkJoin" resultType="java.lang.Integer">
+    <select id="getCountJoin" resultType="java.lang.Integer">
         select count(1)
         from team_member_teacher
         <where>

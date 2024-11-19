@@ -4,10 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamInfo;
 import com.buis.mapper.TeamInfoMapper;
-import com.buis.service.ITeamInfoService;
-import com.buis.service.ITeamMemberStudentService;
-import com.buis.service.ITeamMemberTeacherService;
-import com.buis.service.IUserInfoService;
+import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +30,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private ITeamMemberStudentService teamStudentService;
     @Autowired
     private ITeamMemberTeacherService teamTeacherService;
-
+    @Autowired
+    private IRaceInfoService raceInfoService;
 
     /**
      * 新增队伍信息
@@ -43,6 +41,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public int insertTeamInfo(TeamInfo teamInfo) {
+        raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
         return teamInfoMapper.insertTeamInfo(teamInfo);
     }
@@ -87,8 +86,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     }
 
     @Override
-    public int checkJoin(Long userId, Long raceId, Long team) {
-        return teamInfoMapper.checkJoin(userId,raceId,team);
+    public int getCountJoin(Long userId, Long raceId, Long team) {
+        return teamInfoMapper.getCountJoin(userId,raceId,team);
     }
 
 

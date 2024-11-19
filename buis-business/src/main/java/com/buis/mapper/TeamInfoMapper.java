@@ -85,5 +85,5 @@ public interface TeamInfoMapper
      * @param team
      * @return
      */
-    int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
+    int getCountJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
 }

@@ -91,10 +91,6 @@ public class RaceLanqiaoStudentController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody RaceLanqiaoStudent raceLanqiaoStudent)
     {
-        boolean b = raceInfoService.checkJoinCondition(raceLanqiaoStudent.getRaceId());
-        if (!b) {
-            throw new ServiceException("比赛时间未到，暂不能报名");
-        }
         return toAjax(raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent));
     }
 
