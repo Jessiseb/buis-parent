@@ -7,6 +7,12 @@ import lombok.Data;
 @Data
 @ApiModel("队伍成员DTO")
 public class TeamMemberDto {
+    /**
+     * 记录ID
+     */
+    @ApiModelProperty(value = "记录ID")
+    private Long id;
+
 
     /**
      * 比赛
