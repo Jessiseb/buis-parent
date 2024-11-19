@@ -220,12 +220,12 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         if (checkJoinFull(raceId)) {
             throw new ServiceException("当前比赛已满");
         }
-        if (checkJoinStudentTable(new RaceLanqiaoStudent())) {
-            return true;
-        }
-        if (checkJoinTeacherTable(new RaceLanqiaoTeacher())) {
-            return true;
-        }
+//        if (checkJoinStudentTable(new RaceLanqiaoStudent())) {
+//            return true;
+//        }
+//        if (checkJoinTeacherTable(new RaceLanqiaoTeacher())) {
+//            return true;
+//        }
 
         return true;
     }
@@ -260,7 +260,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
         if (raceDetail != null) {
             Long tLimit = raceDetail.getTLimit();
-            return (teacher + student) >= tLimit;
+            if(tLimit !=0 ){
+                return (teacher + student) >= tLimit;
+            }
         }
         return false;
     }
