@@ -1,8 +1,6 @@
 package com.buis.mapper;
 
 import java.util.List;
-import java.util.Map;
-
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.vo.TeamMemberTeacherVo;
 import org.apache.ibatis.annotations.Param;
@@ -100,9 +98,8 @@ public interface TeamMemberTeacherMapper
 
     /**
      * 根据team和user删除邀请
-     * @param params
+     * @param team
+     * @param user
      */
-    void deleteTeamMemberTeacherByTeamAndTeacher(Map<String, Object> params);
-//    void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
-
+    void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 }

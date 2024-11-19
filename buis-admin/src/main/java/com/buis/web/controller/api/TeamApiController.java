@@ -4,11 +4,14 @@ package com.buis.web.controller.api;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.dto.TeamMemberDto;
+import com.buis.service.IRaceInfoService;
+import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.impl.TeamInfoServiceImpl;
@@ -41,7 +44,9 @@ public class TeamApiController extends BaseController {
     @Autowired
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
-    private TeamInfoServiceImpl teamInfoService;
+    private ITeamInfoService teamInfoService;
+    @Autowired
+    private IRaceInfoService raceInfoService;
 
     /**
      * 新增用户与队伍互选关系
@@ -222,6 +227,11 @@ public class TeamApiController extends BaseController {
     @ApiOperation("新增队伍信息")
     @PostMapping
     public R addTeamInfo(@RequestBody TeamInfo teamInfo) {
+
+        boolean b = raceInfoService.checkJoinCondition(teamInfo.getRace());
+        if (!b) {
+            throw new ServiceException("比赛时间未到，暂不能报名");
+        }
         int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);
         return R.ok(insertTeamInfo, "操作成功");
 

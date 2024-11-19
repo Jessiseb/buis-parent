@@ -3,6 +3,8 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.common.exception.ServiceException;
+import com.buis.service.IRaceInfoService;
 import com.buis.vo.RaceLanqiaoStudentVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +40,9 @@ public class RaceLanqiaoStudentController extends BaseController
 {
     @Autowired
     private IRaceLanqiaoStudentService raceLanqiaoStudentService;
+    @Autowired
+    private IRaceInfoService raceInfoService;
+
 
 /**
  * 查询蓝桥杯学生报名信息列表
@@ -86,6 +91,10 @@ public class RaceLanqiaoStudentController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody RaceLanqiaoStudent raceLanqiaoStudent)
     {
+        boolean b = raceInfoService.checkJoinCondition(raceLanqiaoStudent.getRaceId());
+        if (!b) {
+            throw new ServiceException("比赛时间未到，暂不能报名");
+        }
         return toAjax(raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent));
     }
 

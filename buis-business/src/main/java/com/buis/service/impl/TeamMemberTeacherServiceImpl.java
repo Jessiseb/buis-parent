@@ -165,6 +165,11 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
     }
 
 
+    @Override
+    public Long getJoinCountByRaceId(Long raceId) {
+        return teamMemberTeacherMapper.getJoinCountByRaceId(raceId);
+    }
+
     /**
      * 判断用户是否已加入
      * @param userId
