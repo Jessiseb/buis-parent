@@ -80,5 +80,5 @@ public interface ITeamInfoService
      * @param raceId
      * @return
      */
-    int checkJoin(Long userId, Long raceId, Long team);
+    int getCountJoin(Long userId, Long raceId, Long team);
 }
