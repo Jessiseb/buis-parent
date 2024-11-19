@@ -78,10 +78,6 @@ public class RaceLanqiaoTeacherController extends BaseController {
     @Log(title = "蓝桥杯老师报名信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
-        boolean b = raceInfoService.checkJoinCondition(raceLanqiaoTeacher.getRaceId());
-        if (!b) {
-            throw new ServiceException("比赛时间未到，暂不能报名");
-        }
         return toAjax(raceLanqiaoTeacherService.insertRaceLanqiaoTeacher(raceLanqiaoTeacher));
     }
 

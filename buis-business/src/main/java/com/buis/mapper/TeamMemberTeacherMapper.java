@@ -94,7 +94,7 @@ public interface TeamMemberTeacherMapper
      * @param raceId
      * @return
      */
-    int checkJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
+    int getCountJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
 
     /**
      * 根据team和user删除邀请

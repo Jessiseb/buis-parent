@@ -168,7 +168,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
      */
     @Override
     public int getJoinCount(Long userId, Long raceId, Long team) {
-        return teamMemberTeacherMapper.checkJoin(userId,raceId, team);
+        return teamMemberTeacherMapper.getCountJoin(userId,raceId, team);
     }
 
     /**
