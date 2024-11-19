@@ -237,7 +237,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("修改队伍信息")
     @PutMapping("/{id}")
-    public R editTeamInfo(@RequestBody TeamInfo teamInfo, @PathVariable Long id) {
+    public R editTeamInfo(@RequestBody TeamInfo teamInfo, @ApiParam(name = "id", value = "队伍id", required = true)@PathVariable Long id) {
         teamInfo.setId(id);
         int result = teamInfoService.updateTeamInfo(teamInfo);
         return R.ok(result, "操作成功");
@@ -252,7 +252,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("删除队伍信息")
     @DeleteMapping("/{id}")
-    public R removeTeamInfo(@PathVariable Long id) {
+    public R removeTeamInfo(@ApiParam(name = "id", value = "队伍id", required = true)@PathVariable Long id) {
         int result = teamInfoService.deleteTeamInfoById(id);
         return R.ok(result, "操作成功");
     }
