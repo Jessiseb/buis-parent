@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
-        <result property="isLanqiao"    column="is_lanqiao"    />
+        <result property="raceType"    column="race_type"    />
         <collection property="rewardList" ofType="com.buis.domain.Reward">
             <id property="id" column="id"></id>
             <result property="race" column="race"></result>
@@ -78,7 +78,7 @@ left join race_type t2 on t2.id = t1.son_tid
             <if test="raceEnd != null "> and t1.race_end &lt;= #{raceEnd}</if>
             <if test="status != null "> and t1.status = #{status}</if>
             <if test="level != null "> and t1.level = #{level}</if>
-            <if test="isLanqiao != null "> and t1.is_lanqiao = #{isLanqiao}</if>
+            <if test="raceType != null "> and t1.race_type = #{raceType}</if>
         </where>
     </select>
     
