@@ -56,7 +56,7 @@ public class Score extends BaseEntity {
      * 分数构成
      */
     @Excel(name = "分数构成")
-    @ApiModelProperty(value = "分数构成")
+    @ApiModelProperty(value = "分数构成-评分项id拼接计算权重后的分数1:20,2:40,3:20")
     private String build;
 
     /**

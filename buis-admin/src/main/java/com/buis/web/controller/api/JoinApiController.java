@@ -71,16 +71,6 @@ public class JoinApiController extends BaseController {
         return getDataTable(list);
     }
 
-    /**
-     * 导出老师预报名列表
-     */
-    @ApiOperation("导出老师预报名列表")
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, PreSignTeacher preSignTeacher) {
-        List<PreSignTeacherVo> list = preTeacherService.selectPreSignTeacherList(preSignTeacher);
-        ExcelUtil<PreSignTeacherVo> util = new ExcelUtil<PreSignTeacherVo>(PreSignTeacherVo.class);
-        util.exportExcel(response, list, "老师预报名数据");
-    }
 
     /**
      * 获取老师预报名详细信息
@@ -95,9 +85,9 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("新增老师预报名")
     @PostMapping
-    public AjaxResult add(@RequestBody PreSignTeacher preSignTeacher)
+    public R add(@RequestBody PreSignTeacher preSignTeacher)
     {
-        return toAjax(preTeacherService.insertPreSignTeacher(preSignTeacher));
+        return R.ok(preTeacherService.insertPreSignTeacher(preSignTeacher));
 
     }
 
@@ -106,19 +96,19 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("修改老师预报名")
     @PutMapping
-    public AjaxResult edit(@RequestBody PreSignTeacher preSignTeacher)
+    public R edit(@RequestBody PreSignTeacher preSignTeacher)
     {
-        return toAjax(preTeacherService.updatePreSignTeacher(preSignTeacher));
+        return R.ok(preTeacherService.updatePreSignTeacher(preSignTeacher));
     }
 
     /**
      * 删除老师预报名
      */
     @ApiOperation("删除老师预报名")
-    @DeleteMapping("/{ids}")
-    public AjaxResult removeTeacher(@PathVariable Long[] ids)
+    @DeleteMapping("/{id}")
+    public R removeTeacher(@PathVariable Long id)
     {
-        return toAjax(preTeacherService.deletePreSignTeacherByIds(ids));
+        return R.ok(preTeacherService.deletePreSignTeacherById(id));
     }
     /**
      * 根据比赛id分页查询预报名学生列表
@@ -147,8 +137,8 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("获取学生预报名详细信息")
     @GetMapping(value = "/{id}")
-    public AjaxResult getStudentInfo(@PathVariable("id") Long id) {
-        return success(preStudentService.selectPreSignStudentById(id));
+    public R getStudentInfo(@PathVariable("id") Long id) {
+        return R.ok(preStudentService.selectPreSignStudentById(id));
     }
 
     /**
@@ -156,8 +146,8 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("新增学生预报名")
     @PostMapping
-    public AjaxResult add(@RequestBody PreSignStudent preSignStudent) {
-        return toAjax(preStudentService.insertPreSignStudent(preSignStudent));
+    public R add(@RequestBody PreSignStudent preSignStudent) {
+        return R.ok(preStudentService.insertPreSignStudent(preSignStudent));
     }
 
     /**
@@ -165,8 +155,8 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("修改学生预报名")
     @PutMapping
-    public AjaxResult edit(@RequestBody PreSignStudent preSignStudent) {
-        return toAjax(preStudentService.updatePreSignStudent(preSignStudent));
+    public R edit(@RequestBody PreSignStudent preSignStudent) {
+        return R.ok(preStudentService.updatePreSignStudent(preSignStudent));
     }
 
     /**
@@ -174,18 +164,8 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("删除学生预报名")
     @DeleteMapping("/{ids}")
-    public AjaxResult removeStudent(@PathVariable Long[] ids) {
-        return toAjax(preStudentService.deletePreSignStudentByIds(ids));
+    public R removeStudent(@PathVariable Long[] ids) {
+        return R.ok(preStudentService.deletePreSignStudentByIds(ids));
     }
 
-    /**
-     * 导出学生预报名列表
-     */
-    @ApiOperation("导出学生预报名列表")
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, @RequestBody  PreSignStudent preSignStudent) {
-        List<PreSignStudentVo> list = preStudentService.selectPreSignStudentList(preSignStudent);
-        ExcelUtil<PreSignStudentVo> util = new ExcelUtil<>(PreSignStudentVo.class);
-        util.exportExcel(response, list, "学生预报名数据");
-    }
 }
