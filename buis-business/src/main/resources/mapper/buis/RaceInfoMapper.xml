@@ -58,7 +58,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectRaceInfoVo">
         select t1.id,
                t1.parent_tid,
-               t1.is_lanqiao,
                t1.son_tid,
                t2.name as son_name,
                t3.name as parent_name,
