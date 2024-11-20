@@ -7,10 +7,8 @@ import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
 import com.buis.service.IPreSignStudentService;
-import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.ITeamInfoService;
 import com.buis.vo.RaceLanqiaoStudentVo;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoStudentMapper;
@@ -130,7 +128,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     }
 
     @Override
-    public RaceLanqiaoStudentVo selectRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId) {
+    public RaceLanqiaoStudentVo selectRaceLanqiaoStudentRaceIdAndByUserId(Long race, Long userId) {
         RaceLanqiaoStudent raceLanqiaoStudent = new RaceLanqiaoStudent();
         raceLanqiaoStudent.setRaceId(race);
         raceLanqiaoStudent.setUserId(userId);
@@ -144,15 +142,15 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
 
     @Override
     @Transactional
-    public Integer deleteRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId) {
+    public Integer deleteRaceLanqiaoStudentByRaceIdAndUserId(Long race, Long userId) {
 
-        RaceLanqiaoStudent lanqiaoStudent = (RaceLanqiaoStudent) selectRaceLanqiaoStudentByUserIdAndRaceId(race, userId);
+        RaceLanqiaoStudent lanqiaoStudent = (RaceLanqiaoStudent) selectRaceLanqiaoStudentRaceIdAndByUserId(race, userId);
         if (lanqiaoStudent != null) {
             deleteRaceLanqiaoStudentById(lanqiaoStudent.getId());
             //删除队伍
-            teamInfoService.deleteTeamInfoByUserIdAndRaceId(race, userId);
+            teamInfoService.deleteTeamInfoByRaceIdAndUserId(race, userId);
             //删除预报名
-            preSignStudentService.deletePreSignStudentByUserIdAndRaceId(race, userId);
+            preSignStudentService.deletePreSignStudentByRaceIdAndUserId(race, userId);
         }
         return 1;
     }

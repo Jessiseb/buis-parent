@@ -216,7 +216,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * 判断报名是否符合条件
      */
     public boolean checkJoinCondition(Long userId, Long raceId) {
-        if (!checkJoinTime(raceId)) {
+        if (checkJoinTime(raceId)) {
             throw new ServiceException("当前时间不在报名时间内");
         }
         if (checkJoinFull(raceId)) {
@@ -255,7 +255,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             Date joinEnd = raceInfo.getJoinEnd();
             // 获取当前系统时间
             Date now = DateUtils.getNowDate();
-            return now.getTime() >= joinStart.getTime() && now.getTime() <= joinEnd.getTime();
+            return !(now.getTime() >= joinStart.getTime() && now.getTime() <= joinEnd.getTime());
         }
         return false;
     }
@@ -279,11 +279,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     private boolean checkJoinLanQiaoStudent(Long userId, Long raceId) {
-        Object o = lanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(raceId, userId);
+        Object o = lanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(userId,raceId );
         if (o != null) {
             throw new ServiceException("已提交过老师报名表，请取消后再次提交");
         }
-        Object o1 = LanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceId, userId);
+        Object o1 = LanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(raceId, userId);
         if (o1 != null) {
             throw new ServiceException("已提交过学生报名表，请勿重复提交");
         }
@@ -291,11 +291,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     private boolean checkJoinLanQiaoTeacher(Long userId, Long raceId) {
-        Object o = LanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceId, userId);
+        Object o = LanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(raceId, userId);
         if (o != null) {
             throw new ServiceException("已提交过学生报名表，请取消后再次提交");
         }
-        Object o1 = lanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(raceId, userId);
+        Object o1 = lanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(raceId, userId);
         if (o1 != null) {
             throw new ServiceException("已提交过老师报名表，请勿重复提交");
         }

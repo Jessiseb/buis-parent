@@ -60,7 +60,7 @@ public interface IRaceLanqiaoTeacherService
      */
     public int deleteRaceLanqiaoTeacherById(Long id);
 
-    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId);
+    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherRaceIdAndByUserId(Long race, Long userId);
 
-    public Integer deleteRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId);
+    public Integer deleteRaceLanqiaoTeacherByRaceIdAndUserId(Long race, Long userId);
 }

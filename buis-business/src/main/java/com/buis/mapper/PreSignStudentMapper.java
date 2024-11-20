@@ -3,7 +3,6 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.Judge;
 import com.buis.domain.PreSignStudent;
 import com.buis.vo.PreSignStudentVo;
 import org.apache.ibatis.annotations.Param;
@@ -69,5 +68,5 @@ public interface PreSignStudentMapper
      * @param race
      * @param userId
      */
-    void deletePreSignStudentByUserIdAndRaceId(@Param("race") Long race, @Param("userId") Long userId);
+    void deletePreSignStudentByRaceIdAndUserId(@Param("race") Long race, @Param("userId") Long userId);
 }
