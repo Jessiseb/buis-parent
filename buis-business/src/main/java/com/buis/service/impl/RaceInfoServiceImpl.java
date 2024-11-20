@@ -216,7 +216,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * 判断报名是否符合条件
      */
     public boolean checkJoinCondition(Long userId, Long raceId) {
-        if (checkJoinTime(raceId)) {
+        if (!checkJoinTime(raceId)) {
             throw new ServiceException("当前时间不在报名时间内");
         }
         if (checkJoinFull(raceId)) {
