@@ -216,7 +216,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * 判断报名是否符合条件
      */
     public boolean checkJoinCondition(Long userId, Long raceId) {
-        if (!checkJoinTime(raceId)) {
+        if (checkJoinTime(raceId)) {
             throw new ServiceException("当前时间不在报名时间内");
         }
         if (checkJoinFull(raceId)) {
@@ -225,10 +225,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         RaceInfoVo raceInfoVo = selectRaceInfoById(raceId);
         if (raceInfoVo != null) {
             //如果比赛是蓝桥杯
-            if (raceInfoVo.getRaceType() == 1) {
-                checkJoinLanQiaoStudent(raceId, userId);
-                checkJoinLanQiaoTeacher(raceId, userId);
-            }
+//            if (raceInfoVo.getRaceType() == 1) {
+//                checkJoinLanQiaoStudent(raceId, userId);
+//                checkJoinLanQiaoTeacher(raceId, userId);
+//            }
             //是学生只能创建一个队伍
             UserInfoVo userInfoVo = userInfoService.selectUserInfoById(userId);
             if (userInfoVo != null && userInfoVo.getIsTeacher() == 0) {
@@ -255,7 +255,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             Date joinEnd = raceInfo.getJoinEnd();
             // 获取当前系统时间
             Date now = DateUtils.getNowDate();
-            return now.getTime() >= joinStart.getTime() && now.getTime() <= joinEnd.getTime();
+            return !(now.getTime() >= joinStart.getTime() && now.getTime() <= joinEnd.getTime());
         }
         return false;
     }
