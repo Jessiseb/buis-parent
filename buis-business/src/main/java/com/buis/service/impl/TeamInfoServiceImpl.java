@@ -81,8 +81,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     }
 
     @Override
-    public void deleteTeamInfoByUserIdAndRaceId(Long race, Long userId) {
-        teamInfoMapper.deleteTeamInfoByUserIdAndRaceId(race, userId);
+    public void deleteTeamInfoByRaceIdAndUserId(Long race, Long userId) {
+        teamInfoMapper.deleteTeamInfoByRaceIdAndUserId(race, userId);
     }
 
     @Override

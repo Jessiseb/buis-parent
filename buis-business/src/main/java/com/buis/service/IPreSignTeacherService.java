@@ -61,5 +61,5 @@ public interface IPreSignTeacherService
     public int deletePreSignTeacherById(Long id);
 
 
-    void deletePreSignTeacherByUserIdAndRaceId(Long race, Long userId);
+    void deletePreSignTeacherByRaceIdAndUserId(Long race, Long userId);
 }

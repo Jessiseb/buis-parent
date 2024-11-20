@@ -145,7 +145,7 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
 
     //查询比赛报名信息
     @Override
-    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId) {
+    public RaceLanqiaoTeacher selectRaceLanqiaoTeacherRaceIdAndByUserId(Long race, Long userId) {
         RaceLanqiaoTeacher raceLanqiaoTeacher = new RaceLanqiaoTeacher();
         raceLanqiaoTeacher.setRaceId(race);
         raceLanqiaoTeacher.setUserId(userId);
@@ -159,15 +159,15 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
 
     //删除比赛报名信息
     @Override
-    public Integer deleteRaceLanqiaoTeacherByUserIdAndRaceId(Long race, Long userId) {
+    public Integer deleteRaceLanqiaoTeacherByRaceIdAndUserId(Long race, Long userId) {
 
-        RaceLanqiaoTeacher lanqiaoTeacher = (RaceLanqiaoTeacher) selectRaceLanqiaoTeacherByUserIdAndRaceId(race, userId);
+        RaceLanqiaoTeacher lanqiaoTeacher = (RaceLanqiaoTeacher) selectRaceLanqiaoTeacherRaceIdAndByUserId(race, userId);
         if (lanqiaoTeacher != null) {
             int i = deleteRaceLanqiaoTeacherById(lanqiaoTeacher.getId());
             //删除队伍
-            teamInfoService.deleteTeamInfoByUserIdAndRaceId(race, userId);
+            teamInfoService.deleteTeamInfoByRaceIdAndUserId(race, userId);
             //删除预报名
-            preSignTeacherService.deletePreSignTeacherByUserIdAndRaceId(race, userId);
+            preSignTeacherService.deletePreSignTeacherByRaceIdAndUserId(race, userId);
         }
         return 1;
     }
