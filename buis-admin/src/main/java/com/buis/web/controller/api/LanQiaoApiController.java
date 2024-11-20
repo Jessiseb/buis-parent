@@ -138,29 +138,5 @@ public class LanQiaoApiController extends BaseController {
         return R.ok(list);
     }
 
-    /**
-     * 导出蓝桥杯指导老师信息
-     */
-    @ApiOperation("导出蓝桥杯指导老师信息")
-    @PostMapping("/export")
-    public void exportTeacher(@ApiParam(name = "raceLanqiaoTeacher", value = "蓝桥杯指导老师条件过滤", required = false) @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher,
-                              HttpServletResponse response) {
-        List<RaceLanqiaoTeacherVo> list = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
-        ExcelUtil<RaceLanqiaoTeacherVo> util = new ExcelUtil<>(RaceLanqiaoTeacherVo.class);
-        util.exportExcel(response, list, "蓝桥杯指导老师数据");
-    }
-
-    /**
-     * 导出蓝桥杯报名学生信息
-     */
-    @ApiOperation("导出蓝桥杯报名学生信息")
-    @PostMapping("/exportStudent")
-    public void exportStudent(@ApiParam(name = "raceLanqiaoStudent", value = "蓝桥杯报名学生条件过滤", required = false) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent,
-                              HttpServletResponse response) {
-        List<RaceLanqiaoStudentVo> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
-        ExcelUtil<RaceLanqiaoStudentVo> util = new ExcelUtil<>(RaceLanqiaoStudentVo.class);
-        util.exportExcel(response, list, "蓝桥杯报名学生数据");
-    }
-
 
 }
