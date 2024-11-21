@@ -1,29 +1,33 @@
 package com.buis.service.impl;
 
-import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.PreSignTeacher;
+import com.buis.domain.RaceLanqiaoTeacher;
+import com.buis.mapper.PreSignTeacherMapper;
+import com.buis.service.IPreSignTeacherService;
+import com.buis.service.IRaceInfoService;
+import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.PreSignTeacherVo;
+import com.buis.vo.RaceInfoVo;
+import com.buis.vo.RaceLanqiaoTeacherVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.buis.mapper.PreSignTeacherMapper;
-import com.buis.domain.PreSignTeacher;
-import com.buis.service.IPreSignTeacherService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 老师预报名Service业务层处理
- * 
+ *
  * @author buis
  * @date 2024-10-11
  */
 @Service
-public class PreSignTeacherServiceImpl implements IPreSignTeacherService 
-{
+public class PreSignTeacherServiceImpl implements IPreSignTeacherService {
     @Resource
     private IUserInfoService userInfoService;
-    @Autowired
+    @Resource
     private PreSignTeacherMapper preSignTeacherMapper;
 
     /**
@@ -68,51 +72,47 @@ public class PreSignTeacherServiceImpl implements IPreSignTeacherService
 
     /**
      * 新增老师预报名
-     * 
+     *
      * @param preSignTeacher 老师预报名
      * @return 结果
      */
     @Override
-    public int insertPreSignTeacher(PreSignTeacher preSignTeacher)
-    {
+    public int insertPreSignTeacher(PreSignTeacher preSignTeacher) {
         preSignTeacher.setCreateTime(DateUtils.getNowDate());
         return preSignTeacherMapper.insertPreSignTeacher(preSignTeacher);
     }
 
     /**
      * 修改老师预报名
-     * 
+     *
      * @param preSignTeacher 老师预报名
      * @return 结果
      */
     @Override
-    public int updatePreSignTeacher(PreSignTeacher preSignTeacher)
-    {
+    public int updatePreSignTeacher(PreSignTeacher preSignTeacher) {
         preSignTeacher.setUpdateTime(DateUtils.getNowDate());
         return preSignTeacherMapper.updatePreSignTeacher(preSignTeacher);
     }
 
     /**
      * 批量删除老师预报名
-     * 
+     *
      * @param ids 需要删除的老师预报名主键
      * @return 结果
      */
     @Override
-    public int deletePreSignTeacherByIds(Long[] ids)
-    {
+    public int deletePreSignTeacherByIds(Long[] ids) {
         return preSignTeacherMapper.deletePreSignTeacherByIds(ids);
     }
 
     /**
      * 删除老师预报名信息
-     * 
+     *
      * @param id 老师预报名主键
      * @return 结果
      */
     @Override
-    public int deletePreSignTeacherById(Long id)
-    {
+    public int deletePreSignTeacherById(Long id) {
         return preSignTeacherMapper.deletePreSignTeacherById(id);
     }
 

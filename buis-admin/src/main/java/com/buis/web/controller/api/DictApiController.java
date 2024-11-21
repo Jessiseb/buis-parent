@@ -29,7 +29,22 @@ public class DictApiController {
     public MyPageVo<List<SysDictDataVo>> getTitle() {
         return getDictDataByType("teacher_title");
     }
-
+    /**
+     * 查询班级字典
+     */
+    @ApiOperation("查询班级字典")
+    @GetMapping("/getStuClass")
+    public MyPageVo<List<SysDictDataVo>> getStuClass() {
+        return getDictDataByType("stu_class");
+    }
+    /**
+     * 查询年级字典
+     */
+    @ApiOperation("查询年级字典")
+    @GetMapping("/getStuGrade")
+    public MyPageVo<List<SysDictDataVo>> getStuGrade() {
+        return getDictDataByType("stu_grade");
+    }
     /**
      * 查询性别字典
      */
@@ -58,9 +73,9 @@ public class DictApiController {
     }
 
     /**
-     * 查询参赛类型字典
+     * 查询比赛类型字典
      */
-    @ApiOperation("查询参赛类型字典")
+    @ApiOperation("查询比赛类型字典")
     @GetMapping("/getRaceType")
     public MyPageVo<List<SysDictDataVo>> getRaceType() {
         return getDictDataByType("race_type");

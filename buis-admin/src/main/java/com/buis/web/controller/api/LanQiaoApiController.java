@@ -4,15 +4,12 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
-import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceLanqiaoStudent;
 import com.buis.domain.RaceLanqiaoTeacher;
 import com.buis.domain.RaceLanqiaoType;
-import com.buis.service.IRaceInfoService;
 import com.buis.service.IRaceLanqiaoStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IRaceLanqiaoTypeService;
-import com.buis.vo.RaceLanqiaoStudentVo;
 import com.buis.vo.RaceLanqiaoTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +17,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "蓝桥杯Api")
@@ -33,8 +29,26 @@ public class LanQiaoApiController extends BaseController {
     private IRaceLanqiaoTypeService raceLanqiaoTypeService;
     @Autowired
     private IRaceLanqiaoTeacherService raceLanqiaoTeacherService;
-    @Autowired
-    private IRaceInfoService raceInfoService;
+
+    /**
+     * 根据比赛id查询老师列表
+     */
+    @ApiOperation("根据比赛id查询指导老师列表")
+    @GetMapping("/getTeacherList/{race}")
+    public R<List<RaceLanqiaoTeacherVo>> getTeacherList(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
+        RaceLanqiaoTeacher raceLanqiaoTeacher = new RaceLanqiaoTeacher();
+        raceLanqiaoTeacher.setRaceId(race);
+        List<RaceLanqiaoTeacherVo> raceLanqiaoTeacherVos = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
+        if (raceLanqiaoTeacherVos != null && raceLanqiaoTeacherVos.size() > 0) {
+            for (RaceLanqiaoTeacherVo raceLanqiaoTeacherVo : raceLanqiaoTeacherVos) {
+                if (raceLanqiaoTeacherVo != null) {
+                    raceLanqiaoTeacherVo.setBankNumber(null);//银行卡号
+                    raceLanqiaoTeacherVo.setIdentity(null);//身份证
+                }
+            }
+        }
+        return R.ok(raceLanqiaoTeacherVos);
+    }
 
     /**
      * 删除蓝桥杯报名信息
@@ -137,30 +151,5 @@ public class LanQiaoApiController extends BaseController {
         List<RaceLanqiaoType> list = raceLanqiaoTypeService.selectRaceLanqiaoTypeList(raceLanqiaoType);
         return R.ok(list);
     }
-
-    /**
-     * 导出蓝桥杯指导老师信息
-     */
-    @ApiOperation("导出蓝桥杯指导老师信息")
-    @PostMapping("/export")
-    public void exportTeacher(@ApiParam(name = "raceLanqiaoTeacher", value = "蓝桥杯指导老师条件过滤", required = false) @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher,
-                              HttpServletResponse response) {
-        List<RaceLanqiaoTeacherVo> list = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherList(raceLanqiaoTeacher);
-        ExcelUtil<RaceLanqiaoTeacherVo> util = new ExcelUtil<>(RaceLanqiaoTeacherVo.class);
-        util.exportExcel(response, list, "蓝桥杯指导老师数据");
-    }
-
-    /**
-     * 导出蓝桥杯报名学生信息
-     */
-    @ApiOperation("导出蓝桥杯报名学生信息")
-    @PostMapping("/exportStudent")
-    public void exportStudent(@ApiParam(name = "raceLanqiaoStudent", value = "蓝桥杯报名学生条件过滤", required = false) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent,
-                              HttpServletResponse response) {
-        List<RaceLanqiaoStudentVo> list = raceLanqiaoStudentService.selectRaceLanqiaoStudentList(raceLanqiaoStudent);
-        ExcelUtil<RaceLanqiaoStudentVo> util = new ExcelUtil<>(RaceLanqiaoStudentVo.class);
-        util.exportExcel(response, list, "蓝桥杯报名学生数据");
-    }
-
 
 }
