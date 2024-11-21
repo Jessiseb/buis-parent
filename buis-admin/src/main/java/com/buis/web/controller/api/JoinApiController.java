@@ -79,9 +79,9 @@ public class JoinApiController extends BaseController {
     public R removePre(@ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer isTeacher, @ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         if (isTeacher == 1) {
-            preTeacherService.deletePreSignTeacherByUserIdAndRaceId(race,userId);
+            preTeacherService.deletePreSignTeacherByRaceIdAndUserId(race,userId);
         } else if (isTeacher == 0) {
-            preStudentService.deletePreSignStudentByUserIdAndRaceId(race,userId);
+            preStudentService.deletePreSignStudentByRaceIdAndUserId(race,userId);
         }
         return R.ok();
     }
