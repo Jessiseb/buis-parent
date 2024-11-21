@@ -137,7 +137,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <delete id="deleteTeamInfoByUserIdAndRaceId">
+    <delete id="deleteTeamInfoByRaceIdAndUserId">
         update team_info
         set is_deleted = 1
         where leader = #{userId} and race = #{race}

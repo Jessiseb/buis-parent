@@ -72,7 +72,7 @@ public interface ITeamInfoService
      * @param race
      * @param userId
      */
-    void deleteTeamInfoByUserIdAndRaceId(Long race, Long userId);
+    void deleteTeamInfoByRaceIdAndUserId(Long race, Long userId);
 
     /**
      * 判断用户是否已加入

@@ -66,7 +66,7 @@ public interface IRaceLanqiaoStudentService
 
 
 
-    RaceLanqiaoStudent selectRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId);
+    RaceLanqiaoStudent selectRaceLanqiaoStudentRaceIdAndByUserId(Long race, Long userId);
 
-    Integer deleteRaceLanqiaoStudentByUserIdAndRaceId(Long race, Long userId);
+    Integer deleteRaceLanqiaoStudentByRaceIdAndUserId(Long race, Long userId);
 }

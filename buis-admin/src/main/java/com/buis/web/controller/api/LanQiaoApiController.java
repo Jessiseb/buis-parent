@@ -58,9 +58,9 @@ public class LanQiaoApiController extends BaseController {
     public R remove(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer isTeacher) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         if (isTeacher == 0) {
-            raceLanqiaoStudentService.deleteRaceLanqiaoStudentByUserIdAndRaceId(race, userId);
+            raceLanqiaoStudentService.deleteRaceLanqiaoStudentByRaceIdAndUserId(race, userId);
         } else if (isTeacher == 1) {
-            raceLanqiaoTeacherService.deleteRaceLanqiaoTeacherByUserIdAndRaceId(race, userId);
+            raceLanqiaoTeacherService.deleteRaceLanqiaoTeacherByRaceIdAndUserId(race, userId);
         }
         return R.ok();
     }
@@ -72,7 +72,7 @@ public class LanQiaoApiController extends BaseController {
     @GetMapping("/student/{race}")
     public R<RaceLanqiaoStudent> getStudent(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
-        RaceLanqiaoStudent raceLanqiaoStudent = raceLanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(race, userId);
+        RaceLanqiaoStudent raceLanqiaoStudent = raceLanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(race, userId);
         return R.ok(raceLanqiaoStudent);
     }
 
@@ -83,7 +83,7 @@ public class LanQiaoApiController extends BaseController {
     @GetMapping("/teacher/{race}")
     public R<RaceLanqiaoTeacher> getTeacher(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
-        RaceLanqiaoTeacher raceLanqiaoTeacher = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(race, userId);
+        RaceLanqiaoTeacher raceLanqiaoTeacher = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(race, userId);
         return R.ok(raceLanqiaoTeacher);
     }
 

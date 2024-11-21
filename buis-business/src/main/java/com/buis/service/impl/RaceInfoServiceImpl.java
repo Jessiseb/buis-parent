@@ -279,11 +279,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     private boolean checkJoinLanQiaoStudent(Long userId, Long raceId) {
-        Object o = lanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(raceId, userId);
+        Object o = lanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(userId,raceId );
         if (o != null) {
             throw new ServiceException("已提交过老师报名表，请取消后再次提交");
         }
-        Object o1 = LanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceId, userId);
+        Object o1 = LanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(raceId, userId);
         if (o1 != null) {
             throw new ServiceException("已提交过学生报名表，请勿重复提交");
         }
@@ -291,11 +291,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     private boolean checkJoinLanQiaoTeacher(Long userId, Long raceId) {
-        Object o = LanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceId, userId);
+        Object o = LanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(raceId, userId);
         if (o != null) {
             throw new ServiceException("已提交过学生报名表，请取消后再次提交");
         }
-        Object o1 = lanqiaoTeacherService.selectRaceLanqiaoTeacherByUserIdAndRaceId(raceId, userId);
+        Object o1 = lanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(raceId, userId);
         if (o1 != null) {
             throw new ServiceException("已提交过老师报名表，请勿重复提交");
         }

@@ -76,7 +76,7 @@ public interface TeamInfoMapper
      * @param race
      * @param userId
      */
-    void deleteTeamInfoByUserIdAndRaceId(@Param("race") Long race, @Param("userId")Long userId);
+    void deleteTeamInfoByRaceIdAndUserId(@Param("race") Long race, @Param("userId")Long userId);
 
     /**
      * 检查是否已加入
