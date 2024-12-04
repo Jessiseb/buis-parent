@@ -8,6 +8,7 @@ import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.ITeamInfoService;
+import com.buis.service.IUserInfoService;
 import com.buis.vo.RaceLanqiaoStudentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     private ITeamInfoService teamInfoService;
     @Autowired
     private IPreSignStudentService preSignStudentService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
     /**
      * 查询蓝桥杯学生报名信息
@@ -62,6 +65,10 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     @Override
     @Transactional
     public int insertRaceLanqiaoStudent(RaceLanqiaoStudent raceLanqiaoStudent) {
+        UserInfo id = userInfoService.selectUserInfoById(raceLanqiaoStudent.getUserId());
+        if (id != null && id.getIsTeacher() != 0 ) {
+            throw new ServiceException("您不是学生，无法报名");
+        }
         //获取银行卡号
         String bankNumber = raceLanqiaoStudent.getBankNumber();
         //银行卡号不能超过20
