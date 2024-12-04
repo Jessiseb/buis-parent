@@ -1,5 +1,6 @@
 package com.buis.web.controller.api;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
@@ -7,13 +8,17 @@ import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.RaceLanqiaoStudent;
 import com.buis.domain.RaceLanqiaoTeacher;
 import com.buis.domain.RaceLanqiaoType;
+import com.buis.domain.UserInfo;
 import com.buis.service.IRaceLanqiaoStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IRaceLanqiaoTypeService;
+import com.buis.service.IUserInfoService;
+import com.buis.service.impl.UserInfoServiceImpl;
 import com.buis.vo.RaceLanqiaoTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import net.sf.jsqlparser.statement.select.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +34,8 @@ public class LanQiaoApiController extends BaseController {
     private IRaceLanqiaoTypeService raceLanqiaoTypeService;
     @Autowired
     private IRaceLanqiaoTeacherService raceLanqiaoTeacherService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
     /**
      * 根据比赛id查询老师列表
@@ -72,6 +79,10 @@ public class LanQiaoApiController extends BaseController {
     @GetMapping("/student/{race}")
     public R<RaceLanqiaoStudent> getStudent(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
+        UserInfo id = userInfoService.selectUserInfoById(userId);
+        if (id != null && id.getIsTeacher() != 0 ) {
+            throw new ServiceException("您不是学生，无法报名");
+        }
         RaceLanqiaoStudent raceLanqiaoStudent = raceLanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(race, userId);
         return R.ok(raceLanqiaoStudent);
     }
@@ -83,6 +94,10 @@ public class LanQiaoApiController extends BaseController {
     @GetMapping("/teacher/{race}")
     public R<RaceLanqiaoTeacher> getTeacher(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
+        UserInfo id = userInfoService.selectUserInfoById(userId);
+        if (id != null && id.getIsTeacher() != 1 ) {
+            throw new ServiceException("您不是老师，无法报名");
+        }
         RaceLanqiaoTeacher raceLanqiaoTeacher = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(race, userId);
         return R.ok(raceLanqiaoTeacher);
     }
@@ -96,7 +111,8 @@ public class LanQiaoApiController extends BaseController {
         Long userId = SecurityUtils.getFrontLoginUserId();
         raceLanqiaoStudent.setUserId(userId);
         raceLanqiaoStudent.setRaceId(race);
-        return R.ok(raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent));
+        int res = raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent);
+        return R.ok(res);
     }
 
     /**
@@ -108,6 +124,7 @@ public class LanQiaoApiController extends BaseController {
                  @ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true)
                  @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
         Long userId = SecurityUtils.getFrontLoginUserId();
+
         raceLanqiaoTeacher.setUserId(userId);
         raceLanqiaoTeacher.setRaceId(race);
         int res = raceLanqiaoTeacherService.insertRaceLanqiaoTeacher(raceLanqiaoTeacher);
