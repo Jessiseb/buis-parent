@@ -56,6 +56,7 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 班级
      */
+    @Excel(name = "班级",sort = 3)
     @ApiModelProperty("班级 ")
     @JsonProperty("sClass")
     private String sClass;
@@ -63,7 +64,7 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 手机号
      */
-    @Excel(name = "手机号",sort = 3)
+    @Excel(name = "手机号",sort = 4)
     @ApiModelProperty("手机号 ")
     private String phone;
 
@@ -76,7 +77,7 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 身份证号码
      */
-    @Excel(name = "身份证号码",sort = 5)
+    @Excel(name = "身份证号码",sort = 6)
     @ApiModelProperty("身份证号码")
     private String identity;
 
@@ -95,35 +96,35 @@ public class RaceLanqiaoStudent extends BaseEntity {
     /**
      * 第一意愿指导老师
      */
-    @Excel(name = "第一意愿指导老师",sort = 6)
+    @Excel(name = "第一意愿指导老师",sort = 7)
     @ApiModelProperty("第一意愿指导老师")
     private String teacher1;
 
     /**
      * 第二意愿指导老师
      */
-    @Excel(name = "第二意愿指导老师",sort = 7)
+    @Excel(name = "第二意愿指导老师",sort = 8)
     @ApiModelProperty("第二意愿指导老师")
     private String teacher2;
 
     /**
      * 第三意愿指导老师
      */
-    @Excel(name = "第三意愿指导老师",sort = 8)
+    @Excel(name = "第三意愿指导老师",sort = 9)
     @ApiModelProperty("第三意愿指导老师")
     private String teacher3;
 
     /**
      * 银行卡账号
      */
-    @Excel(name = "银行卡账号",sort = 9)
+    @Excel(name = "银行卡账号",sort = 10)
     @ApiModelProperty("银行卡号 ")
     private String bankNumber;
 
     /**
      * 开户行
      */
-    @Excel(name = "开户行",sort = 10)
+    @Excel(name = "开户行",sort = 11)
     @ApiModelProperty("开户行 ")
     private String bankName;
 
