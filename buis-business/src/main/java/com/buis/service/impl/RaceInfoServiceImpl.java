@@ -247,7 +247,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @param raceId
      * @return
      */
-    private boolean checkJoinTime(Long raceId) {
+    public boolean checkJoinTime(Long raceId) {
         // 查询比赛报名时间
         RaceInfo raceInfo = raceInfoMapper.selectRaceInfoById(raceId);
         if (raceInfo != null) {
