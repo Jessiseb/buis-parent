@@ -108,7 +108,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
             throw new ServiceException("银行卡号过长!");
         }
         if (raceInfoService.checkJoinTime(raceLanqiaoStudent.getRaceId())) {
-            throw new ServiceException("当前时间不在报名时间内");
+            throw new ServiceException("已超过报名时间，不能修改信息~");
         }
         return raceLanqiaoStudentMapper.updateRaceLanqiaoStudent(raceLanqiaoStudent);
     }
