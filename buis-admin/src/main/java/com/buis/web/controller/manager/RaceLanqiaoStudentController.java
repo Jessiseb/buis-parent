@@ -113,8 +113,8 @@ public class RaceLanqiaoStudentController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:lanQiaoStudent:remove')")
     @Log(title = "蓝桥杯学生报名信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
+    public AjaxResult remove(@PathVariable("ids") Long id)
     {
-        return toAjax(raceLanqiaoStudentService.deleteRaceLanqiaoStudentByIds(ids));
+        return toAjax(raceLanqiaoStudentService.deleteRaceLanqiaoStudentById(id));
     }
 }
