@@ -1,6 +1,5 @@
 package com.buis.web.controller.api;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
@@ -13,12 +12,10 @@ import com.buis.service.IRaceLanqiaoStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IRaceLanqiaoTypeService;
 import com.buis.service.IUserInfoService;
-import com.buis.service.impl.UserInfoServiceImpl;
 import com.buis.vo.RaceLanqiaoTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import net.sf.jsqlparser.statement.select.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +33,7 @@ public class LanQiaoApiController extends BaseController {
     private IRaceLanqiaoTeacherService raceLanqiaoTeacherService;
     @Autowired
     private IUserInfoService userInfoService;
+
 
     /**
      * 根据比赛id查询老师列表
@@ -107,8 +105,16 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("新增蓝桥杯学生报名信息")
     @PostMapping("/student/{race}")
-    public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
+    public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race,
+                 @ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
+        //获取登录用户id
         Long userId = SecurityUtils.getFrontLoginUserId();
+        //获取被操作用户id
+        Long id = raceLanqiaoStudent.getUserId();
+        //校验是否本人操作
+        if (userInfoService.isSelf(userId,id)){
+            throw new ServiceException("非本人修改!");
+        }
         raceLanqiaoStudent.setUserId(userId);
         raceLanqiaoStudent.setRaceId(race);
         int res = raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent);
@@ -123,8 +129,14 @@ public class LanQiaoApiController extends BaseController {
     public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race,
                  @ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true)
                  @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
+        //获取登录用户id
         Long userId = SecurityUtils.getFrontLoginUserId();
-
+        //获取被操作用户id
+        Long id = raceLanqiaoTeacher.getUserId();
+        //校验是否本人操作
+        if (userInfoService.isSelf(userId,id)){
+            throw new ServiceException("非本人修改!!");
+        }
         raceLanqiaoTeacher.setUserId(userId);
         raceLanqiaoTeacher.setRaceId(race);
         int res = raceLanqiaoTeacherService.insertRaceLanqiaoTeacher(raceLanqiaoTeacher);
