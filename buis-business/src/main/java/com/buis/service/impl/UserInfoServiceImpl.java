@@ -309,4 +309,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
         return token;
 
     }
+
+    @Override
+    public boolean isSelf(Long loginUserId, Long userId) {
+        return loginUserId != null && !loginUserId.equals(userId);
+    }
 }

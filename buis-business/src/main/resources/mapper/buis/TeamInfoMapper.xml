@@ -12,6 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="leader"    column="leader"    />
         <result property="tLimit"    column="t_limit"    />
         <result property="capacity"    column="capacity"    />
+        <result property="file"    column="file"    />
         <result property="start"    column="start"    />
         <result property="end"    column="end"    />
         <result property="rRank"    column="r_rank"    />
@@ -23,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTeamInfoVo">
-        select id, race, name, description, leader, t_limit, capacity, start, end, r_rank, status, reason, is_deleted, create_time, update_time from team_info
+        select id, race, name, description, leader, t_limit, capacity,file, start, end, r_rank, status, reason, is_deleted, create_time, update_time from team_info
     </sql>
 
     <select id="selectTeamInfoList" parameterType="com.buis.domain.TeamInfo" resultMap="TeamInfoResult">
@@ -38,6 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leader != null ">and leader = #{leader}</if>
             <if test="tLimit != null  and tLimit != ''">and t_limit like concat('%', #{tLimit}, '%')</if>
             <if test="capacity != null ">and capacity = #{capacity}</if>
+            <if test="file != null ">and file = #{file}</if>
             <if test="start != null ">and start = #{start}</if>
             <if test="end != null ">and end = #{end}</if>
             <if test="status != null ">and status = #{status}</if>
@@ -69,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leader != null">leader,</if>
             <if test="tLimit != null and tLimit != ''">t_limit,</if>
             <if test="capacity != null">capacity,</if>
+            <if test="file != null">file,</if>
             <if test="start != null">start,</if>
             <if test="end != null">end,</if>
             <if test="rRank != null">r_rank,</if>
@@ -85,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leader != null">#{leader},</if>
             <if test="tLimit != null and tLimit != ''">#{tLimit},</if>
             <if test="capacity != null">#{capacity},</if>
+            <if test="file != null">#{file},</if>
             <if test="start != null">#{start},</if>
             <if test="end != null">#{end},</if>
             <if test="rRank != null">#{rRank},</if>
@@ -105,6 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leader != null">leader = #{leader},</if>
             <if test="tLimit != null and tLimit != ''">t_limit = #{tLimit},</if>
             <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="file != null">file = #{file},</if>
             <if test="start != null">start = #{start},</if>
             <if test="end != null">end = #{end},</if>
             <if test="rRank != null">r_rank = #{rRank},</if>

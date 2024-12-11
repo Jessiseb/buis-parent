@@ -76,6 +76,14 @@ public class TeamInfo extends BaseEntity {
     private Long capacity;
 
     /**
+     * 申报书
+     */
+    @ApiModelProperty("申报书")
+    @Excel(name = "申报书")
+    private String file;
+
+
+    /**
      * 招聘开始时间
      */
     @ApiModelProperty("招聘开始时间")

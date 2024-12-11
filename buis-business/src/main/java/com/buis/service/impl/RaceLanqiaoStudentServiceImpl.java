@@ -121,6 +121,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
      */
     @Override
     public int deleteRaceLanqiaoStudentByIds(Long[] ids) {
+
         raceLanqiaoStudentMapper.deleteRaceLanqiaoStudentByIds(ids);
 
         return 1;
@@ -151,10 +152,18 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
         return LanqiaoStudent;
     }
 
+    /**
+     * 删除蓝桥杯学生报名信息信息
+     *
+     *
+     * @return 结果
+     */
     @Override
     @Transactional
     public Integer deleteRaceLanqiaoStudentByRaceIdAndUserId(Long race, Long userId) {
-
+        if (raceInfoService.checkJoinTime(race)){
+            throw new ServiceException("已截至报名时间，不能取消报名~");
+        }
         RaceLanqiaoStudent lanqiaoStudent = (RaceLanqiaoStudent) selectRaceLanqiaoStudentRaceIdAndByUserId(race, userId);
         if (lanqiaoStudent != null) {
             deleteRaceLanqiaoStudentById(lanqiaoStudent.getId());
