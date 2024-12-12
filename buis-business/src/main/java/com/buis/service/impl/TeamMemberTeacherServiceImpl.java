@@ -41,6 +41,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
     public TeamMemberTeacherVo selectTeamMemberTeacherById(Long id) {
         TeamMemberTeacherVo teamMemberTeacherVo = teamMemberTeacherMapper.selectTeamMemberTeacherById(id);
         setTeacherInfo(teamMemberTeacherVo);
+        setTeamInfo(teamMemberTeacherVo);
         return teamMemberTeacherVo;
     }
 
@@ -55,6 +56,7 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
         List<TeamMemberTeacherVo> teamMemberTeacherVos = teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
         for (TeamMemberTeacherVo teamMemberTeacherVo : teamMemberTeacherVos) {
             setTeacherInfo(teamMemberTeacherVo);
+            setTeamInfo(teamMemberTeacherVo);
         }
         return teamMemberTeacherVos;
     }
@@ -69,7 +71,14 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
             teamMemberTeacherVo.setTeacherInfo(userInfoService.selectUserInfoById(teamMemberTeacherVo.getTeacher()));
         }
     }
-
+/**
+ * 设置队伍信息
+ */
+private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
+    if (teamMemberTeacherVo != null) {
+        teamMemberTeacherVo.setTeamInfo(teamInfoService.selectTeamInfoById(teamMemberTeacherVo.getTeam()));
+    }
+}
 
     /**
      * 新增队伍老师管理
