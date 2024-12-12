@@ -97,7 +97,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public List<TeamInfoVo> selectTeamInfoByUserId(Long userId) {
-        return teamInfoMapper.selectTeamInfoByUserId(userId);
+        List<TeamInfoVo> results = new ArrayList<>();
+        List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoByUserId(userId);
+        if (teamInfoList == null || teamInfoList.isEmpty()) {
+            return results; // 返回空列表
+        }
+        for (TeamInfo team : teamInfoList) {
+            results.add(createTeamInfoVo(team));
+        }
+        return results;
     }
 
     /**

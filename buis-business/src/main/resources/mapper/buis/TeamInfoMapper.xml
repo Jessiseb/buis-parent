@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">and leader = #{userId}</if>
         </where>
     </select>
-    <select id="selectTeamInfoByUserId" resultType="com.buis.vo.TeamInfoVo">
+    <select id="selectTeamInfoByUserId" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamInfoVo"/>
         where leader = #{userId} and is_deleted = 0
     </select>
