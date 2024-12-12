@@ -61,6 +61,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">and leader = #{userId}</if>
         </where>
     </select>
+    <select id="selectTeamInfoByUserId" resultType="com.buis.vo.TeamInfoVo">
+        <include refid="selectTeamInfoVo"/>
+        where leader = #{userId} and is_deleted = 0
+    </select>
 
     <insert id="insertTeamInfo" parameterType="com.buis.domain.TeamInfo" useGeneratedKeys="true" keyProperty="id">
         insert into team_info

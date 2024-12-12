@@ -86,4 +86,10 @@ public interface TeamInfoMapper
      * @return
      */
     int getCountJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
+    /**
+     * 根据用户id查询用户创建的队伍
+     * @param userId
+     * @return
+     */
+    List<TeamInfoVo> selectTeamInfoByUserId(Long userId);
 }
