@@ -79,10 +79,10 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
         raceLanqiaoTeacherMapper.insertRaceLanqiaoTeacher(raceLanqiaoTeacher);
 
         //新增队伍
-        TeamInfo teamInfo = new TeamInfo();
-        teamInfo.setRace(raceLanqiaoTeacher.getRaceId());
-        teamInfo.setLeader(raceLanqiaoTeacher.getUserId());
-        teamInfoService.insertTeamInfo(teamInfo);
+//        TeamInfo teamInfo = new TeamInfo();
+//        teamInfo.setRace(raceLanqiaoTeacher.getRaceId());
+//        teamInfo.setLeader(raceLanqiaoTeacher.getUserId());
+//        teamInfoService.insertTeamInfo(teamInfo);
 
         //新增老师预报名
         PreSignTeacher preSignTeacher = new PreSignTeacher();
