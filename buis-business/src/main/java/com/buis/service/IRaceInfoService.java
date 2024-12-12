@@ -66,4 +66,11 @@ public interface IRaceInfoService
      * @return
      */
     public boolean checkJoinCondition(Long userId,Long raceId);
+    /**
+     * 检查是否超过了比赛的指导老师数量限制
+     * @param raceId       比赛的ID
+     * @param teacherId    老师的ID
+     * @return
+     */
+    public boolean checkGuideLimit(Long raceId,Long teacherId);
 }
