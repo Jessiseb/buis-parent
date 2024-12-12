@@ -90,6 +90,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return teamInfoMapper.getCountJoin(userId,raceId,team);
     }
 
+    /**
+     * 根据用户id查询用户创建的队伍
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<TeamInfoVo> selectTeamInfoByUserId(Long userId) {
+        return teamInfoMapper.selectTeamInfoByUserId(userId);
+    }
 
     /**
      * 查询队伍信息列表 Vo

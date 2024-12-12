@@ -216,8 +216,16 @@ public class TeamApiController extends BaseController {
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId);
         return R.ok(teamInfoVos);
     }
-
-
+/**
+ * 根据用户id查询我的队伍列表
+ */
+    @ApiOperation("根据用户id查询我的队伍列表")
+    @GetMapping("/myTeam")
+    public R<List<TeamInfoVo>> myTeam() {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        List<TeamInfoVo> teamInfoVos = teamInfoService.selectTeamInfoByUserId(userId);
+        return R.ok(teamInfoVos);
+    }
     /**
      * 新增队伍信息
      *
