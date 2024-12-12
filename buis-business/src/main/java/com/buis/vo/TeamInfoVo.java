@@ -18,7 +18,11 @@ public class TeamInfoVo extends TeamInfo {
      */
     @ApiModelProperty(value = "队长信息")
     private UserInfoVo leaderInfo;
-
+    /**
+     * 比赛信息
+     */
+    @ApiModelProperty(value = "比赛信息")
+    private RaceInfoVo raceInfoVo;
     /**
      * 队伍老师人数
      */
