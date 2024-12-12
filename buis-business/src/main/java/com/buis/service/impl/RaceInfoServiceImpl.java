@@ -241,6 +241,25 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         return true;
     }
 
+    @Override
+    public boolean checkGuideLimit(Long raceId, Long teacherId) {
+        //老师现在指导数量
+        Long nLimit = teamMemberTeacherService.getGuideCount(teacherId);
+        //限制老师最大指导人数数量
+        RaceDetail raceDetail = raceDetailService.selectRaceDetailById(teacherId);
+        Long tLimit = raceDetail.getTLimit();
+        // 检查老师加入的队伍数量是否超过比赛的指导老师数量限制
+        if (nLimit > tLimit) {
+            try {
+                throw new Exception("The number " + nLimit + " is greater than" +tLimit);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return true;
+    }
+
     /**
      * 判断当前时间是否在报名时间内
      *

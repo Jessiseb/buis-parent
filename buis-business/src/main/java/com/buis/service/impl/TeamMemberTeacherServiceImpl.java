@@ -3,6 +3,7 @@ package com.buis.service.impl;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.mapper.TeamMemberTeacherMapper;
+import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
@@ -30,6 +31,8 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
     private IUserInfoService userInfoService;
     @Resource
     private ITeamInfoService teamInfoService;
+    @Resource
+     private IRaceInfoService iRaceInfoService;
 
     /**
      * 查询队伍老师管理
@@ -79,7 +82,9 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
      */
     @Override
     public int insertTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
+        iRaceInfoService.checkGuideLimit(teamMemberTeacher.getId(),teamMemberTeacher.getId());
         teamMemberTeacher.setCreateTime(DateUtils.getNowDate());
+
         return teamMemberTeacherMapper.insertTeamMemberTeacher(teamMemberTeacher);
     }
 
@@ -91,6 +96,10 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
      */
     @Override
     public int updateTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
+        Long isChoosed = teamMemberTeacher.getIsChoosed();
+        if (isChoosed!=null&&isChoosed ==1){
+            iRaceInfoService.checkGuideLimit(teamMemberTeacher.getId(),teamMemberTeacher.getId());
+        }
         teamMemberTeacher.setUpdateTime(DateUtils.getNowDate());
         return teamMemberTeacherMapper.updateTeamMemberTeacher(teamMemberTeacher);
     }
