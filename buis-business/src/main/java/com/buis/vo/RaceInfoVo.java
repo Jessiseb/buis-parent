@@ -40,4 +40,10 @@ public class RaceInfoVo extends RaceInfo {
     @ApiModelProperty(value = "是否已报名")
     private Integer isJoin;
 
+    /**
+     * 是否预报名
+     */
+    @ApiModelProperty(value = "是否预报名")
+    private Integer isPreJoin;
+
 }

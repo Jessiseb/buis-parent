@@ -1,10 +1,12 @@
 package com.buis.web.controller.manager;
 
+import cn.hutool.core.util.ZipUtil;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.file.zipUtils;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.TeamInfo;
 import com.buis.service.ITeamInfoService;
@@ -16,8 +18,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-
+import com.buis.common.utils.file.zipUtils;
 /**
  * 队伍信息Controller
  *
@@ -55,6 +60,25 @@ public class TeamInfoController extends BaseController {
         ExcelUtil<TeamInfoVo> util = new ExcelUtil<TeamInfoVo>(TeamInfoVo.class);
         util.exportExcel(response, list, "队伍信息数据");
     }
+
+    /**
+     * 导出申报书
+     */
+    @ApiOperation("导出申报书")
+    @PreAuthorize("@ss.hasPermi('buis:teamInfo:exportFile')")
+    @Log(title = "队伍信息", businessType = BusinessType.EXPORT)
+    @PostMapping("/exportFile")
+    public void zipDownload(HttpServletResponse response, TeamInfo teamInfo) throws IOException {
+        List<File> files = new ArrayList<>();
+        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
+        for (TeamInfoVo teamInfoVo : list) {
+            String file = teamInfoVo.getFile();
+            files.add(new File(file));
+        }
+        zipUtils.zipDownload(response, "申报书.zip", files);
+    }
+
+
 
     /**
      * 获取队伍信息详细信息

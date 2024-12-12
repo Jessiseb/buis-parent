@@ -6,14 +6,14 @@ import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
-import com.buis.service.IPreSignStudentService;
-import com.buis.service.ITeamInfoService;
+import com.buis.service.*;
 import com.buis.vo.RaceLanqiaoStudentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoStudentMapper;
-import com.buis.service.IRaceLanqiaoStudentService;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * 蓝桥杯学生报名信息Service业务层处理
@@ -30,6 +30,10 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     private ITeamInfoService teamInfoService;
     @Autowired
     private IPreSignStudentService preSignStudentService;
+    @Autowired
+    private IUserInfoService userInfoService;
+    @Resource
+    private RaceInfoServiceImpl raceInfoService;
 
     /**
      * 查询蓝桥杯学生报名信息
@@ -62,10 +66,14 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
     @Override
     @Transactional
     public int insertRaceLanqiaoStudent(RaceLanqiaoStudent raceLanqiaoStudent) {
+        UserInfo id = userInfoService.selectUserInfoById(raceLanqiaoStudent.getUserId());
+        if (id != null && id.getIsTeacher() != 0) {
+            throw new ServiceException("您不是学生，无法报名");
+        }
         //获取银行卡号
         String bankNumber = raceLanqiaoStudent.getBankNumber();
         //银行卡号不能超过20
-        if(StringUtils.isNotEmpty(bankNumber) && bankNumber.length()>20){
+        if (StringUtils.isNotEmpty(bankNumber) && bankNumber.length() > 20) {
             throw new ServiceException("银行卡号过长!");
         }
         raceLanqiaoStudent.setCreateTime(DateUtils.getNowDate());
@@ -96,8 +104,11 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
         //获取银行卡号
         String bankNumber = raceLanqiaoStudent.getBankNumber();
         //银行卡号不能超过20
-        if(StringUtils.isNotEmpty(bankNumber) && bankNumber.length()>20){
+        if (StringUtils.isNotEmpty(bankNumber) && bankNumber.length() > 20) {
             throw new ServiceException("银行卡号过长!");
+        }
+        if (raceInfoService.checkJoinTime(raceLanqiaoStudent.getRaceId())) {
+            throw new ServiceException("已超过报名时间，不能修改信息~");
         }
         return raceLanqiaoStudentMapper.updateRaceLanqiaoStudent(raceLanqiaoStudent);
     }
@@ -110,6 +121,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
      */
     @Override
     public int deleteRaceLanqiaoStudentByIds(Long[] ids) {
+
         raceLanqiaoStudentMapper.deleteRaceLanqiaoStudentByIds(ids);
 
         return 1;
@@ -140,10 +152,18 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
         return LanqiaoStudent;
     }
 
+    /**
+     * 删除蓝桥杯学生报名信息信息
+     *
+     *
+     * @return 结果
+     */
     @Override
     @Transactional
     public Integer deleteRaceLanqiaoStudentByRaceIdAndUserId(Long race, Long userId) {
-
+        if (raceInfoService.checkJoinTime(race)){
+            throw new ServiceException("已截至报名时间，不能取消报名~");
+        }
         RaceLanqiaoStudent lanqiaoStudent = (RaceLanqiaoStudent) selectRaceLanqiaoStudentRaceIdAndByUserId(race, userId);
         if (lanqiaoStudent != null) {
             deleteRaceLanqiaoStudentById(lanqiaoStudent.getId());

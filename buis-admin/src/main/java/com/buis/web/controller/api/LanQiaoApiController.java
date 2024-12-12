@@ -7,9 +7,11 @@ import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.RaceLanqiaoStudent;
 import com.buis.domain.RaceLanqiaoTeacher;
 import com.buis.domain.RaceLanqiaoType;
+import com.buis.domain.UserInfo;
 import com.buis.service.IRaceLanqiaoStudentService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IRaceLanqiaoTypeService;
+import com.buis.service.IUserInfoService;
 import com.buis.vo.RaceLanqiaoTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +31,9 @@ public class LanQiaoApiController extends BaseController {
     private IRaceLanqiaoTypeService raceLanqiaoTypeService;
     @Autowired
     private IRaceLanqiaoTeacherService raceLanqiaoTeacherService;
+    @Autowired
+    private IUserInfoService userInfoService;
+
 
     /**
      * 根据比赛id查询老师列表
@@ -72,6 +77,10 @@ public class LanQiaoApiController extends BaseController {
     @GetMapping("/student/{race}")
     public R<RaceLanqiaoStudent> getStudent(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
+        UserInfo id = userInfoService.selectUserInfoById(userId);
+        if (id != null && id.getIsTeacher() != 0 ) {
+            throw new ServiceException("您不是学生，无法报名");
+        }
         RaceLanqiaoStudent raceLanqiaoStudent = raceLanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(race, userId);
         return R.ok(raceLanqiaoStudent);
     }
@@ -83,6 +92,10 @@ public class LanQiaoApiController extends BaseController {
     @GetMapping("/teacher/{race}")
     public R<RaceLanqiaoTeacher> getTeacher(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
+        UserInfo id = userInfoService.selectUserInfoById(userId);
+        if (id != null && id.getIsTeacher() != 1 ) {
+            throw new ServiceException("您不是老师，无法报名");
+        }
         RaceLanqiaoTeacher raceLanqiaoTeacher = raceLanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(race, userId);
         return R.ok(raceLanqiaoTeacher);
     }
@@ -92,11 +105,20 @@ public class LanQiaoApiController extends BaseController {
      */
     @ApiOperation("新增蓝桥杯学生报名信息")
     @PostMapping("/student/{race}")
-    public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race, @ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
+    public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race,
+                 @ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
+        //获取登录用户id
         Long userId = SecurityUtils.getFrontLoginUserId();
+        //获取被操作用户id
+        Long id = raceLanqiaoStudent.getUserId();
+        //校验是否本人操作
+        if (userInfoService.isSelf(userId,id)){
+            throw new ServiceException("非本人修改!");
+        }
         raceLanqiaoStudent.setUserId(userId);
         raceLanqiaoStudent.setRaceId(race);
-        return R.ok(raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent));
+        int res = raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent);
+        return R.ok(res);
     }
 
     /**
@@ -107,7 +129,14 @@ public class LanQiaoApiController extends BaseController {
     public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race,
                  @ApiParam(name = "raceLanqiaoTeacher", value = "老师报名信息表", required = true)
                  @RequestBody RaceLanqiaoTeacher raceLanqiaoTeacher) {
+        //获取登录用户id
         Long userId = SecurityUtils.getFrontLoginUserId();
+        //获取被操作用户id
+        Long id = raceLanqiaoTeacher.getUserId();
+        //校验是否本人操作
+        if (userInfoService.isSelf(userId,id)){
+            throw new ServiceException("非本人修改!!");
+        }
         raceLanqiaoTeacher.setUserId(userId);
         raceLanqiaoTeacher.setRaceId(race);
         int res = raceLanqiaoTeacherService.insertRaceLanqiaoTeacher(raceLanqiaoTeacher);
