@@ -91,6 +91,10 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
      */
     @Override
     public int updateTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
+        Long isChoosed = teamMemberTeacher.getIsChoosed();
+        if (isChoosed != null && isChoosed == 1) {//选中状态
+
+        }
         teamMemberTeacher.setUpdateTime(DateUtils.getNowDate());
         return teamMemberTeacherMapper.updateTeamMemberTeacher(teamMemberTeacher);
     }
