@@ -197,7 +197,7 @@ public class TeamApiController extends BaseController {
     public MyPageVo<List<TeamInfoVo>> list(
             @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
-            @RequestBody TeamInfo teamInfo) {
+            @RequestBody TeamInfo teamInfo) {   
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return new MyPageVo(list, new PageInfo(list).getTotal());
