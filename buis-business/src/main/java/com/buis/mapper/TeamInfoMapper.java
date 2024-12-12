@@ -91,5 +91,5 @@ public interface TeamInfoMapper
      * @param userId
      * @return
      */
-    List<TeamInfoVo> selectTeamInfoByUserId(Long userId);
+    List<TeamInfo> selectTeamInfoByUserId(Long userId);
 }

@@ -259,11 +259,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         Long tLimit = raceDetail.getTLimit();
         // 检查老师加入的队伍数量是否超过比赛的指导老师数量限制
         if (nLimit > tLimit) {
-            try {
-                throw new Exception("The number " + nLimit + " is greater than" +tLimit);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            throw new ServiceException("您已超过最大指导数量");
+
         }
 
         return true;
