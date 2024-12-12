@@ -85,4 +85,16 @@ public interface IUserInfoService {
      */
     String userLogin(UserLoginDto userLoginDTO, HttpServletRequest request);
 
+
+    /**
+     * 抽取出判断是否为本人修改的接口
+     *
+     * @param loginUserId 登录用户id
+     * @param userId 被修改的用户id
+     */
+    boolean isSelf(Long loginUserId,Long userId);
+
+
+    UserInfo selectUserInfoByEmail(String email);
+
 }

@@ -93,4 +93,7 @@ public class RaceLanqiaoTypeServiceImpl implements IRaceLanqiaoTypeService
     {
         return raceLanqiaoTypeMapper.deleteRaceLanqiaoTypeById(id);
     }
+
+    // 判断用户是否为老师
+
 }

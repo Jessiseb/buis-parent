@@ -2,18 +2,17 @@ package com.buis.service.impl;
 
 import java.util.List;
 
+import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
-import com.buis.service.IPreSignTeacherService;
-import com.buis.service.IRaceLanqiaoStudentService;
-import com.buis.service.ITeamInfoService;
+import com.buis.service.*;
 import com.buis.vo.RaceLanqiaoTeacherVo;
+import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoTeacherMapper;
-import com.buis.service.IRaceLanqiaoTeacherService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -32,6 +31,8 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
     private ITeamInfoService teamInfoService;
     @Autowired
     private IPreSignTeacherService preSignTeacherService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
     /**
      * 查询蓝桥杯老师报名信息
@@ -64,14 +65,10 @@ public class RaceLanqiaoTeacherServiceImpl implements IRaceLanqiaoTeacherService
     @Override
     @Transactional
     public int insertRaceLanqiaoTeacher(RaceLanqiaoTeacher raceLanqiaoTeacher) {
-//        Object o = lanqiaoStudentService.selectRaceLanqiaoStudentByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
-//        if (o != null) {
-//            throw new ServiceException("已提交过学生报名表，请取消后再次提交");
-//        }
-//        Object o1 = selectRaceLanqiaoTeacherByUserIdAndRaceId(raceLanqiaoTeacher.getRaceId(), raceLanqiaoTeacher.getUserId());
-//        if (o1 != null) {
-//            throw new ServiceException("已提交过老师报名表，请勿重复提交");
-//        }
+        UserInfo id = userInfoService.selectUserInfoById(raceLanqiaoTeacher.getUserId());
+        if (id != null && id.getIsTeacher() != 1 ) {
+            throw new ServiceException("您不是老师，无法报名");
+        }
         //获取银行卡号
         String bankNumber = raceLanqiaoTeacher.getBankNumber();
         //银行卡号不能超过20

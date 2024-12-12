@@ -57,6 +57,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         if (raceInfoVo != null) {
             // 设置是否已报名
             setIsJoin(raceInfoVo);
+            // 设置是否预报名
+            setIsPreJoin(raceInfoVo);
             // 设置比赛详情
             raceDetail.setRace(raceInfoVo.getId());
             List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
@@ -76,6 +78,20 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             userId = SecurityUtils.getFrontLoginUserId();
             raceInfoVo.setIsJoin(checkJoin(userId, raceInfoVo.getId(), null));
         } catch (ServiceException e) {
+            return;
+        }
+    }
+
+    /**
+     * 为isPreJoin赋值
+     */
+    public void setIsPreJoin(RaceInfoVo raceInfoVo) {
+        Long userId = null;
+        try {
+            userId = SecurityUtils.getFrontLoginUserId();
+            raceInfoVo.setIsPreJoin(checkJoin(userId, raceInfoVo.getId(), null));
+        } catch (ServiceException e) {
+            return;
         }
     }
 
@@ -94,6 +110,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             if (raceInfoVo != null) {
                 // 设置是否已报名
                 setIsJoin(raceInfoVo);
+                // 设置是否预报名
+                setIsPreJoin(raceInfoVo);
                 // 设置比赛详情
                 RaceDetail raceDetail = new RaceDetail();
                 raceDetail.setRace(raceInfoVo.getId());
@@ -266,7 +284,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @param raceId
      * @return
      */
-    private boolean checkJoinTime(Long raceId) {
+    public boolean checkJoinTime(Long raceId) {
         // 查询比赛报名时间
         RaceInfo raceInfo = raceInfoMapper.selectRaceInfoById(raceId);
         if (raceInfo != null) {

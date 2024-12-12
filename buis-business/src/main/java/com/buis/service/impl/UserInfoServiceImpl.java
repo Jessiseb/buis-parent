@@ -309,4 +309,23 @@ public class UserInfoServiceImpl implements IUserInfoService {
         return token;
 
     }
+
+    @Override
+    public boolean isSelf(Long loginUserId, Long userId) {
+        return loginUserId != null && !loginUserId.equals(userId);
+    }
+
+    @Override
+    public UserInfo selectUserInfoByEmail(String email) {
+        if (StringUtils.isEmpty(email)){
+            throw new ServiceException("邮箱不能为空!");
+        }
+        UserInfo userInfo = userInfoMapper.selectUserInfoByEmail(email);
+        if (userInfo==null){
+            throw new ServiceException("用户不存在!");
+        }
+        return userInfo;
+    }
+
+
 }
