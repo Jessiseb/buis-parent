@@ -93,4 +93,8 @@ public interface IUserInfoService {
      * @param userId 被修改的用户id
      */
     boolean isSelf(Long loginUserId,Long userId);
+
+
+    UserInfo selectUserInfoByEmail(String email);
+
 }
