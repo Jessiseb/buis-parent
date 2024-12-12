@@ -160,6 +160,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
         // 获取队长信息
         teamInfoVo.setLeaderInfo(userInfoVo);
+        //获取比赛信息
+        teamInfoVo.setRaceInfoVo(raceInfoService.selectRaceInfoById(team.getRace()));
         // 获取学生人数
         teamInfoVo.setStudentCount(studentCount);
         // 获取老师人数
