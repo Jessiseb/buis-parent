@@ -38,10 +38,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
-    @Autowired
-    private IRaceLanqiaoStudentService LanqiaoStudentService;
-    @Autowired
-    private IRaceLanqiaoTeacherService lanqiaoTeacherService;
 
     /**
      * 查询比赛信息
@@ -224,11 +220,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         }
         RaceInfoVo raceInfoVo = selectRaceInfoById(raceId);
         if (raceInfoVo != null) {
-            //如果比赛是蓝桥杯
-//            if (raceInfoVo.getRaceType() == 1) {
-//                checkJoinLanQiaoStudent(raceId, userId);
-//                checkJoinLanQiaoTeacher(raceId, userId);
-//            }
             //是学生只能创建一个队伍
             UserInfoVo userInfoVo = userInfoService.selectUserInfoById(userId);
             if (userInfoVo != null && userInfoVo.getIsTeacher() == 0) {
@@ -278,28 +269,5 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         return false;
     }
 
-    private boolean checkJoinLanQiaoStudent(Long userId, Long raceId) {
-        Object o = lanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(userId,raceId );
-        if (o != null) {
-            throw new ServiceException("已提交过老师报名表，请取消后再次提交");
-        }
-        Object o1 = LanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(raceId, userId);
-        if (o1 != null) {
-            throw new ServiceException("已提交过学生报名表，请勿重复提交");
-        }
-        return true;
-    }
-
-    private boolean checkJoinLanQiaoTeacher(Long userId, Long raceId) {
-        Object o = LanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(raceId, userId);
-        if (o != null) {
-            throw new ServiceException("已提交过学生报名表，请取消后再次提交");
-        }
-        Object o1 = lanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(raceId, userId);
-        if (o1 != null) {
-            throw new ServiceException("已提交过老师报名表，请勿重复提交");
-        }
-        return true;
-    }
 }
 

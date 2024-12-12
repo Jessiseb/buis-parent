@@ -83,6 +83,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
         teamInfo.setRace(raceLanqiaoStudent.getRaceId());
         teamInfo.setLeader(raceLanqiaoStudent.getUserId());
         teamInfo.setName(raceLanqiaoStudent.getName());
+        teamInfo.setStatus(1L);
         teamInfoService.insertTeamInfo(teamInfo);
         //新增学生预报名
         PreSignStudent preSignStudent = new PreSignStudent();
