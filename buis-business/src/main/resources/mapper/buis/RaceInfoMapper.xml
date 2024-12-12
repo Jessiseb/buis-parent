@@ -165,7 +165,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinEnd != null">join_end = #{joinEnd},</if>
             <if test="raceStart != null">race_start = #{raceStart},</if>
             <if test="raceEnd != null">race_end = #{raceEnd},</if>
-            <if test="raceType != null">race_end = #{raceType},</if>
+            <if test="raceType != null">race_type = #{raceType},</if>
             <if test="status != null">status = #{status},</if>
             <if test="level != null">level = #{level},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>

@@ -92,8 +92,12 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
     @Override
     public int insertTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
         iRaceInfoService.checkGuideLimit(teamMemberTeacher.getRace(),teamMemberTeacher.getTeacher());
+        //判断是否重复指导
+        int joinCount = getJoinCount(teamMemberTeacher.getTeacher(), teamMemberTeacher.getRace(), teamMemberTeacher.getTeam());
+        if (joinCount >= 1) {
+            throw new RuntimeException("该老师已指导该队伍");
+        }
         teamMemberTeacher.setCreateTime(DateUtils.getNowDate());
-
         return teamMemberTeacherMapper.insertTeamMemberTeacher(teamMemberTeacher);
     }
 
@@ -107,7 +111,12 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
     public int updateTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
         Long isChoosed = teamMemberTeacher.getIsChoosed();
         if (isChoosed!=null&&isChoosed ==1){
-            iRaceInfoService.checkGuideLimit(teamMemberTeacher.getId(),teamMemberTeacher.getId());
+            iRaceInfoService.checkGuideLimit(teamMemberTeacher.getRace(),teamMemberTeacher.getTeacher());
+            //判断是否重复指导
+            int joinCount = getJoinCount(teamMemberTeacher.getTeacher(), teamMemberTeacher.getRace(), teamMemberTeacher.getTeam());
+            if (joinCount >= 1) {
+                throw new RuntimeException("该老师已指导该队伍");
+            }
         }
         teamMemberTeacher.setUpdateTime(DateUtils.getNowDate());
         return teamMemberTeacherMapper.updateTeamMemberTeacher(teamMemberTeacher);
