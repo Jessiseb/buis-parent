@@ -258,10 +258,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
         Long tLimit = raceDetail.getTLimit();
         // 检查老师加入的队伍数量是否超过比赛的指导老师数量限制
-        if (nLimit > tLimit) {
+        if (nLimit >= tLimit) {
             throw new ServiceException("您已超过最大指导数量");
         }
-
         return true;
     }
 
@@ -294,9 +293,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         // 查询比赛信息
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
         if (raceDetail != null) {
-            Long tLimit = raceDetail.getTLimit();
-            if (tLimit != 0) {
-                return (teacher + student) >= tLimit;
+            Long capacity = raceDetail.getCapacity();
+            if (capacity != 0) {
+                return (teacher + student) >= capacity;
             }
         }
         return false;
