@@ -91,7 +91,7 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
      */
     @Override
     public int insertTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
-        iRaceInfoService.checkGuideLimit(teamMemberTeacher.getId(),teamMemberTeacher.getId());
+        iRaceInfoService.checkGuideLimit(teamMemberTeacher.getRace(),teamMemberTeacher.getTeacher());
         teamMemberTeacher.setCreateTime(DateUtils.getNowDate());
 
         return teamMemberTeacherMapper.insertTeamMemberTeacher(teamMemberTeacher);
