@@ -167,6 +167,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="team != null">and team = #{team}</if>
         </where>
     </select>
+    <select id="getMemberTeachersByTeamId" resultType="java.lang.Long">
+        select teacher from team_member_teacher where team = #{id} and is_deleted = 0
+    </select>
 
 
 </mapper>

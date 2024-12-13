@@ -171,6 +171,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
     @Override
     public List<TeamInfoVo> selectTeamInfoByIds(Long[] ids) {
-        return teamInfoMapper.selectTeamInfoByIds(ids);
+        List<TeamInfoVo> teamInfoVos = teamInfoMapper.selectTeamInfoByIds(ids);
+        return teamInfoVos;
     }
 }

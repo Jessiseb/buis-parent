@@ -69,7 +69,7 @@ public interface TeamInfoMapper
      * @param ids
      * @return
      */
-    List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
+    List<TeamInfoVo> selectTeamInfoByIds(@Param("ids")Long[] ids);
 
     /**
      * 根据userId和raceId删除队伍信息

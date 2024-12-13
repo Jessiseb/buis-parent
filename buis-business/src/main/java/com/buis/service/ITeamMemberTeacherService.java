@@ -106,4 +106,10 @@ public interface ITeamMemberTeacherService
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 
+    /**
+     * 根据team获取指导老师
+     * @param team
+     * @return
+     */
+    List<UserInfoVo> getMemberTeachersByTeamId(Long team);
 }
