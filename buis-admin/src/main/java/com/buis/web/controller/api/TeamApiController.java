@@ -213,11 +213,12 @@ public class TeamApiController extends BaseController {
     @PostMapping("/guide")
     public MyPageVo<List<TeamInfoVo>> guide(@ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
                                             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
-                                            @ApiParam(name = "race", value = "比赛id", required = false) @RequestParam(required = false) Long race
+                                            @ApiParam(name = "race", value = "比赛id", required = false) @RequestParam(required = false) Long race,
+                                                                                        @ApiParam(name = "name", value = "比赛名字", required = false) @RequestParam(required = false) Long name
                                             ) {
         startPage();
         Long userId = SecurityUtils.getFrontLoginUserId();
-        List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId,race);
+        List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId,race,name);
         return new MyPageVo(teamInfoVos);
     }
     /**
