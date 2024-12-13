@@ -213,7 +213,7 @@ public class TeamApiController extends BaseController {
     @PostMapping("/guide")
     public MyPageVo<List<TeamInfoVo>> guide(@ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
                                             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
-                                            @ApiParam(name = "race", value = "比赛id", required = false) @RequestParam Long race
+                                            @ApiParam(name = "race", value = "比赛id", required = false) @RequestParam(required = false) Long race
                                             ) {
         startPage();
         Long userId = SecurityUtils.getFrontLoginUserId();
