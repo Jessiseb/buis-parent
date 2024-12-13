@@ -107,13 +107,16 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
      */
     @Override
     public int updateTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
-        Long isChoosed = teamMemberTeacher.getIsChoosed();
-        if (isChoosed!=null&&isChoosed ==1){
-            iRaceInfoService.checkGuideLimit(teamMemberTeacher.getRace(),teamMemberTeacher.getTeacher());
-            //判断是否重复指导
-            int joinCount = getJoinCount(teamMemberTeacher.getTeacher(), teamMemberTeacher.getRace(), teamMemberTeacher.getTeam());
-            if (joinCount >= 1) {
-                throw new RuntimeException("该老师已指导该队伍");
+        TeamMemberTeacherVo teacherById = teamMemberTeacherMapper.selectTeamMemberTeacherById(teamMemberTeacher.getId());
+        if(teacherById!=null && teacherById.getTeacher() != teamMemberTeacher.getTeacher()) {
+            Long isChoosed = teamMemberTeacher.getIsChoosed();
+            if (isChoosed!=null&&isChoosed ==1){
+                iRaceInfoService.checkGuideLimit(teamMemberTeacher.getRace(),teamMemberTeacher.getTeacher());
+                //判断是否重复指导
+                int joinCount = getJoinCount(teamMemberTeacher.getTeacher(), teamMemberTeacher.getRace(), teamMemberTeacher.getTeam());
+                if (joinCount >= 1) {
+                    throw new RuntimeException("该老师已指导该队伍");
+                }
             }
         }
         teamMemberTeacher.setUpdateTime(DateUtils.getNowDate());
