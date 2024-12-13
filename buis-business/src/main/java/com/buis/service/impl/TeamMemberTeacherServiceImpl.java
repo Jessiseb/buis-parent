@@ -13,9 +13,7 @@ import com.buis.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 队伍老师管理Service业务层处理
@@ -168,8 +166,8 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
     }
 
     @Override
-    public List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId) {
-        Long[] teamIds = teamMemberTeacherMapper.selectJoinTeamByTeacherId(userId);
+    public List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId, Long race) {
+        Long[] teamIds = teamMemberTeacherMapper.selectJoinTeamByTeacherId(userId,race);
         List<TeamInfoVo> teamInfoVos = new ArrayList<>();
         if (teamIds != null && teamIds.length > 0) {
             teamInfoVos = teamInfoService.selectTeamInfoByIds(teamIds);

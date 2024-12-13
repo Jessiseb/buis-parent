@@ -143,9 +143,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectJoinTeamByTeacherId" resultType="java.lang.Long">
         SELECT team
         FROM team_member_teacher
-        WHERE (teacher = #{id} or decider = #{id})
+        WHERE teacher = #{userId}
           AND is_deleted = 0
           AND is_choosed = 1
+        <if test="race != null "> and race = #{race}</if>
     </select>
     <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamMemberTeacherVo"/>
