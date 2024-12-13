@@ -178,6 +178,18 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
 
     }
     /**
+     * 根据team获取指导老师
+     * @param team
+     * @return
+     */
+    @Override
+    public List<UserInfoVo> getMemberTeachersByTeamId(Long team) {
+        List<Long> ids = teamMemberTeacherMapper.getMemberTeachersByTeamId(team);
+        List<UserInfoVo> userInfoVos = userInfoService.selectUserInfoByIds(ids);
+        return userInfoVos;
+    }
+
+    /**
      * 根据team和user删除邀请
      * @param team
      * @param user

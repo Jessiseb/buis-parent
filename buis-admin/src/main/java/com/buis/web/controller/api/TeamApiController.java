@@ -181,7 +181,7 @@ public class TeamApiController extends BaseController {
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
             @ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team) {
         List<UserInfoVo> student = teamMemberStudentService.getMemberStudentByTeamId(team);
-        List<UserInfoVo> teacher = teamMemberTeacherService.getTeachersByRaceId(team);
+        List<UserInfoVo> teacher = teamMemberTeacherService.getMemberTeachersByTeamId(team);
         HashMap<String, List<UserInfoVo>> map = new HashMap<>();
         map.put("student", student);
         map.put("teacher", teacher);
@@ -209,21 +209,11 @@ public class TeamApiController extends BaseController {
      *
      * @return 返回结果
      */
-    @ApiOperation("根据老师id查询老师指导的队伍列表")
+    @ApiOperation("查询老师指导的队伍列表")
     @GetMapping("/guide")
     public R<List<TeamInfoVo>> guide() {
         Long userId = SecurityUtils.getFrontLoginUserId();
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId);
-        return R.ok(teamInfoVos);
-    }
-/**
- * 根据用户id查询我的队伍列表
- */
-    @ApiOperation("根据用户id查询我的队伍列表")
-    @GetMapping("/myTeam")
-    public R<List<TeamInfoVo>> myTeam() {
-        Long userId = SecurityUtils.getFrontLoginUserId();
-        List<TeamInfoVo> teamInfoVos = teamInfoService.selectTeamInfoByUserId(userId);
         return R.ok(teamInfoVos);
     }
     /**

@@ -139,13 +139,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <delete id="selectTeamInfoByIds" parameterType="java.lang.Long">
+    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.vo.TeamInfoVo">
         <include refid="selectTeamInfoVo"/>
         where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
+    </select>
     <delete id="deleteTeamInfoByRaceIdAndUserId">
         update team_info
         set is_deleted = 1
