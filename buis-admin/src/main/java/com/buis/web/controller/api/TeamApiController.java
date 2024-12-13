@@ -148,7 +148,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("带条件分页查询学生与队伍互选邀请")
     @PostMapping("/getTeamMemberStudent")
-    public MyPageVo<List<TeamMemberStudentVo>> getTeamMemberStudent(TeamMemberStudent teamMemberStudent) {
+    public MyPageVo<List<TeamMemberStudentVo>> getTeamMemberStudent(@RequestParam(required = false)TeamMemberStudent teamMemberStudent) {
         startPage();
         List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return new MyPageVo<>(list, new PageInfo(list).getTotal());
@@ -161,7 +161,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("带条件分页查询老师与队伍互选邀请")
     @PostMapping("/getTeamMemberTeacher")
-    public MyPageVo<List<TeamMemberTeacherVo>> getTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
+    public MyPageVo<List<TeamMemberTeacherVo>> getTeamMemberTeacher(@RequestParam(required = false)TeamMemberTeacher teamMemberTeacher) {
         startPage();
         List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
         return new MyPageVo<>(list, new PageInfo(list).getTotal());
@@ -197,7 +197,7 @@ public class TeamApiController extends BaseController {
     public MyPageVo<List<TeamInfoVo>> list(
             @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
-            @RequestBody TeamInfo teamInfo) {   
+            @RequestBody(required = false) TeamInfo teamInfo) {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return new MyPageVo(list, new PageInfo(list).getTotal());

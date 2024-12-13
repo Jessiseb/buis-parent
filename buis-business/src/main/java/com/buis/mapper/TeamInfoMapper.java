@@ -4,7 +4,6 @@ import java.util.List;
 
 
 import com.buis.domain.TeamInfo;
-import com.buis.vo.TeamInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -66,10 +65,11 @@ public interface TeamInfoMapper
 
     /**
      * 根据ids获取队伍列表
+     *
      * @param ids
      * @return
      */
-    List<TeamInfoVo> selectTeamInfoByIds(@Param("ids")Long[] ids);
+    List<TeamInfo> selectTeamInfoByIds(@Param("ids")Long[] ids);
 
     /**
      * 根据userId和raceId删除队伍信息

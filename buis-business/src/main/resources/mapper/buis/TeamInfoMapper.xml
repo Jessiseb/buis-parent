@@ -139,7 +139,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.vo.TeamInfoVo">
+    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamInfoVo"/>
         where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
