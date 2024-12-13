@@ -86,7 +86,7 @@ public interface TeamMemberTeacherMapper
      */
     List<Long> getTeachersByRaceId(Long raceId);
 
-    Long[] selectJoinTeamByTeacherId(@Param("userId") Long userId, @Param("race") Long race);
+    Long[] selectJoinTeamByTeacherId(@Param("userId") Long userId, @Param("race") Long race, @Param("name") Long name);
 
     /**
      * 判断用户是否已加入
