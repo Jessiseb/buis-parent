@@ -171,7 +171,12 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
     @Override
     public List<TeamInfoVo> selectTeamInfoByIds(Long[] ids) {
-        List<TeamInfoVo> teamInfoVos = teamInfoMapper.selectTeamInfoByIds(ids);
+        List<TeamInfoVo> teamInfoVos = new ArrayList<>();
+        List<TeamInfo> teamInfos = teamInfoMapper.selectTeamInfoByIds(ids);
+        for (TeamInfo teamInfo : teamInfos) {
+            TeamInfoVo teamInfoVo = createTeamInfoVo(teamInfo);
+            teamInfoVos.add(teamInfoVo);
+        }
         return teamInfoVos;
     }
 }
