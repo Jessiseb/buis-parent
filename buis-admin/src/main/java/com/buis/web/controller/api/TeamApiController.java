@@ -209,12 +209,16 @@ public class TeamApiController extends BaseController {
      *
      * @return 返回结果
      */
-    @ApiOperation("查询老师指导的队伍列表")
-    @GetMapping("/guide")
-    public R<List<TeamInfoVo>> guide() {
+    @ApiOperation("带条件分页查询老师指导的队伍列表")
+    @PostMapping("/guide")
+    public MyPageVo<List<TeamInfoVo>> guide(@ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                                            @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
+                                            @ApiParam(name = "race", value = "比赛id", required = false) @RequestParam Long race
+                                            ) {
+        startPage();
         Long userId = SecurityUtils.getFrontLoginUserId();
-        List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId);
-        return R.ok(teamInfoVos);
+        List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId,race);
+        return new MyPageVo(teamInfoVos, new PageInfo(teamInfoVos).getTotal());
     }
     /**
      * 新增队伍信息

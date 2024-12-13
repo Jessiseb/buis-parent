@@ -85,10 +85,12 @@ public interface ITeamMemberTeacherService
 
     /**
      * 根据老师id查询队伍队伍列表
+     *
      * @param userId
+     * @param race
      * @return
      */
-    List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId);
+    List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId, Long race);
 
     /**
      * 判断用户是否已加入
