@@ -151,7 +151,7 @@ public class TeamApiController extends BaseController {
     public MyPageVo<List<TeamMemberStudentVo>> getTeamMemberStudent(@RequestParam(required = false)TeamMemberStudent teamMemberStudent) {
         startPage();
         List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
-        return new MyPageVo<>(list, new PageInfo(list).getTotal());
+        return new MyPageVo<>(list);
     }
 
     /**
@@ -164,7 +164,7 @@ public class TeamApiController extends BaseController {
     public MyPageVo<List<TeamMemberTeacherVo>> getTeamMemberTeacher(@RequestParam(required = false)TeamMemberTeacher teamMemberTeacher) {
         startPage();
         List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
-        return new MyPageVo<>(list, new PageInfo(list).getTotal());
+        return new MyPageVo<>(list);
     }
 
     /**
@@ -200,7 +200,7 @@ public class TeamApiController extends BaseController {
             @RequestBody(required = false) TeamInfo teamInfo) {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        return new MyPageVo(list, new PageInfo(list).getTotal());
+        return new MyPageVo(list);
     }
 
 
@@ -218,7 +218,7 @@ public class TeamApiController extends BaseController {
         startPage();
         Long userId = SecurityUtils.getFrontLoginUserId();
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId,race);
-        return new MyPageVo(teamInfoVos, new PageInfo(teamInfoVos).getTotal());
+        return new MyPageVo(teamInfoVos);
     }
     /**
      * 新增队伍信息

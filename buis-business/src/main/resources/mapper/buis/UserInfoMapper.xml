@@ -59,14 +59,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getLoginInfoByUserId" resultType="com.buis.domain.UserInfo">
-        select email, password
+        select id, email, password, is_teacher
         from user_info
         where id = #{id} and is_deleted = 0
-    </select>
-
-    <select id="selectUserInfoByEmail" resultType="com.buis.domain.UserInfo">
-        <include refid="selectUserInfoVo"/>
-        where t1.email = #{email} and t1.is_deleted = 0
     </select>
 
     <select id="selectUserInfoByIds" parameterType="java.util.List" resultType="com.buis.domain.UserInfo">
@@ -76,6 +71,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
         AND t1.is_deleted = 0
+    </select>
+    <select id="getLoginInfoByEmail" resultType="com.buis.domain.UserInfo">
+        select id, email, password,is_teacher
+        from user_info
+        where email = #{email} and is_deleted = 0
     </select>
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info

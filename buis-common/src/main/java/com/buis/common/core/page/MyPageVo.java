@@ -5,6 +5,8 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+import static com.buis.common.utils.PageUtils.page;
+
 /**
  * 分页数据对象
  * 
@@ -38,12 +40,11 @@ public class MyPageVo<T> implements Serializable
      * 分页
      * 
      * @param list 列表数据
-     * @param total 总记录数
      */
-    public MyPageVo(T list, long total)
+    public MyPageVo(T list)
     {
         this.rows = list;
-        this.total = total;
+        this.total = page.getTotal();
     }
 
     public long getTotal()
