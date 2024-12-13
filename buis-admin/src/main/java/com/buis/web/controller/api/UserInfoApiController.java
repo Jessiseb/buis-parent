@@ -43,11 +43,6 @@ public class UserInfoApiController extends BaseController {
     private IUserInfoService userInfoService;
     @Autowired
     private ICollegeMajorService collegeMajorService;
-
-
-
-
-
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
     public R<String> login(@ApiParam(name = "userLoginDTO", value = "用户登录信息", required = true)@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {

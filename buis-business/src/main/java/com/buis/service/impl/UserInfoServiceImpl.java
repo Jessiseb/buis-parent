@@ -198,7 +198,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
         //查询数据库中是否存在相同的邮箱号码
         //有的话说明该用户已存在
-        UserInfo userInfo = userInfoMapper.selectUserInfoByEmail(email);
+        UserInfo userInfo = userInfoMapper.getLoginInfoByEmail(email);
         if (userInfo != null) {
             throw new ServiceException("用户已存在!");
         }
@@ -261,7 +261,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         }
         //查询用户是否存在
         //根据用户的邮箱查询用户
-        UserInfo userInfo = userInfoMapper.selectUserInfoByEmail(email);
+        UserInfo userInfo = userInfoMapper.getLoginInfoByEmail(email);
         //用户不存在
         if (userInfo == null) {
             log.info("user login fail,userAccount cannot match userPassword");
@@ -320,7 +320,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (StringUtils.isEmpty(email)){
             throw new ServiceException("邮箱不能为空!");
         }
-        UserInfo userInfo = userInfoMapper.selectUserInfoByEmail(email);
+        UserInfo userInfo = userInfoMapper.getLoginInfoByEmail(email);
         if (userInfo==null){
             throw new ServiceException("用户不存在!");
         }

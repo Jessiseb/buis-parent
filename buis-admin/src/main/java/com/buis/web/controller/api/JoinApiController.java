@@ -47,7 +47,7 @@ public class JoinApiController extends BaseController {
         prevTeacher.setRace(RaceId);
         List<PreSignTeacherVo> preSignTeacherVos = preTeacherService.selectPreSignTeacherList(prevTeacher);
         //返回结果
-        return new MyPageVo(preSignTeacherVos, new PageInfo(preSignTeacherVos).getTotal());
+        return new MyPageVo(preSignTeacherVos);
     }
 
     /**
@@ -124,7 +124,7 @@ public class JoinApiController extends BaseController {
         preSignStudent.setRace(RaceId);
         List<PreSignStudentVo> preSignStudentVos = preStudentService.selectPreSignStudentList(preSignStudent);
         //返回结果
-        return new MyPageVo(preSignStudentVos, new PageInfo(preSignStudentVos).getTotal());
+        return new MyPageVo(preSignStudentVos);
     }
 
 

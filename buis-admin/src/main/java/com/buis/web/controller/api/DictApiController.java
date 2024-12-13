@@ -120,7 +120,7 @@ public class DictApiController {
         List<SysDictData> list = sysDictDataService.selectDictDataList(dictData);
         // 将字典数据列表转换为VO对象
         List<SysDictDataVo> sysDictDataVo = BeanUtil.copyToList(list, SysDictDataVo.class);
-        return new MyPageVo<>(sysDictDataVo, new PageInfo(sysDictDataVo).getTotal());
+        return new MyPageVo<>(sysDictDataVo);
     }
 
 }

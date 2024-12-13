@@ -62,7 +62,7 @@ public class RaceApiController extends BaseController {
             @ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
         startPage();
         List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
-        return new MyPageVo(list,  new PageInfo(list).getTotal());
+        return new MyPageVo(list);
     }
 
     /**
