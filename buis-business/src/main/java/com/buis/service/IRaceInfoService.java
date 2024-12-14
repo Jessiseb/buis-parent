@@ -66,4 +66,6 @@ public interface IRaceInfoService
      * @return
      */
     public boolean checkJoinCondition(Long userId,Long raceId);
+
+    public List<RaceInfo> selectRaceInfoByStatu(Long i);
 }
