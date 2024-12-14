@@ -242,6 +242,17 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     /**
+     * 根据状态查询比赛信息
+     * @param i
+     * @return
+     */
+    @Override
+    public List<RaceInfo> selectRaceInfoByStatu(Long i) {
+        return  raceInfoMapper.selectRaceInfoByStatu(i);
+
+    }
+
+    /**
      * 判断当前时间是否在报名时间内
      *
      * @param raceId

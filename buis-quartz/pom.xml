@@ -35,6 +35,11 @@
             <artifactId>buis-common</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.buis</groupId>
+            <artifactId>buis-business</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
