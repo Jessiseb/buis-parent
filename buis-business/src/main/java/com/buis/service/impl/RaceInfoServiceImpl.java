@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import com.buis.common.core.domain.model.LoginUser;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
@@ -57,6 +58,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         if (raceInfoVo != null) {
             // 设置是否已报名
             setIsJoin(raceInfoVo);
+            // 设置是否预报名
+            setIsPreJoin(raceInfoVo);
             // 设置比赛详情
             raceDetail.setRace(raceInfoVo.getId());
             List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
@@ -76,6 +79,20 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             userId = SecurityUtils.getFrontLoginUserId();
             raceInfoVo.setIsJoin(checkJoin(userId, raceInfoVo.getId(), null));
         } catch (ServiceException e) {
+            return;
+        }
+    }
+
+    /**
+     * 为isPreJoin赋值
+     */
+    public void setIsPreJoin(RaceInfoVo raceInfoVo) {
+        Long userId = null;
+        try {
+            userId = SecurityUtils.getFrontLoginUserId();
+            raceInfoVo.setIsPreJoin(checkJoin(userId, raceInfoVo.getId(), null));
+        } catch (ServiceException e) {
+            return;
         }
     }
 
@@ -94,6 +111,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             if (raceInfoVo != null) {
                 // 设置是否已报名
                 setIsJoin(raceInfoVo);
+                // 设置是否预报名
+                setIsPreJoin(raceInfoVo);
                 // 设置比赛详情
                 RaceDetail raceDetail = new RaceDetail();
                 raceDetail.setRace(raceInfoVo.getId());
@@ -115,6 +134,14 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Transactional
     @Override
     public int insertRaceInfo(RaceInfo raceInfo) {
+        // 获取用户id
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        Long userId = loginUser.getUser().getUserId();
+        //获取比赛id
+        Long raceId = raceInfo.getId();
+        // 判断报名条件
+        this.checkJoinCondition(userId, raceId);
+
         raceInfo.setCreateTime(DateUtils.getNowDate());
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         insertReward(raceInfo);
@@ -153,6 +180,14 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Transactional
     @Override
     public int updateRaceInfo(RaceInfo raceInfo) {
+        // 获取用户id
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        Long userId = loginUser.getUser().getUserId();
+        //获取比赛id
+        Long raceId = raceInfo.getId();
+        // 判断报名条件
+        this.checkJoinCondition(userId, raceId);
+
         raceInfo.setUpdateTime(DateUtils.getNowDate());
         raceInfoMapper.deleteRewardByRace(raceInfo.getId());
         insertReward(raceInfo);
