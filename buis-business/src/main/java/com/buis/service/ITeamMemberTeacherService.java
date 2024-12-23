@@ -106,4 +106,12 @@ public interface ITeamMemberTeacherService
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 
+    /**
+     * 批量新增队伍老师管理
+     * @param teamMemberTeacherList
+     * @return 结果
+     */
+    int insertTeamMemberTeacherBatch(List<TeamMemberTeacherVo> teamMemberTeacherList);
+
+
 }

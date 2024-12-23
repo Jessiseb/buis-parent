@@ -102,4 +102,6 @@ public interface TeamMemberTeacherMapper
      * @param user
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
+
+    int insertTeamMemberTeacherBatch(List<TeamMemberTeacherVo> teamMemberTeacherList);
 }

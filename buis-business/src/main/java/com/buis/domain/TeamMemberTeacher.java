@@ -1,5 +1,9 @@
 package com.buis.domain;
 
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.alibaba.excel.annotation.write.style.ContentRowHeight;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -20,6 +24,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @ApiModel("队伍老师管理对象")
 @Builder
+@ExcelIgnoreUnannotated
+@ColumnWidth(15)
 public class TeamMemberTeacher extends BaseEntity {
     private static final long serialVersionUID = 1L;
     /**
@@ -27,6 +33,7 @@ public class TeamMemberTeacher extends BaseEntity {
      */
     @ApiModelProperty("id")
     @Excel(name = "id")
+    @ExcelProperty("id")
     private Long id;
 
     /**
@@ -34,6 +41,7 @@ public class TeamMemberTeacher extends BaseEntity {
      */
     @ApiModelProperty("比赛")
     @Excel(name = "比赛")
+    @ExcelProperty("比赛")
     private Long race;
 
     /**
@@ -41,6 +49,7 @@ public class TeamMemberTeacher extends BaseEntity {
      */
     @ApiModelProperty("队伍")
     @Excel(name = "队伍")
+    @ExcelProperty("队伍")
     private Long team;
 
     /**
@@ -48,6 +57,7 @@ public class TeamMemberTeacher extends BaseEntity {
      */
     @ApiModelProperty("老师")
     @Excel(name = "老师")
+    @ExcelProperty("老师")
     private Long teacher;
 
     /**
@@ -55,6 +65,7 @@ public class TeamMemberTeacher extends BaseEntity {
      */
     @ApiModelProperty("决定者")
     @Excel(name = "决定者")
+    @ExcelProperty("决定者")
     private Long decider;
 
     /**
@@ -62,6 +73,7 @@ public class TeamMemberTeacher extends BaseEntity {
      */
     @ApiModelProperty("互选状态")
     @Excel(name = "互选状态")
+    @ExcelProperty("互选状态")
     private Long isChoosed;
 
     /**
@@ -69,6 +81,7 @@ public class TeamMemberTeacher extends BaseEntity {
      */
     @ApiModelProperty("选择原因")
     @Excel(name = "选择原因")
+    @ExcelProperty("选择原因")
     private String reason;
 
     /**
