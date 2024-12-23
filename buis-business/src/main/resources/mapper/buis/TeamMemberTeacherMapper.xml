@@ -93,6 +93,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
     </insert>
+    <insert id="insertTeamMemberTeacherBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into team_member_teacher (race, team, teacher, decider, is_choosed, reason)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.race},
+            #{item.team},
+            #{item.teacher},
+            #{item.decider},
+            #{item.isChoosed},
+            #{item.reason}
+
+            )
+        </foreach>
+    </insert>
+
+
 
     <update id="updateTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher">
         update team_member_teacher
