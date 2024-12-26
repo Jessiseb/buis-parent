@@ -1,6 +1,5 @@
 package com.buis.web.controller.manager;
 
-import cn.hutool.core.util.ZipUtil;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -16,13 +15,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import com.buis.common.utils.file.zipUtils;
 /**
  * 队伍信息Controller
  *
