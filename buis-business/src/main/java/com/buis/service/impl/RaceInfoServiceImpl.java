@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.domain.model.LoginUser;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
@@ -135,6 +136,14 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Transactional
     @Override
     public int insertRaceInfo(RaceInfo raceInfo) {
+        // 获取用户id
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        Long userId = loginUser.getUser().getUserId();
+        //获取比赛id
+        Long raceId = raceInfo.getId();
+        // 判断报名条件
+        this.checkJoinCondition(userId, raceId);
+
         raceInfo.setCreateTime(DateUtils.getNowDate());
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         insertReward(raceInfo);
@@ -173,6 +182,14 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Transactional
     @Override
     public int updateRaceInfo(RaceInfo raceInfo) {
+        // 获取用户id
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        Long userId = loginUser.getUser().getUserId();
+        //获取比赛id
+        Long raceId = raceInfo.getId();
+        // 判断报名条件
+        this.checkJoinCondition(userId, raceId);
+
         raceInfo.setUpdateTime(DateUtils.getNowDate());
         raceInfoMapper.deleteRewardByRace(raceInfo.getId());
         insertReward(raceInfo);
@@ -327,6 +344,17 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
 
+
+    /**
+     * 根据状态查询比赛信息
+     * @param i
+     * @return
+     */
+    @Override
+    public List<RaceInfo> selectRaceInfoByStatu(Long i) {
+        return  raceInfoMapper.selectRaceInfoByStatu(i);
+
+    }
 
     /**
      * 判断当前时间是否在报名时间内
