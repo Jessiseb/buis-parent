@@ -61,6 +61,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">and leader = #{userId}</if>
         </where>
     </select>
+    <select id="selectTeamInfoByUserId" resultType="com.buis.domain.TeamInfo">
+        <include refid="selectTeamInfoVo"/>
+        where leader = #{userId} and is_deleted = 0
+    </select>
 
     <insert id="insertTeamInfo" parameterType="com.buis.domain.TeamInfo" useGeneratedKeys="true" keyProperty="id">
         insert into team_info
@@ -135,13 +139,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <delete id="selectTeamInfoByIds" parameterType="java.lang.Long">
+    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamInfoVo"/>
         where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
+    </select>
     <delete id="deleteTeamInfoByRaceIdAndUserId">
         update team_info
         set is_deleted = 1
