@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
@@ -32,6 +33,17 @@ public class RaceInfoController extends BaseController {
     @Autowired
     private IRaceInfoService raceInfoService;
 
+    /**
+     * 审核第二课堂活动
+     * @param id
+     * @return
+     */
+    @ApiOperation("审核第二课堂活动")
+    @PutMapping("/updateApproval/{id}")
+//    @PreAuthorize("@ss.hasPermi('buis:raceInfo:updateApproval')")
+    public AjaxResult updateApproval( @PathVariable("id") Long id) {
+        return success(raceInfoService.updateApproval(id));
+    }
     /**
      * 查询比赛信息列表
      */
