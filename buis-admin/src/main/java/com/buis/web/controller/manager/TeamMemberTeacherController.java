@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.dto.TeamMemberTeacherDto;
 import com.buis.vo.TeamMemberTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -90,6 +91,17 @@ public class TeamMemberTeacherController extends BaseController {
     @PostMapping
     public AjaxResult add(@RequestBody TeamMemberTeacher teamMemberTeacher) {
         return toAjax(teamMemberTeacherService.insertTeamMemberTeacher(teamMemberTeacher));
+    }
+
+    /**
+     * 批量新增/删除队伍老师管理
+     */
+    @ApiOperation("批量新增/删除队伍老师管理")
+    @PreAuthorize("@ss.hasPermi('buis:teamTeacher:Add')")
+    @Log(title = "队伍老师管理", businessType = BusinessType.INSERT)
+    @PostMapping("/batchAdd")
+    public AjaxResult batchAdd(@RequestBody TeamMemberTeacherDto dto) {
+        return toAjax(teamMemberTeacherService.batchAddTeamMemberTeacher(dto));
     }
 
     /**

@@ -3,6 +3,7 @@ package com.buis.service;
 import java.util.List;
 
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.dto.TeamMemberTeacherDto;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
@@ -106,4 +107,17 @@ public interface ITeamMemberTeacherService
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 
+    /**
+     * 根据老师id查询指导学生id
+     * @param teacher
+     * @return
+     */
+    List<Long> selectStudentIdsByTeacherId(Long teacher);
+
+    /**
+     * 批量新增/删除队伍老师管理
+     * @param dto
+     * @return
+     */
+    int batchAddTeamMemberTeacher(TeamMemberTeacherDto dto);
 }
