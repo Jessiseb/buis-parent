@@ -5,6 +5,7 @@ import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.dto.TeamMemberTeacherDto;
 import com.buis.mapper.TeamMemberTeacherMapper;
+import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
@@ -32,6 +33,8 @@ public class TeamMemberTeacherServiceImpl implements ITeamMemberTeacherService {
     private IUserInfoService userInfoService;
     @Resource
     private ITeamInfoService teamInfoService;
+    @Resource
+     private IRaceInfoService iRaceInfoService;
 
     /**
      * 查询队伍老师管理
@@ -90,6 +93,12 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
      */
     @Override
     public int insertTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
+        iRaceInfoService.checkGuideLimit(teamMemberTeacher.getRace(),teamMemberTeacher.getTeacher());
+        //判断是否重复指导
+        int joinCount = getJoinCount(teamMemberTeacher.getTeacher(), teamMemberTeacher.getRace(), teamMemberTeacher.getTeam());
+        if (joinCount >= 1) {
+            throw new RuntimeException("该老师已指导该队伍");
+        }
         teamMemberTeacher.setCreateTime(DateUtils.getNowDate());
         return teamMemberTeacherMapper.insertTeamMemberTeacher(teamMemberTeacher);
     }
@@ -102,6 +111,18 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
      */
     @Override
     public int updateTeamMemberTeacher(TeamMemberTeacher teamMemberTeacher) {
+        TeamMemberTeacherVo teacherById = teamMemberTeacherMapper.selectTeamMemberTeacherById(teamMemberTeacher.getId());
+        if(teacherById!=null && teacherById.getTeacher() != teamMemberTeacher.getTeacher()) {
+            Long isChoosed = teamMemberTeacher.getIsChoosed();
+            if (isChoosed!=null&&isChoosed ==1){
+                iRaceInfoService.checkGuideLimit(teamMemberTeacher.getRace(),teamMemberTeacher.getTeacher());
+            }
+        }
+        //判断是否重复指导
+        int joinCount = getJoinCount(teamMemberTeacher.getTeacher(), teamMemberTeacher.getRace(), teamMemberTeacher.getTeam());
+        if (joinCount >= 1) {
+            throw new RuntimeException("该老师已指导该队伍");
+        }
         teamMemberTeacher.setUpdateTime(DateUtils.getNowDate());
         return teamMemberTeacherMapper.updateTeamMemberTeacher(teamMemberTeacher);
     }
@@ -152,8 +173,8 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
     }
 
     @Override
-    public List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId) {
-        Long[] teamIds = teamMemberTeacherMapper.selectJoinTeamByTeacherId(userId);
+    public List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId, Long race, Long name) {
+        Long[] teamIds = teamMemberTeacherMapper.selectJoinTeamByTeacherId(userId,race,name);
         List<TeamInfoVo> teamInfoVos = new ArrayList<>();
         if (teamIds != null && teamIds.length > 0) {
             teamInfoVos = teamInfoService.selectTeamInfoByIds(teamIds);
@@ -161,6 +182,18 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
         return teamInfoVos;
 
     }
+    /**
+     * 根据team获取指导老师
+     * @param team
+     * @return
+     */
+    @Override
+    public List<UserInfoVo> getMemberTeachersByTeamId(Long team) {
+        List<Long> ids = teamMemberTeacherMapper.getMemberTeachersByTeamId(team);
+        List<UserInfoVo> userInfoVos = userInfoService.selectUserInfoByIds(ids);
+        return userInfoVos;
+    }
+
     /**
      * 根据team和user删除邀请
      * @param team

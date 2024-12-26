@@ -86,10 +86,13 @@ public interface ITeamMemberTeacherService
 
     /**
      * 根据老师id查询队伍队伍列表
+     *
      * @param userId
+     * @param race
+     * @param name
      * @return
      */
-    List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId);
+    List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId, Long race, Long name);
 
     /**
      * 判断用户是否已加入
@@ -107,6 +110,12 @@ public interface ITeamMemberTeacherService
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 
+    /**
+     * 根据team获取指导老师
+     * @param team
+     * @return
+     */
+    List<UserInfoVo> getMemberTeachersByTeamId(Long team);
     /**
      * 根据老师id查询指导学生id
      * @param teacher

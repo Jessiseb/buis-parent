@@ -92,6 +92,23 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return teamInfoMapper.getCountJoin(userId,raceId,team);
     }
 
+    /**
+     * 根据用户id查询用户创建的队伍
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<TeamInfoVo> selectTeamInfoByUserId(Long userId) {
+        List<TeamInfoVo> results = new ArrayList<>();
+        List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoByUserId(userId);
+        if (teamInfoList == null || teamInfoList.isEmpty()) {
+            return results; // 返回空列表
+        }
+        for (TeamInfo team : teamInfoList) {
+            results.add(createTeamInfoVo(team));
+        }
+        return results;
+    }
 
     /**
      * 查询队伍信息列表 Vo
@@ -158,6 +175,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
         // 获取队长信息
         teamInfoVo.setLeaderInfo(userInfoVo);
+        //获取比赛信息
+        teamInfoVo.setRaceInfoVo(raceInfoService.selectRaceInfoById(team.getRace()));
         // 获取学生人数
         teamInfoVo.setStudentCount(studentCount);
         // 获取老师人数
@@ -170,6 +189,12 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
     @Override
     public List<TeamInfoVo> selectTeamInfoByIds(Long[] ids) {
-        return teamInfoMapper.selectTeamInfoByIds(ids);
+        List<TeamInfoVo> teamInfoVos = new ArrayList<>();
+        List<TeamInfo> teamInfos = teamInfoMapper.selectTeamInfoByIds(ids);
+        for (TeamInfo teamInfo : teamInfos) {
+            TeamInfoVo teamInfoVo = createTeamInfoVo(teamInfo);
+            teamInfoVos.add(teamInfoVo);
+        }
+        return teamInfoVos;
     }
 }

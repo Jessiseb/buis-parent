@@ -37,7 +37,7 @@ public class ScoreApiController extends BaseController {
     public MyPageVo<List<Score>> list(Score score) {
         startPage();
         List<Score> list = scoreService.selectScoreList(score);
-        return new MyPageVo(list, new PageInfo(list).getTotal());
+        return new MyPageVo(list);
     }
 
     /**

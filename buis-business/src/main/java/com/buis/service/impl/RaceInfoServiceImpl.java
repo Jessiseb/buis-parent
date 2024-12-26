@@ -38,10 +38,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
-    @Autowired
-    private IRaceLanqiaoStudentService LanqiaoStudentService;
-    @Autowired
-    private IRaceLanqiaoTeacherService lanqiaoTeacherService;
 
     /**
      * 查询比赛信息
@@ -57,6 +53,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         if (raceInfoVo != null) {
             // 设置是否已报名
             setIsJoin(raceInfoVo);
+            // 设置是否预报名
+            setIsPreJoin(raceInfoVo);
             // 设置比赛详情
             raceDetail.setRace(raceInfoVo.getId());
             List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
@@ -76,6 +74,20 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             userId = SecurityUtils.getFrontLoginUserId();
             raceInfoVo.setIsJoin(checkJoin(userId, raceInfoVo.getId(), null));
         } catch (ServiceException e) {
+            return;
+        }
+    }
+
+    /**
+     * 为isPreJoin赋值
+     */
+    public void setIsPreJoin(RaceInfoVo raceInfoVo) {
+        Long userId = null;
+        try {
+            userId = SecurityUtils.getFrontLoginUserId();
+            raceInfoVo.setIsPreJoin(checkJoin(userId, raceInfoVo.getId(), null));
+        } catch (ServiceException e) {
+            return;
         }
     }
 
@@ -94,6 +106,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             if (raceInfoVo != null) {
                 // 设置是否已报名
                 setIsJoin(raceInfoVo);
+                // 设置是否预报名
+                setIsPreJoin(raceInfoVo);
                 // 设置比赛详情
                 RaceDetail raceDetail = new RaceDetail();
                 raceDetail.setRace(raceInfoVo.getId());
@@ -224,11 +238,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         }
         RaceInfoVo raceInfoVo = selectRaceInfoById(raceId);
         if (raceInfoVo != null) {
-            //如果比赛是蓝桥杯
-//            if (raceInfoVo.getRaceType() == 1) {
-//                checkJoinLanQiaoStudent(raceId, userId);
-//                checkJoinLanQiaoTeacher(raceId, userId);
-//            }
             //是学生只能创建一个队伍
             UserInfoVo userInfoVo = userInfoService.selectUserInfoById(userId);
             if (userInfoVo != null && userInfoVo.getIsTeacher() == 0) {
@@ -237,6 +246,20 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                     throw new ServiceException("你已经创建过队伍");
                 }
             }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean checkGuideLimit(Long raceId, Long teacherId) {
+        //老师现在指导数量
+        Long nLimit = teamMemberTeacherService.getGuideCount(teacherId);
+        //限制老师最大指导人数数量
+        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+        Long tLimit = raceDetail.getTLimit();
+        // 检查老师加入的队伍数量是否超过比赛的指导老师数量限制
+        if (tLimit != 0 && nLimit >= tLimit) {
+            throw new ServiceException("您已超过最大指导数量");
         }
         return true;
     }
@@ -270,36 +293,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         // 查询比赛信息
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
         if (raceDetail != null) {
-            Long tLimit = raceDetail.getTLimit();
-            if (tLimit != 0) {
-                return (teacher + student) >= tLimit;
+            Long capacity = raceDetail.getCapacity();
+            if (capacity != 0) {
+                return (teacher + student) >= capacity;
             }
         }
         return false;
     }
 
-    private boolean checkJoinLanQiaoStudent(Long userId, Long raceId) {
-        Object o = lanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(userId,raceId );
-        if (o != null) {
-            throw new ServiceException("已提交过老师报名表，请取消后再次提交");
-        }
-        Object o1 = LanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(raceId, userId);
-        if (o1 != null) {
-            throw new ServiceException("已提交过学生报名表，请勿重复提交");
-        }
-        return true;
-    }
-
-    private boolean checkJoinLanQiaoTeacher(Long userId, Long raceId) {
-        Object o = LanqiaoStudentService.selectRaceLanqiaoStudentRaceIdAndByUserId(raceId, userId);
-        if (o != null) {
-            throw new ServiceException("已提交过学生报名表，请取消后再次提交");
-        }
-        Object o1 = lanqiaoTeacherService.selectRaceLanqiaoTeacherRaceIdAndByUserId(raceId, userId);
-        if (o1 != null) {
-            throw new ServiceException("已提交过老师报名表，请勿重复提交");
-        }
-        return true;
-    }
 }
 

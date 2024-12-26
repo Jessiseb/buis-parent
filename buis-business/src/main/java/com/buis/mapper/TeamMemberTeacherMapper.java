@@ -86,7 +86,7 @@ public interface TeamMemberTeacherMapper
      */
     List<Long> getTeachersByRaceId(Long raceId);
 
-    Long[] selectJoinTeamByTeacherId(Long userId);
+    Long[] selectJoinTeamByTeacherId(@Param("userId") Long userId, @Param("race") Long race, @Param("name") Long name);
 
     /**
      * 判断用户是否已加入
@@ -102,4 +102,11 @@ public interface TeamMemberTeacherMapper
      * @param user
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
+    /**
+     * 根据team获取指导老师
+     *
+     * @param team
+     * @return
+     */
+    List<Long> getMemberTeachersByTeamId(Long team);
 }
