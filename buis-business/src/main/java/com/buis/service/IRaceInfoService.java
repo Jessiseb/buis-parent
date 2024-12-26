@@ -1,6 +1,9 @@
 package com.buis.service;
 
 import java.util.List;
+
+import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
 import com.buis.domain.RaceInfo;
 import com.buis.vo.RaceInfoVo;
 
@@ -66,6 +69,9 @@ public interface IRaceInfoService
      * @return
      */
     public boolean checkJoinCondition(Long userId,Long raceId);
+
+    AjaxResult updateApproval(Long id);
+
     /**
      * 检查是否超过了比赛的指导老师数量限制
      * @param raceId       比赛的ID

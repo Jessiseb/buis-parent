@@ -109,4 +109,6 @@ public interface TeamMemberTeacherMapper
      * @return
      */
     List<Long> getMemberTeachersByTeamId(Long team);
+
+    int insertTeamMemberTeacherBatch(List<TeamMemberTeacherVo> teamMemberTeacherList);
 }
