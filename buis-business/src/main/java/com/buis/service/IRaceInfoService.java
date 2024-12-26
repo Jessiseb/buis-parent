@@ -79,4 +79,6 @@ public interface IRaceInfoService
      * @return
      */
     public boolean checkGuideLimit(Long raceId,Long teacherId);
+
+    public List<RaceInfo> selectRaceInfoByStatu(Long i);
 }
