@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 定时任务
  */
-@Component
+@Component("RaceTask")
 public class RaceTask {
     @Autowired
     private IRaceInfoService raceInfoService;
@@ -23,7 +23,7 @@ public class RaceTask {
      * 每天1点10分运行
      * 检查未开始的比赛并与当前时间对比来改变比赛状态
      */
-    @Scheduled(cron = "0 10 1 * * ?")
+//    @Scheduled(cron = "0 10 1 * * ?")
     public void checkRaceStatusPREPARE() {
         System.out.println("执行定时任务===检查未开始的比赛状态");
         //找出状态为未开始的比赛
@@ -42,7 +42,7 @@ public class RaceTask {
      * 每天0点0分运行
      * 检查报名钟的比赛并与比赛截止时间对比来改变比赛状态
      */
-    @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(cron = "0 0 0 * * ?")
     public void checkRaceStatusJOIN() {
         System.out.println("执行定时任务===检查报名中的比赛状态");
         //找出状态为未开始的比赛
