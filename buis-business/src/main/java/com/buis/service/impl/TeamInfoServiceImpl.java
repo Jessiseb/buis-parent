@@ -9,9 +9,11 @@ import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,17 +25,17 @@ import java.util.List;
  */
 @Service
 public class TeamInfoServiceImpl implements ITeamInfoService {
-    @Autowired
+    @Resource
     private TeamInfoMapper teamInfoMapper;
-
-    @Autowired
+    @Resource
     private IUserInfoService userInfoService;
-    @Autowired
+    @Resource
     private ITeamMemberStudentService teamStudentService;
-    @Autowired
+    @Resource
     private ITeamMemberTeacherService teamTeacherService;
-    @Autowired
+    @Resource
     private IRaceInfoService raceInfoService;
+
 
     /**
      * 新增队伍信息
@@ -43,6 +45,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public int insertTeamInfo(TeamInfo teamInfo) {
+        // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
         return teamInfoMapper.insertTeamInfo(teamInfo);
@@ -56,6 +59,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public int updateTeamInfo(TeamInfo teamInfo) {
+        // 判断报名条件
+        raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setUpdateTime(DateUtils.getNowDate());
         return teamInfoMapper.updateTeamInfo(teamInfo);
     }
