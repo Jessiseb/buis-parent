@@ -1,5 +1,8 @@
 package com.buis.service.impl;
 
+import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
+import com.buis.common.core.domain.model.LoginUser;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
@@ -7,6 +10,8 @@ import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
+import com.buis.system.mapper.SysRoleMapper;
+import com.buis.system.service.ISysUserService;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 比赛信息Service业务层处理
@@ -39,6 +42,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
 
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
+
     /**
      * 查询比赛信息
      *
@@ -48,7 +54,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public RaceInfoVo selectRaceInfoById(Long id) {
         RaceInfoVo raceInfoVo = raceInfoMapper.selectRaceInfoById(id);
-
+        //登录用户id
+        Long userId = SecurityUtils.getUserId();
         RaceDetail raceDetail = new RaceDetail();
         if (raceInfoVo != null) {
             // 设置是否已报名
@@ -129,6 +136,14 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Transactional
     @Override
     public int insertRaceInfo(RaceInfo raceInfo) {
+        // 获取用户id
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        Long userId = loginUser.getUser().getUserId();
+        //获取比赛id
+        Long raceId = raceInfo.getId();
+        // 判断报名条件
+        this.checkJoinCondition(userId, raceId);
+
         raceInfo.setCreateTime(DateUtils.getNowDate());
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         insertReward(raceInfo);
@@ -167,6 +182,14 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Transactional
     @Override
     public int updateRaceInfo(RaceInfo raceInfo) {
+        // 获取用户id
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        Long userId = loginUser.getUser().getUserId();
+        //获取比赛id
+        Long raceId = raceInfo.getId();
+        // 判断报名条件
+        this.checkJoinCondition(userId, raceId);
+
         raceInfo.setUpdateTime(DateUtils.getNowDate());
         raceInfoMapper.deleteRewardByRace(raceInfo.getId());
         insertReward(raceInfo);
@@ -262,6 +285,75 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             throw new ServiceException("您已超过最大指导数量");
         }
         return true;
+    }
+
+    /**
+     * 审批第二课堂
+     * @param id
+     * @return
+     */
+    @Override
+    public AjaxResult updateApproval(Long id) {
+        //获取登录用户id
+        Long userId = SecurityUtils.getUserId();
+        //根据用户id获取角色id
+        List<Long> roleIds = sysRoleMapper.selectRoleListByUserId(userId);
+        if (roleIds == null || roleIds.isEmpty()) {
+            return AjaxResult.error("用户没有分配任何角色");
+        }
+        // 获取院级和校级角色id
+        List<Map<String, Object>> roleIdsList = sysRoleMapper.selectSchoolAndCollegeRoleId();
+        if (roleIdsList == null || roleIdsList.isEmpty()) {
+            return AjaxResult.error("无法获取校级或院级角色信息");
+        }
+
+        Map<String, Long> roleIdsMap = new HashMap<>();
+        for (Map<String, Object> map : roleIdsList) {
+            String roleType = (String) map.get("roleType");
+            Long roleId = (Long) map.get("roleId");
+            roleIdsMap.put(roleType, roleId);
+        }
+       //获取院级和校级角色id
+        Long schoolRoleId = roleIdsMap.get("校级id");
+        Long collegeRoleId = roleIdsMap.get("院级id");
+
+        // 判断用户是否是校级或院级用户
+        boolean isSchoolUser = roleIds.contains(schoolRoleId);
+        boolean isCollegeUser = roleIds.contains(collegeRoleId);
+        if (isSchoolUser) {
+            // 用户是校级用户
+            try {
+                raceInfoMapper.updateRaceInfoStatus(id, 1);
+                return AjaxResult.success("校级审核成功");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return AjaxResult.error("校级审核失败: " + e.getMessage());
+             }
+            } else if (isCollegeUser) {
+                // 用户是院级用户
+                try {
+                    raceInfoMapper.updateRaceInfoStatus(id, 5);
+                    return AjaxResult.success("院级审核成功");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return AjaxResult.error("院级审核失败: " + e.getMessage());
+                }
+            }
+
+        return AjaxResult.error("当前用户不是院级或校级用户");
+    }
+
+
+
+    /**
+     * 根据状态查询比赛信息
+     * @param i
+     * @return
+     */
+    @Override
+    public List<RaceInfo> selectRaceInfoByStatu(Long i) {
+        return  raceInfoMapper.selectRaceInfoByStatu(i);
+
     }
 
     /**

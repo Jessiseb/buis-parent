@@ -89,4 +89,9 @@ public interface RaceInfoMapper
      * @return 结果
      */
     public int deleteRewardByRace(Long id);
+
+    void updateRaceInfoStatus(@Param("id") Long id,@Param("status") Integer status);
+
+    public List<RaceInfo> selectRaceInfoByStatu(Long i);
+
 }

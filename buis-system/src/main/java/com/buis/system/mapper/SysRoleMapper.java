@@ -1,6 +1,8 @@
 package com.buis.system.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import com.buis.common.core.domain.entity.SysRole;
 
 /**
@@ -104,4 +106,8 @@ public interface SysRoleMapper
      * @return 结果
      */
     public int deleteRoleByIds(Long[] roleIds);
+
+
+    List<Map<String,Object>> selectSchoolAndCollegeRoleId();
+
 }

@@ -205,6 +205,17 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
     }
 
     /**
+     * 批量新增队伍老师管理
+     * @param teamMemberTeacherList
+     * @return 结果
+     */
+    @Override
+    public int insertTeamMemberTeacherBatch(List<TeamMemberTeacherVo> teamMemberTeacherList) {
+        return teamMemberTeacherMapper.insertTeamMemberTeacherBatch(teamMemberTeacherList);
+
+    }
+
+    /**
      * 根据老师id查询指导学生id
      *
      * @param teacher
