@@ -4,7 +4,9 @@ import cn.hutool.core.util.RandomUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
+import com.buis.domain.UserInfo;
 import com.buis.service.IEmailService;
+import com.buis.service.IUserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,6 +33,8 @@ public class EmailApiController {
 
     @Resource
     private IEmailService emailService;
+    @Resource
+    private IUserInfoService userInfoService;
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -50,6 +54,12 @@ public class EmailApiController {
         if (!matcher.find()) {
             throw new ServiceException("邮箱格式有误,请重新输入!");
         }
+        //验证是否有对应账号
+        UserInfo user = userInfoService.selectUserInfoByEmail(email);
+        if (user==null){
+            throw new ServiceException("用户不存在,请先注册!");
+        }
+
 
         //生成四位数验证码
         String code = RandomUtil.randomNumbers(4);
