@@ -10,6 +10,7 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
+import com.buis.common.utils.StringUtils;
 import com.buis.domain.CollegeMajor;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
@@ -18,6 +19,7 @@ import com.buis.mapper.UserInfoMapper;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
 import com.buis.system.service.ISysDictDataService;
+import com.buis.vo.FindUserVo;
 import com.buis.vo.SysDictDataVo;
 import com.buis.vo.UserInfoVo;
 import com.github.pagehelper.PageInfo;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 import static com.buis.service.impl.UserInfoServiceImpl.SALT;
@@ -116,24 +119,28 @@ public class UserInfoApiController extends BaseController {
      */
     @ApiOperation("找回密码")
     @PostMapping("/findPassword")
-    public R findPassword(@ApiParam(name = "userInfo", value = "用户信息", required = true) @RequestBody UserInfo userInfo) {
+    public R findPassword(@ApiParam(name = "findUserVo", value = "找回密码信息", required = true) @RequestBody FindUserVo findUserVo) {
         //判空
-        if (userInfo == null || userInfo.getEmail() == null || userInfo.getPassword() == null) {
-            throw new ServiceException("参数错误!");
+        if (findUserVo == null) {
+            throw new ServiceException("参数不能为空!");
         }
         //判断用户是否存在
-        UserInfo user = userInfoService.selectUserInfoByEmail(userInfo.getEmail());
+        String eamil = findUserVo.getEamil();
+        UserInfo user = userInfoService.selectUserInfoByEmail(eamil);
         if (user==null){
             throw new ServiceException("用户不存在,请先注册!");
         }
-        Long userId = user.getId();
-        userInfo.setId(userId);
-        String password = userInfo.getPassword();
+        //判断两次输入的密码是否一致
+        String newPassword = findUserVo.getNewPassword();
+        String checkPassword = findUserVo.getCheckPassword();
+        if(!newPassword.equals(checkPassword)){
+            throw new ServiceException("两次输入的密码不一致,请校验~");
+        }
         //密码加密
-        String encryptPassword = SaSecureUtil.md5(SALT + password);
-        userInfo.setPassword(encryptPassword);
+        String encryptPassword = SaSecureUtil.md5(SALT + newPassword);
+        user.setPassword(encryptPassword);
         //更新
-        return R.ok(userInfoService.updateUserInfo(userInfo));
+        return R.ok(userInfoService.updateUserInfo(user));
 
     }
 
