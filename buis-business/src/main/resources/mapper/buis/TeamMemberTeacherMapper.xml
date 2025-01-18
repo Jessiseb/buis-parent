@@ -106,7 +106,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             )
         </foreach>
     </insert>
-
+    <insert id="insertTeamMemberTeacherByList">
+        <foreach collection="list" item="item" separator=";">
+            insert into team_member_teacher
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="race != null">race,</if>
+                <if test="team != null">team,</if>
+                <if test="teacher != null">teacher,</if>
+                <if test="decider != null">decider,</if>
+                <if test="isChoosed != null">is_choosed,</if>
+                <if test="reason != null">reason,</if>
+                <if test="isDeleted != null">is_deleted,</if>
+                <if test="createTime != null">create_time,</if>
+                <if test="updateTime != null">update_time,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="race != null">#{race},</if>
+                <if test="team != null">#{team},</if>
+                <if test="teacher != null">#{teacher},</if>
+                <if test="decider != null">#{decider},</if>
+                <if test="isChoosed != null">#{isChoosed},</if>
+                <if test="reason != null">#{reason},</if>
+                <if test="isDeleted != null">#{isDeleted},</if>
+                <if test="createTime != null">#{createTime},</if>
+                <if test="updateTime != null">#{updateTime},</if>
+            </trim>
+        </foreach>
+    </insert>
 
 
     <update id="updateTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher">

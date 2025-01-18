@@ -123,4 +123,6 @@ public interface ITeamMemberTeacherService
      * @return
      */
     List<UserInfoVo> getMemberTeachersByTeamId(Long team);
+
+    public int insertTeamMemberTeacherByList(List<TeamMemberTeacher> teamMemberTeacherList);
 }
