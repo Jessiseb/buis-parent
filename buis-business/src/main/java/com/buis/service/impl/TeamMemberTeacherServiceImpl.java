@@ -190,6 +190,11 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
         return userInfoVos;
     }
 
+    @Override
+    public int insertTeamMemberTeacherByList(List<TeamMemberTeacher> teamMemberTeacherList) {
+        return teamMemberTeacherMapper.insertTeamMemberTeacherByList(teamMemberTeacherList);
+    }
+
     /**
      * 根据team和user删除邀请
      * @param team
