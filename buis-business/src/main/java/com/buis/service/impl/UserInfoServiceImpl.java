@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
+import com.buis.common.utils.FormatUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.bean.BeanUtils;
 import com.buis.domain.UserInfo;
@@ -298,11 +299,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
         //3.校验账户
         //邮箱的正则表达式
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        Matcher matcher = Pattern.compile(emailRegex).matcher(email);
-        if (!matcher.find()) {
-            throw new ServiceException("邮箱格式有误,请重新输入!");
-        }
+        FormatUtils.checkEmailFormat(email);
 
         StpUtil.login(userInfo.getId());
         String token = StpUtil.getTokenValue();
