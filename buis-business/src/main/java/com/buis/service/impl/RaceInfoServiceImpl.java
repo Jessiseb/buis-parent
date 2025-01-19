@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.domain.model.LoginUser;
@@ -55,7 +56,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     public RaceInfoVo selectRaceInfoById(Long id) {
         RaceInfoVo raceInfoVo = raceInfoMapper.selectRaceInfoById(id);
         //登录用户id
-        Long userId = SecurityUtils.getUserId();
+//        Object userId =  StpUtil.getLoginId();
         RaceDetail raceDetail = new RaceDetail();
         if (raceInfoVo != null) {
             // 设置是否已报名
