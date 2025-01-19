@@ -4,20 +4,25 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.utils.SecurityUtils;
-import com.buis.domain.PreSignStudent;
-import com.buis.domain.PreSignTeacher;
+import com.buis.domain.*;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IPreSignTeacherService;
+import com.buis.service.ITeamInfoService;
 import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.PreSignTeacherVo;
+import com.buis.vo.RaceInfoVo;
+import com.buis.vo.TeamInfoVo;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 报名信息
@@ -30,7 +35,8 @@ public class JoinApiController extends BaseController {
     private IPreSignTeacherService preTeacherService;
     @Autowired
     private IPreSignStudentService preStudentService;
-
+    @Autowired
+    private ITeamInfoService teamInfoService;
 
     /**
      * 根据比赛id分页查询预报名老师列表
@@ -127,8 +133,55 @@ public class JoinApiController extends BaseController {
         return new MyPageVo(preSignStudentVos, new PageInfo(preSignStudentVos).getTotal());
     }
 
+    /**
+     * 分页查询用户组建的队伍的比赛
+     *
+     */
+    @ApiOperation("分页查询用户组建的队伍的比赛list")
+    @PostMapping("/JoinRaceListOf/{leader}")
+     public  MyPageVo<List<RaceInfo>> mylead(@ApiParam(name = "leader",required = true) @PathVariable Long leader){
+        //开始分页
+        startPage();
+        Long id = leader;
 
+        List<RaceInfo> raceInfoList = null;
+        TeamInfo teamInfo = new TeamInfo();
+        teamInfo.setId(id);
+        List<TeamInfoVo> teamInfovos = teamInfoService.selectTeamInfoList(teamInfo);
+        BeanUtils.copyProperties(raceInfoList,teamInfovos);
+        //返回结果
+        return   new MyPageVo(raceInfoList, new PageInfo(raceInfoList).getTotal());
+     }
 
+    /**
+     * 分页查询用户预报名过的比赛list
+     *
+     */
+    @ApiOperation("分页查询用户预报名过的比赛list")
+    @PostMapping("/PreJoinRaceListOf/{isTeacher}")
+    public  MyPageVo<List<RaceInfo>> PreJoinRaceListOf(@ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer isTeacher){
+        //开始分页
+        startPage();
+        Long id  = SecurityUtils.getUserId();
+        List<RaceInfo> raceInfoList = null;
+        //判断学生还是老师，查pre表
+        if( isTeacher == 0){
+            PreSignStudent preSignStudent = new PreSignStudent();
+            preSignStudent.setRace(id);
+            List<PreSignStudentVo> preSignStudentVos = preStudentService.selectPreSignStudentList(preSignStudent);
+            BeanUtils.copyProperties(raceInfoList,preSignStudentVos);
+        }else if (isTeacher == 0){
+            PreSignTeacher preSignTeacher = new PreSignTeacher();
+            preSignTeacher.setRace(id);
+            List<PreSignTeacherVo> preSignTeacherVos = preTeacherService.selectPreSignTeacherList(preSignTeacher);
+            BeanUtils.copyProperties(raceInfoList,preSignTeacherVos);
+        }else {
+            throw new IllegalArgumentException("无效的用户类型");
+        }
+
+        //返回结果
+        return   new MyPageVo(raceInfoList, new PageInfo(raceInfoList).getTotal());
+    }
 
 
 }
