@@ -3,6 +3,7 @@ package com.buis.web.controller.api;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.domain.entity.SysDictData;
@@ -28,6 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -46,6 +48,8 @@ public class UserInfoApiController extends BaseController {
     private IUserInfoService userInfoService;
     @Autowired
     private ICollegeMajorService collegeMajorService;
+    @Resource
+    private RedisTemplate redisTemplate;
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
     public R<String> login(@ApiParam(name = "userLoginDTO", value = "用户登录信息", required = true)@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
@@ -125,10 +129,16 @@ public class UserInfoApiController extends BaseController {
             throw new ServiceException("参数不能为空!");
         }
         //判断用户是否存在
-        String eamil = findUserVo.getEamil();
+        String eamil = findUserVo.getEmail();
         UserInfo user = userInfoService.selectUserInfoByEmail(eamil);
         if (user==null){
             throw new ServiceException("用户不存在,请先注册!");
+        }
+        //判断验证码输入是否正确
+        //从缓存中取到code
+        String rcode = (String) redisTemplate.opsForValue().get(RedisConstant.EMAIL + eamil);
+        if (!rcode.equals(findUserVo.getCode())) {
+            throw new ServiceException("验证码错误~");
         }
         //判断两次输入的密码是否一致
         String newPassword = findUserVo.getNewPassword();
