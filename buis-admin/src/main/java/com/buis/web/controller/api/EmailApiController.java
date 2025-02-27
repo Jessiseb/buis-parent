@@ -10,10 +10,7 @@ import com.buis.service.IUserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
@@ -76,5 +73,34 @@ public class EmailApiController {
         //不管有无发过,,直接更新缓存的验证码
         redisTemplate.opsForValue().set(RedisConstant.EMAIL + email, code, RedisConstant.EMAIL_TTL, TimeUnit.MINUTES);
         return R.ok("验证码发送成功!!");
+    }
+
+    /**
+     * 发送驳回通知到指定邮箱
+     * @param email
+     * @param inform
+     * @return
+     */
+    @ApiOperation("发送驳回通知到指定邮箱")
+    @PostMapping("/sendInformToEmail")
+    public R<String> sendInformToEmail(@RequestParam String email, @RequestParam String inform) {
+        //校验账户
+        //邮箱的正则表达式
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Matcher matcher = Pattern.compile(emailRegex).matcher(email);
+        if (!matcher.find()) {
+            throw new ServiceException("邮箱格式有误,请重新输入!");
+        }
+
+        //构建信息
+        String massage = "经过审核,您的提交的材料不符合要求,原因如下:" + inform + "。请修改后重新提交!";
+        try {
+            //发送邮件
+            emailService.sendEmail(email, "广东白云学院大数据与计算机学院创新创业中心", massage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.fail("发送通知失败!");
+        }
+        return R.ok("通知发送成功!!");
     }
 }
