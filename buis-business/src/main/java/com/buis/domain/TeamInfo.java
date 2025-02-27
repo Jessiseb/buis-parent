@@ -163,5 +163,10 @@ public class TeamInfo extends BaseEntity {
     @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
+    /**
+     * 指导老师
+     */
+    @ApiModelProperty("指导老师")
+    private Long teacher;
 
 }

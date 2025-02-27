@@ -82,7 +82,8 @@ public class TeamMemberTeacher extends BaseEntity {
      */
     @ApiModelProperty("互选状态")
     @Excel(name = "互选状态")
-    @ExcelProperty("互选状态")
+    @
+            ExcelProperty("互选状态")
     private Long isChoosed;
 
     /**

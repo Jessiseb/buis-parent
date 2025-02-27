@@ -1,7 +1,9 @@
 package com.buis.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.dto.TeamMemberTeacherDto;
 import com.buis.mapper.TeamMemberTeacherMapper;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
@@ -11,6 +13,8 @@ import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -214,6 +218,57 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
     public int insertTeamMemberTeacherBatch(List<TeamMemberTeacherVo> teamMemberTeacherList) {
         return teamMemberTeacherMapper.insertTeamMemberTeacherBatch(teamMemberTeacherList);
 
+    }
+
+    /**
+     * 根据老师id查询指导学生id
+     *
+     * @param teacher
+     * @return
+     */
+    @Override
+    public List<Long> selectStudentIdsByTeacherId(Long teacher) {
+        TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
+        teamMemberTeacher.setTeacher(teacher);
+        List<TeamMemberTeacherVo> teamMemberTeacherVos = teamMemberTeacherMapper.selectTeamMemberTeacherList(teamMemberTeacher);
+        List<Long> studentIds = new ArrayList<>();
+        if (teamMemberTeacherVos != null) {
+            for (TeamMemberTeacherVo teamMemberTeacherVo : teamMemberTeacherVos) {
+                Long teamId = teamMemberTeacherVo.getTeam();
+                studentIds.add(teamId);
+            }
+        }
+            return studentIds;
+    }
+
+    /**
+     * 批量新增/删除队伍老师管理
+     *
+     * @param dto
+     * @return
+     */
+    @Override
+    @Transactional
+    public int batchAddTeamMemberTeacher(TeamMemberTeacherDto dto) {
+        List<Long> addTeamIds = dto.getAddTeamIds();
+        List<Long> removeTeamIds = dto.getRemoveTeamIds();
+
+        if(removeTeamIds != null && removeTeamIds.size() > 0) {
+            for (Long teamId : removeTeamIds) {
+                teamMemberTeacherMapper.deleteTeamMemberTeacherByTeamAndTeacher(teamId, dto.getTeacher());
+            }
+        }
+
+        if(addTeamIds!= null && addTeamIds.size() > 0) {
+            TeamMemberTeacher teamMemberTeacher1 = new TeamMemberTeacher();
+            BeanUtil.copyProperties(dto, teamMemberTeacher1);
+
+            for (Long teamId : addTeamIds) {
+                teamMemberTeacher1.setTeam(teamId);
+                teamMemberTeacherMapper.insertTeamMemberTeacher(teamMemberTeacher1);
+            }
+        }
+        return 1;
     }
 
     /**
