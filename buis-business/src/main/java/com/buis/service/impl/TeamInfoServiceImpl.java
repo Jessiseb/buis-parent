@@ -3,9 +3,11 @@ package com.buis.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.TeamMemberTeacher;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
+import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,12 +124,25 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Override
     public List<TeamInfoVo> selectTeamInfoList(TeamInfo teamInfo) {
         List<TeamInfoVo> results = new ArrayList<>();
+
         List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoList(teamInfo);
+
         if (teamInfoList == null || teamInfoList.isEmpty()) {
             return results; // 返回空列表
         }
         for (TeamInfo team : teamInfoList) {
-            results.add(createTeamInfoVo(team));
+            TeamInfoVo teamInfoVo = createTeamInfoVo(team);
+            //带指导老师查询
+            if (teamInfo.getTeacher() != null) {
+                //返回该老师指导的队伍id
+                List<Long> teamIds = teamTeacherService.selectStudentIdsByTeacherId(teamInfo.getTeacher());
+                for (Long teamId : teamIds) {
+                    if (teamId.equals(team.getId())) {
+                        teamInfoVo.setIsInstruct(1);
+                    }
+                }
+            }
+            results.add(teamInfoVo);
         }
         return results;
     }
@@ -171,6 +186,9 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfoVo.setStudentCount(studentCount);
         // 获取老师人数
         teamInfoVo.setTeacherCount(teacherCount);
+
+
+
         return teamInfoVo;
     }
 
