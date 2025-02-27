@@ -1,6 +1,7 @@
 package com.buis.vo;
 
 import com.buis.bo.MemberInfoBO;
+import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.buis.domain.TeamInfo;
 import io.swagger.annotations.ApiModel;
@@ -12,6 +13,34 @@ import java.util.List;
 @Data
 @ApiModel("队伍信息VO")
 public class TeamInfoVo extends TeamInfo {
+
+    /**
+     * 比赛
+     */
+    @ApiModelProperty(value = "比赛")
+    @Excel(name="比赛",sort = 1)
+    private String raceName;
+
+    /**
+     * 负责人所在学院
+     */
+    @ApiModelProperty(value = "负责人所在学院")
+    @Excel(name="负责人所在学院")
+    private String sCollege;
+
+    /**
+     * 第一指导老师所在学院
+     */
+    @ApiModelProperty(value = "第一指导老师所在学院")
+    @Excel(name="第一指导老师所在学院")
+    private String t1College;
+
+    /**
+     * 第二指导老师所在学院
+     */
+    @ApiModelProperty(value = "第二指导老师所在学院")
+    @Excel(name="第二指导老师所在学院")
+    private String t2College;
 
     /**
      * 队长信息
