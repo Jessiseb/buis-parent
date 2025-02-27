@@ -32,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectTeamInfoVo">
         select t1.id,
+               t1.leader,
                t5.name as race_name,
                t1.name,
                t1.type,
@@ -65,10 +66,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTeamInfoVo"/>
         <where>
             t1.is_deleted = 0
-            <if test="race != null ">and t1.race = #{race}</if>
+            <if test="race != null and race != ''">and t1.race = #{race}</if>
             <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
             <if test="type != null and type != ''">and t1.type = #{type}</if>
-            <if test="description != null  and description != ''">and t1.description like concat('%', #{description},
+            <if test="description != null  and description != '' ">and t1.description like concat('%', #{description},
                 '%')
             </if>
             <if test="leader != null ">and t1.leader = #{leader}</if>
@@ -118,7 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertTeamInfo" parameterType="com.buis.domain.TeamInfo" useGeneratedKeys="true" keyProperty="id">
         insert into team_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="race != null">race,</if>
+            <if test="race != null and race != ''">race,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="type != null and type != ''">type,</if>
             <if test="description != null and description != ''">description,</if>
@@ -142,7 +143,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="race != null">#{race},</if>
+            <if test="race != null and race != ''">#{race},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="type != null and type != ''">#{type},</if>
             <if test="description != null and description != ''">#{description},</if>
@@ -171,7 +172,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateTeamInfo" parameterType="com.buis.domain.TeamInfo">
         update team_info
         <trim prefix="SET" suffixOverrides=",">
-            <if test="race != null">race = #{race},</if>
+            <if test="race != null and race != ''">race = #{race},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="type != null and type != ''">type = #{type},</if>
             <if test="description != null and description != ''">description = #{description},</if>
