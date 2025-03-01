@@ -134,5 +134,11 @@ public class RaceDetail extends BaseEntity {
     @ApiModelProperty("分数权重")
     private List<Weight> weightList;
 
+    /**
+     * 比赛名称
+     */
+    @ApiModelProperty("比赛名称")
+    @Excel(name = "比赛名称")
+    private String raceName;
 
 }
