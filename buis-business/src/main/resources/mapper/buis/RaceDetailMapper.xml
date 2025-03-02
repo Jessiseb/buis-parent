@@ -43,12 +43,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectRaceDetail">
         select ri.name as ri_name,rd.id,rd.race,rd.name as rd_name,rd.phone,rd.email,rd.desc_url,rd.group_url,rd.rule,rd.capacity,rd.team_min,rd.team_max,rd.teacher_min,rd.teacher_max,rd.r_rank,rd.t_limit,rd.is_deleted,rd.create_time,rd.update_time from race_detail as rd
         join race_info as ri ON rd.race = ri.id
-        WHERE ri.is_deleted = 0 AND rd.is_deleted = 0
     </sql>
 
     <select id="selectRaceDetailList" parameterType="com.buis.domain.RaceDetail" resultMap="RaceDetailResult">
         <include refid="selectRaceDetail"/>
         <where>
+            ri.is_deleted = 0 AND rd.is_deleted = 0
             <if test="raceDetail.id != null "> and id = #{raceDetail.id}</if>
             <if test="raceDetail.race != null "> and race = #{raceDetail.race}</if>
             <if test="raceDetail.name != null  and name != ''"> and name like concat('%', #{raceDetail.name}, '%')</if>
