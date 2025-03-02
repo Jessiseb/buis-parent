@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.buis.domain.RaceDetail;
 import com.buis.domain.Weight;
+import com.buis.vo.RaceDetailVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -29,7 +30,7 @@ public interface RaceDetailMapper
      * @param raceDetail 比赛详情
      * @return 比赛详情集合
      */
-    public List<RaceDetail> selectRaceDetailList(@Param("raceDetail") RaceDetail raceDetail);
+    public List<RaceDetailVo> selectRaceDetailList(@Param("raceDetail") RaceDetail raceDetail);
 
     /**
      * 新增比赛详情
