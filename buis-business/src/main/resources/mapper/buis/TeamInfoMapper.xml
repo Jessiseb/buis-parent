@@ -135,8 +135,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="declarationUrl != null and declarationUrl != ''">declaration_url,</if>
             <if test="midUrl != null and midUrl != ''">mid_url,</if>
             <if test="closureUrl != null and closureUrl != ''">closure_url,</if>
-            <if test="rRank != null">r_rank,</if>
             <if test="status != null">status,</if>
+            <if test="rRank != null">r_rank,</if>
             <if test="reason != null">reason,</if>
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
@@ -161,7 +161,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="closureUrl != null and closureUrl != ''">#{closureUrl},</if>
             <if test="status != null">#{status},</if>
             <if test="rRank != null">#{rRank},</if>
-            <if test="status != null">#{status},</if>
             <if test="reason != null">#{reason},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
