@@ -127,6 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and is_deleted = 0
     </select>
 
+
     <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">
         insert into race_info
         <trim prefix="(" suffix=")" suffixOverrides=",">

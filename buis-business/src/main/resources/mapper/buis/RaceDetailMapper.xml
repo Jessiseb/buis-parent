@@ -4,59 +4,79 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceDetailMapper">
 
-    <resultMap type="com.buis.domain.RaceDetail" id="RaceDetailResult">
-        <result property="id"    column="id"    />
-        <result property="race"    column="race"    />
-        <result property="name"    column="rd_name"    />
-        <result property="phone"    column="phone"    />
-        <result property="email"    column="email"    />
-        <result property="descUrl"    column="desc_url"    />
-        <result property="groupUrl"    column="group_url"    />
-        <result property="rule"    column="rule"    />
-        <result property="capacity"    column="capacity"    />
-        <result property="teamMin"    column="team_min"    />
-        <result property="teamMax"    column="team_max"    />
-        <result property="teacherMin"    column="teacher_min"    />
-        <result property="teacherMax"    column="teacher_max"    />
-        <result property="rRank"    column="r_rank"    />
-        <result property="tLimit"    column="t_limit"    />
-        <result property="isDeleted"    column="is_deleted"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="raceName"    column="ri_name"    />
+    <resultMap type="com.buis.vo.RaceDetailVo" id="RaceDetailResult">
+        <result property="id" column="id"/>
+        <result property="raceName" column="race_name"/>
+        <result property="race" column="race"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="descUrl" column="desc_url"/>
+        <result property="groupUrl" column="group_url"/>
+        <result property="rule" column="rule"/>
+        <result property="capacity" column="capacity"/>
+        <result property="teamMin" column="team_min"/>
+        <result property="teamMax" column="team_max"/>
+        <result property="teacherMin" column="teacher_min"/>
+        <result property="teacherMax" column="teacher_max"/>
+        <result property="rRank" column="r_rank"/>
+        <result property="tLimit" column="t_limit"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+
     </resultMap>
 
-    <resultMap id="RaceDetailWeightResult" type="com.buis.domain.RaceDetail" extends="RaceDetailResult">
-        <collection property="weightList" ofType="com.buis.domain.Weight" column="id" select="selectWeightList" />
+    <resultMap id="RaceDetailWeightResult" type="com.buis.vo.RaceDetailVo" extends="RaceDetailResult">
+        <collection property="weightList" ofType="com.buis.domain.Weight" column="id" select="selectWeightList"/>
     </resultMap>
 
     <resultMap type="com.buis.domain.Weight" id="WeightResult">
-        <result property="id"    column="id"    />
-        <result property="raceD"    column="race_d"    />
-        <result property="name"    column="name"    />
-        <result property="weight"    column="weight"    />
-        <result property="isDeleted"    column="is_deleted"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="raceD" column="race_d"/>
+        <result property="name" column="name"/>
+        <result property="weight" column="weight"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <sql id="selectRaceDetail">
-        select ri.name as ri_name,rd.id,rd.race,rd.name as rd_name,rd.phone,rd.email,rd.desc_url,rd.group_url,rd.rule,rd.capacity,rd.team_min,rd.team_max,rd.teacher_min,rd.teacher_max,rd.r_rank,rd.t_limit,rd.is_deleted,rd.create_time,rd.update_time from race_detail as rd
-        join race_info as ri ON rd.race = ri.id
+    <sql id="selectRaceDetailVo">
+        select t2.name as race_name,
+               t1.id,
+               t1.race,
+               t1.name,
+               t1.phone,
+               t1.email,
+               t1.desc_url,
+               t1.group_url,
+               t1.rule,
+               t1.capacity,
+               t1.team_min,
+               t1.team_max,
+               t1.teacher_min,
+               t1.teacher_max,
+               t1.r_rank,
+               t1.t_limit,
+               t1.is_deleted,
+               t1.create_time,
+               t1.update_time
+        from race_detail t1
+                 left join race_info t2 ON t1.race = t2.id
     </sql>
 
-    <select id="selectRaceDetailList" parameterType="com.buis.domain.RaceDetail" resultMap="RaceDetailResult">
-        <include refid="selectRaceDetail"/>
+    <select id="selectRaceDetailList" parameterType="com.buis.vo.RaceDetailVo" resultMap="RaceDetailResult">
+        <include refid="selectRaceDetailVo"/>
         <where>
-            ri.is_deleted = 0 AND rd.is_deleted = 0
-            <if test="raceDetail.id != null "> and id = #{raceDetail.id}</if>
-            <if test="raceDetail.race != null "> and race = #{raceDetail.race}</if>
-            <if test="raceDetail.name != null  and name != ''"> and name like concat('%', #{raceDetail.name}, '%')</if>
-            <if test="raceDetail.phone != null  and phone != ''"> and phone = #{raceDetail.phone}</if>
-            <if test="raceDetail.email != null  and email != ''"> and email = #{raceDetail.email}</if>
-            <if test="raceDetail.capacity != null "> and capacity = #{raceDetail.capacity}</if>
-            <if test="raceDetail.rRank != null "> and r_rank = #{raceDetail.rRank}</if>
-            <if test="raceDetail.tLimit != null "> and t_limit = #{raceDetail.tLimit}</if>
+            <if test="raceDetail.id != null ">and t1.id = #{raceDetail.id}</if>
+            <if test="raceDetail.race != null ">and t1.race = #{raceDetail.race}</if>
+            <if test="raceDetail.name != null  and name != ''">and t1.name like concat('%', #{raceDetail.name}, '%')
+            </if>
+            <if test="raceDetail.phone != null  and phone != ''">and t1.phone = #{raceDetail.phone}</if>
+            <if test="raceDetail.email != null  and email != ''">and t1.email = #{raceDetail.email}</if>
+            <if test="raceDetail.capacity != null ">and t1.capacity = #{raceDetail.capacity}</if>
+            <if test="raceDetail.rRank != null ">and t1.r_rank = #{raceDetail.rRank}</if>
+            <if test="raceDetail.tLimit != null ">and t1.t_limit = #{raceDetail.tLimit}</if>
         </where>
     </select>
 

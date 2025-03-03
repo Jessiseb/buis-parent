@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.File;
 import java.util.Date;
 
 /**
@@ -36,7 +37,6 @@ public class TeamInfo extends BaseEntity {
      * 比赛
      */
     @ApiModelProperty("比赛")
-    @Excel(name = "比赛")
     private Long race;
 
     /**
@@ -47,6 +47,13 @@ public class TeamInfo extends BaseEntity {
     private String name;
 
     /**
+     * 项目类型
+     */
+    @ApiModelProperty("项目类型")
+    @Excel(name = "项目类型",dictType = "innovation_type")
+    private int type;
+
+    /**
      * 项目简介
      */
     @ApiModelProperty("项目简介")
@@ -54,50 +61,83 @@ public class TeamInfo extends BaseEntity {
     private String description;
 
     /**
-     * 队长
+     * 队长id(负责人id)
      */
-    @ApiModelProperty("队长")
-    @Excel(name = "队长")
+    @ApiModelProperty("队长id(负责人id)")
     private Long leader;
 
     /**
-     * 招募要求
+     * 负责人姓名
      */
-    @ApiModelProperty("招募要求")
-    @Excel(name = "招募要求")
-    @JsonProperty("tLimit")
-    private String tLimit;
+    @ApiModelProperty("负责人姓名")
+    @Excel(name = "负责人姓名")
+    private String leaderName;
 
     /**
-     * 招募人数
+     * 负责人联系电话
      */
-    @ApiModelProperty("招募人数")
-    @Excel(name = "招募人数")
-    private Long capacity;
+    @ApiModelProperty("负责人联系电话")
+    @Excel(name = "负责人联系电话")
+    private String phone;
 
     /**
-     * 申报书
+     * 专业班级
      */
-    @ApiModelProperty("申报书")
-    @Excel(name = "申报书")
-    private String file;
+    @ApiModelProperty("专业班级")
+    @Excel(name = "专业班级")
+    @JsonProperty("sClass")
+    private String sClass;
+
+    /**
+     * 负责人所在学院
+     */
+    @ApiModelProperty("负责人所在学院")
+    private int college;
+
+    /**
+     * 第一指导老师
+     */
+    @ApiModelProperty("第一指导老师")
+    @Excel(name = "第一指导老师")
+    private String teacher1;
+
+    /**
+     * 第一指导老师所在学院
+     */
+    @ApiModelProperty("第一指导老师所在学院")
+    private String teacher1College;
+
+    /**
+     * 第二指导老师
+     */
+    @ApiModelProperty("第二指导老师")
+    @Excel(name = "第二指导老师")
+    private String teacher2;
+
+    /**
+     * 第二指导老师所在学院
+     */
+    @ApiModelProperty("第二指导老师所在学院")
+    private String teacher2College;
 
 
     /**
-     * 招聘开始时间
+     * 申报书材料
      */
-    @ApiModelProperty("招聘开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "招聘开始时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date start;
+    @ApiModelProperty("申报书材料")
+    private String declarationUrl;
 
     /**
-     * 招聘结束时间
+     * 中期检查材料
      */
-    @ApiModelProperty("招聘结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "招聘结束时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date end;
+    @ApiModelProperty("中期检查材料")
+    private String midUrl;
+
+    /**
+     * 结项材料
+     */
+    @ApiModelProperty("结项材料")
+    private String closureUrl;
 
     /**
      * 奖项
@@ -110,14 +150,12 @@ public class TeamInfo extends BaseEntity {
      * 材料审核状态
      */
     @ApiModelProperty("材料审核状态")
-    @Excel(name = "材料审核状态")
     private Long status;
 
     /**
      * 不合格原因
      */
     @ApiModelProperty("不合格原因")
-    @Excel(name = "不合格原因")
     private String reason;
 
     /**
@@ -126,5 +164,10 @@ public class TeamInfo extends BaseEntity {
     @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
+    /**
+     * 指导老师
+     */
+    @ApiModelProperty("指导老师")
+    private Long teacher;
 
 }
