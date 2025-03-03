@@ -13,6 +13,7 @@ import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
 import com.buis.system.service.ISysUserService;
+import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             setIsPreJoin(raceInfoVo);
             // 设置比赛详情
             raceDetail.setRace(raceInfoVo.getId());
-            List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+            List<RaceDetailVo> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
             if (raceDetailVos != null && raceDetailVos.size() > 0) {
                 raceInfoVo.setRaceDetail(raceDetailVos.get(0));
             }
@@ -119,7 +120,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 // 设置比赛详情
                 RaceDetail raceDetail = new RaceDetail();
                 raceDetail.setRace(raceInfoVo.getId());
-                List<RaceDetail> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+                List<RaceDetailVo> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
                 if (raceDetailVos != null && raceDetailVos.size() > 0) {
                     raceInfoVo.setRaceDetail(raceDetailVos.get(0));
                 }
@@ -356,6 +357,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         return  raceInfoMapper.selectRaceInfoByStatu(i);
 
     }
+
+
 
     /**
      * 判断当前时间是否在报名时间内

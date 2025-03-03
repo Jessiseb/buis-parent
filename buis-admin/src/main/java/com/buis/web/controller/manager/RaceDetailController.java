@@ -8,6 +8,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceDetail;
 import com.buis.service.IRaceDetailService;
+import com.buis.vo.RaceDetailVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class RaceDetailController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(RaceDetail raceDetail) {
         startPage();
-        List<RaceDetail> list = raceDetailService.selectRaceDetailList(raceDetail);
+        List<RaceDetailVo> list = raceDetailService.selectRaceDetailList(raceDetail);
         return getDataTable(list);
     }
 
@@ -50,8 +51,8 @@ public class RaceDetailController extends BaseController {
     @Log(title = "比赛详情", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, RaceDetail raceDetail) {
-        List<RaceDetail> list = raceDetailService.selectRaceDetailList(raceDetail);
-        ExcelUtil<RaceDetail> util = new ExcelUtil<RaceDetail>(RaceDetail.class);
+        List<RaceDetailVo> list = raceDetailService.selectRaceDetailList(raceDetail);
+        ExcelUtil<RaceDetailVo> util = new ExcelUtil<RaceDetailVo>(RaceDetailVo.class);
         util.exportExcel(response, list, "比赛详情数据");
     }
 

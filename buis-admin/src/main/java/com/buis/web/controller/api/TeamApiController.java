@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -51,22 +52,24 @@ public class TeamApiController extends BaseController {
     /**
      * 新增用户与队伍互选关系
      *
-     * @param teamMemberDto
+     * @param teamMemberDtoList
      * @return
      */
     @ApiOperation("新增用户与队伍互选关系")
     @PostMapping("/addTeamMember/{isTeacher}")
     public R addInvitation(
             @ApiParam(name = "isTeacher", value = "用户类型，0学生，1老师", required = true) @PathVariable(value = "isTeacher") Long isTeacher,
-            @RequestBody TeamMemberDto teamMemberDto) {
+            @RequestBody List<TeamMemberDto> teamMemberDtoList) {
 
         if (isTeacher != null) {
             if (isTeacher == 0) { // 用户是学生
-                TeamMemberStudent teamMemberStudent = buildTeamMemberStudent(teamMemberDto);
-                teamMemberStudentService.insertTeamMemberStudent(teamMemberStudent);
+                List<TeamMemberStudent> teamMemberStudentList = teamMemberDtoList.stream()
+                        .map(this::buildTeamMemberStudent).collect(Collectors.toList());
+                teamMemberStudentService.insertTeamMemberStudentByList(teamMemberStudentList);
             } else if (isTeacher == 1) { // 用户是老师
-                TeamMemberTeacher teamMemberTeacher = buildTeamMemberTeacher(teamMemberDto);
-                teamMemberTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
+                List<TeamMemberTeacher> teamMemberTeacherList = teamMemberDtoList.stream()
+                        .map(this::buildTeamMemberTeacher).collect(Collectors.toList());
+                teamMemberTeacherService.insertTeamMemberTeacherByList(teamMemberTeacherList);
             }
         }
         return R.ok();
@@ -87,6 +90,7 @@ public class TeamApiController extends BaseController {
 
         if (isTeacher != null) {
             if (isTeacher == 0) { // 用户是学生
+                //把teamMemberDtoList分别buildTeamMemberStudent和setId
                 TeamMemberStudent teamMemberStudent = buildTeamMemberStudent(teamMemberDto);
                 teamMemberStudent.setId(id);
                 teamMemberStudentService.updateTeamMemberStudent(teamMemberStudent);
@@ -227,9 +231,10 @@ public class TeamApiController extends BaseController {
      * @param teamInfo 队伍信息对象
      * @return R
      */
-    @ApiOperation("新增队伍信息")
-    @PostMapping
+    @ApiOperation("新增队伍信息(创建项目)")
+    @PostMapping("/createTeam")
     public R addTeamInfo(@RequestBody TeamInfo teamInfo) {
+        //获取当前创建队伍的用户id
         Long userId = SecurityUtils.getFrontLoginUserId();
         teamInfo.setLeader(userId);
         int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);

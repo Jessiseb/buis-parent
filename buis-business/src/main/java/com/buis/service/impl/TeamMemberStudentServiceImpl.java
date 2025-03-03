@@ -143,6 +143,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
     }
 
+    @Override
+    public int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList) {
+        return teamMemberStudentMapper.insertTeamMemberStudentByList(teamMemberStudentList);
+    }
+
     /**
      * 判断用户是否已加入
      * @param userId

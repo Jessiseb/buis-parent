@@ -93,4 +93,5 @@ public interface ITeamMemberStudentService {
      */
     void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
 
+    public int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList);
 }

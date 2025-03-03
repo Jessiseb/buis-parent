@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import com.buis.domain.TeamInfo;
+import com.buis.vo.TeamInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 /**

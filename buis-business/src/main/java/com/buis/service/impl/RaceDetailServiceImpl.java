@@ -1,41 +1,43 @@
 package com.buis.service.impl;
 
-import java.util.List;
 import com.buis.common.utils.DateUtils;
-import com.buis.service.IRaceInfoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import com.buis.common.utils.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
+import com.buis.domain.RaceDetail;
 import com.buis.domain.Weight;
 import com.buis.mapper.RaceDetailMapper;
-import com.buis.domain.RaceDetail;
 import com.buis.service.IRaceDetailService;
+import com.buis.service.IRaceInfoService;
+import com.buis.vo.RaceDetailVo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 比赛详情Service业务层处理
- * 
+ *
  * @author buis
  * @date 2024-10-11
  */
 @Service
-public class RaceDetailServiceImpl implements IRaceDetailService 
-{
+public class RaceDetailServiceImpl implements IRaceDetailService {
     @Resource
     private RaceDetailMapper raceDetailMapper;
+    @Resource
+    private IRaceInfoService raceInfoService;
+
 
     /**
      * 查询比赛详情
-     * 
+     *
      * @param id 比赛详情主键
      * @return 比赛详情
      */
     @Override
-    public RaceDetail selectRaceDetailById(Long id)
-    {
+    public RaceDetail selectRaceDetailById(Long id) {
         RaceDetail raceDetailVo = raceDetailMapper.selectRaceDetailById(id);
         return raceDetailVo;
     }
@@ -47,22 +49,25 @@ public class RaceDetailServiceImpl implements IRaceDetailService
      * @return 比赛详情
      */
     @Override
-    public List<RaceDetail> selectRaceDetailList(RaceDetail raceDetail)
-    {
-        List<RaceDetail> raceDetailVos = raceDetailMapper.selectRaceDetailList(raceDetail);
+    public List<RaceDetailVo> selectRaceDetailList(RaceDetail raceDetail) {
+
+        //查出的Vo
+        List<RaceDetailVo> raceDetailVos = raceDetailMapper.selectRaceDetailList(raceDetail);
+
+
         return raceDetailVos;
     }
 
+
     /**
      * 新增比赛详情
-     * 
+     *
      * @param raceDetail 比赛详情
      * @return 结果
      */
     @Transactional
     @Override
-    public int insertRaceDetail(RaceDetail raceDetail)
-    {
+    public int insertRaceDetail(RaceDetail raceDetail) {
         raceDetail.setCreateTime(DateUtils.getNowDate());
         int rows = raceDetailMapper.insertRaceDetail(raceDetail);
         insertWeight(raceDetail);
