@@ -11,6 +11,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Score;
 import com.buis.service.IScoreService;
+import com.buis.vo.ScoreVo;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +37,7 @@ public class ScoreApiController extends BaseController {
     @GetMapping("/list")
     public MyPageVo<List<Score>> list(Score score) {
         startPage();
-        List<Score> list = scoreService.selectScoreList(score);
+        List<ScoreVo> list = scoreService.selectScoreList(score);
         return new MyPageVo(list);
     }
 

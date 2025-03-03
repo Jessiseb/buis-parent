@@ -21,14 +21,17 @@ import java.util.List;
 public class DictApiController {
     @Autowired
     private ISysDictDataService sysDictDataService;
+
     /**
      * 查询职称信息字典
      */
+
     @ApiOperation("查询职称信息字典")
     @GetMapping("/getTitle")
     public MyPageVo<List<SysDictDataVo>> getTitle() {
         return getDictDataByType("teacher_title");
     }
+
     /**
      * 查询班级字典
      */
@@ -37,6 +40,7 @@ public class DictApiController {
     public MyPageVo<List<SysDictDataVo>> getStuClass() {
         return getDictDataByType("stu_class");
     }
+
     /**
      * 查询年级字典
      */
@@ -45,6 +49,7 @@ public class DictApiController {
     public MyPageVo<List<SysDictDataVo>> getStuGrade() {
         return getDictDataByType("stu_grade");
     }
+
     /**
      * 查询性别字典
      */

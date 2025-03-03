@@ -105,7 +105,7 @@ public class TeamInfo extends BaseEntity {
      * 第一指导老师所在学院
      */
     @ApiModelProperty("第一指导老师所在学院")
-    private String teacher1College;
+    private int teacher1College;
 
     /**
      * 第二指导老师
@@ -118,7 +118,7 @@ public class TeamInfo extends BaseEntity {
      * 第二指导老师所在学院
      */
     @ApiModelProperty("第二指导老师所在学院")
-    private String teacher2College;
+    private int teacher2College;
 
 
     /**

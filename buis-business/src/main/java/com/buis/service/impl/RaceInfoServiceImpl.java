@@ -190,7 +190,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //获取比赛id
         Long raceId = raceInfo.getId();
         // 判断报名条件
-        this.checkJoinCondition(userId, raceId);
+//        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setUpdateTime(DateUtils.getNowDate());
         raceInfoMapper.deleteRewardByRace(raceInfo.getId());
