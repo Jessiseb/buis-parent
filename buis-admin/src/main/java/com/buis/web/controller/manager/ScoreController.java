@@ -1,28 +1,22 @@
 package com.buis.web.controller.manager;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Score;
 import com.buis.service.IScoreService;
-import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.common.core.page.TableDataInfo;
+import com.buis.vo.ScoreVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 评分管理Controller
@@ -47,7 +41,7 @@ public class ScoreController extends BaseController
     public TableDataInfo list(Score score)
     {
         startPage();
-        List<Score> list = scoreService.selectScoreList(score);
+        List<ScoreVo> list = scoreService.selectScoreList(score);
         return getDataTable(list);
     }
 
@@ -60,8 +54,8 @@ public class ScoreController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, Score score)
     {
-        List<Score> list = scoreService.selectScoreList(score);
-        ExcelUtil<Score> util = new ExcelUtil<Score>(Score.class);
+        List<ScoreVo> list = scoreService.selectScoreList(score);
+        ExcelUtil<ScoreVo> util = new ExcelUtil<ScoreVo>(ScoreVo.class);
         util.exportExcel(response, list, "评分管理数据");
     }
 

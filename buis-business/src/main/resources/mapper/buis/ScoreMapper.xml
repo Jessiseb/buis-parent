@@ -4,9 +4,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.ScoreMapper">
     
-    <resultMap type="com.buis.domain.Score" id="ScoreResult">
+    <resultMap type="com.buis.vo.ScoreVo" id="ScoreResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
+        <result property="raceName"    column="race_name"    />
+        <result property="judgeName"    column="judge_name"    />
+        <result property="projectName"    column="project_name"    />
         <result property="teacher"    column="teacher"    />
         <result property="team"    column="team"    />
         <result property="build"    column="build"    />
@@ -17,24 +20,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectScoreVo">
-        select id, race, teacher, team, build, score, is_deleted, create_time, update_time from t_score
+        select t1.id,
+               t1.race,
+               t2.name as race_name,
+               t3.name as judge_name,
+               t4.name as project_name,
+               t1.teacher,
+               t1.team,
+               t1.build,
+               t1.score,
+               t1.is_deleted,
+               t1.create_time,
+               t1.update_time
+        from t_score t1
+                 left join race_info t2 on t1.race = t2.id
+                 left join user_info t3 on t1.teacher = t3.id
+                 left join team_info t4 on t1.team = t4.id
     </sql>
 
-    <select id="selectScoreList" parameterType="com.buis.domain.Score" resultMap="ScoreResult">
+    <select id="selectScoreList" parameterType="com.buis.vo.ScoreVo" resultMap="ScoreResult">
         <include refid="selectScoreVo"/>
         <where>
-            is_deleted = 0
-            <if test="id != null "> and id = #{id}</if>
-            <if test="race != null "> and race = #{race}</if>
-            <if test="teacher != null "> and teacher = #{teacher}</if>
-            <if test="team != null "> and team = #{team}</if>
-            <if test="params.beginScore != null and params.beginScore != '' and params.endScore != null and params.endScore != ''"> and score between #{params.beginScore} and #{params.endScore}</if>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="teacher != null "> and t1.teacher = #{teacher}</if>
+            <if test="team != null "> and t1.team = #{team}</if>
+            <if test="params.beginScore != null and params.beginScore != '' and params.endScore != null and params.endScore != ''"> and t1.score between #{params.beginScore} and #{params.endScore}</if>
         </where>
     </select>
     
     <select id="selectScoreById" parameterType="Long" resultMap="ScoreResult">
         <include refid="selectScoreVo"/>
-        where id = #{id}  and is_deleted = 0
+        where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
     <insert id="insertScore" parameterType="com.buis.domain.Score" useGeneratedKeys="true" keyProperty="id">
