@@ -33,7 +33,7 @@ public class CollegeMajorController extends BaseController {
      * 查询专业信息列表
      */
     @ApiOperation("查询专业信息列表")
-    @PreAuthorize("@ss.hasPermi('buis:major:list')")
+//    @PreAuthorize("@ss.hasPermi('buis:major:list')")
     @GetMapping("/list")
     public AjaxResult list(CollegeMajor collegeMajor) {
         List<CollegeMajor> list = collegeMajorService.selectCollegeMajorList(collegeMajor);
