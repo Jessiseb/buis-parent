@@ -125,9 +125,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
      */
     @Override
     public List<UserInfoVo> getMemberStudentByTeamId(Long team) {
+        //根据队伍id获取到学生ids
         List<Long> ids = teamMemberStudentMapper.getMemberStudentByTeamId(team);
         List<UserInfoVo> userInfoVos = null;
         if (ids!=null&& ids.size()>0) {
+            //根据ids查询学生信息
             userInfoVos = userInfoService.selectUserInfoByIds(ids);
         }
         return userInfoVos;

@@ -3,6 +3,7 @@ package com.buis.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
@@ -48,7 +49,19 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
-        return teamInfoMapper.insertTeamInfo(teamInfo);
+        int ok = teamInfoMapper.insertTeamInfo(teamInfo);
+        //创建项目成功后,把信息插入队伍用户表
+        int sucess = 0;
+        if (ok > 0) {
+            TeamMemberStudent teamMemberStudent = new TeamMemberStudent();
+            teamMemberStudent.setTeam(teamInfo.getId()); //队伍id
+            teamMemberStudent.setRace(teamInfo.getRace()); //比赛id
+            teamMemberStudent.setStudent(teamInfo.getLeader()); //队长
+            teamMemberStudent.setDecider(teamInfo.getLeader()); //决定者 = 创建该队伍的人
+            teamMemberStudent.setIsChoosed(1L); //选定状态
+            sucess = teamStudentService.insertTeamMemberStudent(teamMemberStudent);
+        }
+        return sucess;
     }
 
     /**

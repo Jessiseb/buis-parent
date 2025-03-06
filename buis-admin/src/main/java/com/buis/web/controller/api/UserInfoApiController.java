@@ -2,28 +2,19 @@ package com.buis.web.controller.api;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
-import com.buis.common.core.domain.entity.SysDictData;
-import com.buis.common.core.page.MyPageVo;
-import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
-import com.buis.common.utils.StringUtils;
 import com.buis.domain.CollegeMajor;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
-import com.buis.mapper.UserInfoMapper;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
-import com.buis.system.service.ISysDictDataService;
 import com.buis.vo.FindUserVo;
-import com.buis.vo.SysDictDataVo;
 import com.buis.vo.UserInfoVo;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Email;
 import java.util.List;
 
 import static com.buis.service.impl.UserInfoServiceImpl.SALT;
@@ -91,6 +81,7 @@ public class UserInfoApiController extends BaseController {
         Long userId = SecurityUtils.getFrontLoginUserId();
         return R.ok(userInfoService.selectUserInfoById(userId));
     }
+
 
     /**
      * 编辑用户信息
