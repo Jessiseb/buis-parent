@@ -238,6 +238,7 @@ public class TeamApiController extends BaseController {
         Long userId = SecurityUtils.getFrontLoginUserId();
         teamInfo.setLeader(userId);
         int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);
+
         return R.ok(insertTeamInfo, "操作成功");
     }
 
