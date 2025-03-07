@@ -210,7 +210,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         member.setNumber(number);
         member.setPassword(encryptPassword);
         member.setIsTeacher(isTeacher);
-        member.setIsDisabled(0L);
+        member.setIsDisabled(0);
         return userInfoMapper.insertUserInfo(member);
     }
 

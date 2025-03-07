@@ -78,9 +78,11 @@ public interface TeamMemberStudentMapper {
      */
     int getCountJoin(@Param("userId") Long userId, @Param("raceId") Long raceId, @Param("team") Long team);
 
-    void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
+    int deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
 
     int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList);
 
     int getJoinTeamByUserId(Long userId);
+
+    List<TeamMemberStudent> selectTeamMemberStudentByTeamId(Long team);
 }

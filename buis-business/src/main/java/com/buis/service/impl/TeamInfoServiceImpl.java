@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
@@ -10,17 +11,17 @@ import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberDto;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
-import com.buis.vo.RaceInfoVo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.redisson.client.RedisClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -64,7 +65,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfo.setCreateTime(DateUtils.getNowDate());
         //根据比赛信息设置队伍最大人数
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(teamInfo.getRace());
-        int teamMax =raceDetail.getTeamMax();//最大人数
+        int teamMax = raceDetail.getTeamMax();//最大人数
         teamInfo.setNumber(teamMax);
 
         int ok = teamInfoMapper.insertTeamInfo(teamInfo);
@@ -93,6 +94,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setUpdateTime(DateUtils.getNowDate());
+        //
         return teamInfoMapper.updateTeamInfo(teamInfo);
     }
 
@@ -114,8 +116,28 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deleteTeamInfoById(Long id) {
-        return teamInfoMapper.deleteTeamInfoById(id);
+        //获取登录用户id
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
+        //根据用户id查出该用户是不是队伍的队长
+        //根据id查出队伍信息
+        TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(id);
+        //根据队伍信息查出队长id
+        if (teamInfo.getLeader().equals(loginId)) {
+            //是队长-->能进行删除
+            return teamInfoMapper.deleteTeamInfoById(id);
+        }
+
+        //不是队长不能删除队伍
+        throw new ServiceException("您不是负责人，不能删除队伍");
+
     }
 
     @Override
@@ -125,11 +147,12 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
     @Override
     public int getCountJoin(Long userId, Long raceId, Long team) {
-        return teamInfoMapper.getCountJoin(userId,raceId,team);
+        return teamInfoMapper.getCountJoin(userId, raceId, team);
     }
 
     /**
      * 根据用户id查询用户创建的队伍
+     *
      * @param userId
      * @return
      */
@@ -169,7 +192,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //判断用户是老师还是学生 (0-学生 1-老师)
         Long isTeacher = teamMemberDto.getIsTeacher();
         TeamMemberStudent teamMemberStudent = new TeamMemberStudent();
-        if (isTeacher == 0){
+        if (isTeacher == 0) {
             //学生
             int hasJoin = teamStudentService.getStudentJoinTeamByUserId(userId);
             if (hasJoin >= count) {
@@ -182,9 +205,9 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             String key = JOIN_TEAM_LOCK;
             RLock rLock = redissonClient.getLock(key);
             //设置锁过期时间
-            try{
-                rLock.tryLock(3,60*3, TimeUnit.SECONDS);
-                while(true){
+            try {
+                rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+                while (true) {
                     //队伍id
                     Long teamId = teamMemberDto.getTeam();
                     //根据id查询项目队伍信息
@@ -217,22 +240,89 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                     teamMemberStudent.setIsChoosed(0L); //是否选择
                     teamMemberStudent.setReason(teamMemberDto.getReason()); //加入理由
                 }
-            }catch (Exception e){
-                log.error("加入队伍失败!",e);
-                throw new ServiceException("加入队伍失败: "+e.getMessage());
-            }finally {
+            } catch (Exception e) {
+                log.error("加入队伍失败!", e);
+                throw new ServiceException("加入队伍失败: " + e.getMessage());
+            } finally {
                 //释放锁
                 //只能释放自己的锁
                 if (rLock.isHeldByCurrentThread()) {
                     rLock.unlock();
                 }
             }
-        }else if(isTeacher == 1){
+        } else if (isTeacher == 1) {
             //老师
             throw new ServiceException("您不是学生,不能加入队伍");
         }
         return teamStudentService.insertTeamMemberStudent(teamMemberStudent);
     }
+
+    /**
+     * 退出队伍
+     *
+     * @param team   队伍id
+     * @param userId 登录用户id
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int quitTeam(Long team, Long userId) {
+        //对id进行校验 -------------> 可以避免缓存穿透(不会直接打到数据库)
+        if (team == null || userId == null) {
+            throw new ServiceException("参数错误");
+        }
+
+        //查询队伍是否存在
+        TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(team);
+        if (teamInfo == null) {
+            throw new ServiceException("退出失败: 该队伍不存在");
+        }
+        //校验登录用户是否已经加入队伍
+        if (teamStudentService.getJoinCount(userId, teamInfo.getRace(), teamInfo.getId()) == 0) {
+            throw new ServiceException("退出失败: 您未加入该队伍");
+        }
+        //如果队伍只有一个人就直接解散
+        if (teamStudentService.getJoinCountByTeamId(team) == 1) {
+            //删除队伍
+            return teamInfoMapper.deleteTeamInfoById(team);
+        } else {
+            //队伍不止一个人
+            //如果是负责人退出队伍,负责人位置移交给第二个进项目团队的人\
+            if (teamInfo.getLeader().equals(userId)) {
+                //查询队伍成员
+                List<TeamMemberStudent> teamMemberStudents = teamStudentService.selectTeamMemberStudentByTeamId(team);
+                //查出的队伍成员按照id排序
+                teamMemberStudents.sort(Comparator.comparingLong(TeamMemberStudent::getId));
+                //将第二个成员设置为负责人
+                TeamMemberStudent teamMemberStudent = teamMemberStudents.get(1);
+                Long nextLeader = teamMemberStudent.getStudent(); //id
+                //根据nextLeader获取下一个队长的信息
+                UserInfo nextLeaderInfo = userInfoService.selectUserInfoById(nextLeader);
+                String phone = nextLeaderInfo.getPhone(); //手机号
+                int college = nextLeaderInfo.getCollege(); //学院
+                String name = nextLeaderInfo.getName(); //姓名
+                teamInfo.setName(name);
+                teamInfo.setPhone(phone);
+                teamInfo.setCollege(college);
+                teamInfo.setLeader(teamMemberStudent.getStudent());
+                //修改队伍负责人信息
+                int ok = teamInfoMapper.updateTeamInfo(teamInfo);
+                if (ok > 0) {
+                    //删除该成员
+                    return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
+                } else {
+                    throw new ServiceException("退出队伍失败");
+                }
+            }else{
+                //不是负责人退出队伍
+                return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
+            }
+        }
+
+    }
+
+
+
 
     /**
      * 查询队伍信息列表 Vo

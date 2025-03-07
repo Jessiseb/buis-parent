@@ -10,7 +10,6 @@ import com.buis.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -139,10 +138,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
      * 根据team和user删除用户与队伍的关联
      * @param team
      * @param user
+     * @return
      */
     @Override
-    public void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user) {
-        teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
+    public int deleteTeamMemberStudentByTeamAndStudent(Long team, Long user) {
+        return teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
     }
 
     @Override
@@ -167,6 +167,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     @Override
     public int getStudentJoinTeamByUserId(Long userId) {
         return teamMemberStudentMapper.getJoinTeamByUserId(userId);
+    }
+
+    @Override
+    public List<TeamMemberStudent> selectTeamMemberStudentByTeamId(Long team) {
+        return teamMemberStudentMapper.selectTeamMemberStudentByTeamId(team);
     }
 
 }

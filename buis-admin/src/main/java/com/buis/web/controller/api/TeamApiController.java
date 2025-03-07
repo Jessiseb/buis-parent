@@ -266,7 +266,7 @@ public class TeamApiController extends BaseController {
      * @param id 队伍ID
      * @return R
      */
-    @ApiOperation("删除队伍信息")
+    @ApiOperation("删除队伍信息(解散项目团队)")
     @DeleteMapping("/{id}")
     public R removeTeamInfo(@ApiParam(name = "id", value = "队伍id", required = true)@PathVariable Long id) {
         int result = teamInfoService.deleteTeamInfoById(id);
@@ -284,6 +284,40 @@ public class TeamApiController extends BaseController {
        //获取登录用户信息
         UserInfo loginUser = userInfoService.getLoginUser();
         int result = teamInfoService.joinTeamById(teamMemberDto,loginUser);
+        if (result == 0) {
+            return R.fail("操作失败");
+        }
+        return R.ok(result, "操作成功");
+    }
+
+//    /**
+//     * 负责人位置转让
+//     */
+//    @ApiOperation("负责人位置转让")
+//    @PutMapping("/transfer/{team}/{user}")
+//    public R transfer(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team,
+//                      @ApiParam(name = "user", value = "用户id", required = true) @PathVariable("user") Long user) {
+//        int result = teamInfoService.transfer(team, user);
+//        if (result == 0) {
+//            return R.fail("操作失败");
+//        }
+//        return R.ok(result, "操作成功");
+//    }
+
+
+    /**
+     * 退出队伍接口
+     */
+    @ApiOperation("退出队伍")
+    @PostMapping("/quit/{team}")
+    public R quit(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team) {
+        //判空
+        if (team == null) {
+            return R.fail("操作失败");
+        }
+        //获取登录用户
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        int result = teamInfoService.quitTeam(team,userId);
         if (result == 0) {
             return R.fail("操作失败");
         }

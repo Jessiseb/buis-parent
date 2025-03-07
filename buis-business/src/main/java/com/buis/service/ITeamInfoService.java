@@ -92,4 +92,7 @@ public interface ITeamInfoService
     List<TeamInfoVo> selectTeamInfoByUserId(Long userId);
 
     int joinTeamById(TeamMemberDto teamMemberDto, UserInfo loginUser);
+
+    int quitTeam(Long team, Long userId);
+
 }
