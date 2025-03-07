@@ -86,6 +86,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">and student = #{userId}</if>
         </where>
     </select>
+    <select id="selectTeamMemberStudentByTeamId" resultType="com.buis.domain.TeamMemberStudent">
+        select *
+        from team_member_student
+        where team = #{team}
+          and is_deleted = 0
+          and is_choosed = 1
+    </select>
 
     <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true"
             keyProperty="id">

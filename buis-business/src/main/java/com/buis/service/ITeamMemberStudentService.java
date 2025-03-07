@@ -90,10 +90,13 @@ public interface ITeamMemberStudentService {
      * 根据team和user删除用户与队伍的关联
      * @param team
      * @param user
+     * @return
      */
-    void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
+    int deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
 
     public int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList);
 
     int getStudentJoinTeamByUserId(Long userId);
+
+    List<TeamMemberStudent> selectTeamMemberStudentByTeamId(Long team);
 }

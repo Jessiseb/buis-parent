@@ -76,35 +76,35 @@ public class UserInfo extends BaseEntity {
      */
     @ApiModelProperty("用户性别")
     @Excel(name = "用户性别")
-    private Long sex;
+    private int sex;
 
     /**
      * 学院
      */
     @ApiModelProperty("学院")
     @Excel(name = "学院")
-    private Long college;
+    private int college;
 
     /**
      * 专业
      */
     @ApiModelProperty("专业")
     @Excel(name = "专业")
-    private Long major;
+    private int major;
 
     /**
      * 老师职称
      */
     @ApiModelProperty("老师职称")
     @Excel(name = "老师职称")
-    private Long title;
+    private int title;
 
     /**
      * 禁用状态
      */
     @ApiModelProperty("禁用状态")
     @Excel(name = "禁用状态")
-    private Long isDisabled;
+    private int isDisabled;
 
     /**
      * 标识是否被删除，0表示未删除
