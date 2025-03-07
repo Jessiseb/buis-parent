@@ -2,6 +2,8 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.UserInfo;
+import com.buis.dto.TeamMemberDto;
 import com.buis.vo.TeamInfoVo;
 
 /**
@@ -88,4 +90,6 @@ public interface ITeamInfoService
      * @return
      */
     List<TeamInfoVo> selectTeamInfoByUserId(Long userId);
+
+    int joinTeamById(TeamMemberDto teamMemberDto, UserInfo loginUser);
 }

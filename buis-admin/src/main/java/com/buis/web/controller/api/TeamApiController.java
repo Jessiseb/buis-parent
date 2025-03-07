@@ -1,6 +1,7 @@
 package com.buis.web.controller.api;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
@@ -9,11 +10,9 @@ import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberDto;
-import com.buis.service.IRaceInfoService;
-import com.buis.service.ITeamInfoService;
-import com.buis.service.ITeamMemberStudentService;
-import com.buis.service.ITeamMemberTeacherService;
+import com.buis.service.*;
 import com.buis.service.impl.TeamInfoServiceImpl;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberStudentVo;
@@ -48,6 +47,8 @@ public class TeamApiController extends BaseController {
     private ITeamInfoService teamInfoService;
     @Autowired
     private IRaceInfoService raceInfoService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
     /**
      * 新增用户与队伍互选关系
@@ -269,6 +270,23 @@ public class TeamApiController extends BaseController {
     @DeleteMapping("/{id}")
     public R removeTeamInfo(@ApiParam(name = "id", value = "队伍id", required = true)@PathVariable Long id) {
         int result = teamInfoService.deleteTeamInfoById(id);
+        return R.ok(result, "操作成功");
+    }
+
+    /**
+     * 加入队伍
+     *
+     */
+    @ApiOperation("加入队伍")
+    @PostMapping("/joinTeam")
+    public R JoinTeam(@ApiParam(name = "teamMemberDto", value = "加入队伍信息", required = true)
+                          @RequestBody TeamMemberDto teamMemberDto) {
+       //获取登录用户信息
+        UserInfo loginUser = userInfoService.getLoginUser();
+        int result = teamInfoService.joinTeamById(teamMemberDto,loginUser);
+        if (result == 0) {
+            return R.fail("操作失败");
+        }
         return R.ok(result, "操作成功");
     }
 

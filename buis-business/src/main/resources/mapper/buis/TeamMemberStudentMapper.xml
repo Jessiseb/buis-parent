@@ -76,8 +76,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">and student = #{userId}</if>
         </where>
     </select>
+    <select id="getJoinTeamByUserId" resultType="java.lang.Integer">
+        select count(1)
 
-    <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true" keyProperty="id">
+        from team_member_student
+
+        <where>
+            is_deleted = 0 and is_choosed = 1
+            <if test="userId != null">and student = #{userId}</if>
+        </where>
+    </select>
+
+    <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true"
+            keyProperty="id">
         insert into team_member_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>

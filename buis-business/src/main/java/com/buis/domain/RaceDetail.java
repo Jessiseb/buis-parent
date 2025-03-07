@@ -88,32 +88,32 @@ public class RaceDetail extends BaseEntity {
      * 队伍最小人数
      */
     @ApiModelProperty("队伍最小人数")
-    private Long teamMin;
+    private int teamMin;
 
     /**
      * 队伍最大人数
      */
     @ApiModelProperty("队伍最大人数")
-    private Long teamMax;
+    private int teamMax;
 
     /**
      * 老师最小人数
      */
     @ApiModelProperty("老师最小人数")
-    private Long teacherMin;
+    private int teacherMin;
 
     /**
      * 老师最大人数
      */
     @ApiModelProperty("老师最大人数")
-    private Long teacherMax;
+    private int teacherMax;
 
     /**
      * 推荐排名
      */
     @Excel(name = "推荐排名")
     @ApiModelProperty("推荐排名")
-    private Long rRank;
+    private int rRank;
 
     /**
      * 限制老师最大指导数量
@@ -121,7 +121,7 @@ public class RaceDetail extends BaseEntity {
     @Excel(name = "限制老师最大指导数量")
     @ApiModelProperty("限制老师最大指导数量")
     @JsonProperty("tLimit")
-    private Long tLimit;
+    private int tLimit;
 
     /**
      * 标识是否被删除，0表示未删除
