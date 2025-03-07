@@ -3,13 +3,17 @@ package com.buis.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.TeamMemberTeacher;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
+import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,17 +25,17 @@ import java.util.List;
  */
 @Service
 public class TeamInfoServiceImpl implements ITeamInfoService {
-    @Autowired
+    @Resource
     private TeamInfoMapper teamInfoMapper;
-
-    @Autowired
+    @Resource
     private IUserInfoService userInfoService;
-    @Autowired
+    @Resource
     private ITeamMemberStudentService teamStudentService;
-    @Autowired
+    @Resource
     private ITeamMemberTeacherService teamTeacherService;
-    @Autowired
+    @Resource
     private IRaceInfoService raceInfoService;
+
 
     /**
      * 新增队伍信息
@@ -41,6 +45,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public int insertTeamInfo(TeamInfo teamInfo) {
+        // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
         return teamInfoMapper.insertTeamInfo(teamInfo);
@@ -54,6 +59,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public int updateTeamInfo(TeamInfo teamInfo) {
+        // 判断报名条件
+        raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setUpdateTime(DateUtils.getNowDate());
         return teamInfoMapper.updateTeamInfo(teamInfo);
     }
@@ -90,6 +97,23 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return teamInfoMapper.getCountJoin(userId,raceId,team);
     }
 
+    /**
+     * 根据用户id查询用户创建的队伍
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<TeamInfoVo> selectTeamInfoByUserId(Long userId) {
+        List<TeamInfoVo> results = new ArrayList<>();
+        List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoByUserId(userId);
+        if (teamInfoList == null || teamInfoList.isEmpty()) {
+            return results; // 返回空列表
+        }
+        for (TeamInfo team : teamInfoList) {
+            results.add(createTeamInfoVo(team));
+        }
+        return results;
+    }
 
     /**
      * 查询队伍信息列表 Vo
@@ -100,12 +124,25 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Override
     public List<TeamInfoVo> selectTeamInfoList(TeamInfo teamInfo) {
         List<TeamInfoVo> results = new ArrayList<>();
+
         List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoList(teamInfo);
+
         if (teamInfoList == null || teamInfoList.isEmpty()) {
             return results; // 返回空列表
         }
         for (TeamInfo team : teamInfoList) {
-            results.add(createTeamInfoVo(team));
+            TeamInfoVo teamInfoVo = createTeamInfoVo(team);
+            //带指导老师查询
+            if (teamInfo.getTeacher() != null) {
+                //返回该老师指导的队伍id
+                List<Long> teamIds = teamTeacherService.selectStudentIdsByTeacherId(teamInfo.getTeacher());
+                for (Long teamId : teamIds) {
+                    if (teamId.equals(team.getId())) {
+                        teamInfoVo.setIsInstruct(1);
+                    }
+                }
+            }
+            results.add(teamInfoVo);
         }
         return results;
     }
@@ -143,15 +180,26 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
         // 获取队长信息
         teamInfoVo.setLeaderInfo(userInfoVo);
+        //获取比赛信息
+        teamInfoVo.setRaceInfoVo(raceInfoService.selectRaceInfoById(team.getRace()));
         // 获取学生人数
         teamInfoVo.setStudentCount(studentCount);
         // 获取老师人数
         teamInfoVo.setTeacherCount(teacherCount);
+
+
+
         return teamInfoVo;
     }
 
     @Override
     public List<TeamInfoVo> selectTeamInfoByIds(Long[] ids) {
-        return teamInfoMapper.selectTeamInfoByIds(ids);
+        List<TeamInfoVo> teamInfoVos = new ArrayList<>();
+        List<TeamInfo> teamInfos = teamInfoMapper.selectTeamInfoByIds(ids);
+        for (TeamInfo teamInfo : teamInfos) {
+            TeamInfoVo teamInfoVo = createTeamInfoVo(teamInfo);
+            teamInfoVos.add(teamInfoVo);
+        }
+        return teamInfoVos;
     }
 }

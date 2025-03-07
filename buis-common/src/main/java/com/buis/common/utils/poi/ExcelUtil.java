@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.excel.EasyExcel;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -108,6 +110,8 @@ public class ExcelUtil<T>
      * Excel sheet最大行数，默认65536
      */
     public static final int sheetSize = 65536;
+
+
 
     /**
      * 工作表名称
@@ -1808,5 +1812,20 @@ public class ExcelUtil<T>
             log.error("获取对象异常{}", e.getMessage());
         }
         return method;
+    }
+
+    public void exportExcelHeaderOnly(HttpServletResponse response, String sheetName) throws IOException {
+        // 创建一个空的数据列表
+        List<T> dataList = new ArrayList<>();
+
+        // 设置响应头
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + sheetName + ".xlsx");
+
+        // 写入Excel
+        EasyExcel.write(response.getOutputStream(), clazz)
+                .sheet(sheetName)
+                .doWrite(dataList);
     }
 }

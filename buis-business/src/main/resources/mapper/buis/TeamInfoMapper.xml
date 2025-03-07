@@ -8,13 +8,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
         <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
         <result property="description"    column="description"    />
         <result property="leader"    column="leader"    />
-        <result property="tLimit"    column="t_limit"    />
-        <result property="capacity"    column="capacity"    />
-        <result property="file"    column="file"    />
-        <result property="start"    column="start"    />
-        <result property="end"    column="end"    />
+        <result property="leaderName"    column="leader_name"    />
+        <result property="phone"    column="phone"    />
+        <result property="sClass"    column="s_class"    />
+        <result property="college"    column="college"    />
+        <result property="teacher1"    column="teacher1"    />
+        <result property="teacher2"    column="teacher2"    />
+        <result property="teacher1College"    column="teacher1_college"    />
+        <result property="teacher2College"    column="teacher2_college"    />
+        <result property="declarationUrl"    column="declaration_url"    />
+        <result property="midUrl"    column="mid_url"    />
+        <result property="closureUrl"    column="closure_url"    />
         <result property="rRank"    column="r_rank"    />
         <result property="status"    column="status"    />
         <result property="reason"    column="reason"    />
@@ -24,75 +31,136 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTeamInfoVo">
-        select id, race, name, description, leader, t_limit, capacity,file, start, end, r_rank, status, reason, is_deleted, create_time, update_time from team_info
+        select t1.id,
+               t1.leader,
+               t5.name as race_name,
+               t1.name,
+               t1.type,
+               t1.description,
+               t1.leader_name,
+               t1.phone,
+               t1.s_class,
+               t2.name as s_college,
+               t1.teacher1,
+               t1.teacher2,
+               t3.name as t1_college,
+               t4.name as t2_college,
+               t1.declaration_url,
+               t1.mid_url,
+               t1.closure_url,
+               t1.r_rank,
+               t1.status,
+               t1.reason,
+               t1.is_deleted,
+               t1.create_time,
+               t1.update_time
+        from team_info t1
+            left join t_college_major t2 on t1.college = t2.id
+            left join t_college_major t3 on t1.teacher1_college = t3.id
+            left join t_college_major t4 on t1.teacher2_college = t4.id
+            left join race_info t5 on t1.race = t5.id
+
     </sql>
 
     <select id="selectTeamInfoList" parameterType="com.buis.domain.TeamInfo" resultMap="TeamInfoResult">
         <include refid="selectTeamInfoVo"/>
         <where>
-            is_deleted = 0
-            <if test="race != null ">and race = #{race}</if>
-            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''">and description like concat('%', #{description},
+            t1.is_deleted = 0
+            <if test="race != null and race != ''">and t1.race = #{race}</if>
+            <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
+            <if test="type != null and type != ''">and t1.type = #{type}</if>
+            <if test="description != null  and description != '' ">and t1.description like concat('%', #{description},
                 '%')
             </if>
-            <if test="leader != null ">and leader = #{leader}</if>
-            <if test="tLimit != null  and tLimit != ''">and t_limit like concat('%', #{tLimit}, '%')</if>
-            <if test="capacity != null ">and capacity = #{capacity}</if>
-            <if test="file != null ">and file = #{file}</if>
-            <if test="start != null ">and start = #{start}</if>
-            <if test="end != null ">and end = #{end}</if>
-            <if test="status != null ">and status = #{status}</if>
-            <if test="reason != null  and reason != ''">and reason like concat('%', #{reason}, '%')</if>
+            <if test="leader != null ">and t1.leader = #{leader}</if>
+            <if test="leaderName != null  and leaderName != ''">and t1.leader_name like concat('%', #{leaderName}, '%')
+            </if>
+            <if test="phone != null  and phone != ''">and t1.phone like concat('%', #{phone}, '%')</if>
+            <if test="sClass != null  and sClass != ''">and t1.s_class like concat('%', #{sClass}, '%')</if>
+            <if test="college != null and college != ''">and t1.college = #{college}</if>
+            <if test="teacher1 != null  and teacher1 != ''">and t1.teacher1 like concat('%', #{teacher1}, '%')</if>
+            <if test="teacher2 != null  and teacher2 != ''">and t1.teacher2 like concat('%', #{teacher2}, '%')</if>
+            <if test="teacher1College != null  and teacher1College != ''">and t1.teacher1_college like concat('%',
+                #{teacher1College}
+            )</if>
+            <if test="teacher2College != null  and teacher2College != ''">and t1.teacher2_college like concat('%',
+                #{teacher2College}
+            )</if>
+            <if test="declarationUrl != null  and declarationUrl != ''">and t1.declaration_url like concat('%',
+                #{declarationUrl}, '%')
+            </if>
+            <if test="midUrl != null  and midUrl != ''">and t1.mid_url like concat('%', #{midUrl}, '%')</if>
+            <if test="closureUrl != null  and closureUrl != ''">and t1.closure_url like concat('%', #{closureUrl}, '%')
+            </if>
+            <if test="status != null ">and t1.status = #{status}</if>
+            <if test="reason != null  and reason != ''">and t1.reason like concat('%', #{reason}, '%')</if>
         </where>
     </select>
 
     <select id="selectTeamInfoById" parameterType="Long" resultMap="TeamInfoResult">
         <include refid="selectTeamInfoVo"/>
-        where id = #{id} and is_deleted = 0
+        where t1.id = #{id} and t1.is_deleted = 0
     </select>
     <select id="getCountJoin" resultType="java.lang.Integer">
         select count(1)
         from team_info
         <where>
             is_deleted = 0
-            <if test="raceId != null">and race = #{raceId}</if>
-            <if test="team != null">and team = #{team}</if>
-            <if test="userId != null">and leader = #{userId}</if>
+            <if test="raceId != null">and t1.race = #{raceId}</if>
+            <if test="team != null">and t1.team = #{team}</if>
+            <if test="userId != null">and t1.leader = #{userId}</if>
         </where>
+    </select>
+    <select id="selectTeamInfoByUserId" resultType="com.buis.domain.TeamInfo">
+        <include refid="selectTeamInfoVo"/>
+        where t1.leader = #{userId} and t1.is_deleted = 0
     </select>
 
     <insert id="insertTeamInfo" parameterType="com.buis.domain.TeamInfo" useGeneratedKeys="true" keyProperty="id">
         insert into team_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="race != null">race,</if>
+            <if test="race != null and race != ''">race,</if>
             <if test="name != null and name != ''">name,</if>
+            <if test="type != null and type != ''">type,</if>
             <if test="description != null and description != ''">description,</if>
             <if test="leader != null">leader,</if>
-            <if test="tLimit != null and tLimit != ''">t_limit,</if>
-            <if test="capacity != null">capacity,</if>
-            <if test="file != null">file,</if>
-            <if test="start != null">start,</if>
-            <if test="end != null">end,</if>
-            <if test="rRank != null">r_rank,</if>
+            <if test="leaderName != null and leaderName != ''">leader_name,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="sClass != null and sClass != ''">s_class,</if>
+            <if test="college != null">college,</if>
+            <if test="teacher1 != null and teacher1 != ''">teacher1,</if>
+            <if test="teacher1College != null and teacher1College != ''">teacher1_college,</if>
+            <if test="teacher2 != null and teacher2 != ''">teacher2,</if>
+            <if test="teacher2College != null and teacher2College != ''">teacher2_college,</if>
+            <if test="declarationUrl != null and declarationUrl != ''">declaration_url,</if>
+            <if test="midUrl != null and midUrl != ''">mid_url,</if>
+            <if test="closureUrl != null and closureUrl != ''">closure_url,</if>
             <if test="status != null">status,</if>
+            <if test="rRank != null">r_rank,</if>
             <if test="reason != null">reason,</if>
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="race != null">#{race},</if>
+            <if test="race != null and race != ''">#{race},</if>
             <if test="name != null and name != ''">#{name},</if>
+            <if test="type != null and type != ''">#{type},</if>
             <if test="description != null and description != ''">#{description},</if>
             <if test="leader != null">#{leader},</if>
-            <if test="tLimit != null and tLimit != ''">#{tLimit},</if>
-            <if test="capacity != null">#{capacity},</if>
-            <if test="file != null">#{file},</if>
-            <if test="start != null">#{start},</if>
-            <if test="end != null">#{end},</if>
-            <if test="rRank != null">#{rRank},</if>
+            <if test="leaderName != null and leaderName != ''">#{leaderName},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="sClass != null and sClass != ''">#{sClass},</if>
+            <if test="college != null">#{college},</if>
+            <if test="teacher1 != null and teacher1 != ''">#{teacher1},</if>
+            <if test="teacher1College != null and teacher1College != ''">#{teacher1College},</if>
+            <if test="teacher2 != null and teacher2 != ''">#{teacher2},</if>
+            <if test="teacher2College != null and teacher2College != ''">#{teacher2College},</if>
+            <if test="declarationUrl != null and declarationUrl != ''">#{declarationUrl},</if>
+            <if test="midUrl != null and midUrl != ''">#{midUrl},</if>
+            <if test="closureUrl != null and closureUrl != ''">#{closureUrl},</if>
             <if test="status != null">#{status},</if>
+            <if test="rRank != null">#{rRank},</if>
             <if test="reason != null">#{reason},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -103,15 +171,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateTeamInfo" parameterType="com.buis.domain.TeamInfo">
         update team_info
         <trim prefix="SET" suffixOverrides=",">
-            <if test="race != null">race = #{race},</if>
+            <if test="race != null and race != ''">race = #{race},</if>
             <if test="name != null and name != ''">name = #{name},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
             <if test="description != null and description != ''">description = #{description},</if>
             <if test="leader != null">leader = #{leader},</if>
-            <if test="tLimit != null and tLimit != ''">t_limit = #{tLimit},</if>
-            <if test="capacity != null">capacity = #{capacity},</if>
-            <if test="file != null">file = #{file},</if>
-            <if test="start != null">start = #{start},</if>
-            <if test="end != null">end = #{end},</if>
+            <if test="declarationUrl != null and declarationUrl != ''">declaration_url = #{declarationUrl},</if>
+            <if test="midUrl != null and midUrl != ''">mid_url = #{midUrl},</if>
+            <if test="closureUrl != null and closureUrl != ''">closure_url = #{closureUrl},</if>
             <if test="rRank != null">r_rank = #{rRank},</if>
             <if test="status != null">status = #{status},</if>
             <if test="reason != null">reason = #{reason},</if>
@@ -135,13 +202,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <delete id="selectTeamInfoByIds" parameterType="java.lang.Long">
+    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamInfoVo"/>
-        where id in
+        where t1.id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
+    </select>
     <delete id="deleteTeamInfoByRaceIdAndUserId">
         update team_info
         set is_deleted = 1

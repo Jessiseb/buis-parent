@@ -9,7 +9,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="race"    column="race"    />
         <result property="raceName"    column="race_name"    />
         <result property="team"    column="team"    />
-        <result property="teamName"    column="team_name"    />
         <result property="teacher"    column="teacher"    />
         <result property="decider"    column="decider"    />
         <result property="isChoosed"    column="is_choosed"    />
@@ -20,9 +19,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTeamMemberTeacherVo">
-        select t1.id, t1.race, t1.team,t2.name as team_name,t3.name as race_name, t1.teacher, t1.decider, t1.is_choosed, t1.reason, t1.is_deleted, t1.create_time, t1.update_time
+        select t1.id, t1.race, t1.team,t3.name as race_name, t1.teacher, t1.decider, t1.is_choosed, t1.reason, t1.is_deleted, t1.create_time, t1.update_time
         from team_member_teacher t1
-                 left join team_info t2 on t1.team = t2.id
                  left join race_info t3 on t1.race = t3.id
     </sql>
 
@@ -93,6 +91,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
     </insert>
+    <insert id="insertTeamMemberTeacherBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into team_member_teacher (race, team, teacher, decider, is_choosed, reason)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.race},
+            #{item.team},
+            #{item.teacher},
+            #{item.decider},
+            #{item.isChoosed},
+            #{item.reason}
+
+            )
+        </foreach>
+    </insert>
+    <insert id="insertTeamMemberTeacherByList">
+        <foreach collection="list" item="item" separator=";">
+            insert into team_member_teacher
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="race != null">race,</if>
+                <if test="team != null">team,</if>
+                <if test="teacher != null">teacher,</if>
+                <if test="decider != null">decider,</if>
+                <if test="isChoosed != null">is_choosed,</if>
+                <if test="reason != null">reason,</if>
+                <if test="isDeleted != null">is_deleted,</if>
+                <if test="createTime != null">create_time,</if>
+                <if test="updateTime != null">update_time,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="race != null">#{race},</if>
+                <if test="team != null">#{team},</if>
+                <if test="teacher != null">#{teacher},</if>
+                <if test="decider != null">#{decider},</if>
+                <if test="isChoosed != null">#{isChoosed},</if>
+                <if test="reason != null">#{reason},</if>
+                <if test="isDeleted != null">#{isDeleted},</if>
+                <if test="createTime != null">#{createTime},</if>
+                <if test="updateTime != null">#{updateTime},</if>
+            </trim>
+        </foreach>
+    </insert>
+
 
     <update id="updateTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher">
         update team_member_teacher
@@ -145,9 +186,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectJoinTeamByTeacherId" resultType="java.lang.Long">
         SELECT team
         FROM team_member_teacher
-        WHERE (teacher = #{id} or decider = #{id})
+        WHERE teacher = #{userId}
           AND is_deleted = 0
           AND is_choosed = 1
+        <if test="race != null "> and race = #{race}</if>
+        <if test="name != null "> and name = #{name}</if>
     </select>
     <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamMemberTeacherVo"/>
@@ -168,6 +211,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">and teacher = #{userId}</if>
             <if test="team != null">and team = #{team}</if>
         </where>
+    </select>
+    <select id="getMemberTeachersByTeamId" resultType="java.lang.Long">
+        select teacher from team_member_teacher where team = #{id} and is_deleted = 0
     </select>
 
 

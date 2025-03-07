@@ -21,6 +21,8 @@ import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.sql.SqlUtil;
 
+import static com.buis.common.utils.PageUtils.page;
+
 /**
  * web层通用数据处理
  * 
@@ -88,7 +90,7 @@ public class BaseController
         rspData.setCode(HttpStatus.SUCCESS);
         rspData.setMsg("查询成功");
         rspData.setRows(list);
-        rspData.setTotal(new PageInfo(list).getTotal());
+        rspData.setTotal(page.getTotal());
         return rspData;
     }
 

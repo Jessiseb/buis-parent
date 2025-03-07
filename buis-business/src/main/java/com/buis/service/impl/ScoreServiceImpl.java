@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.vo.ScoreVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.ScoreMapper;
@@ -39,7 +40,7 @@ public class ScoreServiceImpl implements IScoreService
      * @return 评分管理
      */
     @Override
-    public List<Score> selectScoreList(Score score)
+    public List<ScoreVo> selectScoreList(Score score)
     {
         return scoreMapper.selectScoreList(score);
     }

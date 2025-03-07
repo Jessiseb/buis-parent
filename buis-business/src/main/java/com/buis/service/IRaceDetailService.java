@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.RaceDetail;
+import com.buis.vo.RaceDetailVo;
 
 /**
  * 比赛详情Service接口
@@ -25,7 +26,7 @@ public interface IRaceDetailService
      * @param raceDetail 比赛详情
      * @return 比赛详情集合
      */
-    public List<RaceDetail> selectRaceDetailList(RaceDetail raceDetail);
+    public List<RaceDetailVo> selectRaceDetailList(RaceDetail raceDetail);
 
     /**
      * 新增比赛详情

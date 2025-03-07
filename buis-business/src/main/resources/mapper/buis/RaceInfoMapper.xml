@@ -117,6 +117,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and is_deleted = 0
         order by id
     </select>
+    <select id="selectRaceInfoByStatu" resultType="com.buis.domain.RaceInfo">
+        select id,
+               race_start,
+               race_end,
+               status
+        from race_info
+        where status = #{status}
+          and is_deleted = 0
+    </select>
+
 
     <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">
         insert into race_info
@@ -165,7 +175,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinEnd != null">join_end = #{joinEnd},</if>
             <if test="raceStart != null">race_start = #{raceStart},</if>
             <if test="raceEnd != null">race_end = #{raceEnd},</if>
-            <if test="raceType != null">race_end = #{raceType},</if>
+            <if test="raceType != null">race_type = #{raceType},</if>
             <if test="status != null">status = #{status},</if>
             <if test="level != null">level = #{level},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
@@ -173,6 +183,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where id = #{id}
+    </update>
+    <update id="updateRaceInfoStatus" >
+        UPDATE race_info
+        SET status = #{status}
+        WHERE id = #{id}
     </update>
 
     <delete id="deleteRaceInfoById" parameterType="Long">

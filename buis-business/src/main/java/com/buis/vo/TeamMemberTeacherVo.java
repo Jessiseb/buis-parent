@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * 队伍老师管理对象 team_member_teacher
  *
@@ -25,17 +27,15 @@ public class TeamMemberTeacherVo extends TeamMemberTeacher {
      */
     @ApiModelProperty(value = "老师信息")
     private UserInfoVo teacherInfo;
+    /**
+     * 队伍信息
+     */
+    @ApiModelProperty(value = "队伍信息")
+    private TeamInfoVo teamInfo;
 
     /**
      * 比赛名称
      */
     @ApiModelProperty(value = "所属比赛的名称")
     private String raceName;
-    /**
-     * 队伍名称
-     */
-    @ApiModelProperty(value = "所属队伍的名称")
-    private String teamName;
-
-
 }

@@ -3,6 +3,7 @@ package com.buis.service;
 import java.util.List;
 
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.dto.TeamMemberTeacherDto;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
@@ -85,10 +86,13 @@ public interface ITeamMemberTeacherService
 
     /**
      * 根据老师id查询队伍队伍列表
+     *
      * @param userId
+     * @param race
+     * @param name
      * @return
      */
-    List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId);
+    List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId, Long race, Long name);
 
     /**
      * 判断用户是否已加入
@@ -106,4 +110,33 @@ public interface ITeamMemberTeacherService
      */
     void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user);
 
+    /**
+     * 批量新增队伍老师管理
+     * @param teamMemberTeacherList
+     * @return 结果
+     */
+    int insertTeamMemberTeacherBatch(List<TeamMemberTeacherVo> teamMemberTeacherList);
+
+
+    /**
+     * 根据team获取指导老师
+     * @param team
+     * @return
+     */
+    List<UserInfoVo> getMemberTeachersByTeamId(Long team);
+    /**
+     * 根据老师id查询指导学生id
+     * @param teacher
+     * @return
+     */
+    List<Long> selectStudentIdsByTeacherId(Long teacher);
+
+    /**
+     * 批量新增/删除队伍老师管理
+     * @param dto
+     * @return
+     */
+    int batchAddTeamMemberTeacher(TeamMemberTeacherDto dto);
+
+    public int insertTeamMemberTeacherByList(List<TeamMemberTeacher> teamMemberTeacherList);
 }
