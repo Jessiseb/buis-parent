@@ -1,8 +1,10 @@
 package com.buis.web.controller.manager;
 
+import java.io.IOException;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.dto.TeamMemberTeacherDto;
 import com.buis.vo.TeamMemberTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +31,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -70,7 +73,26 @@ public class TeamMemberTeacherController extends BaseController {
         ExcelUtil<TeamMemberTeacherVo> util = new ExcelUtil<TeamMemberTeacherVo>(TeamMemberTeacherVo.class);
         util.exportExcel(response, list, "队伍老师管理数据");
     }
-
+    @ApiOperation("导出队伍老师管理列表模板")
+    @Log(title = "队伍老师管理", businessType = BusinessType.EXPORT)
+    @PostMapping("/exportTemplate")
+    @PreAuthorize("@ss.hasPermi('buis:teamTeacher:export')")
+    public void exportHeader(HttpServletResponse response) throws IOException {
+        ExcelUtil<TeamMemberTeacherVo> util = new ExcelUtil<>(TeamMemberTeacherVo.class);
+        util.exportExcelHeaderOnly(response, "队伍老师管理数据");
+    }
+    /**
+     * 导入队伍老师管理列表
+     */
+     @ApiOperation("导入队伍老师管理列表")
+     @PreAuthorize("@ss.hasPermi('buis:teamTeacher:add')")
+     @Log(title = "队伍老师管理", businessType = BusinessType.IMPORT)
+     @PostMapping("/import")
+     public AjaxResult excelImport(MultipartFile file) throws Exception {
+         ExcelUtil<TeamMemberTeacherVo> util = new ExcelUtil<TeamMemberTeacherVo>(TeamMemberTeacherVo.class);
+         List<TeamMemberTeacherVo> TeamMemberTeacherList = util.importExcel(file.getInputStream());
+         return toAjax(teamMemberTeacherService.insertTeamMemberTeacherBatch(TeamMemberTeacherList));
+     }
     /**
      * 获取队伍老师管理详细信息
      */
@@ -90,6 +112,17 @@ public class TeamMemberTeacherController extends BaseController {
     @PostMapping
     public AjaxResult add(@RequestBody TeamMemberTeacher teamMemberTeacher) {
         return toAjax(teamMemberTeacherService.insertTeamMemberTeacher(teamMemberTeacher));
+    }
+
+    /**
+     * 批量新增/删除队伍老师管理
+     */
+    @ApiOperation("批量新增/删除队伍老师管理")
+    @PreAuthorize("@ss.hasPermi('buis:teamTeacher:Add')")
+    @Log(title = "队伍老师管理", businessType = BusinessType.INSERT)
+    @PostMapping("/batchAdd")
+    public AjaxResult batchAdd(@RequestBody TeamMemberTeacherDto dto) {
+        return toAjax(teamMemberTeacherService.batchAddTeamMemberTeacher(dto));
     }
 
     /**

@@ -135,4 +135,5 @@ public class RaceDetail extends BaseEntity {
     private List<Weight> weightList;
 
 
+
 }

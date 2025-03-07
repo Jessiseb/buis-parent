@@ -66,10 +66,11 @@ public interface TeamInfoMapper
 
     /**
      * 根据ids获取队伍列表
+     *
      * @param ids
      * @return
      */
-    List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
+    List<TeamInfo> selectTeamInfoByIds(@Param("ids")Long[] ids);
 
     /**
      * 根据userId和raceId删除队伍信息
@@ -86,4 +87,10 @@ public interface TeamInfoMapper
      * @return
      */
     int getCountJoin(@Param("userId") Long userId, @Param("raceId") Long raceId,@Param("team") Long team);
+    /**
+     * 根据用户id查询用户创建的队伍
+     * @param userId
+     * @return
+     */
+    List<TeamInfo> selectTeamInfoByUserId(Long userId);
 }

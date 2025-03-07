@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * 队伍成员管理对象 team_member_student
  *
@@ -28,6 +30,15 @@ public class TeamMemberStudent extends BaseEntity {
     @ApiModelProperty("id")
     @Excel(name = "id")
     private Long id;
+
+    /**
+     * ids
+     */
+    @ApiModelProperty("ids")
+    @Excel(name = "ids")
+    private List<Long> ids;
+
+
 
     /**
      * 比赛

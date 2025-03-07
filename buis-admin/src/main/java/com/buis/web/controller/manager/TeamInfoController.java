@@ -1,11 +1,13 @@
 package com.buis.web.controller.manager;
 
-import cn.hutool.core.util.ZipUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.exception.ServiceException;
+import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.file.zipUtils;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.TeamInfo;
@@ -13,22 +15,34 @@ import com.buis.service.ITeamInfoService;
 import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.archivers.zip.ZipUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.List;
-import com.buis.common.utils.file.zipUtils;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 /**
  * 队伍信息Controller
  *
  * @author buis
  * @date 2024-10-11
  */
+@Slf4j
 @Api(tags = "队伍信息Controller")
 @RestController
 @RequestMapping("/buis/teamInfo")
@@ -58,8 +72,11 @@ public class TeamInfoController extends BaseController {
     public void export(HttpServletResponse response, TeamInfo teamInfo) {
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         ExcelUtil<TeamInfoVo> util = new ExcelUtil<TeamInfoVo>(TeamInfoVo.class);
-        util.exportExcel(response, list, "队伍信息数据");
+        util.exportExcel(response, list, "项目信息数据");
     }
+
+
+
 
     /**
      * 导出申报书
@@ -67,18 +84,34 @@ public class TeamInfoController extends BaseController {
     @ApiOperation("导出申报书")
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:exportFile')")
     @Log(title = "队伍信息", businessType = BusinessType.EXPORT)
-    @PostMapping("/exportFile")
-    public void zipDownload(HttpServletResponse response, TeamInfo teamInfo) throws IOException {
-        List<File> files = new ArrayList<>();
-        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        for (TeamInfoVo teamInfoVo : list) {
-            String file = teamInfoVo.getFile();
-            files.add(new File(file));
+    @GetMapping("/exportFile")
+    public void zipDownload(TeamInfo teamInfo, HttpServletResponse response) throws IOException {
+        List<TeamInfoVo> teamInfoList = teamInfoService.selectTeamInfoList(teamInfo);
+        //参数校验
+        if (CollectionUtil.isEmpty(teamInfoList)) {
+            throw new ServiceException("请选择要导出的团队申报书~");
         }
-        zipUtils.zipDownload(response, "申报书.zip", files);
+        //获取所有队伍的申报书url
+        List<String> declarationUrlList = teamInfoList.stream().map(TeamInfo::getDeclarationUrl)
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+        //判空
+        if (declarationUrlList.isEmpty()) {
+            throw new ServiceException("未找到可下载文件!");
+        }
+
+        // 设置响应头（关键步骤）
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename=\"申报书_"+System.currentTimeMillis()+".zip\"");
+
+        String zipFile = "申报书_"+System.currentTimeMillis()+".zip";
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            for (String file : declarationUrlList) {
+                zipUtils.addToZipFile(file, zos);
+            }
+        }
+
     }
-
-
 
     /**
      * 获取队伍信息详细信息

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.buis.domain.RaceType;
 import com.buis.domain.Score;
+import com.buis.vo.ScoreVo;
 
 /**
  * 评分管理Mapper接口
@@ -28,7 +29,7 @@ public interface ScoreMapper
      * @param score 评分管理
      * @return 评分管理集合
      */
-    public List<Score> selectScoreList(Score score);
+    public List<ScoreVo> selectScoreList(Score score);
 
     /**
      * 新增评分管理

@@ -81,4 +81,11 @@ public interface ITeamInfoService
      * @return
      */
     int getCountJoin(Long userId, Long raceId, Long team);
+
+    /**
+     * 根据用户id查询用户创建的队伍
+     * @param userId
+     * @return
+     */
+    List<TeamInfoVo> selectTeamInfoByUserId(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.buis.common.utils;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.buis.common.core.page.PageDomain;
 import com.buis.common.core.page.TableSupport;
@@ -12,6 +13,7 @@ import com.buis.common.utils.sql.SqlUtil;
  */
 public class PageUtils extends PageHelper
 {
+    public static Page page;
     /**
      * 设置请求分页数据
      */
@@ -22,7 +24,7 @@ public class PageUtils extends PageHelper
         Integer pageSize = pageDomain.getPageSize();
         String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
         Boolean reasonable = pageDomain.getReasonable();
-        PageHelper.startPage(pageNum, pageSize, orderBy).setReasonable(reasonable);
+        page = PageHelper.startPage(pageNum, pageSize, orderBy).setReasonable(reasonable);
     }
 
     /**
