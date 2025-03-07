@@ -2,16 +2,22 @@ package com.buis.web.controller.api;
 
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.buis.common.config.RuoYiConfig;
 import com.buis.common.core.controller.BaseController;
+import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
+import com.buis.common.utils.StringUtils;
+import com.buis.common.utils.file.FileUploadUtils;
+import com.buis.common.utils.file.FileUtils;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberDto;
+import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
 import com.buis.service.impl.TeamInfoServiceImpl;
 import com.buis.vo.TeamInfoVo;
@@ -25,10 +31,14 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+
 
 
 /**
@@ -49,6 +59,10 @@ public class TeamApiController extends BaseController {
     private IRaceInfoService raceInfoService;
     @Autowired
     private IUserInfoService userInfoService;
+    @Autowired
+    private ServerConfig serverConfig;
+
+    private static final String FILE_DELIMETER = ",";
 
     /**
      * 新增用户与队伍互选关系
@@ -261,7 +275,7 @@ public class TeamApiController extends BaseController {
 
 
     /**
-     * 删除队伍信息
+     * 删除队伍信息(解散项目团队)
      *
      * @param id 队伍ID
      * @return R
@@ -322,6 +336,43 @@ public class TeamApiController extends BaseController {
             return R.fail("操作失败");
         }
         return R.ok(result, "操作成功");
+    }
+
+    /**
+     * 文件上传
+     */
+    @PostMapping("/uploads")
+    public AjaxResult uploadFiles(List<MultipartFile> files) throws Exception
+    {
+        try
+        {
+            // 上传文件路径
+            String filePath = RuoYiConfig.getUploadPath();
+            List<String> urls = new ArrayList<String>();
+            List<String> fileNames = new ArrayList<String>();
+            List<String> newFileNames = new ArrayList<String>();
+            List<String> originalFilenames = new ArrayList<String>();
+            for (MultipartFile file : files)
+            {
+                // 上传并返回新文件名称
+                String fileName = FileUploadUtils.upload(filePath, file);
+                String url = serverConfig.getUrl() + fileName;
+                urls.add(url);
+                fileNames.add(fileName);
+                newFileNames.add(FileUtils.getName(fileName));
+                originalFilenames.add(file.getOriginalFilename());
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("urls", StringUtils.join(urls, FILE_DELIMETER));
+            ajax.put("fileNames", StringUtils.join(fileNames, FILE_DELIMETER));
+            ajax.put("newFileNames", StringUtils.join(newFileNames, FILE_DELIMETER));
+            ajax.put("originalFilenames", StringUtils.join(originalFilenames, FILE_DELIMETER));
+            return ajax;
+        }
+        catch (Exception e)
+        {
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
 }
