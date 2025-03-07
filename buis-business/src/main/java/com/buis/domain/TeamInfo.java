@@ -159,6 +159,38 @@ public class TeamInfo extends BaseEntity {
     private String reason;
 
     /**
+     * 招募开始时间
+     */
+    @ApiModelProperty("招募开始时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date start;
+
+    /**
+     * 招募结束时间
+     */
+    @ApiModelProperty("招募结束时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date end;
+
+    /**
+     * 招募人数
+     */
+    @ApiModelProperty("招募人数")
+    private int number;
+
+    /**
+     * 招募要求
+     */
+    @ApiModelProperty("招募要求")
+    private String request;
+
+    /**
+     * 是否发布招募
+     */
+    @ApiModelProperty("是否发布招募")
+    private Integer isPublish;
+
+    /**
      * 标识是否被删除，0表示未删除
      */
     @ApiModelProperty("标识是否被删除，0表示未删除")

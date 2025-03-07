@@ -161,4 +161,12 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return teamMemberStudentMapper.getCountJoin(userId,raceId,teamId);
     }
 
+    /**
+     * 查询用户(学生)已经加入多少个队伍
+     */
+    @Override
+    public int getStudentJoinTeamByUserId(Long userId) {
+        return teamMemberStudentMapper.getJoinTeamByUserId(userId);
+    }
+
 }

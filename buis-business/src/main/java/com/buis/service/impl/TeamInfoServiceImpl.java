@@ -1,22 +1,30 @@
 package com.buis.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.RaceDetail;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
-import com.buis.domain.TeamMemberTeacher;
+import com.buis.domain.UserInfo;
+import com.buis.dto.TeamMemberDto;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
+import com.buis.vo.RaceInfoVo;
 import com.buis.vo.TeamInfoVo;
-import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.redisson.client.RedisClient;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static com.buis.common.constant.CacheConstants.JOIN_TEAM_LOCK;
 
 /**
  * 队伍信息Service业务层处理
@@ -25,6 +33,7 @@ import java.util.List;
  * @date 2024-10-11
  */
 @Service
+@Slf4j
 public class TeamInfoServiceImpl implements ITeamInfoService {
     @Resource
     private TeamInfoMapper teamInfoMapper;
@@ -36,6 +45,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private ITeamMemberTeacherService teamTeacherService;
     @Resource
     private IRaceInfoService raceInfoService;
+    @Resource
+    private RedissonClient redissonClient;
+    @Resource
+    private RaceDetailServiceImpl raceDetailService;
 
 
     /**
@@ -49,6 +62,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
+        //根据比赛信息设置队伍最大人数
+        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(teamInfo.getRace());
+        int teamMax =raceDetail.getTeamMax();//最大人数
+        teamInfo.setNumber(teamMax);
+
         int ok = teamInfoMapper.insertTeamInfo(teamInfo);
         //创建项目成功后,把信息插入队伍用户表
         int sucess = 0;
@@ -126,6 +144,94 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             results.add(createTeamInfoVo(team));
         }
         return results;
+    }
+
+    /**
+     * 加入指定项目队伍
+     *
+     * @param teamMemberDto 加入队伍信息
+     * @param loginUser     登录用户
+     * @return
+     */
+    @Override
+    public int joinTeamById(TeamMemberDto teamMemberDto, UserInfo loginUser) {
+        //判空
+        if (teamMemberDto == null || loginUser == null) {
+            throw new ServiceException("参数错误");
+        }
+
+        //用户最多加入指定个队伍
+        //TODO 先设置为1 后续改为可选
+        int count = 1;
+
+        //根据用户id查出用户已经加入多少个队伍
+        Long userId = loginUser.getId();
+        //判断用户是老师还是学生 (0-学生 1-老师)
+        Long isTeacher = teamMemberDto.getIsTeacher();
+        TeamMemberStudent teamMemberStudent = new TeamMemberStudent();
+        if (isTeacher == 0){
+            //学生
+            int hasJoin = teamStudentService.getStudentJoinTeamByUserId(userId);
+            if (hasJoin >= count) {
+                throw new ServiceException("您已加入其他团队,最多只能加入一个项目团队!!!");
+            }
+
+
+            //分布式锁---->只有抢到锁的人才能加入队伍
+            //尝试获得锁
+            String key = JOIN_TEAM_LOCK;
+            RLock rLock = redissonClient.getLock(key);
+            //设置锁过期时间
+            try{
+                rLock.tryLock(3,60*3, TimeUnit.SECONDS);
+                while(true){
+                    //队伍id
+                    Long teamId = teamMemberDto.getTeam();
+                    //根据id查询项目队伍信息
+                    TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
+
+                    //不能加入不存在的队伍
+                    if (teamInfo == null) {
+                        throw new ServiceException("该队伍不存在");
+                    }
+
+                    //已经过期的队伍不能加入
+                    if (teamInfo.getEnd().before(DateUtils.getNowDate())) {
+                        throw new ServiceException("该队伍已过期");
+                    }
+
+                    //已经满人的队伍不能加入
+                    if (teamStudentService.getJoinCountByTeamId(teamId) >= teamInfo.getNumber()) {
+                        throw new ServiceException("该队伍已满");
+                    }
+
+                    //不能重复加入已经加入的队伍
+                    if (teamStudentService.getJoinCount(userId, teamInfo.getRace(), teamInfo.getId()) > 0) {
+                        throw new ServiceException("您已加入该队伍");
+                    }
+
+                    //修改用户队伍表信息
+                    teamMemberStudent.setTeam(teamInfo.getId()); //队伍
+                    teamMemberStudent.setRace(teamInfo.getRace()); //比赛
+                    teamMemberStudent.setStudent(userId); //成员
+                    teamMemberStudent.setIsChoosed(0L); //是否选择
+                    teamMemberStudent.setReason(teamMemberDto.getReason()); //加入理由
+                }
+            }catch (Exception e){
+                log.error("加入队伍失败!",e);
+                throw new ServiceException("加入队伍失败: "+e.getMessage());
+            }finally {
+                //释放锁
+                //只能释放自己的锁
+                if (rLock.isHeldByCurrentThread()) {
+                    rLock.unlock();
+                }
+            }
+        }else if(isTeacher == 1){
+            //老师
+            throw new ServiceException("您不是学生,不能加入队伍");
+        }
+        return teamStudentService.insertTeamMemberStudent(teamMemberStudent);
     }
 
     /**

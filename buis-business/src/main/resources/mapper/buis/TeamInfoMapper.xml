@@ -5,29 +5,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.buis.mapper.TeamInfoMapper">
 
     <resultMap type="com.buis.vo.TeamInfoVo" id="TeamInfoResult">
-        <result property="id"    column="id"    />
-        <result property="race"    column="race"    />
-        <result property="name"    column="name"    />
-        <result property="type"    column="type"    />
-        <result property="description"    column="description"    />
-        <result property="leader"    column="leader"    />
-        <result property="leaderName"    column="leader_name"    />
-        <result property="phone"    column="phone"    />
-        <result property="sClass"    column="s_class"    />
-        <result property="college"    column="college"    />
-        <result property="teacher1"    column="teacher1"    />
-        <result property="teacher2"    column="teacher2"    />
-        <result property="teacher1College"    column="teacher1_college"    />
-        <result property="teacher2College"    column="teacher2_college"    />
-        <result property="declarationUrl"    column="declaration_url"    />
-        <result property="midUrl"    column="mid_url"    />
-        <result property="closureUrl"    column="closure_url"    />
-        <result property="rRank"    column="r_rank"    />
-        <result property="status"    column="status"    />
-        <result property="reason"    column="reason"    />
-        <result property="isDeleted"    column="is_deleted"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="race" column="race"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="description" column="description"/>
+        <result property="leader" column="leader"/>
+        <result property="leaderName" column="leader_name"/>
+        <result property="phone" column="phone"/>
+        <result property="sClass" column="s_class"/>
+        <result property="college" column="college"/>
+        <result property="teacher1" column="teacher1"/>
+        <result property="teacher2" column="teacher2"/>
+        <result property="teacher1College" column="teacher1_college"/>
+        <result property="teacher2College" column="teacher2_college"/>
+        <result property="declarationUrl" column="declaration_url"/>
+        <result property="midUrl" column="mid_url"/>
+        <result property="closureUrl" column="closure_url"/>
+        <result property="rRank" column="r_rank"/>
+        <result property="status" column="status"/>
+        <result property="reason" column="reason"/>
+        <result property="start" column="start"/>
+        <result property="end" column="end"/>
+        <result property="number" column="number"/>
+        <result property="request" column="request"/>
+        <result property="isPublish" column="is_publish"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectTeamInfoVo">
@@ -51,14 +56,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.r_rank,
                t1.status,
                t1.reason,
+               t1.start,
+               t1.end,
+               t1.number,
+               t1.request,
+               t1.is_publish,
                t1.is_deleted,
                t1.create_time,
                t1.update_time
         from team_info t1
-            left join t_college_major t2 on t1.college = t2.id
-            left join t_college_major t3 on t1.teacher1_college = t3.id
-            left join t_college_major t4 on t1.teacher2_college = t4.id
-            left join race_info t5 on t1.race = t5.id
+                 left join t_college_major t2 on t1.college = t2.id
+                 left join t_college_major t3 on t1.teacher1_college = t3.id
+                 left join t_college_major t4 on t1.teacher2_college = t4.id
+                 left join race_info t5 on t1.race = t5.id
 
     </sql>
 
@@ -85,7 +95,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             )</if>
             <if test="teacher2College != null  and teacher2College != ''">and t1.teacher2_college like concat('%',
                 #{teacher2College}
-            )</if>
+                )
+            </if>
             <if test="declarationUrl != null  and declarationUrl != ''">and t1.declaration_url like concat('%',
                 #{declarationUrl}, '%')
             </if>
@@ -94,6 +105,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="status != null ">and t1.status = #{status}</if>
             <if test="reason != null  and reason != ''">and t1.reason like concat('%', #{reason}, '%')</if>
+            <if test="start != null ">and t1.start = #{start}</if>
+            <if test="end != null ">and t1.end = #{end}</if>
+            <if test="number != null ">and t1.number = #{number}</if>
+            <if test="request != null  and request != ''">and t1.request like concat('%', #{request}, '%')</if>
+            <if test="isPublish != null ">and t1.is_publish = #{isPublish}</if>
         </where>
     </select>
 
@@ -138,10 +154,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status,</if>
             <if test="rRank != null">r_rank,</if>
             <if test="reason != null">reason,</if>
+            <if test="start != null">start,</if>
+            <if test="end != null">end,</if>
+            <if test="number != null">number,</if>
+            <if test="request != null">request,</if>
+            <if test="isPublish != null">is_publish,</if>
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="race != null and race != ''">#{race},</if>
             <if test="name != null and name != ''">#{name},</if>
@@ -162,10 +183,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">#{status},</if>
             <if test="rRank != null">#{rRank},</if>
             <if test="reason != null">#{reason},</if>
+            <if test="start != null">#{start},</if>
+            <if test="end != null">#{end},</if>
+            <if test="number != null">#{number},</if>
+            <if test="request != null">#{request},</if>
+            <if test="isPublish != null">#{isPublish},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateTeamInfo" parameterType="com.buis.domain.TeamInfo">
@@ -182,6 +208,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="rRank != null">r_rank = #{rRank},</if>
             <if test="status != null">status = #{status},</if>
             <if test="reason != null">reason = #{reason},</if>
+            <if test="leaderName != null and leaderName != ''">leader_name = #{leaderName},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="sClass != null and sClass != ''">s_class = #{sClass},</if>
+            <if test="college != null">college = #{college},</if>
+            <if test="teacher1 != null and teacher1 != ''">teacher1 = #{teacher1},</if>
+            <if test="teacher1College != null and teacher1College != ''">teacher1_college = #{teacher1College},</if>
+            <if test="teacher2 != null and teacher2 != ''">teacher2 = #{teacher2},</if>
+            <if test="teacher2College != null and teacher2College != ''">teacher2_college = #{teacher2College},</if>
+            <if test="start != null">start = #{start},</if>
+            <if test="end != null">end = #{end},</if>
+            <if test="number != null">number = #{number},</if>
+            <if test="request != null">request = #{request},</if>
+            <if test="isPublish != null">is_publish = #{isPublish},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

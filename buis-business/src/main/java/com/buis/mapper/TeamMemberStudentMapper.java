@@ -81,4 +81,6 @@ public interface TeamMemberStudentMapper {
     void deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
 
     int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList);
+
+    int getJoinTeamByUserId(Long userId);
 }
