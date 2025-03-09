@@ -30,7 +30,7 @@ public class SaTokenConfig {
 //                    System.out.println("---------- 进入Sa-Token全局认证 -----------");
                     // 登录认证 -- 拦截所有路由，并排除/api/user/login,/api/user/register,/api/user/findPassword和发邮箱验证码用于开放登录
                     SaRouter.match("/api/**")
-                            .notMatch("/api/user/login", "/api/user/register", "/api/email/sendEmail/{email}","/api/user/findPassword")
+                            .notMatch("/api/user/login", "/api/user/register", "/api/email/sendEmail/{email}","/api/user/findPassword","/api/ai/chat")
                             .notMatch("/*.html")
                             .notMatch("/api/user/getToken")
                             .notMatch("/**/doc.html")
