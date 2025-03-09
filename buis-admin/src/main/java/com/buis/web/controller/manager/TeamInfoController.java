@@ -11,7 +11,6 @@ import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.file.zipUtils;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.TeamInfo;
-import com.buis.service.ITeamInfoService;
 import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,7 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.buis.service.ITeamInfoService;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,7 +47,7 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/buis/teamInfo")
 public class TeamInfoController extends BaseController {
     @Autowired
-    private ITeamInfoService teamInfoService;
+    private ITeamInfoService  teamInfoService;
 
     /**
      * 查询队伍信息列表

@@ -88,28 +88,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="phone != null  and phone != ''">and t1.phone like concat('%', #{phone}, '%')</if>
             <if test="sClass != null  and sClass != ''">and t1.s_class like concat('%', #{sClass}, '%')</if>
             <if test="college != null and college != ''">and t1.college = #{college}</if>
-            <if test="teacher1 != null  and teacher1 != ''">and t1.teacher1 like concat('%', #{teacher1}, '%')</if>
-            <if test="teacher2 != null  and teacher2 != ''">and t1.teacher2 like concat('%', #{teacher2}, '%')</if>
-            <if test="teacher1College != null  and teacher1College != ''">and t1.teacher1_college like concat('%',
-                #{teacher1College}
-            )</if>
-            <if test="teacher2College != null  and teacher2College != ''">and t1.teacher2_college like concat('%',
-                #{teacher2College}
-                )
-            </if>
-            <if test="declarationUrl != null  and declarationUrl != ''">and t1.declaration_url like concat('%',
-                #{declarationUrl}, '%')
-            </if>
-            <if test="midUrl != null  and midUrl != ''">and t1.mid_url like concat('%', #{midUrl}, '%')</if>
-            <if test="closureUrl != null  and closureUrl != ''">and t1.closure_url like concat('%', #{closureUrl}, '%')
-            </if>
-            <if test="status != null ">and t1.status = #{status}</if>
-            <if test="reason != null  and reason != ''">and t1.reason like concat('%', #{reason}, '%')</if>
-            <if test="start != null ">and t1.start = #{start}</if>
-            <if test="end != null ">and t1.end = #{end}</if>
-            <if test="number != null ">and t1.number = #{number}</if>
-            <if test="request != null  and request != ''">and t1.request like concat('%', #{request}, '%')</if>
-            <if test="isPublish != null ">and t1.is_publish = #{isPublish}</if>
         </where>
     </select>
 

@@ -129,3 +129,10 @@ sa-token:
   is-log: true
   # jwt秘钥
   jwt-secret-key: ***REMOVED***
+
+aliyun:
+  ai:
+    api-key: ***REMOVED***
+    #base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    #api-key: ***REMOVED***
+    base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
