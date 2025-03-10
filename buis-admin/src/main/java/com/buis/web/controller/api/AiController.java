@@ -56,8 +56,8 @@ public class AiController {
         MultiModalMessage userMessage = MultiModalMessage.builder().role(Role.USER.getValue())
                 .content(Arrays.asList(
                         Collections.singletonMap("image", image),
-                        Collections.singletonMap("text", "请帮忙分类附件图片的活动名字、 获奖级别、获奖成员、指导老师、获奖时间,其余不需要，并且不要出现我要的结果被省略了,返回的信息必须要完全,返回的结果要" +
-                                "活动名字：xxx；获奖级别：xxx；获奖成员：xxx；指导老师：xxx；获奖时间：xxxx年-xx月-xx日"),
+                        Collections.singletonMap("text", "请帮忙分类附件图片的活动名字、 获奖级别、全部获奖成员、全部指导老师、获奖时间,其余不需要，并且不要出现我要的结果被省略了,返回的信息必须要完全,返回的结果要" +
+                                "活动名字：内容；获奖级别：内容；获奖成员：内容；指导老师：内容；获奖时间：xxxx年-xx月-xx日，这种样子的"),
                         Collections.singletonMap("stream", "true"))).build();
         MultiModalConversationParam param = MultiModalConversationParam.builder()
                 // 若没有配置环境变量，请用百炼API Key将下行替换为：.apiKey("sk-xxx")
