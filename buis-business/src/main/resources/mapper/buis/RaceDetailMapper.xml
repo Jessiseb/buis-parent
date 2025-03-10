@@ -68,15 +68,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectRaceDetailList" parameterType="com.buis.vo.RaceDetailVo" resultMap="RaceDetailResult">
         <include refid="selectRaceDetailVo"/>
         <where>
-            <if test="raceDetail.id != null ">and t1.id = #{raceDetail.id}</if>
-            <if test="raceDetail.race != null ">and t1.race = #{raceDetail.race}</if>
-            <if test="raceDetail.name != null  and name != ''">and t1.name like concat('%', #{raceDetail.name}, '%')
+            <if test="raceDetail.id != null and raceDetail.id != '' ">and t1.id = #{raceDetail.id}</if>
+            <if test="raceDetail.race != null and raceDetail.race != ''">and t1.race = #{raceDetail.race}</if>
+            <if test="raceDetail.name != null  and raceDetail.name != ''">and t1.name like concat('%', #{raceDetail.name}, '%')
             </if>
-            <if test="raceDetail.phone != null  and phone != ''">and t1.phone = #{raceDetail.phone}</if>
-            <if test="raceDetail.email != null  and email != ''">and t1.email = #{raceDetail.email}</if>
-            <if test="raceDetail.capacity != null ">and t1.capacity = #{raceDetail.capacity}</if>
-            <if test="raceDetail.rRank != null ">and t1.r_rank = #{raceDetail.rRank}</if>
-            <if test="raceDetail.tLimit != null ">and t1.t_limit = #{raceDetail.tLimit}</if>
+            <if test="raceDetail.phone != null  and raceDetail.phone != ''">and t1.phone = #{raceDetail.phone}</if>
+            <if test="raceDetail.email != null  and raceDetail.email != ''">and t1.email = #{raceDetail.email}</if>
+            <if test="raceDetail.capacity != null and raceDetail.capacity != ''">and t1.capacity = #{raceDetail.capacity}</if>
+            <if test="raceDetail.rRank != null and raceDetail.rRank != ''">and t1.r_rank = #{raceDetail.rRank}</if>
+            <if test="raceDetail.tLimit != null and raceDetail.tLimit != ''">and t1.t_limit = #{raceDetail.tLimit}</if>
         </where>
     </select>
 
