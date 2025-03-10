@@ -97,4 +97,5 @@ public interface IUserInfoService {
 
     UserInfo selectUserInfoByEmail(String email);
 
+    List<UserInfo> selectUserInfoBynumber(String number);
 }
