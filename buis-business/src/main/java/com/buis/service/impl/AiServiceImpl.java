@@ -117,6 +117,11 @@ public class AiServiceImpl implements IAiService {
         return Flux.fromIterable(events);
     }
 
+    /**
+     * 构建参数对象
+     * @param userMsg 用户消息对象(输入信息,用户角色等待)
+     * @return
+     */
     private GenerationParam buildGenerationParam(Message userMsg) {
         return GenerationParam.builder()
                 // 若没有配置环境变量，请用百炼API Key将下行替换为：.apiKey("sk-xxx")

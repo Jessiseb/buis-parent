@@ -133,6 +133,5 @@ sa-token:
 aliyun:
   ai:
     api-key: sk-14b751c95f874fe0b0b7b6ec63513c59
-    #base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
     #api-key: sk-7696a81da1cd45ce9de89843b7eb0750
     base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
