@@ -75,4 +75,11 @@ public interface UserInfoMapper
      * @return 用户信息列表
      */
     List<UserInfo> selectUserInfoByIds(List<Long> ids);
+
+    /**
+     *
+     * @param number 学号
+     * @return 学生信息
+     */
+    List<UserInfo> selectUserInfoBynumber(String number);
 }

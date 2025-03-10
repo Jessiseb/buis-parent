@@ -2,6 +2,8 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.TeamMemberStudent;
+import com.buis.domain.UserInfo;
 import com.buis.vo.TeamInfoVo;
 
 /**
@@ -88,4 +90,10 @@ public interface ITeamInfoService
      * @return
      */
     List<TeamInfoVo> selectTeamInfoByUserId(Long userId);
+    /**
+     * 查询用户:根据学生学号查询学生信息
+     * @param number 学生学号
+     * @return R
+     */
+
 }

@@ -4,22 +4,17 @@ package com.buis.web.controller.api;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
-import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.domain.TeamMemberTeacher;
+import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberDto;
-import com.buis.service.IRaceInfoService;
-import com.buis.service.ITeamInfoService;
-import com.buis.service.ITeamMemberStudentService;
-import com.buis.service.ITeamMemberTeacherService;
-import com.buis.service.impl.TeamInfoServiceImpl;
+import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -48,6 +43,8 @@ public class TeamApiController extends BaseController {
     private ITeamInfoService teamInfoService;
     @Autowired
     private IRaceInfoService raceInfoService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
     /**
      * 新增用户与队伍互选关系
@@ -270,5 +267,18 @@ public class TeamApiController extends BaseController {
         int result = teamInfoService.deleteTeamInfoById(id);
         return R.ok(result, "操作成功");
     }
+    /**
+     * 查询用户:根据学生学号查询学生信息
+     * @param number 学生学号
+     * @return R
+     */
+    @ApiOperation("根据学号查询学生信息")
+    @GetMapping("/{id}")
+    public R<List<UserInfo>> getStudentById(@ApiParam(name = "number",value = "学号",required = true)@PathVariable String number){
+           List<UserInfo> StudentInfo =  userInfoService.selectUserInfoBynumber(number);
+            return R.ok(StudentInfo);
+    }
+
+
 
 }
