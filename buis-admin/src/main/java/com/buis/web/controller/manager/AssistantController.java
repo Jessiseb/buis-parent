@@ -8,6 +8,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Assistant;
 import com.buis.service.IAssistantService;
+import com.buis.vo.AssistantVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,19 @@ public class AssistantController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(Assistant assistant) {
         startPage();
-        List<Assistant> list = assistantService.selectAssistantList(assistant);
+        List<AssistantVo> list = assistantService.selectAssistantList(assistant);
+        return getDataTable(list);
+    }
+
+    /**
+     * 联表模糊查询学生助理列表
+     */
+    @ApiOperation("联表模糊查询学生助理列表")
+    @PreAuthorize("@ss.hasPermi('buis:assistant:fuzzy')")
+    @GetMapping("/fuzzy")
+    public TableDataInfo fuzzyQuery(String name) {
+        startPage();
+        List<AssistantVo> list = assistantService.fuzzyQuery(name);
         return getDataTable(list);
     }
 
@@ -50,8 +63,8 @@ public class AssistantController extends BaseController {
     @Log(title = "学生助理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, Assistant assistant) {
-        List<Assistant> list = assistantService.selectAssistantList(assistant);
-        ExcelUtil<Assistant> util = new ExcelUtil<Assistant>(Assistant.class);
+        List<AssistantVo> list = assistantService.selectAssistantList(assistant);
+        ExcelUtil<AssistantVo> util = new ExcelUtil<AssistantVo>(AssistantVo.class);
         util.exportExcel(response, list, "学生助理数据");
     }
 

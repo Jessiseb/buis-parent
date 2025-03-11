@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.AssistantMapper">
     
-    <resultMap type="com.buis.domain.Assistant" id="AssistantResult">
+    <resultMap type="com.buis.vo.AssistantVo" id="AssistantResult">
         <result property="id"    column="id"    />
         <result property="student"    column="student"    />
         <result property="race"    column="race"    />
@@ -30,6 +30,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectAssistantById" parameterType="Long" resultMap="AssistantResult">
         <include refid="selectAssistantVo"/>
         where id = #{id}  and is_deleted = 0
+    </select>
+
+    <select id="fuzzyQuery" parameterType="java.lang.String" resultMap="AssistantResult">
+        SELECT t_assistant.* FROM t_assistant
+        JOIN user_info ON t_assistant.student = user_info.id
+        <where>
+            t_assistant.is_deleted = 0
+            <if test="name != 'null' and name != ''">and user_info.name LIKE CONCAT('%', #{name}, '%')</if>
+        </where>
     </select>
 
     <insert id="insertAssistant" parameterType="com.buis.domain.Assistant" useGeneratedKeys="true" keyProperty="id">

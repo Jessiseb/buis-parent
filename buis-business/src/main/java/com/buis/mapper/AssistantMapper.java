@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import com.buis.domain.Assistant;
+import com.buis.vo.AssistantVo;
 
 /**
  * 学生助理Mapper接口
@@ -26,7 +27,7 @@ public interface AssistantMapper{
      * @param assistant 学生助理
      * @return 学生助理集合
      */
-    public List<Assistant> selectAssistantList(Assistant assistant);
+    public List<AssistantVo> selectAssistantList(Assistant assistant);
 
     /**
      * 新增学生助理
@@ -59,4 +60,6 @@ public interface AssistantMapper{
      * @return 结果
      */
     public int deleteAssistantByIds(Long[] ids);
+
+    public List<AssistantVo> fuzzyQuery(String name);
 }

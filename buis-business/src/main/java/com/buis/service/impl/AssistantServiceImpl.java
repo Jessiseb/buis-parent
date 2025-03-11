@@ -2,11 +2,17 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.service.IRaceInfoService;
+import com.buis.service.IUserInfoService;
+import com.buis.vo.AssistantVo;
+import com.buis.vo.TeamMemberTeacherVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.AssistantMapper;
 import com.buis.domain.Assistant;
 import com.buis.service.IAssistantService;
+
+import javax.annotation.Resource;
 
 /**
  * 学生助理Service业务层处理
@@ -19,6 +25,10 @@ public class AssistantServiceImpl implements IAssistantService
 {
     @Autowired
     private AssistantMapper assistantMapper;
+    @Resource
+    private IUserInfoService userInfoService;
+    @Resource
+    private IRaceInfoService raceInfoService;
 
     /**
      * 查询学生助理
@@ -39,9 +49,14 @@ public class AssistantServiceImpl implements IAssistantService
      * @return 学生助理
      */
     @Override
-    public List<Assistant> selectAssistantList(Assistant assistant)
+    public List<AssistantVo> selectAssistantList(Assistant assistant)
     {
-        return assistantMapper.selectAssistantList(assistant);
+        List<AssistantVo> assistantVos = assistantMapper.selectAssistantList(assistant);
+        for (AssistantVo assistantVo : assistantVos) {
+            setUserInfo(assistantVo);
+            setRaceInfo(assistantVo);
+        }
+        return assistantVos;
     }
 
     /**
@@ -92,5 +107,46 @@ public class AssistantServiceImpl implements IAssistantService
     public int deleteAssistantById(Long id)
     {
         return assistantMapper.deleteAssistantById(id);
+    }
+
+    /**
+     * 联表模糊查询学生助理列表
+     *
+     * @param name
+     * @return
+     */
+    @Override
+    public List<AssistantVo> fuzzyQuery(String name) {
+        if (name == null) {
+            name = "";
+        }
+        List<AssistantVo> assistantVos = assistantMapper.fuzzyQuery(name);
+        for (AssistantVo assistantVo : assistantVos) {
+            setUserInfo(assistantVo);
+            setRaceInfo(assistantVo);
+        }
+        return assistantVos;
+    }
+
+    /**
+     * 设置学生信息
+     *
+     * @param assistantVo 学生助理管理对象
+     */
+    private void setUserInfo(AssistantVo assistantVo) {
+        if (assistantVo != null) {
+            assistantVo.setUserInfo(userInfoService.selectUserInfoById(assistantVo.getStudent()));
+        }
+    }
+
+    /**
+     * 设置学生信息
+     *
+     * @param assistantVo 学生助理管理对象
+     */
+    private void setRaceInfo(AssistantVo assistantVo) {
+        if (assistantVo != null) {
+            assistantVo.setRaceInfo(raceInfoService.selectRaceInfoById(assistantVo.getRace()));
+        }
     }
 }
