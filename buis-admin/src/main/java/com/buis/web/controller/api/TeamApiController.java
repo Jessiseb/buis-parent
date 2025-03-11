@@ -341,8 +341,9 @@ public class TeamApiController extends BaseController {
     /**
      * 文件上传
      */
+    @ApiOperation("前台文件上传")
     @PostMapping("/uploads")
-    public AjaxResult uploadFiles(List<MultipartFile> files) throws Exception
+    public AjaxResult uploadFiles(@RequestParam("files") List<MultipartFile> files) throws Exception
     {
         try
         {
