@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.Assistant;
+import com.buis.vo.AssistantVo;
 
 /**
  * 学生助理Service接口
@@ -25,7 +26,7 @@ public interface IAssistantService
      * @param assistant 学生助理
      * @return 学生助理集合
      */
-    public List<Assistant> selectAssistantList(Assistant assistant);
+    public List<AssistantVo> selectAssistantList(Assistant assistant);
 
     /**
      * 新增学生助理
@@ -58,4 +59,11 @@ public interface IAssistantService
      * @return 结果
      */
     public int deleteAssistantById(Long id);
+
+    /**
+     * 联表模糊查询学生助理列表
+     * @param name
+     * @return
+     */
+    public List<AssistantVo> fuzzyQuery(String name);
 }
