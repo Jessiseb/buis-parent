@@ -97,4 +97,9 @@ public interface IUserInfoService {
 
     UserInfo selectUserInfoByEmail(String email);
 
+    /**
+     * 根据学号查询用户信息
+     */
+    UserInfo selectUserInfoBynumber(String number);
+
 }

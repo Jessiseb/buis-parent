@@ -2,6 +2,7 @@ package com.buis.web.controller.api;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
@@ -82,6 +83,20 @@ public class UserInfoApiController extends BaseController {
         return R.ok(userInfoService.selectUserInfoById(userId));
     }
 
+    /**
+     * 根据学号查询用户信息
+     */
+    @ApiOperation("根据学号查询用户信息")
+    @PostMapping("/getUserInfoByNumber")
+    public R<UserInfoVo> getUserInfoByNumber(@RequestParam("number") String number){
+        UserInfo userInfo = userInfoService.selectUserInfoBynumber(number);
+        if (userInfo==null){
+            throw new ServiceException("用户不存在!");
+        }
+        UserInfoVo userInfoVo = new UserInfoVo();
+        BeanUtil.copyProperties(userInfo,userInfoVo);
+        return R.ok(userInfoVo);
+    }
 
     /**
      * 编辑用户信息
