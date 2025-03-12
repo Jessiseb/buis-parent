@@ -8,6 +8,8 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Judge;
 import com.buis.service.IJudgeService;
+import com.buis.vo.AssistantVo;
+import com.buis.vo.JudgeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,19 @@ public class JudgeController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(Judge judge) {
         startPage();
-        List<Judge> list = judgeService.selectJudgeList(judge);
+        List<JudgeVo> list = judgeService.selectJudgeList(judge);
+        return getDataTable(list);
+    }
+
+    /**
+     * 联表模糊查询评委列表
+     */
+    @ApiOperation("联表模糊查询评委列表")
+    @PreAuthorize("@ss.hasPermi('buis:judge:fuzzy')")
+    @GetMapping("/fuzzy")
+    public TableDataInfo fuzzyQuery(String name) {
+        startPage();
+        List<JudgeVo> list = judgeService.fuzzyQuery(name);
         return getDataTable(list);
     }
 
@@ -50,8 +64,8 @@ public class JudgeController extends BaseController {
     @Log(title = "评委管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, Judge judge) {
-        List<Judge> list = judgeService.selectJudgeList(judge);
-        ExcelUtil<Judge> util = new ExcelUtil<Judge>(Judge.class);
+        List<JudgeVo> list = judgeService.selectJudgeList(judge);
+        ExcelUtil<JudgeVo> util = new ExcelUtil<JudgeVo>(JudgeVo.class);
         util.exportExcel(response, list, "评委管理数据");
     }
 

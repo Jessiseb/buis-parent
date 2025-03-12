@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.JudgeMapper">
     
-    <resultMap type="com.buis.domain.Judge" id="JudgeResult">
+    <resultMap type="com.buis.vo.JudgeVo" id="JudgeResult">
         <result property="id"    column="id"    />
         <result property="teacher"    column="teacher"    />
         <result property="race"    column="race"    />
@@ -27,9 +27,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectJudgeById" parameterType="Long" resultMap="JudgeResult">
+    <select id="selectJudgeByIdteam_info" parameterType="Long" resultMap="JudgeResult">
         <include refid="selectJudgeVo"/>
         where id = #{id}  and is_deleted = 0
+    </select>
+
+    <select id="fuzzyQuery" resultType="com.buis.vo.JudgeVo" resultMap="JudgeResult">
+        SELECT t_judge.* FROM t_judge
+        JOIN user_info ON t_judge.teacher = user_info.id
+        <where>
+            t_judge.is_deleted = 0
+            <if test="name != 'null' and name != ''">and user_info.name LIKE CONCAT('%', #{name}, '%')</if>
+        </where>
     </select>
 
     <insert id="insertJudge" parameterType="com.buis.domain.Judge" useGeneratedKeys="true" keyProperty="id">

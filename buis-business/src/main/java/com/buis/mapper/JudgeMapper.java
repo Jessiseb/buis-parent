@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.buis.domain.CollegeMajor;
 import com.buis.domain.Judge;
+import com.buis.vo.JudgeVo;
 
 /**
  * 评委管理Mapper接口
@@ -28,7 +29,7 @@ public interface JudgeMapper
      * @param judge 评委管理
      * @return 评委管理集合
      */
-    public List<Judge> selectJudgeList(Judge judge);
+    public List<JudgeVo> selectJudgeList(Judge judge);
 
     /**
      * 新增评委管理
@@ -61,4 +62,11 @@ public interface JudgeMapper
      * @return 结果
      */
     public int deleteJudgeByIds(Long[] ids);
+
+    /**
+     * 联表模糊查询评委列表
+     *
+     * @param name
+     */
+    public List<JudgeVo> fuzzyQuery(String name);
 }

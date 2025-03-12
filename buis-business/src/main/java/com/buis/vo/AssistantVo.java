@@ -15,7 +15,7 @@ import lombok.Data;
 @ApiModel("学生助理VO")
 public class AssistantVo extends Assistant {
     /**
-     * 学生信息
+     * 学生助理信息
      */
     @ApiModelProperty(value = "学生信息")
     private UserInfoVo userInfo;
