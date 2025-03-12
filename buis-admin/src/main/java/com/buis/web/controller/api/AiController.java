@@ -12,29 +12,17 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.exception.UploadFileException;
 import com.buis.common.core.domain.R;
+import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AiServiceImpl;
-import com.coze.openapi.client.chat.CreateChatReq;
-import com.coze.openapi.client.chat.model.ChatEvent;
-import com.coze.openapi.client.chat.model.ChatEventType;
-import com.coze.openapi.service.auth.TokenAuth;
-import com.coze.openapi.service.config.Consts;
-import com.coze.openapi.service.service.CozeAPI;
-import io.reactivex.Flowable;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-import java.util.Collections;
-
-import com.coze.openapi.client.chat.CreateChatReq;
-import com.coze.openapi.client.chat.model.ChatEvent;
-import com.coze.openapi.client.chat.model.ChatEventType;
-import com.coze.openapi.service.auth.TokenAuth;
-import com.coze.openapi.service.service.CozeAPI;
-
-import io.reactivex.Flowable;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -48,14 +36,18 @@ public class AiController {
 
     @Autowired
     private AiServiceImpl aiService;
+    @Autowired
+    private IUserInfoService uservice;
 
     @Value("${aliyun.ai.api-key}")
     String apiKey; //阿里云api
 
     @Value("${coze}")
     String cozeToken;
-    //    @Value("${aliyun.base-url}")
-//    String baseUrl;
+
+    private static final String API_KEY = "h9bKT9qFwv91Q2jXbhkEpyJyUieYAIpq";
+    private static final String SECRET_KEY = "jVFagF3PmOueZXfs3U3VUCAABK8s8j1H";
+    private static final String API_URL = "你的智能体API地址";
 
 
     /**
@@ -64,6 +56,7 @@ public class AiController {
      * @param image 图像路径
      */
     @PostMapping("/imageAnalysis")
+    @ApiOperation("图像识别文字")
     public R<MultiModalConversationResult> imageAnalysis(@RequestParam("image") String image)
             throws ApiException, NoApiKeyException, UploadFileException {
         System.out.println(apiKey);
@@ -91,6 +84,7 @@ public class AiController {
      * @return
      */
     @GetMapping("/chat")
+    @ApiOperation("ds深度对话")
     public Flux<String> chatWithDs(@RequestParam("text") String text, HttpServletResponse response) {
         //UTF-8
         response.setCharacterEncoding("UTF-8");
@@ -107,61 +101,28 @@ public class AiController {
         return Flux.empty();
     }
 
-//    /**
-//     * 智能体对话
-//     */
-//    @PostMapping("chatWithCoze")
-//    public Flux<String> chatWithCoze(@RequestBody Message message) {
-//        String token = cozeToken;
+
+    /**
+     * 智能体对话
+     * @return
+     */
+    @GetMapping(value = "/stream/chat/agent", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @ApiOperation("智能体对话")
+    public Flux<ServerSentEvent<String>> chatWithAgent(@RequestParam String query,
+                                                       @RequestParam(required = false) String threadId) {
+        //获取登录用户id
+//        String loginIdStr = StpUtil.getLoginId().toString();
+//        Long loginId;
+//        try {
+//            loginId = Long.parseLong(loginIdStr);
+//        } catch (NumberFormatException e) {
+//            throw new ServiceException("无效的用户ID格式");
+//        }
 //
-//        String botID = "7480476157490659379";
-//        String userID = System.getenv("USER_ID");
-//
-//        TokenAuth authCli = new TokenAuth(token);
-//
-//        // Init the Coze client through the access_token.
-//        CozeAPI coze =
-//                new CozeAPI.Builder()
-//                        .baseURL(Consts.COZE_CN_BASE_URL)
-//                        .auth(authCli)
-//                        .readTimeout(10000)
-//                        .build();
-//        ;
-//
-//     /*
-//         * 第一步，创建聊天
-//         * 调用 coze.chat（）.stream（） 方法创建聊天。create 方法是一个流
-//         * chat 并返回一个 Flowable ChatEvent。开发人员应该迭代迭代器以获得
-//         * chat 事件并处理它们。
-//         * */
-//        CreateChatReq req =
-//                CreateChatReq.builder()
-//                        .botID(botID)
-//                        .userID(userID)
-//                        .messages(Collections.singletonList(message.buildUserQuestionText("What can you do?")))
-//                        .build();
-//
-//        Flowable<ChatEvent> resp = coze.chat().stream(req);
-//        resp.blockingForEach(
-//                event -> {
-//                    if (ChatEventType.CONVERSATION_MESSAGE_DELTA.equals(event.getEvent())) {
-//                        System.out.print(event.getMessage().getContent());
-//                    }
-//                    if (ChatEventType.CONVERSATION_CHAT_COMPLETED.equals(event.getEvent())) {
-//                        System.out.println("Token usage:" + event.getChat().getUsage().getTokenCount());
-//                    }
-//                });
-////        System.out.println("done");
-//        coze.shutdownExecutor();
-//        //流式返回结果
-//        return Flux.from(resp)
-//                .map(event -> {
-//                    if (ChatEventType.CONVERSATION_MESSAGE_DELTA.equals(event.getEvent())) {
-//                        return event.getMessage().getContent();
-//                    } else {
-//                        return "";
-//                    }
-//                });
-//    }
+
+        //流式返回
+        return aiService.agentCallWithMessage(query, threadId);
+
+    }
 
 }
