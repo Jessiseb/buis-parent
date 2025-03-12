@@ -2,11 +2,17 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.service.IRaceInfoService;
+import com.buis.service.IUserInfoService;
+import com.buis.vo.AssistantVo;
+import com.buis.vo.JudgeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.JudgeMapper;
 import com.buis.domain.Judge;
 import com.buis.service.IJudgeService;
+
+import javax.annotation.Resource;
 
 /**
  * 评委管理Service业务层处理
@@ -19,6 +25,10 @@ public class JudgeServiceImpl implements IJudgeService
 {
     @Autowired
     private JudgeMapper judgeMapper;
+    @Resource
+    private IUserInfoService userInfoService;
+    @Resource
+    private IRaceInfoService raceInfoService;
 
     /**
      * 查询评委管理
@@ -39,9 +49,14 @@ public class JudgeServiceImpl implements IJudgeService
      * @return 评委管理
      */
     @Override
-    public List<Judge> selectJudgeList(Judge judge)
+    public List<JudgeVo> selectJudgeList(Judge judge)
     {
-        return judgeMapper.selectJudgeList(judge);
+        List<JudgeVo> judgeVos = judgeMapper.selectJudgeList(judge);
+        for (JudgeVo judgeVo : judgeVos) {
+            setUserInfo(judgeVo);
+            setRaceInfo(judgeVo);
+        }
+        return judgeVos;
     }
 
     /**
@@ -92,5 +107,45 @@ public class JudgeServiceImpl implements IJudgeService
     public int deleteJudgeById(Long id)
     {
         return judgeMapper.deleteJudgeById(id);
+    }
+
+    /**
+     * 联表模糊查询评委列表
+     *
+     * @param name
+     */
+    @Override
+    public List<JudgeVo> fuzzyQuery(String name) {
+        if (name == null) {
+            name = "";
+        }
+        List<JudgeVo> judgeVos = judgeMapper.fuzzyQuery(name);
+        for (JudgeVo judgeVo : judgeVos) {
+            setUserInfo(judgeVo);
+            setRaceInfo(judgeVo);
+        }
+        return judgeVos;
+    }
+
+    /**
+     * 设置评委信息
+     *
+     * @param judgeVo 评委管理对象
+     */
+    private void setUserInfo(JudgeVo judgeVo) {
+        if (judgeVo != null) {
+            judgeVo.setUserInfo(userInfoService.selectUserInfoById(judgeVo.getTeacher()));
+        }
+    }
+
+    /**
+     * 设置学生信息
+     *
+     * @param judgeVo 评委管理对象
+     */
+    private void setRaceInfo(JudgeVo judgeVo) {
+        if (judgeVo != null) {
+            judgeVo.setRaceInfo(raceInfoService.selectRaceInfoById(judgeVo.getRace()));
+        }
     }
 }

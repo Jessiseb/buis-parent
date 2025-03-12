@@ -61,5 +61,10 @@ public interface AssistantMapper{
      */
     public int deleteAssistantByIds(Long[] ids);
 
+    /**
+     * 联表模糊查询学生助理列表
+     *
+     * @param name
+     */
     public List<AssistantVo> fuzzyQuery(String name);
 }
