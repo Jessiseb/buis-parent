@@ -1,10 +1,14 @@
 package com.buis.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.mapper.TeamMemberStudentMapper;
+import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
+import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,8 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     private TeamMemberStudentMapper teamMemberStudentMapper;
     @Resource
     private IUserInfoService userInfoService;
+    @Resource
+    private ITeamInfoService teamInfoService;
     /**
      * 查询队伍成员管理
      *
@@ -142,6 +148,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
      */
     @Override
     public int deleteTeamMemberStudentByTeamAndStudent(Long team, Long user) {
+    //判断是否为负责任人
+        if(!isLeader(team)) {
+            throw new ServiceException("您不是队长，无法进行此操作");
+        }
+        //是队长-->能进行删除
         return teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
     }
 
@@ -174,4 +185,25 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return teamMemberStudentMapper.selectTeamMemberStudentByTeamId(team);
     }
 
+    /**
+     * 抽出判断是否为负责人的方法
+     */
+    private boolean isLeader(Long team) {
+        //获取登录用户
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
+        //根据team查出队长和loginId是否一致
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
+        Long leader = teamInfoVo.getLeader();
+        if (leader.equals(loginId)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

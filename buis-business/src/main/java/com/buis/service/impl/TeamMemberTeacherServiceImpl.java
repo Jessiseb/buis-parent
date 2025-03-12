@@ -1,6 +1,7 @@
 package com.buis.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.TeamMemberTeacher;
 import com.buis.dto.TeamMemberTeacherDto;
@@ -206,7 +207,23 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
      */
     @Override
     public void deleteTeamMemberTeacherByTeamAndTeacher(Long team, Long user) {
-        teamMemberTeacherMapper.deleteTeamMemberTeacherByTeamAndTeacher(team, user);
+        //查出团队信息
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
+        //获取指导老师名称
+        String teacher1 = teamInfoVo.getTeacher1();
+        String teacher2 = teamInfoVo.getTeacher2();
+        //根据指导老师名称查询对应信息
+        UserInfoVo teacher1Info = userInfoService.selectUserInfoByName(teacher1);
+        UserInfoVo teacher2Info = userInfoService.selectUserInfoByName(teacher2);
+        //判断用户是否为该团队的指导老师
+        if (teacher1Info.getId().equals(user) || teacher2Info.getId().equals(user)) {
+            //是指导老师
+            teamMemberTeacherMapper.deleteTeamMemberTeacherByTeamAndTeacher(team, user);
+        } else {
+            //不是指导老师
+            throw new ServiceException("您不是指导老师，不能删除!");
+        }
+
     }
 
     /**

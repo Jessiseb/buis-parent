@@ -102,4 +102,5 @@ public interface IUserInfoService {
      */
     UserInfo selectUserInfoBynumber(String number);
 
+    UserInfoVo selectUserInfoByName(String name);
 }

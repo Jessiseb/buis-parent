@@ -82,6 +82,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from user_info
         where number = #{number} and is_deleted = 0
     </select>
+    <select id="selectUserInfoByName" resultType="com.buis.vo.UserInfoVo">
+        select id, number, email, phone, name, description, sex, college, major, title, is_disabled, is_deleted, create_time, update_time
+        from user_info
+        where name = #{name} and is_deleted = 0
+    </select>
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
