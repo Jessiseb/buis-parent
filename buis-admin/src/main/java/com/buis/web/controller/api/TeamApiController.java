@@ -19,12 +19,10 @@ import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberDto;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
-import com.buis.service.impl.TeamInfoServiceImpl;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.TeamMemberTeacherVo;
 import com.buis.vo.UserInfoVo;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -36,7 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 
@@ -65,29 +62,80 @@ public class TeamApiController extends BaseController {
     private static final String FILE_DELIMETER = ",";
 
     /**
-     * 新增用户与队伍互选关系
+     * 抽取出判断登录用户是否为指导老师或者团队负责人
+     */
+    public boolean isTeamLeaderOrTeacher(Long team) {
+        //获取登录用户
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
+        //获取用户信息
+        UserInfo loginUser = userInfoService.getLoginInfoByUserId(loginId);
+        //判断用户是否为老师
+        if (loginUser.getIsTeacher() == 1) {
+            //是老师
+            //判断是否为本项目团队的指导老师
+            //根据team查出队伍
+            TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
+            //是指导老师
+            return teamInfoVo.getTeacher1().equals(loginUser.getName()) || teamInfoVo.getTeacher2().equals(loginUser.getName());
+        }
+        //判断用户是否是负责人
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
+        Long leader = teamInfoVo.getLeader();
+        if (leader.equals(loginId)) {
+            //是负责人
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * 添加成员
      *
-     * @param teamMemberDtoList
+     * @param userInfoVoList 用户信息列表
+     * @param team           团队id
      * @return
      */
-    @ApiOperation("新增用户与队伍互选关系")
+    @ApiOperation("添加成员")
     @PostMapping("/addTeamMember/{isTeacher}")
-    public R addInvitation(
-            @ApiParam(name = "isTeacher", value = "用户类型，0学生，1老师", required = true) @PathVariable(value = "isTeacher") Long isTeacher,
-            @RequestBody List<TeamMemberDto> teamMemberDtoList) {
-
-        if (isTeacher != null) {
-            if (isTeacher == 0) { // 用户是学生
-                List<TeamMemberStudent> teamMemberStudentList = teamMemberDtoList.stream()
-                        .map(this::buildTeamMemberStudent).collect(Collectors.toList());
-                teamMemberStudentService.insertTeamMemberStudentByList(teamMemberStudentList);
-            } else if (isTeacher == 1) { // 用户是老师
-                List<TeamMemberTeacher> teamMemberTeacherList = teamMemberDtoList.stream()
-                        .map(this::buildTeamMemberTeacher).collect(Collectors.toList());
-                teamMemberTeacherService.insertTeamMemberTeacherByList(teamMemberTeacherList);
-            }
+    public R<Long> addInvitation(
+            @RequestBody List<UserInfoVo> userInfoVoList,
+            @ApiParam(name = "team", value = "团队id")
+            @RequestParam(value = "teamId") Long team) {
+        //添加的时候要判断团队是否存在
+        //根据team查询队伍信息
+        TeamInfo teamInfo = teamInfoService.selectTeamInfoById(team);
+        if (teamInfo == null) {
+            throw new ServiceException("项目团队不存在,请先创建团队~");
         }
-        return R.ok();
+        //只有指导老师和负责人才有权限
+        if (!isTeamLeaderOrTeacher(team)) {
+            throw new ServiceException("您不是团队负责人或指导老师，没有权限进行此操作");
+        }
+        //批量插入成员
+        List<TeamMemberStudent> teamMemberStudentList = new ArrayList<>();
+        for (UserInfoVo userInfoVo : userInfoVoList) {
+            TeamMemberStudent teamMemberStudent = new TeamMemberStudent();
+            teamMemberStudent.setTeam(teamInfo.getId()); //队伍id
+            teamMemberStudent.setRace(teamInfo.getRace()); //比赛id
+            teamMemberStudent.setStudent(userInfoVo.getId()); //成员
+            teamMemberStudent.setDecider(teamInfo.getLeader()); //负责人
+            teamMemberStudent.setIsChoosed(0L); //选定状态 0待同意
+            teamMemberStudentList.add(teamMemberStudent);
+        }
+        //插入
+        int ok = teamMemberStudentService.insertTeamMemberStudentByList(teamMemberStudentList);
+        if (ok == 0) {
+            throw new ServiceException("添加成员失败");
+        }
+        //返回团队id
+        return R.ok(team);
     }
 
     /**
@@ -100,8 +148,9 @@ public class TeamApiController extends BaseController {
     @PutMapping("/updateTeamMember/{isTeacher}/{id}")
     public R updateTeamMember(
             @ApiParam(name = "isTeacher", value = "用户类型，0学生，1老师", required = true) @PathVariable(value = "isTeacher") Long isTeacher,
-             @ApiParam(name = "id", value = "记录ID", required = true) @PathVariable(value = "id") Long id,
+            @ApiParam(name = "id", value = "记录ID", required = true) @PathVariable(value = "id") Long id,
             @RequestBody TeamMemberDto teamMemberDto) {
+        //只有老师和负责人才能修改
 
         if (isTeacher != null) {
             if (isTeacher == 0) { // 用户是学生
@@ -146,12 +195,23 @@ public class TeamApiController extends BaseController {
         return teamMemberTeacher;
     }
 
-    @ApiOperation("删除用户与队伍互选关系")
+    /**
+     * 踢人接口
+     * 只有负责人和老师才有权限
+     * 要判断是否为指导老师
+     *
+     * @param team
+     * @param user
+     * @param isTeacher
+     * @return
+     */
+    @ApiOperation("剔除团队成员")
     @DeleteMapping("/deleteTeamMember/{team}/{user}/{isTeacher}")
     public R delectTeamMember(
             @ApiParam(name = "team", value = "队伍id", required = true) @PathVariable(value = "team") Long team,
             @ApiParam(name = "user", value = "用户id", required = true) @PathVariable(value = "user") Long user,
             @ApiParam(name = "isTeacher", value = "用户类型，0学生，1老师", required = true) @PathVariable(value = "isTeacher") Long isTeacher) {
+
         if (isTeacher != null && isTeacher == 0) { // 用户是学生
             teamMemberStudentService.deleteTeamMemberStudentByTeamAndStudent(team, user);
         } else if (isTeacher != null && isTeacher == 1) { // 用户是老师
@@ -220,6 +280,16 @@ public class TeamApiController extends BaseController {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return new MyPageVo(list);
+    }
+
+    /**
+     * 根据项目队伍id查询团队信息
+     */
+    @ApiOperation("根据项目团队id查询团队信息")
+    @GetMapping("/{id}")
+    public R<TeamInfoVo> getTeamInfoById(@ApiParam(name = "id", value = "项目队伍id", required = true) @PathVariable("id") Long id) {
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(id);
+        return R.ok(teamInfoVo);
     }
 
 

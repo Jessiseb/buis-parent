@@ -328,5 +328,13 @@ public class UserInfoServiceImpl implements IUserInfoService {
         return userInfoMapper.selectUserInfoBynumber(number);
     }
 
+    @Override
+    public UserInfoVo selectUserInfoByName(String name) {
+        if (StringUtils.isEmpty(name)){
+            throw new ServiceException("用户名不能为空!");
+        }
+        return userInfoMapper.selectUserInfoByName(name);
+    }
+
 
 }

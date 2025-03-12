@@ -2,6 +2,7 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.UserInfo;
+import com.buis.vo.UserInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -78,4 +79,5 @@ public interface UserInfoMapper
 
     UserInfo selectUserInfoBynumber(String number);
 
+    UserInfoVo selectUserInfoByName(String name);
 }

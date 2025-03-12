@@ -45,6 +45,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Resource
     private ITeamMemberTeacherService teamTeacherService;
     @Resource
+    private ITeamInfoService teamInfoService;
+    @Resource
     private IRaceInfoService raceInfoService;
     @Resource
     private RedissonClient redissonClient;
@@ -94,7 +96,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setUpdateTime(DateUtils.getNowDate());
-        //
+        //只有老师和负责人才能修改
+        if (!isTeamLeaderOrTeacher(teamInfo.getId())) {
+            throw new ServiceException("您不是老师或负责人，不能修改队伍信息!");
+        }
         return teamInfoMapper.updateTeamInfo(teamInfo);
     }
 
@@ -410,5 +415,35 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             teamInfoVos.add(teamInfoVo);
         }
         return teamInfoVos;
+    }
+
+
+    /**
+     * 抽取出判断登录用户是否为老师或者团队负责人
+     */
+    public  boolean isTeamLeaderOrTeacher(Long team) {
+        //获取登录用户
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
+        //获取用户信息
+        UserInfo loginUser = userInfoService.getLoginInfoByUserId(loginId);
+        //判断用户是否为老师
+        if (loginUser.getIsTeacher() == 1) {
+            //是老师
+            return true;
+        }
+        //判断用户是否是负责人
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
+        Long leader = teamInfoVo.getLeader();
+        if (leader.equals(loginId)) {
+            //是负责人
+            return true;
+        }
+        return false;
     }
 }
