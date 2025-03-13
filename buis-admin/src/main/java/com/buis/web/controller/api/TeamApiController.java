@@ -286,6 +286,11 @@ public class TeamApiController extends BaseController {
             @RequestParam(required = false) Long userId
             ) {
         startPage();
+        //如果userId不为空,则查询这个用户所创建的队伍
+        if (userId != null) {
+
+           return  new MyPageVo(teamInfoService.selectTeamInfoByUserId(userId));
+        }
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return new MyPageVo(list);
     }
