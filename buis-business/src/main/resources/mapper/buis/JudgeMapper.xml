@@ -40,6 +40,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != 'null' and name != ''">and user_info.name LIKE CONCAT('%', #{name}, '%')</if>
         </where>
     </select>
+    <select id="selectJudgeById" resultType="com.buis.domain.Judge">
+        <include refid="selectJudgeVo"/>
+        where id = #{id} and is_deleted = 0
+    </select>
 
     <insert id="insertJudge" parameterType="com.buis.domain.Judge" useGeneratedKeys="true" keyProperty="id">
         insert into t_judge
