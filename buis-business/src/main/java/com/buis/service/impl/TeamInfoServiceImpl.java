@@ -61,7 +61,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return 结果
      */
     @Override
-    public int insertTeamInfo(TeamInfo teamInfo) {
+    public TeamInfo insertTeamInfo(TeamInfo teamInfo) {
         // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
@@ -82,7 +82,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             teamMemberStudent.setIsChoosed(1L); //选定状态
             sucess = teamStudentService.insertTeamMemberStudent(teamMemberStudent);
         }
-        return sucess;
+
+        return sucess > 0 ? teamInfo : null;
     }
 
     /**
