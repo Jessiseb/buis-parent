@@ -43,7 +43,7 @@ public interface ITeamInfoService
      * @param teamInfo 队伍信息
      * @return 结果
      */
-    public int insertTeamInfo(TeamInfo teamInfo);
+    public TeamInfo insertTeamInfo(TeamInfo teamInfo);
 
     /**
      * 修改队伍信息

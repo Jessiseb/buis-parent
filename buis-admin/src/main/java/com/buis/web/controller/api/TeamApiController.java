@@ -270,13 +270,21 @@ public class TeamApiController extends BaseController {
 
     /**
      * 查询队伍信息列表
+     * @param pageNum
+     * @param pageSize
+     * @param teamInfo
+     * @param userId 该登录用户的id 要不要都可以
+     * @return
      */
     @ApiOperation("带条件分页查询队伍列表")
     @PostMapping("/list")
     public MyPageVo<List<TeamInfoVo>> list(
             @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
-            @RequestBody(required = false) TeamInfo teamInfo) {
+            @RequestBody(required = false) TeamInfo teamInfo,
+            @ApiParam(name = "userId", value = "用户id", required = false)
+            @RequestParam(required = false) Long userId
+            ) {
         startPage();
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return new MyPageVo(list);
@@ -318,13 +326,13 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("新增队伍信息(创建项目)")
     @PostMapping("/createTeam")
-    public R addTeamInfo(@RequestBody TeamInfo teamInfo) {
+    public R<TeamInfo> addTeamInfo(@RequestBody TeamInfo teamInfo) {
         //获取当前创建队伍的用户id
         Long userId = SecurityUtils.getFrontLoginUserId();
         teamInfo.setLeader(userId);
-        int insertTeamInfo = teamInfoService.insertTeamInfo(teamInfo);
+        TeamInfo result =  teamInfoService.insertTeamInfo(teamInfo);
 
-        return R.ok(insertTeamInfo, "操作成功");
+        return R.ok(result, "操作成功");
     }
 
 
