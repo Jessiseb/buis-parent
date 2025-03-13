@@ -110,8 +110,6 @@ public class AiController {
     public Flux<String> chatWithAgent(@RequestParam String message,
                                       @RequestParam(required = false) String threadId) {
 
-
-
         //流式返回
         return aiService.agentCallWithMessage(message, threadId);
 
