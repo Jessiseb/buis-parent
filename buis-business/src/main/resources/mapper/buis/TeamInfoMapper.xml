@@ -75,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectTeamInfoList" parameterType="com.buis.domain.TeamInfo" resultMap="TeamInfoResult">
         <include refid="selectTeamInfoVo"/>
         <where>
-            t1.is_deleted = 0
+            t1.is_deleted = 0 and t1.is_publish =1
             <if test="race != null and race != ''">and t1.race = #{race}</if>
             <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
             <if test="type != null and type != ''">and t1.type = #{type}</if>
