@@ -13,5 +13,5 @@ public interface IAiService {
     Flux<String> streamCallWithMessage(Generation gen, Message userMsg)
             throws NoApiKeyException, ApiException, InputRequiredException;
 
-    Flux<StreamResponse> agentCallWithMessage(String query, String sessionId);
+    Flux<String> agentCallWithMessage(String query, String sessionId);
 }
