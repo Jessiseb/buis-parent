@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.exception.ServiceException;
@@ -129,8 +130,8 @@ public class TeamInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:teamInfo:add')")
     @Log(title = "队伍信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TeamInfo teamInfo) {
-        return toAjax(teamInfoService.insertTeamInfo(teamInfo));
+    public R<TeamInfo> add(@RequestBody TeamInfo teamInfo) {
+        return R.ok(teamInfoService.insertTeamInfo(teamInfo));
     }
 
     /**
