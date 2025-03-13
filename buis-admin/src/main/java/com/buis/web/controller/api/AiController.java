@@ -12,7 +12,6 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.exception.UploadFileException;
 import com.buis.common.core.domain.R;
-import com.buis.reponse.StreamResponse;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AiServiceImpl;
 import io.swagger.annotations.Api;
@@ -108,20 +107,13 @@ public class AiController {
      */
     @GetMapping(value = "/stream/chat/agent", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ApiOperation("智能体对话")
-    public Flux<StreamResponse> chatWithAgent(@RequestParam String query,
-                                              @RequestParam(required = false) String threadId) {
-        //获取登录用户id
-//        String loginIdStr = StpUtil.getLoginId().toString();
-//        Long loginId;
-//        try {
-//            loginId = Long.parseLong(loginIdStr);
-//        } catch (NumberFormatException e) {
-//            throw new ServiceException("无效的用户ID格式");
-//        }
-//
+    public Flux<String> chatWithAgent(@RequestParam String message,
+                                      @RequestParam(required = false) String threadId) {
+
+
 
         //流式返回
-        return aiService.agentCallWithMessage(query, threadId);
+        return aiService.agentCallWithMessage(message, threadId);
 
     }
 

@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
@@ -7,6 +8,7 @@ import com.alibaba.dashscope.common.Message;
 import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.StringUtils;
 import com.buis.reponse.AuthResponse;
 import com.buis.reponse.StreamResponse;
@@ -125,7 +127,16 @@ public class AiServiceImpl implements IAiService {
     }
 
     @Override
-    public Flux<StreamResponse> agentCallWithMessage(String message, String threadId) {
+    public Flux<String> agentCallWithMessage(String message, String threadId) {
+        //获取登录用户id
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
+
         // 1. 获取 access_token（增强错误处理）
         RestTemplate restTemplate = new RestTemplate();
         String authUrl = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
@@ -154,7 +165,7 @@ public class AiServiceImpl implements IAiService {
             requestBody.put("message", Collections.singletonMap("content", messageContent));
             requestBody.put("source", apiId); // 根据文档填写固定值
             requestBody.put("from", "openapi");
-            requestBody.put("openId", "123"); // 使用传入的 threadId 作为 openId
+            requestBody.put("openId", loginId); //用户id
             requestBody.put("stream", true);
 
             System.out.println(apiId);
@@ -173,47 +184,11 @@ public class AiServiceImpl implements IAiService {
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(requestBody)
                     .retrieve()
-                    .bodyToFlux(String.class)
-                    .flatMap(raw -> {
-                        try {
-                            return Mono.justOrEmpty(parseStreamData(raw));
-                        } catch (Exception e) {
-                            log.error("解析失败: {}", raw, e);
-                            return Mono.empty();
-                        }
-                    });
+                    .bodyToFlux(String.class); // 直接返回字符串流
+
         } catch (Exception e) {
             return Flux.error(new RuntimeException("认证流程失败: " + e.getMessage()));
         }
     }
-
-    // 4. 增强解析逻辑
-    private StreamResponse parseStreamData(String rawData) {
-        try {
-            if (rawData == null || !rawData.startsWith("data: ")) {
-                log.warn("无效数据格式: {}", rawData);
-                return null;
-            }
-
-            String json = rawData.substring(6).trim();
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            // 分步解析确保字段匹配
-            JsonNode root = mapper.readTree(json);
-            StreamResponse response = new StreamResponse();
-            response.setId(root.path("id").asText());
-            response.setEvent(root.path("event").asText());
-            response.setIsEnd(root.path("is_end").asBoolean());
-
-            JsonNode resultNode = root.path("result");
-            if (!resultNode.isMissingNode()) {
-                response.setContent(resultNode.path("content").asText());
-            }
-            return response;
-        } catch (Exception e) {
-            log.error("解析异常: {}", rawData, e);
-            return null;
-        }
-    }
 }
+
