@@ -9,23 +9,26 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.buis.common.utils.StringUtils;
 import com.buis.reponse.AuthResponse;
+import com.buis.reponse.StreamResponse;
 import com.buis.service.IAiService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -122,37 +125,95 @@ public class AiServiceImpl implements IAiService {
     }
 
     @Override
-    public Flux<ServerSentEvent<String>> agentCallWithMessage(String messageContent, String threadId) {
-        //获取到token
+    public Flux<StreamResponse> agentCallWithMessage(String message, String threadId) {
+        // 1. 获取 access_token（增强错误处理）
         RestTemplate restTemplate = new RestTemplate();
-        String url = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
+        String authUrl = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
                 agentApiUrl, apiId, secretKey);
-        //设置请求方式为application/json
 
-        System.out.println(apiId);
-        System.out.println(secretKey);
-        ResponseEntity<AuthResponse> response = restTemplate.getForEntity(url, AuthResponse.class);
-        String accessToken = response.getBody().getAccess_token();
+        // 打印调试信息
+        log.info("请求Token URL: {}", authUrl);
 
-        WebClient client = WebClient.builder().build();
+        try {
+            ResponseEntity<AuthResponse> response = restTemplate.getForEntity(authUrl, AuthResponse.class);
+            if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+                return Flux.error(new RuntimeException("获取Token失败: " + response.getStatusCode()));
+            }
+            String accessToken = response.getBody().getAccess_token();
+            log.info("成功获取Token: {}", accessToken.substring(0, 6) + "****"); // 安全日志
 
-        // 构造请求体
-        String requestBody = String.format(
-                "{\"threadId\": \"%s\", \"message\": {\"content\": {\"type\": \"text\", \"value\": \"%s\"}}, " +
-                        "\"source\": \"%s\", \"from\": \"openapi\", \"openId\": \"%s\"}",
-                threadId, messageContent, apiId, "123"
-        );
+            // 2. 构建请求体（修正字段）
+            Map<String, Object> requestBody = new HashMap<>();
+            Map<String, Object> contentValue = new HashMap<>();
+            contentValue.put("showText", message);
 
+            Map<String, Object> messageContent = new HashMap<>();
+            messageContent.put("type", "text");
+            messageContent.put("value", contentValue);
 
-        return client.post()
-                .uri("https://agentapi.baidu.com/assistant/conversation?appId=%s&secretKey=%s",apiId,secretKey)
-                .header("Authorization", "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToFlux(String.class)
-                .map(data -> ServerSentEvent.<String>builder().data(data).build());
+            requestBody.put("message", Collections.singletonMap("content", messageContent));
+            requestBody.put("source", apiId); // 根据文档填写固定值
+            requestBody.put("from", "openapi");
+            requestBody.put("openId", "123"); // 使用传入的 threadId 作为 openId
+            requestBody.put("stream", true);
+
+            System.out.println(apiId);
+            System.out.println(secretKey);
+
+            // 3. 使用正确API地址和鉴权方式
+            WebClient client = WebClient.builder()
+                    .baseUrl("https://agentapi.baidu.com/assistant/conversation?appId="+apiId+"&secretKey="+secretKey)
+                    .defaultHeader("Authorization", "Bearer " + accessToken)
+                    .build();
+
+            return client.post()
+                    .uri(uriBuilder -> uriBuilder
+                            .queryParam("access_token", accessToken) // 正确传递token
+                            .build())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToFlux(String.class)
+                    .flatMap(raw -> {
+                        try {
+                            return Mono.justOrEmpty(parseStreamData(raw));
+                        } catch (Exception e) {
+                            log.error("解析失败: {}", raw, e);
+                            return Mono.empty();
+                        }
+                    });
+        } catch (Exception e) {
+            return Flux.error(new RuntimeException("认证流程失败: " + e.getMessage()));
+        }
     }
 
+    // 4. 增强解析逻辑
+    private StreamResponse parseStreamData(String rawData) {
+        try {
+            if (rawData == null || !rawData.startsWith("data: ")) {
+                log.warn("无效数据格式: {}", rawData);
+                return null;
+            }
 
+            String json = rawData.substring(6).trim();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            // 分步解析确保字段匹配
+            JsonNode root = mapper.readTree(json);
+            StreamResponse response = new StreamResponse();
+            response.setId(root.path("id").asText());
+            response.setEvent(root.path("event").asText());
+            response.setIsEnd(root.path("is_end").asBoolean());
+
+            JsonNode resultNode = root.path("result");
+            if (!resultNode.isMissingNode()) {
+                response.setContent(resultNode.path("content").asText());
+            }
+            return response;
+        } catch (Exception e) {
+            log.error("解析异常: {}", rawData, e);
+            return null;
+        }
+    }
 }
