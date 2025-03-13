@@ -44,12 +44,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
             <if test="name != null  and name != ''"> and t1.name like concat('%', #{name}, '%')</if>
             <if test="description != null  and description != ''"> and t1.description like concat('%', #{description}, '%')</if>
-            <if test="sex != null "> and t1.sex = #{sex}</if>
-            <if test="college != null "> and t1.college = #{college}</if>
-            <if test="major != null ">and t1.major = #{major}</if>
-            <if test="isTeacher != null ">and t1.is_teacher=#{isTeacher}</if>
-            <if test="title != null ">and t1.title = #{title}</if>
-            <if test="isDisabled != null ">and t1.is_disabled = #{isDisabled}</if>
+            <if test="sex != null and sex !=''"> and t1.sex = #{sex}</if>
+            <if test="college != null and sex != ''"> and t1.college = #{college}</if>
+            <if test="major != null and major != ''">and t1.major = #{major}</if>
+            <if test="isTeacher != null and isTeacher != ''">and t1.is_teacher=#{isTeacher}</if>
+            <if test="title != null and title != ''">and t1.title = #{title}</if>
+            <if test="isDisabled != null and isDisabled != ''">and t1.is_disabled = #{isDisabled}</if>
+
         </where>
     </select>
 
