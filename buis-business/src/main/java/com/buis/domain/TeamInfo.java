@@ -188,7 +188,7 @@ public class TeamInfo extends BaseEntity {
      * 是否发布招募
      */
     @ApiModelProperty("是否发布招募")
-    private Integer isPublish;
+    private String isPublish;
 
     /**
      * 标识是否被删除，0表示未删除
