@@ -153,6 +153,7 @@ public class TeamApiController extends BaseController {
             @RequestBody TeamMemberDto teamMemberDto) {
         //只有老师和负责人才能修改
 
+
         if (isTeacher != null) {
             if (isTeacher == 0) { // 用户是学生
                 //把teamMemberDtoList分别buildTeamMemberStudent和setId
