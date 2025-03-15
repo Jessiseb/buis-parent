@@ -124,26 +124,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach collection="teamMemberStudentList" item="item" separator=";">
             insert into team_member_student
             <trim prefix="(" suffix=")" suffixOverrides=",">
-                <if test="item.race != null">race,</if>
-                <if test="item.team != null">team,</if>
-                <if test="item.student != null">student,</if>
-                <if test="item.decider != null">decider,</if>
-                <if test="item.isChoosed != null">is_choosed,</if>
+                <if test="item.race != null and item.race != ''">race,</if>
+                <if test="item.team != null and item.team != ''">team,</if>
+                <if test="item.student != null and item.student != ''">student,</if>
+                <if test="item.decider != null and item.decider != ''">decider,</if>
+                <if test="item.isChoosed != null and item.isChoosed != ''">is_choosed,</if>
                 <if test="item.reason != null and item.reason != ''">reason,</if>
-                <if test="item.isDeleted != null">is_deleted,</if>
-                <if test="item.createTime != null">create_time,</if>
-                <if test="item.updateTime != null">update_time,</if>
+                <if test="item.isDeleted != null and item.isDeleted != ''">is_deleted,</if>
+                <if test="item.createTime != null and item.createTime != ''">create_time,</if>
+                <if test="item.updateTime != null and item.updateTime != ''">update_time,</if>
             </trim>
             <trim prefix="values (" suffix=")" suffixOverrides=",">
-                <if test="item.race != null">#{item.race},</if>
-                <if test="item.team != null">#{item.team},</if>
-                <if test="item.student != null">#{item.student},</if>
-                <if test="item.decider != null">#{item.decider},</if>
-                <if test="item.isChoosed != null">#{item.isChoosed},</if>
+                <if test="item.race != null and item.race != ''">#{item.race},</if>
+                <if test="item.team != null and item.team != ''">#{item.team},</if>
+                <if test="item.student != null and item.student != ''">#{item.student},</if>
+                <if test="item.decider != null and item.decider != ''">#{item.decider},</if>
+                <if test="item.isChoosed != null and item.isChoosed != ''">#{item.isChoosed},</if>
                 <if test="item.reason != null and item.reason != ''">#{item.reason},</if>
-                <if test="item.isDeleted != null">#{item.isDeleted},</if>
-                <if test="item.createTime != null">#{item.createTime},</if>
-                <if test="item.updateTime != null">#{item.updateTime},</if>
+                <if test="item.isDeleted != null and item.isDeleted != ''">#{item.isDeleted},</if>
+                <if test="item.createTime != null and item.createTime != ''">#{item.createTime},</if>
+                <if test="item.updateTime != null and item.updateTime != ''">#{item.updateTime},</if>
             </trim>
         </foreach>
     </insert>
