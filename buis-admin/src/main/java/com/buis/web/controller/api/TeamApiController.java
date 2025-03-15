@@ -104,7 +104,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("添加成员")
     @PostMapping("/addTeamMember")
-    public R<Long> addInvitation(
+    public R<Long> addTeamMember(
             @ApiParam(name = "userInfoVoList", value = "用户信息列表")
             @RequestBody List<UserInfoVo> userInfoVoList,
             @ApiParam(name = "team", value = "团队id")
