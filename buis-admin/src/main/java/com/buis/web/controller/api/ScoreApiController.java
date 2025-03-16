@@ -5,13 +5,21 @@ import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.domain.model.LoginUser;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.poi.ExcelUtil;
+import com.buis.domain.Judge;
 import com.buis.domain.Score;
+import com.buis.domain.UserInfo;
+import com.buis.service.IJudgeService;
 import com.buis.service.IScoreService;
+import com.buis.service.ITeamInfoService;
+import com.buis.service.IUserInfoService;
 import com.buis.vo.ScoreVo;
+import com.buis.vo.TeamInfoVo;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +37,8 @@ import java.util.List;
 public class ScoreApiController extends BaseController {
     @Autowired
     private IScoreService scoreService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
     /**
      * 查询评分管理列表
@@ -37,6 +47,9 @@ public class ScoreApiController extends BaseController {
     @GetMapping("/list")
     public MyPageVo<List<Score>> list(Score score) {
         startPage();
+        //只可以查询自己的评分
+        UserInfo loginUser = userInfoService.getLoginUser();
+        score.setTeacher(loginUser.getId());
         List<ScoreVo> list = scoreService.selectScoreList(score);
         return new MyPageVo(list);
     }
@@ -57,7 +70,7 @@ public class ScoreApiController extends BaseController {
     @Log(title = "评分管理", businessType = BusinessType.INSERT)
     @PostMapping
     public R add(@RequestBody Score score) {
-        return R.ok(scoreService.insertScore(score));
+        return scoreService.addScore(score);
     }
 
     /**

@@ -64,4 +64,9 @@ public interface IJudgeService
      * 联表模糊查询评委列表
      */
     public List<JudgeVo> fuzzyQuery(String name);
+
+    /**
+     * 根据教师ID查询评委信息
+     */
+    public Judge selectJudgeByTeacherId(Long teacherId);
 }
