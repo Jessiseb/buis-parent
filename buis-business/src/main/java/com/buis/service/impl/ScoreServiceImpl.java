@@ -15,6 +15,7 @@ import com.buis.mapper.UserInfoMapper;
 import com.buis.service.*;
 import com.buis.vo.ScoreVo;
 import com.buis.vo.TeamInfoVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.ScoreMapper;
@@ -27,6 +28,7 @@ import com.buis.domain.Score;
  * @date 2024-10-11
  */
 @Service
+@Slf4j
 public class ScoreServiceImpl implements IScoreService {
     @Autowired
     private ScoreMapper scoreMapper;
@@ -92,6 +94,9 @@ public class ScoreServiceImpl implements IScoreService {
                 //计算总分
                 BigDecimal totalScore = calculateTotalScore(score.getBuild());
                 score.setScore(totalScore);
+                //日志打印
+                log.info("评委:{},比赛:{},队伍:{},总分:{}", id, score.getRace(), team, totalScore);
+
                 return R.ok(insertScore(score));
             }
             return R.fail("您不是评委，无法进行评分");
