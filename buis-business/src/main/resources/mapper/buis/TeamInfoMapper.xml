@@ -38,6 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectTeamInfoVo">
         select t1.id,
                t1.leader,
+               t1.race,
                t5.name as race_name,
                t1.name,
                t1.type,
@@ -95,16 +96,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTeamInfoVo"/>
         where t1.id = #{id} and t1.is_deleted = 0
     </select>
+
     <select id="getCountJoin" resultType="java.lang.Integer">
         select count(1)
         from team_info t1
         <where>
-            is_deleted = 0
+            t1.is_deleted = 0
             <if test="raceId != null">and t1.race = #{raceId}</if>
             <if test="team != null">and t1.team = #{team}</if>
             <if test="userId != null">and t1.leader = #{userId}</if>
         </where>
     </select>
+
     <select id="selectTeamInfoByUserId" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamInfoVo"/>
         where t1.leader = #{userId} and t1.is_deleted = 0
