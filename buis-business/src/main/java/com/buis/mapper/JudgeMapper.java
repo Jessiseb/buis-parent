@@ -69,4 +69,11 @@ public interface JudgeMapper
      * @param name
      */
     public List<JudgeVo> fuzzyQuery(String name);
+
+    /**
+     * 根据教师ID查询评委信息
+     * @param teacherId
+     * @return
+     */
+    public Judge selectJudgeByTeacherId(Long teacherId);
 }

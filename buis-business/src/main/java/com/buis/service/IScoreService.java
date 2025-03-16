@@ -1,6 +1,8 @@
 package com.buis.service;
 
 import java.util.List;
+
+import com.buis.common.core.domain.R;
 import com.buis.domain.Score;
 import com.buis.vo.ScoreVo;
 
@@ -59,4 +61,11 @@ public interface IScoreService
      * @return 结果
      */
     public int deleteScoreById(Long id);
+
+    /**
+     * 新增评分（带业务逻辑）
+     * @param score
+     * @return
+     */
+    public R addScore(Score score);
 }
