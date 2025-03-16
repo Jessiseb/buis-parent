@@ -128,6 +128,14 @@ public class JudgeServiceImpl implements IJudgeService
     }
 
     /**
+     * 根据教师ID查询评委信息
+     */
+    @Override
+    public Judge selectJudgeByTeacherId(Long teacherId) {
+       return judgeMapper.selectJudgeByTeacherId(teacherId);
+    }
+
+    /**
      * 设置评委信息
      *
      * @param judgeVo 评委管理对象

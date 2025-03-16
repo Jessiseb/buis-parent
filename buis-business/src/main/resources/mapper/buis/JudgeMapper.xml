@@ -45,6 +45,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id} and is_deleted = 0
     </select>
 
+    <select id="selectJudgeByTeacherId" resultType="com.buis.domain.Judge" parameterType="java.lang.Long">
+        <include refid="selectJudgeVo"/>
+        where teacher = #{teacher} and is_deleted = 0
+    </select>
+
     <insert id="insertJudge" parameterType="com.buis.domain.Judge" useGeneratedKeys="true" keyProperty="id">
         insert into t_judge
         <trim prefix="(" suffix=")" suffixOverrides=",">
