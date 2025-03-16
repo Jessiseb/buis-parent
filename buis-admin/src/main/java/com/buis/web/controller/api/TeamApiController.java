@@ -103,8 +103,8 @@ public class TeamApiController extends BaseController {
      * @return
      */
     @ApiOperation("添加成员")
-    @PostMapping("/addTeamMember/{isTeacher}")
-    public R<Long> addInvitation(
+    @PostMapping("/addTeamMember")
+    public R<Long> addTeamMember(
             @ApiParam(name = "userInfoVoList", value = "用户信息列表")
             @RequestBody List<UserInfoVo> userInfoVoList,
             @ApiParam(name = "team", value = "团队id")
@@ -152,6 +152,7 @@ public class TeamApiController extends BaseController {
             @ApiParam(name = "id", value = "记录ID", required = true) @PathVariable(value = "id") Long id,
             @RequestBody TeamMemberDto teamMemberDto) {
         //只有老师和负责人才能修改
+
 
         if (isTeacher != null) {
             if (isTeacher == 0) { // 用户是学生

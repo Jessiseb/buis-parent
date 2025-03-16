@@ -159,7 +159,19 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
 
     @Override
     public int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList) {
-        return teamMemberStudentMapper.insertTeamMemberStudentByList(teamMemberStudentList);
+        if (teamMemberStudentList==null||teamMemberStudentList.size()==0) {
+            return 0;
+        }
+        //循环插入
+        try {
+            for (TeamMemberStudent teamMemberStudent : teamMemberStudentList) {
+                teamMemberStudentMapper.insertTeamMemberStudent(teamMemberStudent);
+            }
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     /**
