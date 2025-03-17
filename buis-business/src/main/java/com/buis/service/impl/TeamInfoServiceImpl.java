@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -356,22 +357,19 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return ok;
     }
 
-
     /**
-     * 查询队伍信息列表 Vo
+     * 后台查询队伍信息列表 Vo
      *
      * @param teamInfo
      * @return
      */
     @Override
     public List<TeamInfoVo> selectTeamInfoList(TeamInfo teamInfo) {
-        List<TeamInfoVo> results = new ArrayList<>();
-
         List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoList(teamInfo);
-
         if (teamInfoList == null || teamInfoList.isEmpty()) {
-            return results; // 返回空列表
+            return Collections.emptyList(); // 返回空列表
         }
+        List<TeamInfoVo> results = new ArrayList<>();
         for (TeamInfo team : teamInfoList) {
             TeamInfoVo teamInfoVo = createTeamInfoVo(team);
             //带指导老师查询
@@ -388,6 +386,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
         return results;
     }
+
 
     /**
      * 查询队伍信息
@@ -473,4 +472,6 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
         return false;
     }
+
+
 }

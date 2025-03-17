@@ -285,14 +285,15 @@ public class TeamApiController extends BaseController {
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
             @RequestBody(required = false) TeamInfo teamInfo,
             @ApiParam(name = "userId", value = "用户id", required = false)
-            @RequestParam(required = false) Long userId
-            ) {
+            @RequestParam(required = false) Long userId,
+            @ApiParam(name = "isPublish", value = "是否发布招募",required = true)
+            @RequestParam("isPublish") String isPublish){
         startPage();
         //如果userId不为空,则查询这个用户所创建的队伍
         if (userId != null) {
-           return  new MyPageVo(teamInfoService.selectTeamInfoByUserId(userId));
+            return new MyPageVo(teamInfoService.selectTeamInfoByUserId(userId));
         }
-
+        teamInfo.setIsPublish(isPublish);//查出已发布招募的队伍信息
         List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
         return new MyPageVo(list);
     }
