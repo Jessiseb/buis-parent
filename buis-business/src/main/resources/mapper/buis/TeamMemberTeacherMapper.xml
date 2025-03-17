@@ -140,7 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>
             <if test="team != null">team = #{team},</if>
-            <if test="teacher != null">teacher = #{teacher},</if>
+            <if test="student != null">student = #{student},</if>
             <if test="decider != null">decider = #{decider},</if>
             <if test="isChoosed != null">is_choosed = #{isChoosed},</if>
             <if test="reason != null">reason = #{reason},</if>

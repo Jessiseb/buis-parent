@@ -31,12 +31,12 @@ public class TeamMemberStudent extends BaseEntity {
     @Excel(name = "id")
     private Long id;
 
-    /**
-     * ids
-     */
-    @ApiModelProperty("ids")
-    @Excel(name = "ids")
-    private List<Long> ids;
+//    /**
+//     * ids
+//     */
+//    @ApiModelProperty("ids")
+//    @Excel(name = "ids")
+//    private List<Long> ids;
 
 
 
@@ -87,6 +87,5 @@ public class TeamMemberStudent extends BaseEntity {
      */
     @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
-
 
 }
