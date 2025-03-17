@@ -158,6 +158,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     }
 
     @Override
+    public TeamMemberStudent selectTeamMemberStudentByTeamAndStudent(Long user, Long team) {
+        return teamMemberStudentMapper.selectTeamMemberStudentByTeamAndStudent(user,team);
+    }
+
+    @Override
     public int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList) {
         if (teamMemberStudentList==null||teamMemberStudentList.size()==0) {
             return 0;

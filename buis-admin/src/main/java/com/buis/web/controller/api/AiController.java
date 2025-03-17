@@ -79,6 +79,12 @@ public class AiController {
     }
 
     /**
+     * 接收前端识别出的
+     */
+
+
+
+    /**
      * 接入deepseek,进行文本对话
      * @return
      */

@@ -94,6 +94,14 @@ public interface ITeamMemberStudentService {
      */
     int deleteTeamMemberStudentByTeamAndStudent(Long team, Long user);
 
+    /**
+     * 根据user和team查出队伍成员信息
+     * @param team
+     * @param user
+     * @return
+     */
+    TeamMemberStudent selectTeamMemberStudentByTeamAndStudent(Long user, Long team);
+
      int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList);
 
     int getStudentJoinTeamByUserId(Long userId);
