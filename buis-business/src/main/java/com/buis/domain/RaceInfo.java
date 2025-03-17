@@ -94,6 +94,23 @@ public class RaceInfo extends BaseEntity {
     private Date raceEnd;
 
     /**
+     * 评分开始时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "评分开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty("评分开始时间")
+    private Date scoreStart;
+
+    /**
+     * 评分结束时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "评分结束时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty("评分结束时间")
+    private Date scoreEnd;
+
+
+    /**
      * 比赛状态（字典）
      */
     @Excel(name = "比赛状态", readConverterExp = "字=典")

@@ -16,6 +16,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="joinEnd"    column="join_end"    />
         <result property="raceStart"    column="race_start"    />
         <result property="raceEnd"    column="race_end"    />
+        <result property="scoreStart"    column="score_start"    />
+        <result property="scoreEnd"    column="score_end"    />
         <result property="status"    column="status"    />
         <result property="level"    column="level"    />
         <result property="isDeleted"    column="is_deleted"    />
@@ -67,6 +69,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.join_end,
                t1.race_start,
                t1.race_end,
+               t1.score_start,
+               t1.score_end,
                t1.race_type,
                t1.status,
                t1.level,
@@ -91,6 +95,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinEnd != null "> and t1.join_end &lt;= #{joinEnd}</if>
             <if test="raceStart != null "> and t1.race_start &gt;= #{raceStart}</if>
             <if test="raceEnd != null "> and t1.race_end &lt;= #{raceEnd}</if>
+             <if test="scoreStart != null "> and t1.score_start &gt;= #{scoreStart}</if>
+              <if test="scoreEnd != null "> and t1.score_end &lt;= #{scoreEnd}</if>
             <if test="status != null "> and t1.status = #{status}</if>
             <if test="level != null "> and t1.level = #{level}</if>
             <if test="raceType != null "> and t1.race_type = #{raceType}</if>
@@ -139,6 +145,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinEnd != null">join_end,</if>
             <if test="raceStart != null">race_start,</if>
             <if test="raceEnd != null">race_end,</if>
+            <if test="scoreStart != null">score_start,</if>
+            <if test="scoreEnd != null">score_end,</if>
             <if test="raceType != null">race_type,</if>
             <if test="status != null">status,</if>
             <if test="level != null">level,</if>
@@ -155,6 +163,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinEnd != null">#{joinEnd},</if>
             <if test="raceStart != null">#{raceStart},</if>
             <if test="raceEnd != null">#{raceEnd},</if>
+            <if test="scoreStart != null">#{scoreStart},</if>
+            <if test="scoreEnd != null">#{scoreEnd},</if>
             <if test="raceType != null">#{raceType},</if>
             <if test="status != null">#{status},</if>
             <if test="level != null">#{level},</if>
@@ -175,6 +185,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinEnd != null">join_end = #{joinEnd},</if>
             <if test="raceStart != null">race_start = #{raceStart},</if>
             <if test="raceEnd != null">race_end = #{raceEnd},</if>
+            <if test="scoreStart != null">score_start = #{scoreStart},</if>
+            <if test="scoreEnd != null">score_end = #{scoreEnd},</if>
             <if test="raceType != null">race_type = #{raceType},</if>
             <if test="status != null">status = #{status},</if>
             <if test="level != null">level = #{level},</if>

@@ -12,6 +12,8 @@ import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.file.zipUtils;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.TeamInfo;
+import com.buis.domain.UserInfo;
+import com.buis.dto.TeamMemberDto;
 import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,7 +50,7 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/buis/teamInfo")
 public class TeamInfoController extends BaseController {
     @Autowired
-    private ITeamInfoService  teamInfoService;
+    private ITeamInfoService teamInfoService;
 
     /**
      * 查询队伍信息列表
@@ -155,4 +157,6 @@ public class TeamInfoController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(teamInfoService.deleteTeamInfoByIds(ids));
     }
+
+
 }

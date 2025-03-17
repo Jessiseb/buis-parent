@@ -461,4 +461,18 @@ public class TeamApiController extends BaseController {
         }
     }
 
+    /**
+     * 同意用户加入队伍
+     */
+    @ApiOperation("同意加入队伍")
+    @PostMapping("/agreeJoinTeam")
+    public R<String> agreeJoinTeam(@RequestParam("userId") Long userId,@RequestParam("teamId") Long teamId) {
+        int result = teamInfoService.agreeJoinTeam(userId,teamId);
+        if (result != 1) {
+            return R.fail("操作失败");
+        }
+        return R.ok("操作成功");
+    }
 }
+
+

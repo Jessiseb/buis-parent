@@ -85,4 +85,6 @@ public interface TeamMemberStudentMapper {
     int getJoinTeamByUserId(Long userId);
 
     List<TeamMemberStudent> selectTeamMemberStudentByTeamId(Long team);
+
+    TeamMemberStudent selectTeamMemberStudentByTeamAndStudent(@Param("user") Long user,@Param("team") Long team);
 }
