@@ -6,9 +6,12 @@ import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.domain.UserInfo;
 import com.buis.service.IEmailService;
+import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
+import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +39,8 @@ public class EmailApiController {
     @Resource
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private ITeamInfoService teamInfoService;
     /**
      * 发送邮箱验证码
      * @param email
@@ -103,4 +108,69 @@ public class EmailApiController {
         }
         return R.ok("通知发送成功!!");
     }
+
+    /**
+     * 队伍队长邀请成员
+     * @param teamId 队伍ID
+     * @param memberId 成员ID
+     * @return
+     */
+
+    @ApiOperation("队长邀请成员")
+    @PostMapping("/inviteMember")
+    public R<String> inviteMember(@RequestParam Long teamId, @RequestParam Long memberId) {
+        // 获取当前登录用户信息
+        UserInfo loginUser = userInfoService.getLoginUser();
+        // 获取队伍信息
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(teamId);
+        // 获取成员信息
+        UserInfo member = userInfoService.selectUserInfoById(memberId);
+
+        if (!loginUser.getId().equals(teamInfoVo.getLeader())) {
+            throw new ServiceException("您不是该队伍的队长，无法邀请成员！");
+        }
+
+        // 构建信息
+        String message = "您已被邀请加入队长为:" + loginUser.getName()+ "--队伍名称为:" + teamInfoVo.getName() + "的团队，请尽快确认！";
+
+        try {
+            // 发送邮件
+            emailService.sendEmail(member.getEmail(), "团队邀请通知", message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.fail("发送邀请邮件失败!");
+        }
+
+        return R.ok("邀请邮件发送成功!!");
+    }
+
+    /**
+     * 成员请求加入
+     * @param teamId 队伍ID
+     * @return
+     */
+    @ApiOperation("成员请求加入")
+    @PostMapping("/requestJoin")
+    public R<String> requestJoin(@RequestParam Long teamId) {
+        // 获取当前登录用户信息
+        UserInfo loginUser = userInfoService.getLoginUser();
+        // 获取队伍信息
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(teamId);
+        // 获取队长信息
+        UserInfo teamLeader = userInfoService.selectUserInfoById(teamInfoVo.getLeader());
+
+        // 构建信息
+        String message = loginUser.getName() + "用户请求加入队伍名称为：" + teamInfoVo.getName() + "请尽快确认！";
+
+        try {
+            // 发送邮件
+            emailService.sendEmail(teamLeader.getEmail(), "成员请求加入通知", message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.fail("发送请求邮件失败!");
+        }
+
+        return R.ok("请求邮件发送成功!!");
+    }
+
 }
