@@ -63,7 +63,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Override
     public TeamInfo insertTeamInfo(TeamInfo teamInfo) {
         // 判断报名条件
-        raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
+//        raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
         //根据比赛信息设置队伍最大人数
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(teamInfo.getRace());
@@ -213,39 +213,40 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             //设置锁过期时间
             try {
                 rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
-                while (true) {
-                    //队伍id
-                    Long teamId = teamMemberDto.getTeam();
-                    //根据id查询项目队伍信息
-                    TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
+//                while (true) {
+                //队伍id
+                Long teamId = teamMemberDto.getTeam();
+                //根据id查询项目队伍信息
+                TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
 
-                    //不能加入不存在的队伍
-                    if (teamInfo == null) {
-                        throw new ServiceException("该队伍不存在");
-                    }
-
-                    //已经过期的队伍不能加入
-                    if (teamInfo.getEnd().before(DateUtils.getNowDate())) {
-                        throw new ServiceException("该队伍已过期");
-                    }
-
-                    //已经满人的队伍不能加入
-                    if (teamStudentService.getJoinCountByTeamId(teamId) >= teamInfo.getNumber()) {
-                        throw new ServiceException("该队伍已满");
-                    }
-
-                    //不能重复加入已经加入的队伍
-                    if (teamStudentService.getJoinCount(userId, teamInfo.getRace(), teamInfo.getId()) > 0) {
-                        throw new ServiceException("您已加入该队伍");
-                    }
-
-                    //修改用户队伍表信息
-                    teamMemberStudent.setTeam(teamInfo.getId()); //队伍
-                    teamMemberStudent.setRace(teamInfo.getRace()); //比赛
-                    teamMemberStudent.setStudent(userId); //成员
-                    teamMemberStudent.setIsChoosed(0L); //是否选择
-                    teamMemberStudent.setReason(teamMemberDto.getReason()); //加入理由
+                //不能加入不存在的队伍
+                if (teamInfo == null) {
+                    throw new ServiceException("该队伍不存在");
                 }
+
+                //已经过期的队伍不能加入
+                if (teamInfo.getEnd().before(DateUtils.getNowDate())) {
+                    throw new ServiceException("该队伍已过期");
+                }
+
+                //已经满人的队伍不能加入
+                if (teamStudentService.getJoinCountByTeamId(teamId) >= teamInfo.getNumber()) {
+                    throw new ServiceException("该队伍已满");
+                }
+
+                //不能重复加入已经加入的队伍
+                if (teamStudentService.getJoinCount(userId, teamInfo.getRace(), teamInfo.getId()) > 0) {
+                    throw new ServiceException("您已加入该队伍");
+                }
+
+                //修改用户队伍表信息
+                teamMemberStudent.setTeam(teamInfo.getId()); //队伍
+                teamMemberStudent.setRace(teamInfo.getRace()); //比赛
+                teamMemberStudent.setDecider(teamInfo.getLeader());//负责人
+                teamMemberStudent.setStudent(userId); //成员
+                teamMemberStudent.setIsChoosed(0L); //是否选择
+                teamMemberStudent.setReason(teamMemberDto.getReason()); //加入理由
+//                }
             } catch (Exception e) {
                 log.error("加入队伍失败!", e);
                 throw new ServiceException("加入队伍失败: " + e.getMessage());
@@ -319,7 +320,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 } else {
                     throw new ServiceException("退出队伍失败");
                 }
-            }else{
+            } else {
                 //不是负责人退出队伍
                 return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
             }
@@ -327,7 +328,33 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
     }
 
+    @Override
+    public int agreeJoinTeam(Long userId,Long teamId) {
 
+        TeamMemberStudent teamMemberStudent = teamStudentService.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
+
+        // 获取申请记录
+        if (teamMemberStudent.getIsChoosed() != 0L) { // 0表示待审核
+            throw new ServiceException("申请不存在或已处理");
+        }
+
+        // 4. 检查队伍容量
+        TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
+        Long currentCount = teamStudentService.getJoinCountByTeamId(teamId);
+        if (currentCount >= teamInfo.getNumber()) {
+            throw new ServiceException("队伍已满");
+        }
+
+
+        // 5. 更新状态为已同意
+        teamMemberStudent.setIsChoosed(1L); // 1表示已同意
+        int ok = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
+        if (ok == 0) {
+            throw new ServiceException("同意失败");
+        }
+
+        return ok;
+    }
 
 
     /**
@@ -403,7 +430,6 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfoVo.setTeacherCount(teacherCount);
 
 
-
         return teamInfoVo;
     }
 
@@ -422,7 +448,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     /**
      * 抽取出判断登录用户是否为老师或者团队负责人
      */
-    public  boolean isTeamLeaderOrTeacher(Long team) {
+    public boolean isTeamLeaderOrTeacher(Long team) {
         //获取登录用户
         String loginIdStr = StpUtil.getLoginId().toString();
         Long loginId;
