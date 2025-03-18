@@ -58,6 +58,8 @@ public class TeamApiController extends BaseController {
     private IUserInfoService userInfoService;
     @Autowired
     private ServerConfig serverConfig;
+    @Autowired
+    private IEmailService emailService;
 
     private static final String FILE_DELIMETER = ",";
 
@@ -102,7 +104,7 @@ public class TeamApiController extends BaseController {
      * @param team           团队id
      * @return
      */
-    @ApiOperation("添加成员")
+    @ApiOperation("添加成员(邀请)")
     @PostMapping("/addTeamMember")
     public R<Long> addTeamMember(
             @ApiParam(name = "userInfoVoList", value = "用户信息列表")
@@ -115,6 +117,15 @@ public class TeamApiController extends BaseController {
         if (teamInfo == null) {
             throw new ServiceException("项目团队不存在,请先创建团队~");
         }
+
+        //如果已经邀请过对方就提示已邀请,请勿重复邀请
+        for (UserInfoVo userInfoVo : userInfoVoList) {
+            if (teamMemberStudentService.getRequestCount(userInfoVo.getId(),teamInfo.getRace(),team)>=1) {
+                log.info("您已经邀请过学号为:"+userInfoVo.getNumber()+"的用户，请勿重复邀请");
+                throw new ServiceException("您已经邀请过学号为:"+userInfoVo.getNumber()+"的用户，请勿重复邀请");
+            }
+        }
+
         //只有指导老师和负责人才有权限
         if (!isTeamLeaderOrTeacher(team)) {
             throw new ServiceException("您不是团队负责人或指导老师，没有权限进行此操作");
@@ -132,6 +143,10 @@ public class TeamApiController extends BaseController {
         }
         //插入
         int ok = teamMemberStudentService.insertTeamMemberStudentByList(teamMemberStudentList);
+        //邀请之后发送邮箱通知
+        for (TeamMemberStudent teamMemberStudent : teamMemberStudentList) {
+            emailService.inviteMember(teamMemberStudent.getTeam(), teamMemberStudent.getStudent());
+        }
         if (ok == 0) {
             throw new ServiceException("添加成员失败");
         }
@@ -387,6 +402,9 @@ public class TeamApiController extends BaseController {
         if (result == 0) {
             return R.fail("操作失败");
         }
+        //成功后发送邮箱通知
+        emailService.requestJoin(teamMemberDto.getTeam());
+
         return R.ok(result, "操作成功");
     }
 
