@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.AwardRecordsMapper">
+    
+    <resultMap type="com.buis.domain.AwardRecords" id="AwardRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="members"    column="members"    />
+        <result property="project"    column="project"    />
+        <result property="competitionName"    column="competition_name"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="awardDate"    column="award_date"    />
+        <result property="awardLevel"    column="award_level"    />
+        <result property="school"    column="school"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectAwardRecordsVo">
+        select id, members, project, competition_name, teacher, award_date, award_level, school, status, create_time, update_time, is_deleted from award_records
+    </sql>
+
+    <select id="selectAwardRecordsList" parameterType="com.buis.domain.AwardRecords" resultMap="AwardRecordsResult">
+        <include refid="selectAwardRecordsVo"/>
+        <where>
+            is_deleted = 0
+            <if test="members != null  and members != ''"> and members = #{members}</if>
+            <if test="project != null  and project != ''"> and project = #{project}</if>
+            <if test="competitionName != null  and competitionName != ''"> and competition_name like concat('%', #{competitionName}, '%')</if>
+            <if test="teacher != null  and teacher != ''"> and teacher = #{teacher}</if>
+            <if test="awardDate != null "> and award_date = #{awardDate}</if>
+            <if test="awardLevel != null  and awardLevel != ''"> and award_level = #{awardLevel}</if>
+            <if test="school != null  and school != ''"> and school = #{school}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectAwardRecordsById" parameterType="Long" resultMap="AwardRecordsResult">
+        <include refid="selectAwardRecordsVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertAwardRecords" parameterType="com.buis.domain.AwardRecords">
+        insert into award_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="members != null and members != ''">members,</if>
+            <if test="project != null">project,</if>
+            <if test="competitionName != null">competition_name,</if>
+            <if test="teacher != null and teacher != ''">teacher,</if>
+            <if test="awardDate != null">award_date,</if>
+            <if test="awardLevel != null and awardLevel != ''">award_level,</if>
+            <if test="school != null">school,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="members != null and members != ''">#{members},</if>
+            <if test="project != null">#{project},</if>
+            <if test="competitionName != null">#{competitionName},</if>
+            <if test="teacher != null and teacher != ''">#{teacher},</if>
+            <if test="awardDate != null">#{awardDate},</if>
+            <if test="awardLevel != null and awardLevel != ''">#{awardLevel},</if>
+            <if test="school != null">#{school},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAwardRecords" parameterType="com.buis.domain.AwardRecords">
+        update award_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="members != null and members != ''">members = #{members},</if>
+            <if test="project != null">project = #{project},</if>
+            <if test="competitionName != null">competition_name = #{competitionName},</if>
+            <if test="teacher != null and teacher != ''">teacher = #{teacher},</if>
+            <if test="awardDate != null">award_date = #{awardDate},</if>
+            <if test="awardLevel != null and awardLevel != ''">award_level = #{awardLevel},</if>
+            <if test="school != null">school = #{school},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAwardRecordsById" parameterType="Long">
+        update award_records
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteAwardRecordsByIds" parameterType="String">
+        update award_records
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
