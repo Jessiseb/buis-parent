@@ -107,4 +107,6 @@ public interface ITeamMemberStudentService {
     int getStudentJoinTeamByUserId(Long userId);
 
     List<TeamMemberStudent> selectTeamMemberStudentByTeamId(Long team);
+
+    int getRequestCount(Long id, Long race, Long team);
 }
