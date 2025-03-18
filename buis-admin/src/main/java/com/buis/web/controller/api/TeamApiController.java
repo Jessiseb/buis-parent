@@ -301,8 +301,8 @@ public class TeamApiController extends BaseController {
             @RequestBody(required = false) TeamInfo teamInfo,
             @ApiParam(name = "userId", value = "用户id", required = false)
             @RequestParam(required = false) Long userId,
-            @ApiParam(name = "isPublish", value = "是否发布招募",required = true)
-            @RequestParam("isPublish") String isPublish){
+            @ApiParam(name = "isPublish", value = "是否发布招募",required = false)
+            @RequestParam(required = false) String isPublish){
         startPage();
         //如果userId不为空,则查询这个用户所创建的队伍
         if (userId != null) {
