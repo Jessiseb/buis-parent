@@ -31,7 +31,7 @@ public interface ITeamInfoService {
     public List<TeamInfoVo> selectTeamInfoByIds(Long[] ids);
 
     /**
-     * 查询队伍信息列表
+     * 后台查询队伍信息列表
      *
      * @param teamInfo 队伍信息
      * @return 队伍信息集合
@@ -101,7 +101,8 @@ public interface ITeamInfoService {
 
     /**
      *
-     * @param userInfo
+     * @param userId
+     * @param teamId
      */
     int agreeJoinTeam(Long userId,Long teamId);
 

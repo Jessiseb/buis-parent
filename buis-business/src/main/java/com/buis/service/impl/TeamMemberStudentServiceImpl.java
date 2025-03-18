@@ -203,6 +203,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return teamMemberStudentMapper.selectTeamMemberStudentByTeamId(team);
     }
 
+    @Override
+    public int getRequestCount(Long userId, Long raceId, Long team) {
+        return teamMemberStudentMapper.getRequestCount(userId,raceId,team);
+    }
+
     /**
      * 抽出判断是否为负责人的方法
      */
