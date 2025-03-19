@@ -3,6 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.PreSignTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -85,6 +86,14 @@ public class PreSignTeacherController extends BaseController {
 
     }
 
+    @ApiOperation("联表模糊查询老师列表")
+    @PreAuthorize("@ss.hasPermi('buis:preTeacher:fuzzy')")
+    @GetMapping("/fuzzy")
+    public TableDataInfo fuzzyQuery(String name) {
+        startPage();
+        List<PreSignTeacherVo> list = preSignTeacherService.fuzzyQuery(name);
+        return getDataTable(list);
+    }
     /**
      * 修改老师预报名
      */

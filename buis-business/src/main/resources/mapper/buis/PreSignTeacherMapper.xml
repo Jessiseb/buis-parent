@@ -40,6 +40,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectPreSignTeacherVo"/>
         where t1.id = #{id}  and t1.is_deleted = 0
     </select>
+    <select id="fuzzyQuery" resultType="com.buis.vo.PreSignTeacherVo">
+        SELECT pre_sign_teacher.* FROM pre_sign_teacher
+        JOIN user_info ON pre_sign_teacher.teacher = user_info.id
+        <where>
+            pre_sign_teacher.is_deleted = 0
+            <if test="name != 'null' and name != ''">and user_info.name LIKE CONCAT('%', #{name}, '%')</if>
+        </where>
+    </select>
 
 
     <insert id="insertPreSignTeacher" parameterType="com.buis.domain.PreSignTeacher" useGeneratedKeys="true" keyProperty="id">
