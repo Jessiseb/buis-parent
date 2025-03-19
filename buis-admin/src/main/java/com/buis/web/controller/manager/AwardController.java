@@ -1,28 +1,32 @@
 package com.buis.web.controller.manager;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
-import com.buis.common.enums.BusinessType;
-import com.buis.domain.Award;
-import com.buis.service.IAwardService;
-import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.common.core.page.TableDataInfo;
+import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.poi.ExcelUtil;
+import com.buis.domain.Award;
+import com.buis.domain.TeamInfo;
+import com.buis.service.IAwardService;
+import com.buis.service.ITeamInfoService;
+import com.buis.service.ITeamMemberStudentService;
+import com.buis.service.ITeamMemberTeacherService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * 奖状信息Controller
@@ -33,19 +37,24 @@ import com.buis.common.core.page.TableDataInfo;
 @Api(tags = "奖状信息Controller")
 @RestController
 @RequestMapping("/buis/award")
-public class AwardController extends BaseController
-{
+public class AwardController extends BaseController {
     @Autowired
     private IAwardService awardService;
+    @Autowired
+    private ITeamInfoService teamInfoService;
+    @Autowired
+    private ITeamMemberStudentService teamMemberStudentService;
+    @Autowired
+    private ITeamMemberTeacherService teamTeacherService;
 
-/**
- * 查询奖状信息列表
- */
-@ApiOperation("查询奖状信息列表")
-@PreAuthorize("@ss.hasPermi('buis:award:list')")
-@GetMapping("/list")
-    public TableDataInfo list(Award award)
-    {
+
+    /**
+     * 查询奖状信息列表
+     */
+    @ApiOperation("查询奖状信息列表")
+    @PreAuthorize("@ss.hasPermi('buis:award:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(Award award) {
         startPage();
         List<Award> list = awardService.selectAwardList(award);
         return getDataTable(list);
@@ -107,8 +116,8 @@ public class AwardController extends BaseController
     @PreAuthorize("@ss.hasPermi('buis:award:remove')")
     @Log(title = "奖状信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(awardService.deleteAwardByIds(ids));
     }
+
 }
