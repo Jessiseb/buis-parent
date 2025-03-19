@@ -8,6 +8,8 @@ import com.buis.mapper.AwardRecordsMapper;
 import com.buis.domain.AwardRecords;
 import com.buis.service.IAwardRecordsService;
 
+import javax.annotation.Resource;
+
 /**
  * 奖状汇总Service业务层处理
  * 
@@ -17,7 +19,7 @@ import com.buis.service.IAwardRecordsService;
 @Service
 public class AwardRecordsServiceImpl implements IAwardRecordsService 
 {
-    @Autowired
+    @Resource
     private AwardRecordsMapper awardRecordsMapper;
 
     /**
@@ -92,5 +94,24 @@ public class AwardRecordsServiceImpl implements IAwardRecordsService
     public int deleteAwardRecordsById(Long id)
     {
         return awardRecordsMapper.deleteAwardRecordsById(id);
+    }
+
+    /**
+     * 根据奖状id审核奖状
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean audit(Long id,int status) {
+        //根据id查询到奖状信息
+        AwardRecords awardRecords = awardRecordsMapper.selectAwardRecordsById(id);
+        //根据status修改状态
+        int status1 = awardRecords.getStatus();
+        awardRecords.setStatus(status);
+        int ok = awardRecordsMapper.updateAwardRecords(awardRecords);
+        if (ok > 0){
+            return true;
+        }
+        return false;
     }
 }
