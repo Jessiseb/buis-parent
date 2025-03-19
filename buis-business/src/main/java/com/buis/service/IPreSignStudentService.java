@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.PreSignStudent;
+import com.buis.vo.JudgeVo;
 import com.buis.vo.PreSignStudentVo;
 
 /**
@@ -61,4 +62,6 @@ public interface IPreSignStudentService
     public int deletePreSignStudentById(Long id);
 
     void deletePreSignStudentByRaceIdAndUserId(Long race, Long userId);
+
+    List<PreSignStudentVo> fuzzyQuery(String name);
 }
