@@ -8,6 +8,7 @@ import com.buis.service.IPreSignTeacherService;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IUserInfoService;
+import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.PreSignTeacherVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.RaceLanqiaoTeacherVo;
@@ -119,6 +120,19 @@ public class PreSignTeacherServiceImpl implements IPreSignTeacherService {
     @Override
     public void deletePreSignTeacherByRaceIdAndUserId(Long race, Long userId) {
         preSignTeacherMapper.deletePreSignTeacherByUserIdAndRaceId(race, userId);
+    }
+
+    @Override
+    public List<PreSignTeacherVo> fuzzyQuery(String name) {
+        if (name == null) {
+            name = "";
+        }
+        List<PreSignTeacherVo> preSignStudentVos = preSignTeacherMapper.fuzzyQuery(name);
+        for (PreSignTeacherVo preSignStudentVo : preSignStudentVos) {
+            setTeacherInfo(preSignStudentVo);
+        }
+        return preSignStudentVos;
+
     }
 
 }

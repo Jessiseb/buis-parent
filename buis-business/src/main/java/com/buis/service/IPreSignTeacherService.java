@@ -62,4 +62,6 @@ public interface IPreSignTeacherService
 
 
     void deletePreSignTeacherByRaceIdAndUserId(Long race, Long userId);
+
+    List<PreSignTeacherVo> fuzzyQuery(String name);
 }
