@@ -7,6 +7,7 @@ import com.buis.mapper.RaceInfoMapper;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IUserInfoService;
+import com.buis.vo.JudgeVo;
 import com.buis.vo.PreSignStudentVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,4 +125,17 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     public void deletePreSignStudentByRaceIdAndUserId(Long race, Long userId) {
         preSignStudentMapper.deletePreSignStudentByRaceIdAndUserId(race, userId);
     }
+
+    @Override
+    public List<PreSignStudentVo> fuzzyQuery(String name) {
+        if (name == null) {
+            name = "";
+        }
+        List<PreSignStudentVo> preSignStudentVos = preSignStudentMapper.fuzzyQuery(name);
+        for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
+            setStudentInfo(preSignStudentVo);
+        }
+        return preSignStudentVos;
+    }
+
 }

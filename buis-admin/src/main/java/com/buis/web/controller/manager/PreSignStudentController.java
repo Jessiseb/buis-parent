@@ -8,6 +8,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.PreSignStudent;
 import com.buis.service.IPreSignStudentService;
+import com.buis.vo.JudgeVo;
 import com.buis.vo.PreSignStudentVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -88,6 +89,17 @@ public class PreSignStudentController extends BaseController {
         return toAjax(preSignStudentService.updatePreSignStudent(preSignStudent));
     }
 
+    /**
+     * 联表模糊查询评委列表
+     */
+    @ApiOperation("联表模糊查询学生列表")
+    @PreAuthorize("@ss.hasPermi('buis:preStudent:fuzzy')")
+    @GetMapping("/fuzzy")
+    public TableDataInfo fuzzyQuery(String name) {
+        startPage();
+        List<PreSignStudentVo> list = preSignStudentService.fuzzyQuery(name);
+        return getDataTable(list);
+    }
     /**
      * 删除学生预报名
      */
