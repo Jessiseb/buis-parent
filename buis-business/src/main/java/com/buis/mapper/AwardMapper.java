@@ -2,6 +2,7 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.Award;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 奖状信息Mapper接口
@@ -58,4 +59,13 @@ public interface AwardMapper
      * @return 结果
      */
     public int deleteAwardByIds(Long[] ids);
+
+    /**
+     * 根据队伍id查询奖状信息
+     * @param teamId
+     * @return
+     */
+
+    Award selectAwardByTeam(@Param("teamId") Long teamId);
+
 }

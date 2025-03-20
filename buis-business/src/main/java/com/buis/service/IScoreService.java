@@ -68,4 +68,11 @@ public interface IScoreService
      * @return
      */
     public R addScore(Score score);
+
+    /**
+     * 获取队伍排名
+     * @return
+     */
+
+    List<Score> selectTeamsRanking();
 }
