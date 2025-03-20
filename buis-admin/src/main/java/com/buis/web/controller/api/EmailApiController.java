@@ -6,9 +6,12 @@ import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.domain.UserInfo;
 import com.buis.service.IEmailService;
+import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
+import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +39,8 @@ public class EmailApiController {
     @Resource
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private ITeamInfoService teamInfoService;
     /**
      * 发送邮箱验证码
      * @param email
@@ -103,4 +108,6 @@ public class EmailApiController {
         }
         return R.ok("通知发送成功!!");
     }
+
+
 }

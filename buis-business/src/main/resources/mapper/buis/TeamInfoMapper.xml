@@ -76,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectTeamInfoList" parameterType="com.buis.domain.TeamInfo" resultMap="TeamInfoResult">
         <include refid="selectTeamInfoVo"/>
         <where>
-            t1.is_deleted = 0 and t1.is_publish = 'Y'
+            t1.is_deleted = 0
             <if test="race != null and race != ''">and t1.race = #{race}</if>
             <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
             <if test="type != null and type != ''">and t1.type = #{type}</if>
@@ -86,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leader != null ">and t1.leader = #{leader}</if>
             <if test="leaderName != null  and leaderName != ''">and t1.leader_name like concat('%', #{leaderName}, '%')
             </if>
+            <if test="isPublish != null and isPublish != ''">and t1.is_publish = #{isPublish}</if>
             <if test="phone != null  and phone != ''">and t1.phone like concat('%', #{phone}, '%')</if>
             <if test="sClass != null  and sClass != ''">and t1.s_class like concat('%', #{sClass}, '%')</if>
             <if test="college != null and college != ''">and t1.college = #{college}</if>
@@ -228,6 +229,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </select>
+    <select id="getTeamInfoList" resultType="com.buis.domain.TeamInfo">
+        <include refid="selectTeamInfoVo"/>
+        <where>
+            t1.is_deleted = 0 and t1.is_publish = 'Y'
+            <if test="race != null and race != ''">and t1.race = #{race}</if>
+            <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
+            <if test="type != null and type != ''">and t1.type = #{type}</if>
+            <if test="description != null  and description != '' ">and t1.description like concat('%', #{description},
+                '%')
+            </if>
+            <if test="leader != null ">and t1.leader = #{leader}</if>
+            <if test="leaderName != null  and leaderName != ''">and t1.leader_name like concat('%', #{leaderName}, '%')
+            </if>
+            <if test="phone != null  and phone != ''">and t1.phone like concat('%', #{phone}, '%')</if>
+            <if test="sClass != null  and sClass != ''">and t1.s_class like concat('%', #{sClass}, '%')</if>
+            <if test="college != null and college != ''">and t1.college = #{college}</if>
+        </where>
     </select>
     <delete id="deleteTeamInfoByRaceIdAndUserId">
         update team_info

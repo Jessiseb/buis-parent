@@ -3,6 +3,7 @@ package com.buis.service.impl;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,9 +11,11 @@ import java.util.regex.Pattern;
 import com.buis.common.core.domain.R;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.Judge;
+import com.buis.domain.RaceDetail;
 import com.buis.domain.UserInfo;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.*;
+import com.buis.vo.RaceInfoVo;
 import com.buis.vo.ScoreVo;
 import com.buis.vo.TeamInfoVo;
 import lombok.extern.slf4j.Slf4j;
@@ -88,8 +91,12 @@ public class ScoreServiceImpl implements IScoreService {
                         return R.fail("您已经为该队伍评分");
                     }
                 }
-                //是否在评分时间段内
-                //TODO
+                //判断是否在评分时间段内
+                RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(teamInfoVo.getRace());
+                Date scoreEnd = raceInfoVo.getScoreEnd();//评分截止时间
+                if (scoreEnd.getTime() <= DateUtils.getNowDate().getTime()) {
+                    return R.fail("当前比赛评分时间已结束");
+                }
 
                 //计算总分
                 BigDecimal totalScore = calculateTotalScore(score.getBuild());
