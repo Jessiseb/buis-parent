@@ -101,7 +101,8 @@ public interface ITeamInfoService {
 
     /**
      *
-     * @param userInfo
+     * @param userId
+     * @param teamId
      */
     int agreeJoinTeam(Long userId,Long teamId);
 

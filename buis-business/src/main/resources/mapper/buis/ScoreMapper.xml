@@ -55,6 +55,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
+    <select id="selectTeamsRanking" resultType="com.buis.domain.Score">
+        SELECT s.score,s.team
+        FROM t_score AS s
+        ORDER BY s.score DESC
+    </select>
+
     <insert id="insertScore" parameterType="com.buis.domain.Score" useGeneratedKeys="true" keyProperty="id">
         insert into t_score
         <trim prefix="(" suffix=")" suffixOverrides=",">
