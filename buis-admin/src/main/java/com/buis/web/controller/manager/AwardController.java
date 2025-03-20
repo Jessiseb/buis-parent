@@ -18,11 +18,16 @@ import org.springframework.web.bind.annotation.*;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
-import com.buis.common.enums.BusinessType;
-import com.buis.domain.Award;
-import com.buis.service.IAwardService;
-import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.common.core.page.TableDataInfo;
+import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.poi.ExcelUtil;
+import com.buis.domain.Award;
+import com.buis.domain.TeamInfo;
+import com.buis.service.IAwardService;
+import com.buis.service.ITeamInfoService;
+import com.buis.service.ITeamMemberStudentService;
+import com.buis.service.ITeamMemberTeacherService;
+
 
 /**
  * 奖状信息Controller
@@ -36,9 +41,12 @@ import com.buis.common.core.page.TableDataInfo;
 public class AwardController extends BaseController {
     @Autowired
     private IAwardService awardService;
-    @Resource
+    @Autowired
+    private ITeamInfoService teamInfoService;
+    @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
-
+    @Autowired
+    private ITeamMemberTeacherService teamTeacherService;
     @Resource
     private AwardGenerateService awardGenerateService;
 
@@ -129,5 +137,6 @@ public class AwardController extends BaseController {
     public R<String> batchGenerate(@RequestBody List<Long> teamIds, HttpServletResponse response) throws TemplateException, IOException {
         return awardGenerateService.generateAwardContents(teamIds, response);
     }
+
 
 }
