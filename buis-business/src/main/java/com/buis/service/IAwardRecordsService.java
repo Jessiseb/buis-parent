@@ -58,4 +58,6 @@ public interface IAwardRecordsService
      * @return 结果
      */
     public int deleteAwardRecordsById(Long id);
+
+    boolean audit(Long id,int status);
 }

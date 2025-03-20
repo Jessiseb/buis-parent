@@ -64,4 +64,6 @@ public interface PreSignTeacherMapper
     public int deletePreSignTeacherByIds(Long[] ids);
 
     void deletePreSignTeacherByUserIdAndRaceId(@Param("race") Long race, @Param("userId") Long userId);
+
+    List<PreSignTeacherVo> fuzzyQuery(String name);
 }

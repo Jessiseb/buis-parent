@@ -69,4 +69,6 @@ public interface PreSignStudentMapper
      * @param userId
      */
     void deletePreSignStudentByRaceIdAndUserId(@Param("race") Long race, @Param("userId") Long userId);
+
+    List<PreSignStudentVo> fuzzyQuery(String name);
 }
