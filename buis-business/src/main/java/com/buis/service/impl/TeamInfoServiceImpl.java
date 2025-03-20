@@ -2,8 +2,18 @@ package com.buis.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
+import com.buis.common.constant.TeamQueryConstants;
+import com.buis.common.core.page.MyPageVo;
+import com.buis.common.core.page.PageDomain;
+import com.buis.common.core.page.TableSupport;
+import com.buis.common.core.redis.RedisCache;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
+import com.buis.common.utils.PageUtils;
+import com.buis.common.utils.StringUtils;
 import com.buis.domain.RaceDetail;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
@@ -13,20 +23,22 @@ import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
+import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.buis.common.constant.CacheConstants.JOIN_TEAM_LOCK;
+import static com.buis.common.constant.CacheConstants.QUERY_TEAM_LOCK;
 
 /**
  * 队伍信息Service业务层处理
@@ -53,6 +65,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private RedissonClient redissonClient;
     @Resource
     private RaceDetailServiceImpl raceDetailService;
+    @Resource
+    private RedisCache redisCache;
+    @Resource
+    private RedisTemplate redisTemplate;
 
 
     /**
@@ -62,6 +78,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TeamInfo insertTeamInfo(TeamInfo teamInfo) {
         // 判断报名条件
 //        raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
@@ -72,6 +89,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfo.setNumber(teamMax);
 
         int ok = teamInfoMapper.insertTeamInfo(teamInfo);
+        //更新队伍信息缓存
+        if (ok > 0) {
+            updateTeamInfoCache(teamInfo);
+        }
         //创建项目成功后,把信息插入队伍用户表
         int sucess = 0;
         if (ok > 0) {
@@ -94,6 +115,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updateTeamInfo(TeamInfo teamInfo) {
         // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
@@ -102,7 +124,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         if (!isTeamLeaderOrTeacher(teamInfo.getId())) {
             throw new ServiceException("您不是老师或负责人，不能修改队伍信息!");
         }
-        return teamInfoMapper.updateTeamInfo(teamInfo);
+        int i = teamInfoMapper.updateTeamInfo(teamInfo);
+        //更新队伍信息缓存
+        updateTeamInfoCache(teamInfo);
+        return i;
     }
 
     /**
@@ -112,8 +137,14 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deleteTeamInfoByIds(Long[] ids) {
-        return teamInfoMapper.deleteTeamInfoByIds(ids);
+        int i = teamInfoMapper.deleteTeamInfoByIds(ids);
+        //删除队伍信息缓存
+        for (Long id : ids) {
+            deleteTeamInfoCache(id);
+        }
+        return i;
     }
 
     /**
@@ -139,7 +170,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //根据队伍信息查出队长id
         if (teamInfo.getLeader().equals(loginId)) {
             //是队长-->能进行删除
-            return teamInfoMapper.deleteTeamInfoById(id);
+            int i = teamInfoMapper.deleteTeamInfoById(id);
+            //删除队伍信息缓存
+            deleteTeamInfoCache(id);
+            return i;
         }
 
         //不是队长不能删除队伍
@@ -150,6 +184,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Override
     public void deleteTeamInfoByRaceIdAndUserId(Long race, Long userId) {
         teamInfoMapper.deleteTeamInfoByRaceIdAndUserId(race, userId);
+
     }
 
     @Override
@@ -184,6 +219,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int joinTeamById(TeamMemberDto teamMemberDto, UserInfo loginUser) {
         //判空
         if (teamMemberDto == null || loginUser == null) {
@@ -199,13 +235,13 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //判断用户是老师还是学生 (0-学生 1-老师)
         Long isTeacher = teamMemberDto.getIsTeacher();
         TeamMemberStudent teamMemberStudent = new TeamMemberStudent();
+        TeamInfo teamInfo = null;
         if (isTeacher == 0) {
             //学生
             int hasJoin = teamStudentService.getStudentJoinTeamByUserId(userId);
             if (hasJoin >= count) {
                 throw new ServiceException("您已加入其他团队,最多只能加入一个项目团队!!!");
             }
-
 
             //分布式锁---->只有抢到锁的人才能加入队伍
             //尝试获得锁
@@ -218,7 +254,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 //队伍id
                 Long teamId = teamMemberDto.getTeam();
                 //根据id查询项目队伍信息
-                TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
+                 teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
 
                 //不能加入不存在的队伍
                 if (teamInfo == null) {
@@ -262,7 +298,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             //老师
             throw new ServiceException("您不是学生,不能加入队伍");
         }
-        return teamStudentService.insertTeamMemberStudent(teamMemberStudent);
+        int i = teamStudentService.insertTeamMemberStudent(teamMemberStudent);
+        //更新队伍信息缓存
+        updateTeamInfoCache(teamInfo);
+        return i;
     }
 
     /**
@@ -292,7 +331,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //如果队伍只有一个人就直接解散
         if (teamStudentService.getJoinCountByTeamId(team) == 1) {
             //删除队伍
-            return teamInfoMapper.deleteTeamInfoById(team);
+            int i = teamInfoMapper.deleteTeamInfoById(team);
+            //删除队伍信息缓存
+            deleteTeamInfoCache(team);
+            return i;
         } else {
             //队伍不止一个人
             //如果是负责人退出队伍,负责人位置移交给第二个进项目团队的人\
@@ -317,20 +359,26 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 int ok = teamInfoMapper.updateTeamInfo(teamInfo);
                 if (ok > 0) {
                     //删除该成员
+                    //删除队伍信息缓存
+                    deleteTeamInfoCache(teamInfo.getId());
                     return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
                 } else {
                     throw new ServiceException("退出队伍失败");
                 }
             } else {
                 //不是负责人退出队伍
-                return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
+                int i = teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
+                //删除队伍信息缓存
+                deleteTeamInfoCache(team);
+                return i;
             }
         }
 
     }
 
     @Override
-    public int agreeJoinTeam(Long userId,Long teamId) {
+    @Transactional(rollbackFor = Exception.class)
+    public int agreeJoinTeam(Long userId, Long teamId) {
 
         TeamMemberStudent teamMemberStudent = teamStudentService.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
 
@@ -350,6 +398,9 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         // 5. 更新状态为已同意
         teamMemberStudent.setIsChoosed(1L); // 1表示已同意
         int ok = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
+        if (ok > 0) {
+            updateTeamInfoCache(teamInfo);
+        }
         if (ok == 0) {
             throw new ServiceException("同意失败");
         }
@@ -387,6 +438,137 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return results;
     }
 
+    /**
+     * 根据队伍id查询队伍信息(缓存)
+     *
+     * @param teamInfo
+     * @return
+     */
+    @Override
+    public MyPageVo<List<TeamInfoVo>> selectTeamInfoListFromRedis(TeamInfo teamInfo) {
+        //无查询条件
+        //获取key
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        Integer pageSize = pageDomain.getPageSize();
+        String pageCacheKey = getPageCacheKey(pageNum, pageSize);
+
+        String TeamsJson = redisCache.getCacheObject(pageCacheKey);
+        if (StringUtils.isNotEmpty(TeamsJson)) {
+            //存在直接返回
+            return getMyPageVo(TeamsJson);
+        }
+        //判断空值
+        if (TeamsJson != null) {
+            return null;
+        }
+
+        String lockKey = QUERY_TEAM_LOCK + getPageCacheKey(pageNum, pageSize);
+        RLock rLock = redissonClient.getLock(lockKey);
+        MyPageVo myPageVo = null;
+        try {
+            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+
+            //再次检查缓存
+            TeamsJson = redisCache.getCacheObject(pageCacheKey);
+            //判断是否存在
+            if (StringUtils.isNotEmpty(TeamsJson)) {
+                //存在直接返回
+                return getMyPageVo(TeamsJson);
+            }
+            //判断空值
+            if (TeamsJson != null) {
+                return null;
+            }
+
+            if (!isLock) {
+                Thread.sleep(50);
+                return selectTeamInfoListFromRedis(teamInfo);
+            }
+
+            //拿到锁，查询数据库
+            Page<TeamInfoVo> page = PageUtils.startPage(pageNum, pageSize);
+            List<TeamInfoVo> teamInfoVos = teamInfoService.selectTeamInfoList(teamInfo);
+
+            //不存在，返回错误信息
+            if (teamInfoVos.isEmpty()) {
+                log.info("将空值写入redis");
+                redisCache.setCacheObject(pageCacheKey, "", 5, TimeUnit.MINUTES);
+                return null;
+            }
+            //存在，写入redis
+            myPageVo = new MyPageVo(page, teamInfoVos);
+            redisCache.setCacheObject(pageCacheKey, JSON.toJSONString(myPageVo), 1, TimeUnit.DAYS);
+
+        } catch (Exception e) {
+            throw new ServiceException("查询失败: " + e.getMessage());
+        } finally {
+            //释放锁
+            if (rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
+        }
+        return myPageVo;
+    }
+
+    /**
+     * 封装成MyPageVo对象
+     * @param TeamsJson
+     * @return
+     */
+    private MyPageVo getMyPageVo(String TeamsJson) {
+        Map jsonMap = JSON.parseObject(TeamsJson, Map.class);
+        String rowsJson = JSON.toJSONString(jsonMap.get("rows"));
+        List<TeamInfoVo> teamInfoVoList = JSON.parseObject(rowsJson, new TypeReference<List<TeamInfoVo>>() {});
+        MyPageVo myPageVo = JSONUtil.toBean(TeamsJson, MyPageVo.class);
+        myPageVo.setRows(teamInfoVoList);
+        return myPageVo;
+    }
+
+    /**
+     * 检查是否有查询条件
+     * @param queryTeam
+     * @return
+     */
+    public boolean hasSearchCondition(TeamInfo queryTeam) {
+        try {
+            for (String fieldName : TeamQueryConstants.CONDITION_FIELDS1) {
+                Field field = TeamInfo.class.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                if (field.get(queryTeam) != null) {
+                    return true;
+                }
+            }
+            for (String fieldName : TeamQueryConstants.CONDITION_FIELDS2) {
+                Field field = TeamInfo.class.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                if (!field.get(queryTeam).equals(0)) {
+                    return true;
+                }
+            }
+            for (String fieldName : TeamQueryConstants.CONDITION_FIELDS3) {
+                Field field = TeamInfo.class.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                if (!field.get(queryTeam).equals("Y")) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException("条件检测异常", e);
+        }
+    }
+
+    /**
+     * 获取分页缓存key
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    private String getPageCacheKey(int pageNum, int pageSize) {
+        return String.format("teams:page:%d:size:%d", pageNum, pageSize);
+    }
+
 
     /**
      * 查询队伍信息
@@ -396,8 +578,66 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public TeamInfoVo selectTeamInfoById(Long id) {
-        TeamInfo team = teamInfoMapper.selectTeamInfoById(id);
-        return team != null ? createTeamInfoVo(team) : new TeamInfoVo();
+        //从redis中查询队伍缓存
+        String key = "team:" + id;
+        String TeamJson = redisCache.getCacheObject("team:" + id);
+
+        //判断是否存在
+        if (StringUtils.isNotEmpty(TeamJson)) {
+            //存在直接返回
+            return JSONUtil.toBean(TeamJson, TeamInfoVo.class);
+        }
+
+        //判断空值
+        if (TeamJson != null) {
+            return null;
+        }
+
+        String lockKey = QUERY_TEAM_LOCK + id;
+        RLock rLock = redissonClient.getLock(lockKey);
+        TeamInfoVo teamInfoVo = null;
+        try {
+            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+
+            //再次检查缓存
+            TeamJson = redisCache.getCacheObject("team:" + id);
+            //判断是否存在
+            if (StringUtils.isNotEmpty(TeamJson)) {
+                //存在直接返回
+                return JSONUtil.toBean(TeamJson, TeamInfoVo.class);
+            }
+            //判断空值
+            if (TeamJson != null) {
+                return null;
+            }
+
+            if (!isLock) {
+                Thread.sleep(50);
+                return selectTeamInfoById(id);
+            }
+
+            //拿到锁，查询数据库
+            TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(id);
+
+            //不存在，返回错误信息
+            if (teamInfo == null) {
+                log.info("将空值写入redis");
+                redisCache.setCacheObject("team:" + id, "", 5, TimeUnit.MINUTES);
+                return null;
+            }
+            //存在，写入redis
+            teamInfoVo = createTeamInfoVo(teamInfo);
+            redisCache.setCacheObject("team:" + id, JSONUtil.toJsonStr(teamInfoVo), 1, TimeUnit.DAYS);
+
+        } catch (Exception e) {
+            throw new ServiceException("查询失败: " + e.getMessage());
+        } finally {
+            //释放锁
+            if (rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
+        }
+        return teamInfoVo;
     }
 
     /**
@@ -473,5 +713,32 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return false;
     }
 
+    //更新队伍信息缓存 + 删除队伍信息分页缓存
+    private void updateTeamInfoCache(TeamInfo teamInfo) {
+        String teamInfoCacheKey = "team:" + teamInfo.getId();
+        TeamInfoVo teamInfoVo = createTeamInfoVo(teamInfo);
+        redisCache.setCacheObject(teamInfoCacheKey, JSON.toJSONString(teamInfoVo), 1, TimeUnit.DAYS);
 
+        //删除所有队伍信息分页缓存
+        String pattern = "teams:page:*:size:*";
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (keys != null && !keys.isEmpty()) {
+            // 删除匹配的键
+            redisTemplate.delete(keys);
+        }
+    }
+
+    //删除队伍信息缓存 + 删除队伍信息分页缓存
+    private void deleteTeamInfoCache(Long id) {
+        String teamInfoCacheKey = "team:" + id;
+        redisCache.deleteObject(teamInfoCacheKey);
+
+        //删除所有队伍信息分页缓存
+        String pattern = "teams:page:*:size:*";
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (keys != null && !keys.isEmpty()) {
+            // 删除匹配的键
+            redisTemplate.delete(keys);
+        }
+    }
 }
