@@ -2,6 +2,7 @@ package com.buis.web.controller.api;
 
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.alibaba.fastjson2.JSON;
 import com.buis.common.config.RuoYiConfig;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -309,8 +310,14 @@ public class TeamApiController extends BaseController {
             return new MyPageVo(teamInfoService.selectTeamInfoByUserId(userId));
         }
         teamInfo.setIsPublish(isPublish);//查出已发布招募的队伍信息
-        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        return new MyPageVo(list);
+        List<TeamInfoVo> list = null;
+        //如果teamInfo有值,则查询带条件的队伍信息
+        if (teamInfoService.hasSearchCondition(teamInfo)) {
+            list = teamInfoService.selectTeamInfoList(teamInfo);
+            return new MyPageVo(list);
+        } else {
+            return teamInfoService.selectTeamInfoListFromRedis(teamInfo);
+        }
     }
 
     /**
