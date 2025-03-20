@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, race_id, team_id, year, award_level, teachers, award_date, update_time, create_time, is_deleted from award
     </sql>
 
-    <select id="selectAwardList" parameterType="Award" resultMap="AwardResult">
+    <select id="selectAwardList" parameterType="com.buis.domain.Award" resultMap="AwardResult">
         <include refid="selectAwardVo"/>
         <where>
             is_deleted = 0
@@ -39,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertAward" parameterType="Award">
+    <insert id="insertAward" parameterType="com.buis.domain.Award">
         insert into award
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
