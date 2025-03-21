@@ -39,6 +39,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
+    <select id="selectAwardByTeam" resultMap="AwardResult">
+        select a.race_id,a.team_id,a.year,a.award_level,a.teachers,a.award_date
+        from award as a
+        where team_id = #{teamId} and is_deleted = 0
+    </select>
+
     <insert id="insertAward" parameterType="com.buis.domain.Award">
         insert into award
         <trim prefix="(" suffix=")" suffixOverrides=",">

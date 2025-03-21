@@ -58,4 +58,6 @@ public interface IAwardService
      * @return 结果
      */
     public int deleteAwardById(Long id);
+
+    Award selectAwardByTeam(Long teamId);
 }
