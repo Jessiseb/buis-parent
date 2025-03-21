@@ -79,7 +79,7 @@ public class RaceApiController extends BaseController {
      * 查询用户参加的所有比赛
      */
     @ApiOperation("查询用户参加的所有比赛")
-    @GetMapping("/userRaceList")
+    @GetMapping("/getUserRaceList")
     public R<List<RaceInfo>> getUserRaceList(@ApiParam(name = "userId", value = "用户id", required = true) Long userId) {
         //根据用户id查出用户所参加的比赛
         List<RaceInfo> result = raceInfoService.getUserRaceList(userId);
