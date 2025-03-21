@@ -92,6 +92,9 @@ public interface RaceInfoMapper
 
     void updateRaceInfoStatus(@Param("id") Long id,@Param("status") Integer status);
 
+    //根据状态查询比赛信息
     public List<RaceInfo> selectRaceInfoByStatu(Long i);
 
+    //根据比赛信息ids查询比赛信息列表
+    List<RaceInfo> selectRaceInfoByRaceIds(List<Long> raceIds);
 }

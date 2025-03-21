@@ -210,6 +210,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     }
 
     @Override
+    public List<TeamMemberStudent> selectTeamMemberStudentByUserId(Long userId) {
+        return teamMemberStudentMapper.selectTeamMemberStudentByUserId(userId);
+    }
+
+    @Override
     public int getRequestCount(Long userId, Long raceId, Long team) {
         return teamMemberStudentMapper.getRequestCount(userId,raceId,team);
     }
