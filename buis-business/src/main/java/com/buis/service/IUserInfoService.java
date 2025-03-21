@@ -102,5 +102,10 @@ public interface IUserInfoService {
      */
     UserInfo selectUserInfoBynumber(String number);
 
+    /**
+     * 根据名字搜索用户信息
+     * @param name
+     * @return
+     */
     UserInfoVo selectUserInfoByName(String name);
 }

@@ -1,16 +1,15 @@
 package com.buis.web.controller.api;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
+import com.buis.common.exception.ServiceException;
 import com.buis.domain.PreSignStudent;
 import com.buis.domain.PreSignTeacher;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.RaceType;
-import com.buis.service.IPreSignStudentService;
-import com.buis.service.IPreSignTeacherService;
-import com.buis.service.IRaceInfoService;
-import com.buis.service.IRaceTypeService;
+import com.buis.service.*;
 import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.PreSignTeacherVo;
 import com.buis.vo.RaceInfoVo;
@@ -34,6 +33,7 @@ public class RaceApiController extends BaseController {
     private IRaceInfoService raceInfoService;
     @Autowired
     private IRaceTypeService raceTypeService;
+
 
     /**
      * 根据比赛id查询比赛信息
@@ -73,6 +73,17 @@ public class RaceApiController extends BaseController {
     public R<List<RaceType>> list(@ApiParam(name = "raceType", value = "比赛类型信息", required = false) RaceType raceType) {
         List<RaceType> list = raceTypeService.selectRaceTypeList(raceType);
         return R.ok(list);
+    }
+
+    /**
+     * 查询用户参加的所有比赛
+     */
+    @ApiOperation("查询用户参加的所有比赛")
+    @GetMapping("/userRaceList")
+    public R<List<RaceInfo>> getUserRaceList(@ApiParam(name = "userId", value = "用户id", required = true) Long userId) {
+        //根据用户id查出用户所参加的比赛
+        List<RaceInfo> result = raceInfoService.getUserRaceList(userId);
+        return R.ok(result);
     }
 
 }
