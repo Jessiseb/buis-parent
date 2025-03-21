@@ -62,4 +62,7 @@ public interface ScoreMapper
      * @return 结果
      */
     public int deleteScoreByIds(Long[] ids);
+
+    List<Score> selectTeamsRanking();
+
 }
