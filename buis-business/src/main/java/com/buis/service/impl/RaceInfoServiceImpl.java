@@ -44,7 +44,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
 
-    @Autowired
+    @Resource
     private SysRoleMapper sysRoleMapper;
 
     /**
@@ -381,7 +381,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //从队伍用户表中查出该用户所在信息
         List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
         //根据查出的信息获取到raceId<List>
-        List<Long> raceIds = null;
+        List<Long> raceIds = new ArrayList<>();
         for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
             Long race = teamMemberStudent.getRace();
             raceIds.add(race);
