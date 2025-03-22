@@ -132,6 +132,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where status = #{status}
           and is_deleted = 0
     </select>
+    <select id="selectRaceInfoByRaceIds" resultType="com.buis.domain.RaceInfo">
+        select id,
+        name,
+        level,
+        race_start,
+        race_end,
+        status
+        from race_info
+        where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 
 
     <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">

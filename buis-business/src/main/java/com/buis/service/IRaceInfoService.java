@@ -81,4 +81,6 @@ public interface IRaceInfoService
 
     public List<RaceInfo> selectRaceInfoByStatu(Long i);
 
+    List<RaceInfo> getUserRaceList(Long userId);
+
 }

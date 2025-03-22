@@ -44,7 +44,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
 
-    @Autowired
+    @Resource
     private SysRoleMapper sysRoleMapper;
 
     /**
@@ -358,6 +358,38 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     }
 
+    /**
+     * 根据用户id查询出用户所参加的所有比赛
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<RaceInfo> getUserRaceList(Long userId) {
+        //获取登录用户
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
+        //不是本人不能操作
+        if (!loginId.equals(userId)){
+            throw new ServiceException("无权限,请联系管理员");
+        }
+
+        //从队伍用户表中查出该用户所在信息
+        List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
+        //根据查出的信息获取到raceId<List>
+        List<Long> raceIds = new ArrayList<>();
+        for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
+            Long race = teamMemberStudent.getRace();
+            raceIds.add(race);
+        }
+        //根据raceId<List>查询到对应的比赛信息并返回
+        return raceInfoMapper.selectRaceInfoByRaceIds(raceIds);
+
+    }
 
 
     /**
