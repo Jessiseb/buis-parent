@@ -102,11 +102,15 @@ public interface ITeamMemberStudentService {
      */
     TeamMemberStudent selectTeamMemberStudentByTeamAndStudent(Long user, Long team);
 
+
      int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList);
 
     int getStudentJoinTeamByUserId(Long userId);
 
     List<TeamMemberStudent> selectTeamMemberStudentByTeamId(Long team);
+
+    //根据用户id获取队伍用户信息
+    List<TeamMemberStudent> selectTeamMemberStudentByUserId(Long userId);
 
     int getRequestCount(Long id, Long race, Long team);
 }

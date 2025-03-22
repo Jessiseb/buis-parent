@@ -238,4 +238,15 @@ public class ScoreServiceImpl implements IScoreService {
         }
         return scoreMapper.deleteScoreById(id);
     }
+
+    /**
+     * 查询队伍排名
+     * @return
+     */
+
+    @Override
+    public List<Score> selectTeamsRanking() {
+        return scoreMapper.selectTeamsRanking();
+    }
+
 }

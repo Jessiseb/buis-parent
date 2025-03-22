@@ -1,5 +1,20 @@
 package com.buis.web.controller.manager;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import com.buis.common.core.domain.R;
+import com.buis.generator.service.AwardGenerateService;
+import com.buis.service.ITeamMemberStudentService;
+import freemarker.template.TemplateException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -12,21 +27,7 @@ import com.buis.service.IAwardService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URISyntaxException;
-import java.util.List;
 
 /**
  * 奖状信息Controller
@@ -46,7 +47,8 @@ public class AwardController extends BaseController {
     private ITeamMemberStudentService teamMemberStudentService;
     @Autowired
     private ITeamMemberTeacherService teamTeacherService;
-
+    @Resource
+    private AwardGenerateService awardGenerateService;
 
     /**
      * 查询奖状信息列表
@@ -67,8 +69,7 @@ public class AwardController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:award:export')")
     @Log(title = "奖状信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, Award award)
-    {
+    public void export(HttpServletResponse response, Award award) {
         List<Award> list = awardService.selectAwardList(award);
         ExcelUtil<Award> util = new ExcelUtil<Award>(Award.class);
         util.exportExcel(response, list, "奖状信息数据");
@@ -80,8 +81,7 @@ public class AwardController extends BaseController {
     @ApiOperation("获取奖状信息详细信息")
     @PreAuthorize("@ss.hasPermi('buis:award:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(awardService.selectAwardById(id));
     }
 
@@ -92,8 +92,7 @@ public class AwardController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:award:add')")
     @Log(title = "奖状信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Award award)
-    {
+    public AjaxResult add(@RequestBody Award award) {
         return toAjax(awardService.insertAward(award));
     }
 
@@ -104,8 +103,7 @@ public class AwardController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:award:edit')")
     @Log(title = "奖状信息", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Award award)
-    {
+    public AjaxResult edit(@RequestBody Award award) {
         return toAjax(awardService.updateAward(award));
     }
 
@@ -119,5 +117,26 @@ public class AwardController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(awardService.deleteAwardByIds(ids));
     }
+
+
+    @ApiOperation("根据队伍id查询奖状信息")
+    @PreAuthorize("@ss.hasPermi('buis:award:query')")
+    @GetMapping("/getAwardByTeam/{teamId}")
+    public Award selectAwardByTeam(@PathVariable("teamId") Long teamId) {
+        return awardService.selectAwardByTeam(teamId);
+    }
+
+    @ApiOperation("根据队伍id生成奖状信息")
+    @GetMapping("/generate")
+    public R<String> generateCertificate(@RequestParam("teamId") Long teamId, HttpServletResponse response) {
+        return awardGenerateService.generateAwardContent(teamId, response);
+    }
+
+    @ApiOperation("根据多队伍ids批量生成奖状信息")
+    @PostMapping("/batchGenerate")
+    public R<String> batchGenerate(@RequestBody List<Long> teamIds, HttpServletResponse response) throws TemplateException, IOException {
+        return awardGenerateService.generateAwardContents(teamIds, response);
+    }
+
 
 }

@@ -374,8 +374,12 @@ public class TeamApiController extends BaseController {
      * @return R
      */
     @ApiOperation("修改队伍信息")
-    @PutMapping("/{id}")
-    public R editTeamInfo(@RequestBody TeamInfo teamInfo, @ApiParam(name = "id", value = "队伍id", required = true)@PathVariable Long id) {
+    @PutMapping("update/{id}")
+    public R editTeamInfo(
+            @ApiParam(name = "teamInfo", value = "队伍信息", required = true)
+            @RequestBody TeamInfo teamInfo,
+            @ApiParam(name = "id", value = "队伍id", required = true)
+            @PathVariable Long id) {
         teamInfo.setId(id);
         int result = teamInfoService.updateTeamInfo(teamInfo);
         return R.ok(result, "操作成功");

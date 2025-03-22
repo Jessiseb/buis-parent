@@ -30,6 +30,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     private IUserInfoService userInfoService;
     @Resource
     private ITeamInfoService teamInfoService;
+
     /**
      * 查询队伍成员管理
      *
@@ -68,6 +69,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
             teamMemberStudentVo.setStudentInfo(userInfoService.selectUserInfoById(teamMemberStudentVo.getStudent()));
         }
     }
+
     /**
      * 新增队伍成员管理
      *
@@ -116,6 +118,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
 
     /**
      * 根据teamId获取结对的个数，查成员个数
+     *
      * @param id teamId
      * @return
      */
@@ -126,6 +129,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
 
     /**
      * 查询队伍内学生列表
+     *
      * @param team
      * @return
      */
@@ -134,7 +138,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         //根据队伍id获取到学生ids
         List<Long> ids = teamMemberStudentMapper.getMemberStudentByTeamId(team);
         List<UserInfoVo> userInfoVos = null;
-        if (ids!=null&& ids.size()>0) {
+        if (ids != null && ids.size() > 0) {
             //根据ids查询学生信息
             userInfoVos = userInfoService.selectUserInfoByIds(ids);
         }
@@ -143,28 +147,29 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
 
     /**
      * 根据team和user删除用户与队伍的关联
+     *
      * @param team
      * @param user
      * @return
      */
     @Override
     public int deleteTeamMemberStudentByTeamAndStudent(Long team, Long user) {
-    //判断是否为负责任人
-        if(!isLeader(team)) {
+        //判断是否为负责任人
+        if (!isLeader(team)) {
             throw new ServiceException("您不是队长，无法进行此操作");
         }
         //是队长-->能进行删除
-        return teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team,user);
+        return teamMemberStudentMapper.deleteTeamMemberStudentByTeamAndStudent(team, user);
     }
 
     @Override
     public TeamMemberStudent selectTeamMemberStudentByTeamAndStudent(Long user, Long team) {
-        return teamMemberStudentMapper.selectTeamMemberStudentByTeamAndStudent(user,team);
+        return teamMemberStudentMapper.selectTeamMemberStudentByTeamAndStudent(user, team);
     }
 
     @Override
     public int insertTeamMemberStudentByList(List<TeamMemberStudent> teamMemberStudentList) {
-        if (teamMemberStudentList==null||teamMemberStudentList.size()==0) {
+        if (teamMemberStudentList == null || teamMemberStudentList.size() == 0) {
             return 0;
         }
         //循环插入
@@ -181,13 +186,14 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
 
     /**
      * 判断用户是否已加入
+     *
      * @param userId
      * @param raceId
      * @return
      */
     @Override
     public int getJoinCount(Long userId, Long raceId, Long teamId) {
-        return teamMemberStudentMapper.getCountJoin(userId,raceId,teamId);
+        return teamMemberStudentMapper.getCountJoin(userId, raceId, teamId);
     }
 
     /**
@@ -201,6 +207,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     @Override
     public List<TeamMemberStudent> selectTeamMemberStudentByTeamId(Long team) {
         return teamMemberStudentMapper.selectTeamMemberStudentByTeamId(team);
+    }
+
+    @Override
+    public List<TeamMemberStudent> selectTeamMemberStudentByUserId(Long userId) {
+        return teamMemberStudentMapper.selectTeamMemberStudentByUserId(userId);
     }
 
     @Override
