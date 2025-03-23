@@ -141,7 +141,7 @@ public class AwardController extends BaseController {
      * 根据用户id返回用户所获得的奖项
      */
     @ApiOperation("根据用户id返回该用户所获得的奖项")
-    @GetMapping("getUserAward/{id}")
+    @GetMapping("/getUserAward")
     public R<List<Award>> getawardbyId(
             @ApiParam(value = "用户id", required = true)
             @RequestParam("userId") Long userId){
