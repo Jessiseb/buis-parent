@@ -201,4 +201,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ( #{item.id}, #{item.raceD}, #{item.name}, #{item.weight}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
         </foreach>
     </insert>
+
+
 </mapper>
