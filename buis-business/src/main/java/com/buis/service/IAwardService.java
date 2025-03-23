@@ -17,7 +17,7 @@ public interface IAwardService
      * @param id 奖状信息主键
      * @return 奖状信息
      */
-    public Award selectAwardById(Long id);
+    public  List<Award> selectAwardById(Long id);
 
     /**
      * 查询奖状信息列表

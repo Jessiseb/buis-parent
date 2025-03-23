@@ -53,11 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="awardDate != null "> and award_date = #{awardDate}</if>
         </where>
     </select>
-    
-    <select id="selectAwardById" parameterType="Long" resultMap="AwardResult">
-        <include refid="selectAwardVo"/>
-        where id = #{id}  and is_deleted = 0
-    </select>
+
 
     <select id="selectAwardByTeam" resultMap="AwardResult">
         select a.race_id,a.team_id,a.year,a.award_level,a.teachers,a.award_date
