@@ -1,7 +1,6 @@
 package com.buis.web.controller.manager;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +11,8 @@ import com.buis.service.ITeamMemberStudentService;
 import freemarker.template.TemplateException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,8 @@ import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Award;
-import com.buis.domain.TeamInfo;
 import com.buis.service.IAwardService;
 import com.buis.service.ITeamInfoService;
-import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
 
 
@@ -137,6 +136,18 @@ public class AwardController extends BaseController {
     public R<String> batchGenerate(@RequestBody List<Long> teamIds, HttpServletResponse response) throws TemplateException, IOException {
         return awardGenerateService.generateAwardContents(teamIds, response);
     }
+
+    /**
+     * 根据用户id返回用户所获得的奖项
+     */
+    @ApiOperation("根据用户id返回该用户所获得的奖项")
+    @GetMapping("/{id}")
+    public Award getawardbyId(
+            @ApiParam(value = "用户id", required = true)
+            @PathVariable Long id){
+        return awardService.selectAwardById(id);
+    }
+    
 
 
 }
