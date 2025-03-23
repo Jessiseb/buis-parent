@@ -16,10 +16,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="isDeleted"    column="is_deleted"    />
     </resultMap>
+    
+    <resultMap id="AwardraceResult" type="com.buis.vo.AwardVo" extends="AwardResult">
 
+        <result property="raceId" column="race_id" />
+        <result property="winners" column="winners"/>
+    </resultMap>
+    
     <sql id="selectAwardVo">
         select id, race_id, team_id, year, award_level, teachers, award_date, update_time, create_time, is_deleted from award
     </sql>
+
+    <sql id="selectAwardrace">
+        SELECT
+         racename,teachers,winners,race_id
+        FROM
+         award
+    </sql>
+
+    <select id="selectAwardRaceList" resultMap="AwardraceResult">
+    <include refid="selectAwardrace"/>
+        <where>
+            <if test="raceId != null "> and race_id = #{raceId}</if>
+        </where>
+    </select>
 
     <select id="selectAwardList" parameterType="com.buis.domain.Award" resultMap="AwardResult">
         <include refid="selectAwardVo"/>
@@ -103,4 +123,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+
 </mapper>
