@@ -3,7 +3,9 @@ package com.buis.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.domain.R;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.Score;
 import com.buis.domain.UserInfo;
@@ -49,8 +51,21 @@ public class AwardServiceImpl implements IAwardService {
      * @return 奖状信息
      */
     @Override
-    public Award selectAwardById(Long id) {
-        return awardMapper.selectAwardById(id);
+    public  List<Award> selectAwardById(Long id) {
+        //获取登录用户id
+        String loginIdStr = StpUtil.getLoginId().toString();
+        Long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
+        if(!loginId.equals(id)){
+            throw new ServiceException("无权限操作");
+        }
+        Award award = new Award();
+        award.setId(id);
+        return awardMapper.selectAwardList(award);
     }
 
     /**
