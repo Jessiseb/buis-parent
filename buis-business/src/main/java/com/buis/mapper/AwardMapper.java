@@ -12,13 +12,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface AwardMapper 
 {
-    /**
-     * 查询奖状信息
-     * 
-     * @param id 奖状信息主键
-     * @return 奖状信息
-     */
-    public Award selectAwardById(Long id);
+
 
     /**
      * 查询奖状信息列表

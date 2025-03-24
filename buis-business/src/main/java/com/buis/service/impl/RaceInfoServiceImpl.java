@@ -380,6 +380,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
         //从队伍用户表中查出该用户所在信息
         List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
+        if (teamMemberStudents == null || teamMemberStudents.isEmpty()) {
+            return null;
+        }
         //根据查出的信息获取到raceId<List>
         List<Long> raceIds = new ArrayList<>();
         for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {

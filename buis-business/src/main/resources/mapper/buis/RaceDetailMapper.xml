@@ -68,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectRaceDetailList" parameterType="com.buis.vo.RaceDetailVo" resultMap="RaceDetailResult">
         <include refid="selectRaceDetailVo"/>
         <where>
+            t1.is_deleted = 0
             <if test="raceDetail.id != null and raceDetail.id != '' ">and t1.id = #{raceDetail.id}</if>
             <if test="raceDetail.race != null and raceDetail.race != ''">and t1.race = #{raceDetail.race}</if>
             <if test="raceDetail.name != null  and raceDetail.name != ''">and t1.name like concat('%', #{raceDetail.name}, '%')
@@ -200,4 +201,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ( #{item.id}, #{item.raceD}, #{item.name}, #{item.weight}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
         </foreach>
     </insert>
+
+
 </mapper>
