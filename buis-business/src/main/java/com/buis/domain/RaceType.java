@@ -36,6 +36,9 @@ public class RaceType extends TreeEntity {
     @ApiModelProperty(value = "类型名称")
     private String name;
 
+    @ApiModelProperty(value = "父级id")
+    private Long parentId;
+
     /**
      * 排序号
      */

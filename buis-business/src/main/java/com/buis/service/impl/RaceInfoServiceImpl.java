@@ -2,25 +2,27 @@ package com.buis.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.domain.AjaxResult;
-import com.buis.common.core.domain.R;
 import com.buis.common.core.domain.model.LoginUser;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
+import com.buis.dto.TeacherExportToDaDto;
+import com.buis.dto.TeacherExportToDiDto;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
-import com.buis.system.service.ISysUserService;
 import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -365,18 +367,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfo> getUserRaceList(Long userId) {
-        //获取登录用户
-        String loginIdStr = StpUtil.getLoginId().toString();
-        Long loginId;
-        try {
-            loginId = Long.parseLong(loginIdStr);
-        } catch (NumberFormatException e) {
-            throw new ServiceException("无效的用户ID格式");
-        }
-        //不是本人不能操作
-        if (!loginId.equals(userId)){
-            throw new ServiceException("无权限,请联系管理员");
-        }
+//        //获取登录用户
+//        String loginIdStr = StpUtil.getLoginId().toString();
+//        Long loginId;
+//        try {
+//            loginId = Long.parseLong(loginIdStr);
+//        } catch (NumberFormatException e) {
+//            throw new ServiceException("无效的用户ID格式");
+//        }
+//        //不是本人不能操作
+//        if (!loginId.equals(userId)){
+//            throw new ServiceException("无权限,请联系管理员");
+//        }
 
         //从队伍用户表中查出该用户所在信息
         List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
@@ -392,6 +394,79 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //根据raceId<List>查询到对应的比赛信息并返回
         return raceInfoMapper.selectRaceInfoByRaceIds(raceIds);
 
+    }
+
+    @Override
+    public List<TeacherExportToDaDto> exportTeacherDaProjectCount(List<TeacherExportToDaDto> teacherExportDtoList, String name, HttpServletResponse response) {
+        Map<Long, Long> teacherExportMap = exportTeacherProjectCount(teacherExportDtoList, name, response);
+        //遍历map集合, 把值插入到TeacherExportDto
+        for (Map.Entry<Long, Long> entry : teacherExportMap.entrySet()) {
+            TeacherExportToDaDto teacherExportToDaDto = new TeacherExportToDaDto();
+            Long key = entry.getKey();//老师id
+            //通过老师id查询到老师的名字
+            String teacherName = userInfoService.selectUserInfoById(key).getName();
+            teacherExportToDaDto.setTeacherName(teacherName);  //老师名称
+            teacherExportToDaDto.setProjectCount(entry.getValue()); //指导数量
+            teacherExportDtoList.add(teacherExportToDaDto);
+        }
+        return teacherExportDtoList;
+    }
+
+    @Override
+    public List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response) {
+        Map<Long, Long> teacherExportMap = exportTeacherProjectCount(teacherExporToDektDtoList, name, response);
+        //遍历map集合, 把值插入到TeacherExportDto
+        for (Map.Entry<Long, Long> entry : teacherExportMap.entrySet()) {
+            TeacherExportToDiDto teacherExportToDiDto = new TeacherExportToDiDto();
+            Long key = entry.getKey();//老师id
+            //通过老师id查询到老师的名字
+            String teacherName = userInfoService.selectUserInfoById(key).getName();
+            teacherExportToDiDto.setTeacherName(teacherName);  //老师名称
+            teacherExportToDiDto.setProjectCount(entry.getValue()); //指导数量
+            teacherExporToDektDtoList.add(teacherExportToDiDto);
+        }
+        return teacherExporToDektDtoList;
+    }
+
+    /**
+     * 抽取出导出的方法
+     */
+    public <T> Map<Long, Long> exportTeacherProjectCount(List<T> teacherExportDtoList, String name, HttpServletResponse response) {
+        Map<Long, Long> teacherExportMap = new HashMap<>(); //老师id : 指导的项目数量
+        //遍历所有团队
+        TeamInfo teamInfo = new TeamInfo();
+        List<TeamInfoVo> teamInfoVos = teamInfoService.selectTeamInfoList(teamInfo);
+        //判断团队是否是第二课堂类型的
+        for (TeamInfoVo teamInfoVo : teamInfoVos) {
+            if (teamInfoVo.getRaceInfoVo().getParentName().equals(name)) {
+                //是第二课堂, 获取到老师id
+                Long teacher1 = teamInfoVo.getTeacher1();
+                Long teacher2 = teamInfoVo.getTeacher2();
+                //插入到map集合中
+                if (teacher1 != null) {
+                    if (teacherExportMap.containsKey(teacher1)) {
+                        //如果map集合中包含这个老师id,则将数量加一
+                        Long count = teacherExportMap.get(teacher1);
+                        teacherExportMap.put(teacher1, count + 1);
+                    } else {
+                        //如果不包含这个老师id,则将数量设置为1
+                        teacherExportMap.put(teacher1, 1L);
+                    }
+                }
+
+                if (teacher2 != null) {
+                    if (teacherExportMap.containsKey(teacher2)) {
+                        //如果map集合中包含这个老师id,则将数量加一
+                        Long count = teacherExportMap.get(teacher2);
+                        teacherExportMap.put(teacher2, count + 1);
+                    } else {
+                        //如果不包含这个老师id,则将数量设置为1
+                        teacherExportMap.put(teacher2, 1L);
+                    }
+                }
+            }
+        }
+        return teacherExportMap;
     }
 
 

@@ -40,6 +40,7 @@ public class RaceTypeController extends BaseController {
         return success(list);
     }
 
+
     /**
      * 导出比赛类型列表
      */

@@ -4,7 +4,11 @@ import java.util.List;
 
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.domain.RaceInfo;
+import com.buis.dto.TeacherExportToDaDto;
+import com.buis.dto.TeacherExportToDiDto;
 import com.buis.vo.RaceInfoVo;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 比赛信息Service接口
@@ -83,4 +87,7 @@ public interface IRaceInfoService
 
     List<RaceInfo> getUserRaceList(Long userId);
 
+    List<TeacherExportToDaDto> exportTeacherDaProjectCount(List<TeacherExportToDaDto> teacherExporToDektDtoList,String name, HttpServletResponse response);
+
+    List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
 }
