@@ -210,8 +210,10 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
         //查出团队信息
         TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
         //获取指导老师名称
-        String teacher1 = teamInfoVo.getTeacher1();
-        String teacher2 = teamInfoVo.getTeacher2();
+        Long t1 = teamInfoVo.getTeacher1();
+        Long t2 = teamInfoVo.getTeacher2();
+        String teacher1 = userInfoService.selectUserInfoById(t1).getName();
+        String teacher2 = userInfoService.selectUserInfoById(t2).getName();
         //根据指导老师名称查询对应信息
         UserInfoVo teacher1Info = userInfoService.selectUserInfoByName(teacher1);
         UserInfoVo teacher2Info = userInfoService.selectUserInfoByName(teacher2);
