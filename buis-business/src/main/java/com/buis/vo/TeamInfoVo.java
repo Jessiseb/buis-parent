@@ -43,10 +43,25 @@ public class TeamInfoVo extends TeamInfo {
     private String t2College;
 
     /**
+     * 第一指导老师名称
+     */
+    @ApiModelProperty(value = "第一指导老师名称")
+    @Excel(name="第一指导老师名称")
+    private String t1Name;
+
+    /**
+     * 第二指导老师名称
+     */
+    @ApiModelProperty(value = "第二指导老师名称")
+    @Excel(name="第二指导老师名称")
+    private String t2Name;
+
+    /**
      * 队长信息
      */
     @ApiModelProperty(value = "队长信息")
     private UserInfoVo leaderInfo;
+
     /**
      * 比赛信息
      */

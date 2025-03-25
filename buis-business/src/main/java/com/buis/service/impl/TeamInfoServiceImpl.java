@@ -408,6 +408,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return ok;
     }
 
+
+
     /**
      * 后台查询队伍信息列表 Vo
      *
@@ -424,9 +426,12 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         for (TeamInfo team : teamInfoList) {
             TeamInfoVo teamInfoVo = createTeamInfoVo(team);
             //带指导老师查询
-            if (teamInfo.getTeacher() != null) {
+            if (teamInfo.getTeacher1() != null ||teamInfo.getTeacher2() != null ) {
                 //返回该老师指导的队伍id
-                List<Long> teamIds = teamTeacherService.selectStudentIdsByTeacherId(teamInfo.getTeacher());
+                List<Long> teamIds1 = teamTeacherService.selectStudentIdsByTeacherId(teamInfo.getTeacher1());
+                List<Long> teamIds2 = teamTeacherService.selectStudentIdsByTeacherId(teamInfo.getTeacher2());
+                List<Long> teamIds = new ArrayList<>(teamIds1);
+                teamIds1.addAll(teamIds2);
                 for (Long teamId : teamIds) {
                     if (teamId.equals(team.getId())) {
                         teamInfoVo.setIsInstruct(1);

@@ -1,27 +1,30 @@
 package com.buis.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.domain.AjaxResult;
-import com.buis.common.core.domain.R;
 import com.buis.common.core.domain.model.LoginUser;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
+import com.buis.dto.TeacherExportToDaDto;
+import com.buis.dto.TeacherExportToDiDto;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
-import com.buis.system.service.ISysUserService;
 import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 比赛信息Service业务层处理
@@ -30,6 +33,7 @@ import java.util.*;
  * @date 2024-10-23
  */
 @Service
+@Slf4j
 public class RaceInfoServiceImpl implements IRaceInfoService {
     @Resource
     private RaceInfoMapper raceInfoMapper;
@@ -43,6 +47,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
+
 
     @Resource
     private SysRoleMapper sysRoleMapper;
@@ -365,18 +370,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfo> getUserRaceList(Long userId) {
-        //获取登录用户
-        String loginIdStr = StpUtil.getLoginId().toString();
-        Long loginId;
-        try {
-            loginId = Long.parseLong(loginIdStr);
-        } catch (NumberFormatException e) {
-            throw new ServiceException("无效的用户ID格式");
-        }
-        //不是本人不能操作
-        if (!loginId.equals(userId)){
-            throw new ServiceException("无权限,请联系管理员");
-        }
+//        //获取登录用户
+//        String loginIdStr = StpUtil.getLoginId().toString();
+//        Long loginId;
+//        try {
+//            loginId = Long.parseLong(loginIdStr);
+//        } catch (NumberFormatException e) {
+//            throw new ServiceException("无效的用户ID格式");
+//        }
+//        //不是本人不能操作
+//        if (!loginId.equals(userId)){
+//            throw new ServiceException("无权限,请联系管理员");
+//        }
 
         //从队伍用户表中查出该用户所在信息
         List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
@@ -392,6 +397,155 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //根据raceId<List>查询到对应的比赛信息并返回
         return raceInfoMapper.selectRaceInfoByRaceIds(raceIds);
 
+    }
+
+    @Override
+    public List<TeacherExportToDaDto> exportTeacherDaProjectCount(List<TeacherExportToDaDto> teacherExportDtoList, String name, HttpServletResponse response) {
+        Map<Long, Long> teacherExportMap = exportTeacherProjectCount(teacherExportDtoList, name, response);
+        //遍历map集合, 把值插入到TeacherExportDto
+        for (Map.Entry<Long, Long> entry : teacherExportMap.entrySet()) {
+            TeacherExportToDaDto teacherExportToDaDto = new TeacherExportToDaDto();
+            Long key = entry.getKey();//老师id
+            //通过老师id查询到老师的名字
+            String teacherName = userInfoService.selectUserInfoById(key).getName();
+            teacherExportToDaDto.setTeacherName(teacherName);  //老师名称
+            teacherExportToDaDto.setProjectCount(entry.getValue()); //指导数量
+            teacherExportDtoList.add(teacherExportToDaDto);
+        }
+        return teacherExportDtoList;
+    }
+
+    @Override
+    public List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response) {
+        Map<String, Long> teacherExportMap = new HashMap<>(); //老师id : 指导的项目数量
+        //遍历所有race_info
+        RaceInfo raceInfo = new RaceInfo();
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+        log.debug("查询到原始比赛数据量:{}", raceInfoVos.size());
+        //过滤parent_id != 5 的List<RaceInfoVo>
+        List<RaceInfoVo> collect = Optional.ofNullable(raceInfoVos).orElse(Collections.emptyList())
+                .stream()
+//                .filter(Objects::nonNull) // 过滤空元素
+                .filter(raceInfoVo -> raceInfoVo.getParentTid() != null && raceInfoVo.getParentTid() == 5)
+                .collect(Collectors.toList());
+        log.info("过滤后第二课堂比赛数量:{}", collect.size());
+        //第二课堂的比赛详情
+        List<RaceDetail> list = new ArrayList<>();
+        for (RaceInfoVo raceInfoVo : collect) {
+            Optional.ofNullable(raceDetailService.selectRaceDetailByRaceId(raceInfoVo.getId()))
+                    .ifPresent(list::add);
+
+        }
+        log.debug("获取到比赛详情数量:{}", list.size());
+        //遍历list,计算出每个老师负责的比赛有多少个
+        for (RaceDetail raceDetail : list) {
+            String teacherName = Optional.ofNullable(raceDetail)
+                    .map(RaceDetail::getName)
+                    .orElse("");
+            if (StringUtils.isEmpty(teacherName)) {
+                log.warn("比赛ID:{} 无负责人信息", raceDetail.getId());
+                continue;
+            }
+            //如果名字有多个, 按照"、"分割
+            if (teacherName != null && teacherName.contains("、")) {
+                String[] split = teacherName.split("、");
+                for (String tName : split) {
+                    if (teacherExportMap.containsKey(tName)) {
+                        Long count = teacherExportMap.get(tName);
+                        count++;
+                        teacherExportMap.put(tName, count);
+                    } else {
+                        teacherExportMap.put(tName, 1L);
+                    }
+                }
+            }else{
+                if (teacherExportMap.containsKey(teacherName)) {
+                    Long count = teacherExportMap.get(teacherName);
+                    count++;
+                    teacherExportMap.put(teacherName, count);
+                } else {
+                    teacherExportMap.put(teacherName, 1L);
+                }
+            }
+        }
+        log.info("统计完成，涉及教师人数:{}", teacherExportMap.size());
+
+        //遍历map集合, 把值插入到TeacherExportDto
+        for (Map.Entry<String, Long> entry : teacherExportMap.entrySet()) {
+            TeacherExportToDiDto teacherExportToDiDto = new TeacherExportToDiDto();
+            teacherExportToDiDto.setTeacherName(entry.getKey());  //老师名称
+            teacherExportToDiDto.setProjectCount(entry.getValue()); //指导数量
+            teacherExporToDektDtoList.add(teacherExportToDiDto);
+        }
+        log.info("导出数据组装完成，最终记录数:{}", teacherExporToDektDtoList.size());
+        return teacherExporToDektDtoList;
+    }
+
+
+    /**
+     * 抽取出导出的方法
+     */
+    public <T> Map<Long, Long> exportTeacherProjectCount(List<T> teacherExportDtoList, String name, HttpServletResponse response) {
+        Map<Long, Long> teacherExportMap = new HashMap<>();
+        try {
+            // 添加日志记录参数
+            log.debug("开始统计{}类型项目，参数: name={}", name, name);
+
+            TeamInfo teamInfo = new TeamInfo();
+            List<TeamInfoVo> teamInfoVos;
+            try {
+                teamInfoVos = teamInfoService.selectTeamInfoList(teamInfo);
+            } catch (Exception e) {
+                log.error("查询团队信息失败，参数:{}", teamInfo, e);
+                throw new ServiceException("团队信息查询失败:" + e);
+            }
+
+            for (TeamInfoVo teamInfoVo : teamInfoVos) {
+                try {
+                    if (name != null && teamInfoVo.getRaceInfoVo() != null
+                            && name.equals(teamInfoVo.getRaceInfoVo().getParentName())) {
+                        Long teacher1 = teamInfoVo.getTeacher1();
+                        Long teacher2 = teamInfoVo.getTeacher2();
+
+                        if (teacher1 == null && teacher2 == null) {
+                            log.warn("团队ID:{} 无指导老师信息", teamInfoVo.getId());
+                            continue;
+                        }
+
+                        Optional.ofNullable(teacher1).ifPresent(t ->
+                                teacherExportMap.merge(t, 1L, (oldVal, newVal) -> {
+                                    try {
+                                        return oldVal + newVal;
+                                    } catch (Exception e) {
+                                        log.error("统计合并异常，teacherId:{}, oldVal:{}, newVal:{}", t, oldVal, newVal, e);
+                                        throw e;
+                                    }
+                                }));
+
+                        Optional.ofNullable(teacher2).ifPresent(t ->
+                                teacherExportMap.merge(t, 1L, (oldVal, newVal) -> {
+                                    try {
+                                        return oldVal + newVal;
+                                    } catch (Exception e) {
+                                        log.error("统计合并异常，teacherId:{}, oldVal:{}, newVal:{}", t, oldVal, newVal, e);
+                                        throw e;
+                                    }
+                                }));
+                    }
+                } catch (Exception e) {
+                    log.error("处理团队ID:{} 数据时发生异常", teamInfoVo.getId(), e);
+                    throw new ServiceException("数据处理异常:" + e);
+                }
+            }
+            log.debug("统计完成，共处理{}个团队", teamInfoVos.size());
+        } catch (ServiceException e) {
+            log.error("项目统计业务异常: {}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("项目统计未知异常: {}", e.getMessage(), e);
+            throw new ServiceException("项目统计服务异常:" + e);
+        }
+        return teacherExportMap;
     }
 
 

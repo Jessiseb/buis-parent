@@ -125,6 +125,11 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         return raceDetail;
     }
 
+    @Override
+    public List<RaceDetail> batchSelectRaceDetailByRaceIds(List<Long> raceIds) {
+        return raceDetailMapper.batchSelectRaceDetailByRaceIds(raceIds);
+    }
+
     /**
      * 新增分数权重信息
      * 

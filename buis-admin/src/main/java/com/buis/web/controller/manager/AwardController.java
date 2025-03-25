@@ -118,11 +118,11 @@ public class AwardController extends BaseController {
     }
 
 
-    @ApiOperation("根据队伍id查询奖状信息")
+    @ApiOperation("根据队伍id生成奖状信息")
     @PreAuthorize("@ss.hasPermi('buis:award:query')")
     @GetMapping("/getAwardByTeam/{teamId}")
-    public Award selectAwardByTeam(@PathVariable("teamId") Long teamId) {
-        return awardService.selectAwardByTeam(teamId);
+    public R<Award> selectAwardByTeam(@PathVariable("teamId") Long teamId) {
+        return R.ok(awardService.selectAwardByTeam(teamId));
     }
 
     @ApiOperation("根据队伍id生成奖状信息")
@@ -136,19 +136,6 @@ public class AwardController extends BaseController {
     public R<String> batchGenerate(@RequestBody List<Long> teamIds, HttpServletResponse response) throws TemplateException, IOException {
         return awardGenerateService.generateAwardContents(teamIds, response);
     }
-
-    /**
-     * 根据用户id返回用户所获得的奖项
-     */
-    @ApiOperation("根据用户id返回该用户所获得的奖项")
-    @GetMapping("/getUserAward")
-    public R<List<Award>> getawardbyId(
-            @ApiParam(value = "用户id", required = true)
-            @RequestParam("userId") Long userId){
-        List<Award> awards = awardService.selectAwardById(userId);
-        return R.ok(awards);
-    }
-    
 
 
 }
