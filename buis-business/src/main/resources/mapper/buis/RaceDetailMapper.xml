@@ -98,6 +98,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from race_detail
         where race = #{raceId} and is_deleted = 0
     </select>
+    <select id="batchSelectRaceDetailByRaceIds" resultType="com.buis.domain.RaceDetail">
+        select id, race, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
+        from race_detail
+        where race in
+        <foreach collection="raceIds" item="raceId" open="(" separator="," close=")">
+            #{raceId}
+        </foreach>
+        and is_deleted = 0
+    </select>
 
     <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
         insert into race_detail
@@ -164,6 +173,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+
 
     <delete id="deleteRaceDetailById" parameterType="Long">
         update race_detail

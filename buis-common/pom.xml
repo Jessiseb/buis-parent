@@ -217,6 +217,19 @@
             <artifactId>coze-api</artifactId>
             <version>LATEST</version>
         </dependency>
+
+        <!--        &lt;!&ndash; FreeMarker 模板引擎 &ndash;&gt;-->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.31</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>3.1.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 

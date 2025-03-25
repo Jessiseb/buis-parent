@@ -90,4 +90,6 @@ public interface RaceDetailMapper
     public int deleteWeightByRaceD(Long id);
 
     RaceDetail selectRaceDetailByRaceId(@Param("raceId") Long raceId);
+
+    List<RaceDetail> batchSelectRaceDetailByRaceIds(List<Long> raceIds);
 }

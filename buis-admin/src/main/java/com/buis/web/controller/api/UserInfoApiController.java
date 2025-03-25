@@ -8,12 +8,14 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
+import com.buis.domain.Award;
 import com.buis.domain.CollegeMajor;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
+import com.buis.service.impl.AwardServiceImpl;
 import com.buis.vo.FindUserVo;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
@@ -41,6 +43,9 @@ public class UserInfoApiController extends BaseController {
     private ICollegeMajorService collegeMajorService;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private AwardServiceImpl awardService;
+
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
     public R<String> login(@ApiParam(name = "userLoginDTO", value = "用户登录信息", required = true)@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
@@ -160,6 +165,15 @@ public class UserInfoApiController extends BaseController {
 
     }
 
-
-
+    /**
+     * 根据用户id返回用户所获得的奖项
+     */
+    @ApiOperation("根据用户id返回该用户所获得的奖项")
+    @GetMapping("/getUserAward")
+    public R<List<Award>> getawardbyId(
+            @ApiParam(value = "用户id", required = true)
+            @RequestParam("userId") Long userId){
+        List<Award> awards = awardService.selectAwardById(userId);
+        return R.ok(awards);
+    }
 }

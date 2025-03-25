@@ -40,9 +40,9 @@ import java.util.List;
 
 
 /**
- * 队伍管理
+ * 项目团队管理
  */
-@Api(tags = "队伍管理Api")
+@Api(tags = "项目团队管理Api")
 @RestController
 @RequestMapping("/api/team")
 @Slf4j
