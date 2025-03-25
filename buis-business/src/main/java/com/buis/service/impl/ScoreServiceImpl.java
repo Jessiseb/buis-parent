@@ -249,4 +249,10 @@ public class ScoreServiceImpl implements IScoreService {
         return scoreMapper.selectTeamsRanking();
     }
 
+    @Override
+    public List<ScoreVo> fuzzyQuery(ScoreVo scoreVo) {
+
+        return scoreMapper.selectScoreListFuzzyQuery(scoreVo);
+    }
+
 }

@@ -113,4 +113,6 @@ public interface ITeamMemberStudentService {
     List<TeamMemberStudent> selectTeamMemberStudentByUserId(Long userId);
 
     int getRequestCount(Long id, Long race, Long team);
+
+    List<TeamMemberStudentVo> selectTeamMemberStudentListVo(TeamMemberStudentVo teamMemberStudentVo);
 }
