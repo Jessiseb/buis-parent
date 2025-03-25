@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 比赛信息Service业务层处理
@@ -45,6 +46,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
+
 
     @Resource
     private SysRoleMapper sysRoleMapper;
@@ -414,14 +416,52 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     @Override
     public List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response) {
-        Map<Long, Long> teacherExportMap = exportTeacherProjectCount(teacherExporToDektDtoList, name, response);
+        Map<String, Long> teacherExportMap = new HashMap<>(); //老师id : 指导的项目数量
+        //遍历所有race_info
+        RaceInfo raceInfo = new RaceInfo();
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+        //过滤parent_id != 5 的List<RaceInfoVo>
+        List<RaceInfoVo> collect = raceInfoVos.stream()
+                .filter(raceInfoVo -> raceInfoVo.getParentTid() != 5).collect(Collectors.toList());
+
+        //第二课堂的比赛详情
+        List<RaceDetail> list = new ArrayList<>();
+        for (RaceInfoVo raceInfoVo : collect) {
+            //根据id查询到对应比赛详情
+            RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceInfoVo.getId());
+            list.add(raceDetail);
+        }
+
+        //遍历list,计算出每个老师负责的比赛有多少个
+        for (RaceDetail raceDetail : list) {
+            String teacherName = raceDetail.getName();
+            //如果名字有多个, 按照"、"分割
+            if (teacherName!=null && teacherName.contains("、")) {
+                String[] split = teacherName.split("、");
+                for (String tName : split) {
+                    if (teacherExportMap.containsKey(tName)) {
+                        Long count = teacherExportMap.get(tName);
+                        count++;
+                        teacherExportMap.put(tName, count);
+                    } else {
+                        teacherExportMap.put(tName, 1L);
+                    }
+                }
+            }else{
+                if (teacherExportMap.containsKey(teacherName)) {
+                    Long count = teacherExportMap.get(teacherName);
+                    count++;
+                    teacherExportMap.put(teacherName, count);
+                } else {
+                    teacherExportMap.put(teacherName, 1L);
+                }
+            }
+        }
+
         //遍历map集合, 把值插入到TeacherExportDto
-        for (Map.Entry<Long, Long> entry : teacherExportMap.entrySet()) {
+        for (Map.Entry<String, Long> entry : teacherExportMap.entrySet()) {
             TeacherExportToDiDto teacherExportToDiDto = new TeacherExportToDiDto();
-            Long key = entry.getKey();//老师id
-            //通过老师id查询到老师的名字
-            String teacherName = userInfoService.selectUserInfoById(key).getName();
-            teacherExportToDiDto.setTeacherName(teacherName);  //老师名称
+            teacherExportToDiDto.setTeacherName(entry.getKey());  //老师名称
             teacherExportToDiDto.setProjectCount(entry.getValue()); //指导数量
             teacherExporToDektDtoList.add(teacherExportToDiDto);
         }
@@ -436,10 +476,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //遍历所有团队
         TeamInfo teamInfo = new TeamInfo();
         List<TeamInfoVo> teamInfoVos = teamInfoService.selectTeamInfoList(teamInfo);
-        //判断团队是否是第二课堂类型的
+        //判断团队是否是name类型的
         for (TeamInfoVo teamInfoVo : teamInfoVos) {
             if (teamInfoVo.getRaceInfoVo().getParentName().equals(name)) {
-                //是第二课堂, 获取到老师id
+                //是name类型, 获取到老师id
                 Long teacher1 = teamInfoVo.getTeacher1();
                 Long teacher2 = teamInfoVo.getTeacher2();
                 //插入到map集合中
