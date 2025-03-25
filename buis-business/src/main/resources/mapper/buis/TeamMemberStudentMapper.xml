@@ -135,6 +135,24 @@
           and is_deleted = 0
           and is_choosed = 1
     </select>
+    <select id="selectTeamMemberStudentListVo" resultType="com.buis.vo.TeamMemberStudentVo">
+            <include refid="selectTeamMemberStudentVo"/>
+        left join user_info t4 on t1.student = t4.id
+            <where>
+                t1.is_deleted = 0
+                <if test="id != null ">and t1.id = #{id}</if>
+                <if test="race != null ">and t1.race = #{race}</if>
+                <if test="team != null ">and t1.team = #{team}</if>
+                <if test="student != null ">and t1.student = #{student}</if>
+                <if test="decider != null ">and t1.decider = #{decider}</if>
+                <if test="isChoosed != null ">and t1.is_choosed = #{isChoosed}</if>
+                <if test="reason != null  and reason != ''">and t1.reason like concat('%', #{reason}, '%')</if>
+                <if test="studentName != null  and studentName != ''">
+                    and t4.name like concat('%', #{studentName}, '%')
+                </if>
+            </where>
+
+    </select>
 
     <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true"
             keyProperty="id">

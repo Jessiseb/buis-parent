@@ -8,6 +8,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Score;
 import com.buis.service.IScoreService;
+import com.buis.vo.JudgeVo;
 import com.buis.vo.ScoreVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +46,14 @@ public class ScoreController extends BaseController
         return getDataTable(list);
     }
 
+    @ApiOperation("联表模糊查询评分列表")
+    @PreAuthorize("@ss.hasPermi('buis:score:fuzzy')")
+    @GetMapping("/fuzzy")
+    public TableDataInfo fuzzyQuery( ScoreVo scoreVo) {
+        startPage();
+        List<ScoreVo> list = scoreService.fuzzyQuery(scoreVo);
+        return getDataTable(list);
+    }
     /**
      * 导出评分管理列表
      */
