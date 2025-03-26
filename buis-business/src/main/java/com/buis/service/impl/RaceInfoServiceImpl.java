@@ -26,6 +26,7 @@ import com.buis.vo.UserInfoVo;
 import com.buis.vo.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -511,41 +513,59 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         return teacherExportDtoList;
     }
 
+    /**
+     * 导出大数据学院的老师负责的第二课堂项目
+     * @param teacherExporToDektDtoList
+     * @param name
+     * @param response
+     * @return
+     */
     @Override
-    public List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response) {
+    public List<TeacherExportToDiDto> exportTeacherDiProjectCount(int college, int grade, List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response) {
         Map<String, Long> teacherExportMap = new HashMap<>(); //老师id : 指导的项目数量
         //遍历所有race_info
         RaceInfo raceInfo = new RaceInfo();
         List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
-        log.debug("查询到原始比赛数据量:{}", raceInfoVos.size());
+        //根据传入的学年来过滤
+        List<RaceInfoVo> raceInfoVoList = raceInfoVos.stream()
+                .filter(raceInfoVo -> raceInfoVo.getCreateTime().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate().getYear() == grade)
+                .collect(Collectors.toList());
+
+        log.debug("查询到原始比赛数据量:{}", raceInfoVoList.size());
         //过滤parent_id != 5 的List<RaceInfoVo>
-        List<RaceInfoVo> collect = Optional.ofNullable(raceInfoVos).orElse(Collections.emptyList())
+        List<RaceInfoVo> collect = Optional.ofNullable(raceInfoVoList).orElse(Collections.emptyList())
                 .stream()
-//                .filter(Objects::nonNull) // 过滤空元素
                 .filter(raceInfoVo -> raceInfoVo.getParentTid() != null && raceInfoVo.getParentTid() == 5)
                 .collect(Collectors.toList());
         log.info("过滤后第二课堂比赛数量:{}", collect.size());
+
         //第二课堂的比赛详情
         List<RaceDetail> list = new ArrayList<>();
         for (RaceInfoVo raceInfoVo : collect) {
             Optional.ofNullable(raceDetailService.selectRaceDetailByRaceId(raceInfoVo.getId()))
                     .ifPresent(list::add);
-
         }
         log.debug("获取到比赛详情数量:{}", list.size());
-        //遍历list,计算出每个老师负责的比赛有多少个
+
+        //遍历list,计算出每个老师负责的比赛有多少个  并且老师的学院是等于指定学院的
         for (RaceDetail raceDetail : list) {
             String teacherName = Optional.ofNullable(raceDetail)
                     .map(RaceDetail::getName)
                     .orElse("");
-            if (StringUtils.isEmpty(teacherName)) {
-                log.warn("比赛ID:{} 无负责人信息", raceDetail.getId());
-                continue;
-            }
+            //根据名字查询到用户信息
+            UserInfo userInfo;
             //如果名字有多个, 按照"、"分割
-            if (teacherName != null && teacherName.contains("、")) {
+            if (teacherName.contains("、")) {
                 String[] split = teacherName.split("、");
                 for (String tName : split) {
+                    //根据名字查询到用户信息
+                    userInfo = userInfoService.selectUserInfoByName(tName);
+                    //只留下指定学院的
+                    if (userInfo == null || userInfo.getCollege() != college) {
+                        continue;
+                    }
                     if (teacherExportMap.containsKey(tName)) {
                         Long count = teacherExportMap.get(tName);
                         count++;
@@ -555,6 +575,15 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                     }
                 }
             }else{
+                UserInfoVo userInfoVo = userInfoService.selectUserInfoByName(teacherName);
+                //只留下指定的学院的
+                if (userInfoVo == null || userInfoVo.getCollege() != college) {
+                    continue;
+                }
+                if (StringUtils.isEmpty(teacherName)) {
+                    log.warn("比赛ID:{} 无负责人信息", raceDetail.getId());
+                    continue;
+                }
                 if (teacherExportMap.containsKey(teacherName)) {
                     Long count = teacherExportMap.get(teacherName);
                     count++;
