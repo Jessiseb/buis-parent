@@ -251,4 +251,51 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ( #{item.race}, #{item.rRank}, #{item.name}, #{item.quantity}, #{item.remark}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
         </foreach>
     </insert>
+
+    <select id="getSecondClassCountByMonth" resultType="com.buis.vo.SecondClassCountVo">
+        SELECT
+            cm.name AS college_name,
+            COUNT(ri.id) AS count
+        FROM
+            race_info ri
+                JOIN
+            (
+                SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+                FROM
+                    race_detail
+            ) AS rd ON ri.id = rd.race
+                JOIN
+            user_info ui ON rd.name = ui.name
+                JOIN
+            t_college_major cm ON ui.college = cm.id
+        WHERE
+            ri.parent_tid = 5
+          AND YEAR(ri.create_time) = YEAR(CURRENT_DATE)
+          AND MONTH(ri.create_time) = MONTH(CURRENT_DATE)
+        GROUP BY
+            cm.name
+    </select>
+
+    <select id="getSecondClassCountByYear" resultType="com.buis.vo.SecondClassCountVo">
+        SELECT
+            cm.name AS college_name,
+            COUNT(ri.id) AS count
+        FROM
+            race_info ri
+                JOIN
+            (
+                SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+                FROM
+                    race_detail
+            ) AS rd ON ri.id = rd.race
+                JOIN
+            user_info ui ON rd.name = ui.name
+                JOIN
+            t_college_major cm ON ui.college = cm.id
+        WHERE
+            ri.parent_tid = 5
+          AND YEAR(ri.create_time) = YEAR(CURRENT_DATE)
+        GROUP BY
+            cm.name
+    </select>
 </mapper>

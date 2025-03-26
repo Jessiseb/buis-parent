@@ -99,4 +99,13 @@ public class RaceApiController extends BaseController {
         return raceInfoService.getSecondClassCountByMonth();
     }
 
+    /**
+     * 查询今年各学院第二课堂活动数量
+     */
+    @ApiOperation("查询今年各学院第二课堂活动数量")
+    @GetMapping("/getSecondClassCount/year")
+    public List<SecondClassCountVo> getSecondClassCountByYear() {
+        return raceInfoService.getSecondClassCountByYear();
+    }
+
 }
