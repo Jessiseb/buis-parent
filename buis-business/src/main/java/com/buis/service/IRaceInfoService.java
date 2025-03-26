@@ -102,7 +102,7 @@ public interface IRaceInfoService
 
     MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo);
 
-    List<SecondClassCountVo> getSecondClassCountByMonth();
+    List<SecondClassCountVo> getSecondClassCountByMonth(Integer month);
 
-    List<SecondClassCountVo> getSecondClassCountByYear();
+    List<SecondClassCountVo> getSecondClassCountByYear(Integer year);
 }
