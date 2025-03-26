@@ -1,6 +1,5 @@
 package com.buis.common.core.page;
 
-import com.github.pagehelper.Page;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -45,11 +44,6 @@ public class MyPageVo<T> implements Serializable
     public MyPageVo(T list)
     {
         this.rows = list;
-        this.total = page.getTotal();
-    }
-
-    public MyPageVo(Page<T> page, List<T> list) {
-        this.rows = (T) list;
         this.total = page.getTotal();
     }
 

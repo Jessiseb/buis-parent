@@ -35,4 +35,9 @@ public class TeamMemberStudentVo extends TeamMemberStudent {
      */
     @ApiModelProperty(value = "所属队伍的名称")
     private String teamName;
+    /**
+     * 学生姓名查询
+     */
+    @ApiModelProperty(value = "学生姓名查询参数")
+    private String studentName;
 }

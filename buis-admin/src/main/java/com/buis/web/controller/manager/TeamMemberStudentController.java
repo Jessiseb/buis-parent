@@ -44,6 +44,19 @@ public class TeamMemberStudentController extends BaseController {
         return getDataTable(list);
     }
 
+    /**
+     * 模糊查询队伍成员管理列表
+     * @param teamMemberStudentVo
+     * @return
+     */
+    @ApiOperation("模糊查询队伍成员管理列表")
+    @PreAuthorize("@ss.hasPermi('buis:teamStudent:list')")
+    @GetMapping("/listVo")
+    public TableDataInfo listVo(TeamMemberStudentVo teamMemberStudentVo) {
+        startPage();
+        List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentListVo(teamMemberStudentVo);
+        return getDataTable(list);
+    }
 
     /**
      * 导出队伍成员管理列表
