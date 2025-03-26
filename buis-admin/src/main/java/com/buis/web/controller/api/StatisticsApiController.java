@@ -1,6 +1,7 @@
 package com.buis.web.controller.api;
 
 import com.buis.service.IRaceInfoService;
+import com.buis.vo.HotRaceVo;
 import com.buis.vo.SecondClassCountVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,5 +43,15 @@ public class StatisticsApiController {
     @GetMapping("/getSecondClassCount/year")
     public List<SecondClassCountVo> getSecondClassCountByYear(@RequestParam(required = false) Integer year) {
         return raceInfoService.getSecondClassCountByYear(year);
+    }
+
+    /**
+     * 获取热门比赛TOP10
+     * @return
+     */
+    @ApiOperation("查询热门比赛")
+    @GetMapping("/getHotRaces")
+    public List<HotRaceVo> getHotRaces() {
+        return raceInfoService.getHotRace();
     }
 }
