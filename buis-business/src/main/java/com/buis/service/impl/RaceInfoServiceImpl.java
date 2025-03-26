@@ -787,7 +787,12 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     @Override
     public List<SecondClassCountVo> getSecondClassCountByMonth() {
-        return null;
+        return raceInfoMapper.getSecondClassCountByMonth();
+    }
+
+    @Override
+    public List<SecondClassCountVo> getSecondClassCountByYear() {
+        return raceInfoMapper.getSecondClassCountByYear();
     }
 
     /**

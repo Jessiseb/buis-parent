@@ -103,4 +103,6 @@ public interface IRaceInfoService
     MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo);
 
     List<SecondClassCountVo> getSecondClassCountByMonth();
+
+    List<SecondClassCountVo> getSecondClassCountByYear();
 }
