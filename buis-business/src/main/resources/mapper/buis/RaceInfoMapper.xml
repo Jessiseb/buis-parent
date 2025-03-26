@@ -254,48 +254,62 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getSecondClassCountByMonth" resultType="com.buis.vo.SecondClassCountVo">
         SELECT
-            cm.name AS college_name,
-            COUNT(ri.id) AS count
-        FROM
-            race_info ri
-                JOIN
-            (
-                SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
-                FROM
-                    race_detail
-            ) AS rd ON ri.id = rd.race
-                JOIN
-            user_info ui ON rd.name = ui.name
-                JOIN
-            t_college_major cm ON ui.college = cm.id
-        WHERE
-            ri.parent_tid = 5
-          AND YEAR(ri.create_time) = YEAR(CURRENT_DATE)
-          AND MONTH(ri.create_time) = MONTH(CURRENT_DATE)
-        GROUP BY
-            cm.name
+            all_colleges.name AS college_name,
+            COALESCE(activity_count.count, 0) AS count
+        FROM (
+                 -- 子查询获取所有学院信息
+                 SELECT name
+                 FROM t_college_major where college = 0
+             ) all_colleges
+                 LEFT JOIN (
+            -- 子查询统计每个学院符合条件的活动数量
+            SELECT
+                cm.name AS college_name,
+                COUNT(ri.id) AS count
+            FROM
+                race_info ri
+                    JOIN (
+                    SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+                    FROM race_detail
+                ) rd ON ri.id = rd.race
+                    JOIN user_info ui ON rd.name = ui.name
+                    JOIN t_college_major cm ON ui.college = cm.id
+            WHERE
+                ri.parent_tid = 5
+              AND YEAR(ri.create_time) = YEAR(CURRENT_DATE)
+              AND MONTH(ri.create_time) = IFNULL(#{month}, MONTH(CURRENT_DATE))
+            GROUP BY
+                cm.name
+        ) activity_count ON all_colleges.name = activity_count.college_name
     </select>
 
     <select id="getSecondClassCountByYear" resultType="com.buis.vo.SecondClassCountVo">
         SELECT
-            cm.name AS college_name,
-            COUNT(ri.id) AS count
-        FROM
-            race_info ri
-                JOIN
-            (
-                SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
-                FROM
-                    race_detail
-            ) AS rd ON ri.id = rd.race
-                JOIN
-            user_info ui ON rd.name = ui.name
-                JOIN
-            t_college_major cm ON ui.college = cm.id
-        WHERE
-            ri.parent_tid = 5
-          AND YEAR(ri.create_time) = YEAR(CURRENT_DATE)
-        GROUP BY
-            cm.name
+            all_colleges.name AS college_name,
+            COALESCE(activity_count.count, 0) AS count
+        FROM (
+                 -- 子查询获取所有学院信息
+                 SELECT name
+                 FROM t_college_major where college = 0
+             ) all_colleges
+                 LEFT JOIN (
+            -- 子查询统计每个学院符合条件的活动数量
+            SELECT
+                cm.name AS college_name,
+                COUNT(ri.id) AS count
+            FROM
+                race_info ri
+                    JOIN (
+                    SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+                    FROM race_detail
+                ) rd ON ri.id = rd.race
+                    JOIN user_info ui ON rd.name = ui.name
+                    JOIN t_college_major cm ON ui.college = cm.id
+            WHERE
+                ri.parent_tid = 5
+              AND YEAR(ri.create_time) = IFNULL(#{year}, YEAR(CURRENT_DATE))
+            GROUP BY
+                cm.name
+        ) activity_count ON all_colleges.name = activity_count.college_name
     </select>
 </mapper>

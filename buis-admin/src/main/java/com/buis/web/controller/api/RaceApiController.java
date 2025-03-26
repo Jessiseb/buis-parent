@@ -89,23 +89,4 @@ public class RaceApiController extends BaseController {
         List<RaceInfo> result = raceInfoService.getUserRaceList(userId);
         return R.ok(result);
     }
-
-    /**
-     * 查询本月各学院第二课堂活动数量
-     */
-    @ApiOperation("查询本月各学院第二课堂活动数量")
-    @GetMapping("/getSecondClassCount/month")
-    public List<SecondClassCountVo> getSecondClassCountByMonth() {
-        return raceInfoService.getSecondClassCountByMonth();
-    }
-
-    /**
-     * 查询今年各学院第二课堂活动数量
-     */
-    @ApiOperation("查询今年各学院第二课堂活动数量")
-    @GetMapping("/getSecondClassCount/year")
-    public List<SecondClassCountVo> getSecondClassCountByYear() {
-        return raceInfoService.getSecondClassCountByYear();
-    }
-
 }
