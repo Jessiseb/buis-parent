@@ -3,6 +3,7 @@ package com.buis.service;
 import java.util.List;
 
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.domain.RaceInfo;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
@@ -90,4 +91,13 @@ public interface IRaceInfoService
     List<TeacherExportToDaDto> exportTeacherDaProjectCount(List<TeacherExportToDaDto> teacherExporToDektDtoList,String name, HttpServletResponse response);
 
     List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
+
+    /**
+     * 判断对象的所有字段是否为空
+     * @param obj
+     * @return
+     **/
+    boolean allFieldsEmpty(Object obj);
+
+    MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo);
 }

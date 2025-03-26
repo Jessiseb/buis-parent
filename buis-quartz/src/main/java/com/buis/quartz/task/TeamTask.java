@@ -59,7 +59,7 @@ public class TeamTask {
             redisTemplate.delete(keys1);
         }
         // 分页查询队伍信息
-        //缓存前五页的队伍信息
+        //缓存首页的队伍信息
         int[] pageNums = {1};
         int[] pageSizes = {8,10};
         teamInfo.setIsPublish("Y");
