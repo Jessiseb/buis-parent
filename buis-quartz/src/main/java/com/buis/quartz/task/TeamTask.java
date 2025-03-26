@@ -44,12 +44,7 @@ public class TeamTask {
             // 删除匹配的键
             redisTemplate.delete(keys);
         }
-        // 查询所有队伍信息
-        //缓存所有队伍信息
         TeamInfo teamInfo = new TeamInfo();
-        List<TeamInfoVo> teamInfoVos = teamInfoService.selectTeamInfoList(teamInfo);
-        teamInfoVos.forEach(teamInfoVo -> redisCache.setCacheObject("team:" + teamInfoVo.getId(), JSON.toJSONString(teamInfoVo), 1, TimeUnit.DAYS));
-
 
         //清理分页缓存
         String pattern1 = "teams:page:*:size:*";

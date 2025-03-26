@@ -41,6 +41,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.buis.common.constant.CacheConstants.QUERY_HOT_RACE_LOCK;
 import static com.buis.common.constant.CacheConstants.QUERY_RACE_LOCK;
 
 /**
@@ -70,6 +71,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private RedisTemplate redisTemplate;
     @Autowired
     private RedissonClient redissonClient;
+    @Autowired
+    private IPreSignStudentService preSignStudentService;
 
 
     @Resource
@@ -773,7 +776,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             myPageVo = new MyPageVo(page, raceInfoVos);
             String json = objectMapper.writeValueAsString(myPageVo);
             redisCache.setCacheObject(pageCacheKey, json, 1, TimeUnit.DAYS);
-
+            myPageVo = addFieldToJson(json);
         } catch (Exception e) {
             throw new ServiceException("查询失败: " + e.getMessage());
         } finally {
@@ -793,6 +796,90 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public List<SecondClassCountVo> getSecondClassCountByYear(Integer year) {
         return raceInfoMapper.getSecondClassCountByYear(year);
+    }
+
+    /**
+     * 获取热门比赛
+     *
+     * @return
+     */
+    @Override
+    public List<HotRaceVo> getHotRace() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String hotRaceJson = redisCache.getCacheObject("hotRace");
+        if (StringUtils.isNotEmpty(hotRaceJson)) {
+            //存在直接返回
+            return JSON.parseArray(hotRaceJson, HotRaceVo.class);
+        }
+        //判断空值
+        if (hotRaceJson!= null) {
+            return null;
+        }
+
+        String lockKey = QUERY_HOT_RACE_LOCK;
+        RLock rLock = redissonClient.getLock(lockKey);
+        try {
+            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+            //再次检查缓存
+            hotRaceJson = redisCache.getCacheObject("hotRace");
+            if (StringUtils.isNotEmpty(hotRaceJson)) {
+                return JSON.parseArray(hotRaceJson, HotRaceVo.class);
+            }
+            //判断空值
+            if (hotRaceJson!= null) {
+                return null;
+            }
+            if (!isLock) {
+                Thread.sleep(50);
+                return getHotRace();
+            }
+            //拿到锁，查询数据库
+            // 获取所有比赛信息
+            RaceInfo r = new RaceInfo();
+            List<RaceInfoVo> raceInfoList = raceInfoMapper.selectRaceInfoList(r);
+
+            // 用于存储每个比赛的报名人数
+            Map<Long, Integer> raceRegistrationCountMap = new HashMap<>();
+
+            // 查询未删除的报名记录
+            PreSignStudent p = new PreSignStudent();
+            List<PreSignStudentVo> preSignStudentList = preSignStudentService.selectPreSignStudentList(p);
+
+            // 统计每个比赛的报名人数
+            for (PreSignStudent preSignStudent : preSignStudentList) {
+                Long raceId = preSignStudent.getRace();
+                raceRegistrationCountMap.put(raceId, raceRegistrationCountMap.getOrDefault(raceId, 0) + 1);
+            }
+
+            // 封装结果
+            List<HotRaceVo> resultList = new ArrayList<>();
+            for (RaceInfo raceInfo : raceInfoList) {
+                Long raceId = raceInfo.getId();
+                Integer count = raceRegistrationCountMap.getOrDefault(raceId, 0);
+                HotRaceVo vo = new HotRaceVo();
+                vo.setRaceName(raceInfo.getName());
+                vo.setRegistrationCount(count);
+                resultList.add(vo);
+            }
+
+            // 按报名人数降序排序，并取前10个
+            resultList.sort((o1, o2) -> o2.getRegistrationCount() - o1.getRegistrationCount());
+            if (resultList.size() > 10) {
+                List<HotRaceVo> hotRaceVoList = resultList.subList(0, 10);
+                redisCache.setCacheObject("hotRace", objectMapper.writeValueAsString(hotRaceVoList), 1, TimeUnit.DAYS);
+                return hotRaceVoList;
+            } else {
+                redisCache.setCacheObject("hotRace", objectMapper.writeValueAsString(resultList), 1, TimeUnit.DAYS);
+                return resultList;
+            }
+        } catch (Exception e) {
+            throw new ServiceException("查询失败: " + e.getMessage());
+        } finally {
+            //释放锁
+            if (rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
+        }
     }
 
     /**
