@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="raceName" column="race_name"/>
         <result property="race" column="race"/>
         <result property="name" column="name"/>
+        <result property="count" column="count"/>
         <result property="phone" column="phone"/>
         <result property="email" column="email"/>
         <result property="descUrl" column="desc_url"/>
@@ -46,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.id,
                t1.race,
                t1.name,
+               t1.count,
                t1.phone,
                t1.email,
                t1.desc_url,
@@ -113,6 +115,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
             <if test="name != null and name != ''">name,</if>
+            <if test="count != null">count,</if>
             <if test="phone != null and phone != ''">phone,</if>
             <if test="email != null and email != ''">email,</if>
             <if test="descUrl != null and descUrl != ''">desc_url,</if>
@@ -160,6 +163,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="descUrl != null and descUrl != ''">desc_url = #{descUrl},</if>
             <if test="groupUrl != null and groupUrl != ''">group_url = #{groupUrl},</if>
             <if test="rule != null">rule = #{rule},</if>
+            <if test="count != null">count = #{count},</if>
             <if test="capacity != null">capacity = #{capacity},</if>
             <if test="teamMin != null">team_min = #{teamMin},</if>
             <if test="teamMax != null">team_max = #{teamMax},</if>
