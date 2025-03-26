@@ -91,7 +91,7 @@ public interface IRaceInfoService
 
     List<TeacherExportToDaDto> exportTeacherDaProjectCount(List<TeacherExportToDaDto> teacherExporToDektDtoList,String name, HttpServletResponse response);
 
-    List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
+    List<TeacherExportToDiDto> exportTeacherDiProjectCount(int college,int grade,List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
 
     /**
      * 判断对象的所有字段是否为空
