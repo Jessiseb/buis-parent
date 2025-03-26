@@ -444,7 +444,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     }
 
     /**
-     * 根据队伍id查询队伍信息(缓存)
+     * 分页查询队伍信息(缓存)
      *
      * @param teamInfo
      * @return
@@ -576,7 +576,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
 
     /**
-     * 查询队伍信息
+     * 根据ID查询队伍信息
      *
      * @param id 队伍信息主键
      * @return 队伍信息
