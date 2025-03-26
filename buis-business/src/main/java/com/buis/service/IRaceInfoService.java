@@ -8,6 +8,7 @@ import com.buis.domain.RaceInfo;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.SecondClassCountVo;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -100,4 +101,6 @@ public interface IRaceInfoService
     boolean allFieldsEmpty(Object obj);
 
     MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo);
+
+    List<SecondClassCountVo> getSecondClassCountByMonth();
 }

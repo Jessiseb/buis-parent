@@ -19,10 +19,7 @@ import com.buis.dto.TeacherExportToDiDto;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
-import com.buis.vo.RaceDetailVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.vo.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -782,6 +779,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             }
         }
         return myPageVo;
+    }
+
+    @Override
+    public List<SecondClassCountVo> getSecondClassCountByMonth() {
+        return null;
     }
 
     /**
