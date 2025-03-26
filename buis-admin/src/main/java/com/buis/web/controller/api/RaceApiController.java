@@ -13,6 +13,7 @@ import com.buis.service.*;
 import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.PreSignTeacherVo;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.SecondClassCountVo;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -87,6 +88,15 @@ public class RaceApiController extends BaseController {
         //根据用户id查出用户所参加的比赛
         List<RaceInfo> result = raceInfoService.getUserRaceList(userId);
         return R.ok(result);
+    }
+
+    /**
+     * 查询本月各学院第二课堂活动数量
+     */
+    @ApiOperation("查询本月各学院第二课堂活动数量")
+    @GetMapping("/getSecondClassCount/month")
+    public List<SecondClassCountVo> getSecondClassCountByMonth() {
+        return raceInfoService.getSecondClassCountByMonth();
     }
 
 }
