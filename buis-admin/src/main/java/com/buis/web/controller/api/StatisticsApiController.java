@@ -10,4 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StatisticsApiController {
 
 
+    /**
+     * 统计各年级学生的参与活动
+     */
 }
