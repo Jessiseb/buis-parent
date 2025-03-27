@@ -358,9 +358,8 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
     @Override
-    public List<UserInfoVo> selectAllTeachers() {
-        List<UserInfoVo> userInfos = userInfoMapper.selectTeachers(1);
-        return userInfos;
+    public List<UserInfoVo> selectAllTeachers(Integer isTeacher) {
+        return userInfoMapper.selectTeachers(isTeacher);
     }
 
 

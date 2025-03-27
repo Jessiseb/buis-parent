@@ -179,17 +179,18 @@ public class UserInfoApiController extends BaseController {
     }
 
     /**
-     * 查询老师信息
+     * 查询老师或学生信息
      */
-    @ApiOperation("查询老师信息")
+    @ApiOperation("查询老师或学生信息")
     @GetMapping("/teachers")
-    public R<List<UserInfoVo>> getAllTeachers(){
+    public R<List<UserInfoVo>> getAllUser(@ApiParam(name = "isTeacher", value = "是否为老师标识", required = true)
+                                              @RequestParam("isTeacher") Integer isTeacher){
         try {
-            List<UserInfoVo> teachers = userInfoService.selectAllTeachers();
-            if (teachers.isEmpty()) {
+            List<UserInfoVo> userInfoVoList = userInfoService.selectAllTeachers(isTeacher);
+            if (userInfoVoList.isEmpty()) {
                 return R.fail("暂无老师信息!");
             }
-            return R.ok(teachers);
+            return R.ok(userInfoVoList);
         }catch (Exception e){
             return  R.fail("查询失败，请稍后重试！");
         }

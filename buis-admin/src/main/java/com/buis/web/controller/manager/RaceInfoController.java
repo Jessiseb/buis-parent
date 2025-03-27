@@ -133,8 +133,8 @@ public class RaceInfoController extends BaseController {
     @ApiOperation("导出老师所指导的大创立项项目数量")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
     @PostMapping("/exportTeacherDaProjectCount")
-    public void exportTeacherDaProjectCount(@RequestParam(value = "college", required = false, defaultValue = "1") int college,
-                                            @RequestParam(value = "grade", required = false, defaultValue = "2025") int grade,
+    public void exportTeacherDaProjectCount(@RequestParam(value = "college", required = true) int college,
+                                            @RequestParam(value = "grade", required = true) int grade,
                                             HttpServletResponse response) {
         List<TeacherExportToDaDto> teacherExporToDektDtoList = new LinkedList<>(); //要导出的类型
         List<TeacherExportToDaDto> list = raceInfoService.exportTeacherDaProjectCount(college,grade,teacherExporToDektDtoList, "大创立项", response);
@@ -150,8 +150,8 @@ public class RaceInfoController extends BaseController {
     @ApiOperation("导出大数据学院老师所负责的第二课堂项目数量")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
     @PostMapping("/exportTeacherDiProjectCount")
-    public void exportTeacherDiProjectCount(@RequestParam(value = "college", required = false, defaultValue = "1") int college,
-                                            @RequestParam(value = "grade", required = false, defaultValue = "2025") int grade,
+    public void exportTeacherDiProjectCount(@RequestParam(value = "college", required = true) int college,
+                                            @RequestParam(value = "grade", required = true) int grade,
                                             HttpServletResponse response) {
         List<TeacherExportToDiDto> teacherExporToDektDtoList = new LinkedList<>(); //要导出的类型
         List<TeacherExportToDiDto> list = raceInfoService.exportTeacherDiProjectCount(college,grade,teacherExporToDektDtoList, "第二课堂", response);
