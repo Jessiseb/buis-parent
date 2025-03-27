@@ -1,9 +1,11 @@
 package com.buis.service;
 
+import com.buis.common.core.domain.R;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.vo.UserInfoVo;
+import org.redisson.api.RList;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -108,4 +110,11 @@ public interface IUserInfoService {
      * @return
      */
     UserInfoVo selectUserInfoByName(String name);
+
+    /**
+     *
+     *  查询老师信息
+     * @return
+     */
+    List<UserInfo> selectAllTeachers();
 }

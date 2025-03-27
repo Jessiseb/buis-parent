@@ -80,4 +80,6 @@ public interface UserInfoMapper
     UserInfo selectUserInfoBynumber(String number);
 
     UserInfoVo selectUserInfoByName(String name);
+
+    List<UserInfo> selectTeachers(@Param("isTeacher")int isTeacher);
 }

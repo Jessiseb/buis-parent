@@ -3,6 +3,7 @@ package com.buis.service.impl;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.constant.RedisConstant;
+import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.FormatUtils;
@@ -16,6 +17,7 @@ import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RList;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -334,6 +336,12 @@ public class UserInfoServiceImpl implements IUserInfoService {
             throw new ServiceException("用户名不能为空!");
         }
         return userInfoMapper.selectUserInfoByName(name);
+    }
+
+    @Override
+    public List<UserInfo> selectAllTeachers() {
+        List<UserInfo> userInfos = userInfoMapper.selectTeachers(1);
+        return userInfos;
     }
 
 
