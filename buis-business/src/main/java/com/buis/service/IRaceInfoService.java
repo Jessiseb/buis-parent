@@ -89,7 +89,7 @@ public interface IRaceInfoService
 
     List<RaceInfo> getUserRaceList(Long userId);
 
-    List<TeacherExportToDaDto> exportTeacherDaProjectCount(List<TeacherExportToDaDto> teacherExporToDektDtoList,String name, HttpServletResponse response);
+    List<TeacherExportToDaDto> exportTeacherDaProjectCount(int college,int grade,List<TeacherExportToDaDto> teacherExporToDektDtoList,String name, HttpServletResponse response);
 
     List<TeacherExportToDiDto> exportTeacherDiProjectCount(int college,int grade,List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
 

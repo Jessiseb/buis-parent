@@ -133,9 +133,11 @@ public class RaceInfoController extends BaseController {
     @ApiOperation("导出老师所指导的大创立项项目数量")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
     @PostMapping("/exportTeacherDaProjectCount")
-    public void exportTeacherDaProjectCount(HttpServletResponse response) {
+    public void exportTeacherDaProjectCount(@RequestParam(value = "college", required = false, defaultValue = "1") int college,
+                                            @RequestParam(value = "grade", required = false, defaultValue = "2025") int grade,
+                                            HttpServletResponse response) {
         List<TeacherExportToDaDto> teacherExporToDektDtoList = new LinkedList<>(); //要导出的类型
-        List<TeacherExportToDaDto> list = raceInfoService.exportTeacherDaProjectCount(teacherExporToDektDtoList, "大创立项", response);
+        List<TeacherExportToDaDto> list = raceInfoService.exportTeacherDaProjectCount(college,grade,teacherExporToDektDtoList, "大创立项", response);
         ExcelUtil<TeacherExportToDaDto> util = new ExcelUtil<TeacherExportToDaDto>(TeacherExportToDaDto.class);
         util.exportExcel(response, list, "老师所指导的大创项目数量数据");
     }
