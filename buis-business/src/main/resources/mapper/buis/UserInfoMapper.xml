@@ -47,10 +47,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sex != null and sex !=''"> and t1.sex = #{sex}</if>
             <if test="college != null and sex != ''"> and t1.college = #{college}</if>
             <if test="major != null and major != ''">and t1.major = #{major}</if>
-            <if test="isTeacher != null and isTeacher != ''">and t1.is_teacher=#{isTeacher}</if>
+            <if test="isTeacher != null">and t1.is_teacher=#{isTeacher}</if>
             <if test="title != null and title != ''">and t1.title = #{title}</if>
             <if test="isDisabled != null and isDisabled != ''">and t1.is_disabled = #{isDisabled}</if>
-
         </where>
     </select>
 
@@ -87,6 +86,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, number, email, phone, name, description, sex, college, major, title, is_disabled, is_deleted, create_time, update_time
         from user_info
         where name = #{name} and is_deleted = 0
+    </select>
+    <select id="selectTeachers" resultType="com.buis.vo.UserInfoVo">
+        select id,
+               number,
+               email,
+               phone,
+               name,
+               description,
+               sex,
+               college,
+               major,
+               title
+        from user_info
+        where is_teacher = #{isTeacher} and is_deleted = 0
     </select>
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info

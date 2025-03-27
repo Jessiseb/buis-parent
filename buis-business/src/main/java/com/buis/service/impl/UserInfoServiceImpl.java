@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
+import com.alibaba.dashscope.utils.EncryptionUtils;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
@@ -18,6 +19,7 @@ import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -201,7 +203,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         }
 
         //密码加密
-        String encryptPassword = SaSecureUtil.md5(SALT + password);
+        String encryptPassword =  DigestUtils.md5DigestAsHex((SALT + password).getBytes());
 
         //添加注册信息到数据库
         UserInfo member = new UserInfo();
@@ -279,7 +281,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (!StringUtils.isEmpty(passWord)) {
             // 如果密码不为空则是密码登录
             //把输入的密码加密
-            String encryptPassword = SaSecureUtil.md5(SALT + passWord);
+            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + passWord).getBytes());
             if (!encryptPassword.equals(userInfo.getPassword())) {
                 throw new ServiceException("用户密码错误,请重新输入~");
             }
@@ -334,6 +336,12 @@ public class UserInfoServiceImpl implements IUserInfoService {
             throw new ServiceException("用户名不能为空!");
         }
         return userInfoMapper.selectUserInfoByName(name);
+    }
+
+    @Override
+    public List<UserInfoVo> selectAllTeachers() {
+        List<UserInfoVo> userInfos = userInfoMapper.selectTeachers(1);
+        return userInfos;
     }
 
 
