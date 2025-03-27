@@ -67,7 +67,10 @@ public interface UserInfoMapper
      * @return
      */
     public UserInfo getLoginInfoByUserId(Long id);
+
     public UserInfo getLoginInfoByEmail(String email);
+
+    public UserInfo getLoginInfoByNumber(String number);
 
     /**
      * 根据用户ID列表查询用户信息

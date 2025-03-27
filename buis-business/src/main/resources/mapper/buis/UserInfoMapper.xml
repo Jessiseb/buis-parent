@@ -77,6 +77,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from user_info
         where email = #{email} and is_deleted = 0
     </select>
+    <select id="getLoginInfoByNumber" resultType="com.buis.domain.UserInfo">
+        select id, email,number,password,is_teacher
+        from user_info
+        where number = #{number} and is_deleted = 0
+    </select>
     <select id="selectUserInfoBynumber" resultType="com.buis.domain.UserInfo">
         select id, number, email, phone, name, description, sex, college, major, title, is_disabled, is_deleted, create_time, update_time
         from user_info
