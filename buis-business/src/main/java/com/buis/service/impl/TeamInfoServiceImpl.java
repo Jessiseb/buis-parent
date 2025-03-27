@@ -579,8 +579,66 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public TeamInfoVo selectTeamInfoById(Long id) {
-        TeamInfo team = teamInfoMapper.selectTeamInfoById(id);
-        return team != null ? createTeamInfoVo(team) : new TeamInfoVo();
+        //从redis中查询队伍缓存
+        String key = "team:" + id;
+        String TeamJson = redisCache.getCacheObject("team:" + id);
+
+        //判断是否存在
+        if (StringUtils.isNotEmpty(TeamJson)) {
+            //存在直接返回
+            return JSONUtil.toBean(TeamJson, TeamInfoVo.class);
+        }
+
+        //判断空值
+        if (TeamJson != null) {
+            return null;
+        }
+
+        String lockKey = QUERY_TEAM_LOCK + id;
+        RLock rLock = redissonClient.getLock(lockKey);
+        TeamInfoVo teamInfoVo = null;
+        try {
+            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+
+            //再次检查缓存
+            TeamJson = redisCache.getCacheObject("team:" + id);
+            //判断是否存在
+            if (StringUtils.isNotEmpty(TeamJson)) {
+                //存在直接返回
+                return JSONUtil.toBean(TeamJson, TeamInfoVo.class);
+            }
+            //判断空值
+            if (TeamJson != null) {
+                return null;
+            }
+
+            if (!isLock) {
+                Thread.sleep(50);
+                return selectTeamInfoById(id);
+            }
+
+            //拿到锁，查询数据库
+            TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(id);
+
+            //不存在，返回错误信息
+            if (teamInfo == null) {
+                log.info("将空值写入redis");
+                redisCache.setCacheObject("team:" + id, "", 5, TimeUnit.MINUTES);
+                return null;
+            }
+            //存在，写入redis
+            teamInfoVo = createTeamInfoVo(teamInfo);
+            redisCache.setCacheObject("team:" + id, JSONUtil.toJsonStr(teamInfoVo), 1, TimeUnit.DAYS);
+
+        } catch (Exception e) {
+            throw new ServiceException("查询失败: " + e.getMessage());
+        } finally {
+            //释放锁
+            if (rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
+        }
+        return teamInfoVo;
     }
 
     /**
