@@ -72,6 +72,7 @@ public class StatisticsApiController {
         return raceInfoService.getHotRace();
     }
 
+
     /**
      * 统计各年级学生的参与第二课堂的活动占比
      * @return
@@ -140,5 +141,9 @@ public class StatisticsApiController {
                 .collect(Collectors.toList()));
 
     }
+
+
+
+
 
 }
