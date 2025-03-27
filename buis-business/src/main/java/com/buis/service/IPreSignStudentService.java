@@ -64,4 +64,10 @@ public interface IPreSignStudentService
     void deletePreSignStudentByRaceIdAndUserId(Long race, Long userId);
 
     List<PreSignStudentVo> fuzzyQuery(String name);
+
+
+    //根据学生id查询已经报名的raceId
+    List<Integer> selectRaceByStudentId(Long id);
+
+
 }

@@ -97,4 +97,8 @@ public interface RaceInfoMapper
 
     //根据比赛信息ids查询比赛信息列表
     List<RaceInfo> selectRaceInfoByRaceIds(List<Long> raceIds);
+
+    //根据二级类型id查询一级类型id
+    Long selectRaceTypeBySecondTypeId(@Param("id")Long id);
+
 }
