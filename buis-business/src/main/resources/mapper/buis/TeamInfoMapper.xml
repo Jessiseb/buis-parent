@@ -258,6 +258,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectTeamInfoListByTeacherIds" resultType="com.buis.vo.TeamInfoVo">
 
     </select>
+
+    <select id="selectTeamInfoByRaceIdAndUserId" resultType="com.buis.domain.TeamInfo">
+        select *
+        from team_info
+        where leader = #{userId}
+          and race = #{race}
+          and is_deleted = 0
+    </select>
+
     <delete id="deleteTeamInfoByRaceIdAndUserId">
         update team_info
         set is_deleted = 1

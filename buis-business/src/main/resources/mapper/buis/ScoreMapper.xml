@@ -60,6 +60,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM t_score AS s
         ORDER BY s.score DESC
     </select>
+    <select id="selectScoreListFuzzyQuery" resultType="com.buis.vo.ScoreVo">
+        <include refid="selectScoreVo"/>
+        <where>
+            t1.is_deleted = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="race != null "> and t1.race = #{race}</if>
+            <if test="teacher != null "> and t1.teacher = #{teacher}</if>
+            <if test="team != null "> and t1.team = #{team}</if>
+            <if test="judgeName != null and judgeName != ''">
+                and t3.name LIKE CONCAT('%', #{judgeName}, '%')
+            </if>
+            <if test="projectName != null and projectName != ''">
+            and t4.name LIKE CONCAT('%', #{projectName}, '%')
+            </if>
+        </where>
+    </select>
 
     <insert id="insertScore" parameterType="com.buis.domain.Score" useGeneratedKeys="true" keyProperty="id">
         insert into t_score

@@ -219,6 +219,15 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return teamMemberStudentMapper.getRequestCount(userId,raceId,team);
     }
 
+    @Override
+    public List<TeamMemberStudentVo> selectTeamMemberStudentListVo(TeamMemberStudentVo teamMemberStudentVo) {
+        List<TeamMemberStudentVo> teamMemberStudentVos = teamMemberStudentMapper.selectTeamMemberStudentListVo(teamMemberStudentVo);
+        for (TeamMemberStudentVo teamMemberStudentVo2 : teamMemberStudentVos) {
+            setStudentInfo(teamMemberStudentVo2);
+        }
+        return teamMemberStudentVos;
+    }
+
     /**
      * 抽出判断是否为负责人的方法
      */

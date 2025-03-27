@@ -3,11 +3,13 @@ package com.buis.service;
 import java.util.List;
 
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.domain.RaceInfo;
-import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
+import com.buis.vo.HotRaceVo;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.SecondClassCountVo;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -88,8 +90,28 @@ public interface IRaceInfoService
 
     List<RaceInfo> getUserRaceList(Long userId);
 
-    List<TeacherExportToDaDto> exportTeacherDaProjectCount(List<TeacherExportToDaDto> teacherExporToDektDtoList,String name, HttpServletResponse response);
+    List<TeacherExportToDaDto> exportTeacherDaProjectCount(int college,int grade,List<TeacherExportToDaDto> teacherExporToDektDtoList,String name, HttpServletResponse response);
 
+    List<TeacherExportToDiDto> exportTeacherDiProjectCount(int college,int grade,List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
+
+    /**
+     * 判断对象的所有字段是否为空
+     * @param obj
+     * @return
+     **/
+    boolean allFieldsEmpty(Object obj);
+
+    MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo);
+
+    List<SecondClassCountVo> getSecondClassCountByMonth(Integer month);
+
+    List<SecondClassCountVo> getSecondClassCountByYear(Integer year);
+
+    /**
+     * 获取热门比赛
+     * @return
+     */
+    List<HotRaceVo> getHotRace();
     List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
 
     List<StudentExportToDiDto> exportStudentDiProjectCount(List<StudentExportToDiDto> StudentExporToDektDtoList, String name, HttpServletResponse response);

@@ -61,4 +61,6 @@ public interface IRaceDetailService
     public int deleteRaceDetailById(Long id);
 
     RaceDetail selectRaceDetailByRaceId(Long raceId);
+
+    List<RaceDetail> batchSelectRaceDetailByRaceIds(List<Long> raceIds);
 }

@@ -7,6 +7,7 @@ import com.buis.domain.RaceDetail;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.Reward;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -97,6 +98,10 @@ public interface RaceInfoMapper
 
     //根据比赛信息ids查询比赛信息列表
     List<RaceInfo> selectRaceInfoByRaceIds(List<Long> raceIds);
+
+    List<SecondClassCountVo> getSecondClassCountByMonth(Integer mounth);
+
+    List<SecondClassCountVo> getSecondClassCountByYear(Integer year);
 
     //根据二级类型id查询一级类型id
     Long selectRaceTypeBySecondTypeId(@Param("id")Long id);
