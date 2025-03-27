@@ -12,10 +12,7 @@ import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.common.utils.file.FileUtils;
-import com.buis.domain.TeamInfo;
-import com.buis.domain.TeamMemberStudent;
-import com.buis.domain.TeamMemberTeacher;
-import com.buis.domain.UserInfo;
+import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
@@ -60,6 +57,8 @@ public class TeamApiController extends BaseController {
     private ServerConfig serverConfig;
     @Autowired
     private IEmailService emailService;
+    @Autowired
+    private IPreSignStudentService preSignStudentService;
 
     private static final String FILE_DELIMETER = ",";
 
@@ -123,6 +122,15 @@ public class TeamApiController extends BaseController {
             if (teamMemberStudentService.getRequestCount(userInfoVo.getId(),teamInfo.getRace(),team)>=1) {
                 log.info("您已经邀请过学号为:"+userInfoVo.getNumber()+"的用户，请勿重复邀请");
                 throw new ServiceException("您已经邀请过学号为:"+userInfoVo.getNumber()+"的用户，请勿重复邀请");
+            }
+        }
+
+
+        // 检查邀请的成员是否已经预报名比赛
+        for (UserInfoVo userInfoVo : userInfoVoList) {
+            PreSignStudent preSignStudent = preSignStudentService.selectByUserIdAndRace(userInfoVo.getId(), teamInfo.getRace());
+            if (preSignStudent == null || preSignStudent.getIsDeleted() != 0) {
+                throw new ServiceException("学号为:" + userInfoVo.getNumber() + "的用户尚未预报名该比赛");
             }
         }
 

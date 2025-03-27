@@ -109,6 +109,6 @@ public interface IUserInfoService {
      */
     UserInfoVo selectUserInfoByName(String name);
 
-    List<UserInfoVo> selectAllTeachers();
+    List<UserInfoVo> selectAllTeachers(Integer isTeacher);
 
 }
