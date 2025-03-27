@@ -65,6 +65,11 @@ public class RaceApiController extends BaseController {
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
             @ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
         startPage();
+        //判断是不是条件查询
+        if(raceInfoService.allFieldsEmpty(raceInfo)) {
+            //获取缓存
+            return raceInfoService.selectRaceInfoListFromRedis(raceInfo);
+        }
         List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
         return new MyPageVo(list);
     }
@@ -84,7 +89,8 @@ public class RaceApiController extends BaseController {
      */
     @ApiOperation("查询用户参加的所有比赛")
     @GetMapping("/getUserRaceList")
-    public R<List<RaceInfo>> getUserRaceList(@ApiParam(name = "userId", value = "用户id", required = true) Long userId) {
+    public R<List<RaceInfo>> getUserRaceList(@ApiParam(name = "userId", value = "用户id", required = true)
+                                                         @RequestParam Long userId) {
         //根据用户id查出用户所参加的比赛
         List<RaceInfo> result = raceInfoService.getUserRaceList(userId);
         return R.ok(result);

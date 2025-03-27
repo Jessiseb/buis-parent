@@ -7,6 +7,7 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.domain.RaceInfo;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
+import com.buis.vo.HotRaceVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.SecondClassCountVo;
 
@@ -102,7 +103,13 @@ public interface IRaceInfoService
 
     MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo);
 
-    List<SecondClassCountVo> getSecondClassCountByMonth();
+    List<SecondClassCountVo> getSecondClassCountByMonth(Integer month);
 
-    List<SecondClassCountVo> getSecondClassCountByYear();
+    List<SecondClassCountVo> getSecondClassCountByYear(Integer year);
+
+    /**
+     * 获取热门比赛
+     * @return
+     */
+    List<HotRaceVo> getHotRace();
 }
