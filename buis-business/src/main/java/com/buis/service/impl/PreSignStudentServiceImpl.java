@@ -138,4 +138,9 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
         return preSignStudentVos;
     }
 
+    @Override
+    public PreSignStudent selectByUserIdAndRace(Long userId, Long raceId) {
+        return preSignStudentMapper.selectByUserIdAndRace(userId, raceId);
+    }
+
 }
