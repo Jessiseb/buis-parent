@@ -5,11 +5,11 @@ import com.buis.domain.RaceInfo;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.dto.GradeStatistic;
+import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
-import com.buis.service.impl.RaceInfoServiceImpl;
-import com.buis.vo.RaceInfoVo;
+import com.buis.vo.HotRaceVo;
 import com.buis.vo.SecondClassCountVo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -27,54 +28,53 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/statistics")
 public class StatisticsApiController {
-
-
     @Autowired
-    private RaceInfoServiceImpl raceInfoService;
+    private IRaceInfoService raceInfoService;
     @Autowired
     private ITeamInfoService teamInfoService;
     @Autowired
-    private IUserInfoService userInfoService;
-    @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
 
     /**
-     * 查询本月各学院第二课堂活动数量
+     * 统计各年级学生的参与活动
+     */
+
+    /**
+     * 根据月份查询各学院第二课堂活动数量
+     * @param month 没有即查询本月
      */
     @ApiOperation("查询本月各学院第二课堂活动数量")
     @GetMapping("/getSecondClassCount/month")
-    public List<SecondClassCountVo> getSecondClassCountByMonth() {
-        return raceInfoService.getSecondClassCountByMonth();
+    public List<SecondClassCountVo> getSecondClassCountByMonth(@RequestParam(required = false) Integer month) {
+        return raceInfoService.getSecondClassCountByMonth(month);
     }
 
     /**
-     * 查询今年各学院第二课堂活动数量
+     * 根据年份查询各学院第二课堂活动数量
+     * @param year 没有即查询本年
      */
     @ApiOperation("查询今年各学院第二课堂活动数量")
     @GetMapping("/getSecondClassCount/year")
-    public List<SecondClassCountVo> getSecondClassCountByYear() {
-        return raceInfoService.getSecondClassCountByYear();
+    public List<SecondClassCountVo> getSecondClassCountByYear(@RequestParam(required = false) Integer year) {
+        return raceInfoService.getSecondClassCountByYear(year);
     }
-
 
     /**
-     * 统计第二课堂的活动总量
+     * 获取热门比赛TOP10
+     * @return
      */
-    @ApiOperation("第二课堂的活动总量")
-    @GetMapping("/getSecondClassCount")
-    public R<Integer> getSecondClassCount() {
-        RaceInfo raceInfo = new RaceInfo();
-        List<RaceInfoVo> raceInfoVos = raceInfoService.selectRaceInfoList(raceInfo);
-        if (raceInfoVos == null) {
-            raceInfoVos = Collections.emptyList();
-        }
-        return R.ok(raceInfoVos.size());
+    @ApiOperation("查询热门比赛")
+    @GetMapping("/getHotRaces")
+    public List<HotRaceVo> getHotRaces() {
+        return raceInfoService.getHotRace();
     }
-
 
     /**
      * 统计各年级学生的参与第二课堂的活动占比
+     * @return
      */
     @ApiOperation("统计各年级学生的参与第二课堂的活动占比")
     @GetMapping("/getStudentGradeCount")
