@@ -24,6 +24,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -158,7 +159,7 @@ public class UserInfoApiController extends BaseController {
             throw new ServiceException("两次输入的密码不一致,请校验~");
         }
         //密码加密
-        String encryptPassword = SaSecureUtil.md5(SALT + newPassword);
+        String encryptPassword =  DigestUtils.md5DigestAsHex((SALT + newPassword).getBytes());
         user.setPassword(encryptPassword);
         //更新
         return R.ok(userInfoService.updateUserInfo(user));
@@ -176,4 +177,23 @@ public class UserInfoApiController extends BaseController {
         List<Award> awards = awardService.selectAwardById(userId);
         return R.ok(awards);
     }
+
+    /**
+     * 查询老师信息
+     */
+    @ApiOperation("查询老师信息")
+    @GetMapping("/teachers")
+    public R<List<UserInfoVo>> getAllTeachers(){
+        try {
+            List<UserInfoVo> teachers = userInfoService.selectAllTeachers();
+            if (teachers.isEmpty()) {
+                return R.fail("暂无老师信息!");
+            }
+            return R.ok(teachers);
+        }catch (Exception e){
+            return  R.fail("查询失败，请稍后重试！");
+        }
+
+    }
+
 }
