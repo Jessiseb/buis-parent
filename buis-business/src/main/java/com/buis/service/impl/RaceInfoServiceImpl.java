@@ -19,14 +19,9 @@ import com.buis.dto.TeacherExportToDiDto;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
-import com.buis.vo.RaceDetailVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.UserInfoVo;
 import com.buis.vo.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -498,8 +493,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     @Override
-    public List<TeacherExportToDaDto> exportTeacherDaProjectCount(List<TeacherExportToDaDto> teacherExportDtoList, String name, HttpServletResponse response) {
-        Map<Long, Long> teacherExportMap = exportTeacherProjectCount(teacherExportDtoList, name, response);
+    public List<TeacherExportToDaDto> exportTeacherDaProjectCount(int college, int grade, List<TeacherExportToDaDto> teacherExportDtoList, String name, HttpServletResponse response) {
+        Map<Long, Long> teacherExportMap = exportTeacherProjectCount(college, grade, teacherExportDtoList, name, response);
         //遍历map集合, 把值插入到TeacherExportDto
         for (Map.Entry<Long, Long> entry : teacherExportMap.entrySet()) {
             TeacherExportToDaDto teacherExportToDaDto = new TeacherExportToDaDto();
@@ -610,7 +605,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     /**
      * 抽取出导出的方法
      */
-    public <T> Map<Long, Long> exportTeacherProjectCount(List<T> teacherExportDtoList, String name, HttpServletResponse response) {
+    public <T> Map<Long, Long> exportTeacherProjectCount(int college, int grade, List<T> teacherExportDtoList, String name, HttpServletResponse response) {
         Map<Long, Long> teacherExportMap = new HashMap<>();
         try {
             // 添加日志记录参数
@@ -629,6 +624,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 try {
                     if (name != null && teamInfoVo.getRaceInfoVo() != null
                             && name.equals(teamInfoVo.getRaceInfoVo().getParentName())) {
+                        //过滤掉不在指定学年的
+                        if (teamInfoVo.getRaceInfoVo().getCreateTime().toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate().getYear() != grade) {
+                            continue;
+                        }
+
                         Long teacher1 = teamInfoVo.getTeacher1();
                         Long teacher2 = teamInfoVo.getTeacher2();
 
@@ -636,9 +638,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                             log.warn("团队ID:{} 无指导老师信息", teamInfoVo.getId());
                             continue;
                         }
-
-                        Optional.ofNullable(teacher1).ifPresent(t ->
-                                teacherExportMap.merge(t, 1L, (oldVal, newVal) -> {
+                        //过滤不是指定学院,
+                        Optional.ofNullable(teacher1)
+                                .filter(t -> userInfoService.selectUserInfoById(teacher1).getCollege() == college)
+                                .ifPresent(t -> teacherExportMap.merge(t, 1L, (oldVal, newVal) -> {
                                     try {
                                         return oldVal + newVal;
                                     } catch (Exception e) {
@@ -647,8 +650,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                                     }
                                 }));
 
-                        Optional.ofNullable(teacher2).ifPresent(t ->
-                                teacherExportMap.merge(t, 1L, (oldVal, newVal) -> {
+                        Optional.ofNullable(teacher2)
+                                .filter(t -> userInfoService.selectUserInfoById(teacher2).getCollege() == college)
+                                .ifPresent(t -> teacherExportMap.merge(t, 1L, (oldVal, newVal) -> {
                                     try {
                                         return oldVal + newVal;
                                     } catch (Exception e) {
