@@ -8,15 +8,13 @@ import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
+import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
-import com.buis.vo.RaceDetailVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +44,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
+    @Resource
+    private IPreSignStudentService preSignStudentService;
+    @Resource
+    private IUserInfoService userInfoService;
 
 
     @Resource
@@ -295,6 +297,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 审批第二课堂
+     *
      * @param id
      * @return
      */
@@ -319,7 +322,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             Long roleId = (Long) map.get("roleId");
             roleIdsMap.put(roleType, roleId);
         }
-       //获取院级和校级角色id
+        //获取院级和校级角色id
         Long schoolRoleId = roleIdsMap.get("校级id");
         Long collegeRoleId = roleIdsMap.get("院级id");
 
@@ -334,36 +337,37 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             } catch (Exception e) {
                 e.printStackTrace();
                 return AjaxResult.error("校级审核失败: " + e.getMessage());
-             }
-            } else if (isCollegeUser) {
-                // 用户是院级用户
-                try {
-                    raceInfoMapper.updateRaceInfoStatus(id, 5);
-                    return AjaxResult.success("院级审核成功");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return AjaxResult.error("院级审核失败: " + e.getMessage());
-                }
             }
+        } else if (isCollegeUser) {
+            // 用户是院级用户
+            try {
+                raceInfoMapper.updateRaceInfoStatus(id, 5);
+                return AjaxResult.success("院级审核成功");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return AjaxResult.error("院级审核失败: " + e.getMessage());
+            }
+        }
 
         return AjaxResult.error("当前用户不是院级或校级用户");
     }
 
 
-
     /**
      * 根据状态查询比赛信息
+     *
      * @param i
      * @return
      */
     @Override
     public List<RaceInfo> selectRaceInfoByStatu(Long i) {
-        return  raceInfoMapper.selectRaceInfoByStatu(i);
+        return raceInfoMapper.selectRaceInfoByStatu(i);
 
     }
 
     /**
      * 根据用户id查询出用户所参加的所有比赛
+     *
      * @param userId
      * @return
      */
@@ -436,7 +440,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         for (RaceDetail raceDetail : list) {
             String teacherName = raceDetail.getName();
             //如果名字有多个, 按照"、"分割
-            if (teacherName!=null && teacherName.contains("、")) {
+            if (teacherName != null && teacherName.contains("、")) {
                 String[] split = teacherName.split("、");
                 for (String tName : split) {
                     if (teacherExportMap.containsKey(tName)) {
@@ -447,7 +451,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                         teacherExportMap.put(tName, 1L);
                     }
                 }
-            }else{
+            } else {
                 if (teacherExportMap.containsKey(teacherName)) {
                     Long count = teacherExportMap.get(teacherName);
                     count++;
@@ -509,6 +513,76 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         return teacherExportMap;
     }
 
+
+    @Override
+    public List<StudentExportToDiDto> exportStudentDiProjectCount(List<StudentExportToDiDto> StudentExportToDiDtoList, String name, HttpServletResponse response) {
+        Map<String, Long> studentExportMap = new HashMap<>(); //老师id : 指导的项目数量
+//        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(id);
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoByName(name);
+        Long id = userInfoVo.getId();
+        Long count = 0L;
+//        List<RaceDetail> list = new ArrayList<>();
+        List<Integer> integers = preSignStudentService.selectRaceByStudentId(id);
+        for (Integer integer : integers) {
+            Long race = raceInfoMapper.selectRaceTypeBySecondTypeId(Long.valueOf(integer));
+            if (race == 5) {
+                count++;
+            }
+        }
+
+        studentExportMap.put(name, count);
+//        //遍历所有race_info
+//        RaceInfo raceInfo = new RaceInfo();
+//
+//
+//        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+//        //过滤parent_id != 5 的List<RaceInfoVo>
+//        List<RaceInfoVo> collect = raceInfoVos.stream()
+//                .filter(raceInfoVo -> raceInfoVo.getParentTid() != 5).collect(Collectors.toList());
+//
+//        //第二课堂的比赛详情
+//        List<RaceDetail> list = new ArrayList<>();
+//        for (RaceInfoVo raceInfoVo : collect) {
+//            //根据id查询到对应比赛详情
+//            RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceInfoVo.getId());
+//            list.add(raceDetail);
+//        }
+
+        //遍历list,计算出每个老师负责的比赛有多少个
+//        for (RaceDetail raceDetail : list) {
+//            String teacherName = raceDetail.getName();
+//            //如果名字有多个, 按照"、"分割
+//            if (teacherName != null && teacherName.contains("、")) {
+//                String[] split = teacherName.split("、");
+//                for (String tName : split) {
+//                    if (studentExportMap.containsKey(tName)) {
+//                        Long count = studentExportMap.get(tName);
+//                        count++;
+//                        studentExportMap.put(tName, count);
+//                    } else {
+//                        studentExportMap.put(tName, 1L);
+//                    }
+//                }
+//            } else {
+//                if (studentExportMap.containsKey(teacherName)) {
+//                    Long count = studentExportMap.get(teacherName);
+//                    count++;
+//                    studentExportMap.put(teacherName, count);
+//                } else {
+//                    studentExportMap.put(teacherName, 1L);
+//                }
+//            }
+//        }
+
+        //遍历map集合, 把值插入到StudentExportDto
+        for (Map.Entry<String, Long> entry : studentExportMap.entrySet()) {
+            StudentExportToDiDto studentExportToDiDto = new StudentExportToDiDto();
+            studentExportToDiDto.setStudentName(entry.getKey());  //老师名称
+            studentExportToDiDto.setProjectCount(entry.getValue()); //指导数量
+            StudentExportToDiDtoList.add(studentExportToDiDto);
+        }
+        return StudentExportToDiDtoList;
+    }
 
     /**
      * 判断当前时间是否在报名时间内

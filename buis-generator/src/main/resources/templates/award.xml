@@ -25,7 +25,7 @@
         <pkg:xmlData>
             <w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpsCustomData="http://www.wps.cn/officeDocument/2013/wpsCustomData" mc:Ignorable="w14 w15 wp14">
                 <w:body>
-                    <w:p w14:paraId="73288D01">
+                    <w:p w14:paraId="04235C10">
                         <w:pPr>
                             <w:spacing w:line="500" w:lineRule="exact"/>
                             <w:rPr>
@@ -64,10 +64,8 @@
                             </w:rPr>
                             <w:t>同学：</w:t>
                         </w:r>
-                        <w:bookmarkStart w:id="0" w:name="_GoBack"/>
-                        <w:bookmarkEnd w:id="0"/>
                     </w:p>
-                    <w:p w14:paraId="7885F90E">
+                    <w:p w14:paraId="02DAEDDA">
                         <w:pPr>
                             <w:spacing w:line="800" w:lineRule="exact"/>
                             <w:rPr>
@@ -84,7 +82,7 @@
                                 <w:sz w:val="48"/>
                                 <w:szCs w:val="48"/>
                             </w:rPr>
-                            <w:t xml:space="preserve"> </w:t>
+                            <w:t xml:space="preserve"> 荣获广东白云学院</w:t>
                         </w:r>
                         <w:r>
                             <w:rPr>
@@ -92,25 +90,7 @@
                                 <w:spacing w:val="8"/>
                                 <w:sz w:val="48"/>
                                 <w:szCs w:val="48"/>
-                                <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
-                            </w:rPr>
-                            <w:t xml:space="preserve"> </w:t>
-                        </w:r>
-                        <w:r>
-                            <w:rPr>
-                                <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
-                                <w:spacing w:val="8"/>
-                                <w:sz w:val="48"/>
-                                <w:szCs w:val="48"/>
-                            </w:rPr>
-                            <w:t>荣获广东白云学院</w:t>
-                        </w:r>
-                        <w:r>
-                            <w:rPr>
-                                <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
-                                <w:spacing w:val="8"/>
-                                <w:sz w:val="48"/>
-                                <w:szCs w:val="48"/>
+                                <w:u w:val="none"/>
                                 <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
                             </w:rPr>
                             <w:t>${year}</w:t>
@@ -145,28 +125,19 @@
                             <w:t>项目</w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="68E5E310">
+                    <w:p w14:paraId="78D54C7A">
                         <w:pPr>
                             <w:spacing w:line="800" w:lineRule="exact"/>
-                            <w:ind w:firstLine="4464" w:firstLineChars="900"/>
+                            <w:ind w:firstLine="4960" w:firstLineChars="1000"/>
                             <w:rPr>
                                 <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
                                 <w:spacing w:val="-22"/>
                                 <w:sz w:val="48"/>
                                 <w:szCs w:val="48"/>
-                                <w:u w:val="none"/>
                             </w:rPr>
                         </w:pPr>
-                        <w:r>
-                            <w:rPr>
-                                <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
-                                <w:spacing w:val="8"/>
-                                <w:sz w:val="48"/>
-                                <w:szCs w:val="48"/>
-                                <w:u w:val="none"/>
-                            </w:rPr>
-                            <w:t xml:space="preserve"> </w:t>
-                        </w:r>
+                        <w:bookmarkStart w:id="0" w:name="_GoBack"/>
+                        <w:bookmarkEnd w:id="0"/>
                         <w:r>
                             <w:rPr>
                                 <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
@@ -176,7 +147,7 @@
                                 <w:u w:val="none"/>
                                 <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
                             </w:rPr>
-                            <w:t xml:space="preserve"> ${level}</w:t>
+                            <w:t>${level}</w:t>
                         </w:r>
                         <w:r>
                             <w:rPr>
@@ -189,7 +160,7 @@
                             <w:t xml:space="preserve">等奖 </w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="6966352A">
+                    <w:p w14:paraId="09AA1E23">
                         <w:pPr>
                             <w:spacing w:line="800" w:lineRule="exact"/>
                             <w:ind w:firstLine="960"/>
@@ -208,7 +179,7 @@
                             <w:t>特发此证，以资鼓励。</w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="5F623F93">
+                    <w:p w14:paraId="50A89F3A">
                         <w:pPr>
                             <w:spacing w:line="800" w:lineRule="exact"/>
                             <w:ind w:firstLine="960"/>
@@ -241,9 +212,10 @@
                         <w:r>
                             <w:rPr>
                                 <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
-                                <w:color w:val="FF0000"/>
+                                <w:spacing w:val="8"/>
                                 <w:sz w:val="48"/>
                                 <w:szCs w:val="48"/>
+                                <w:u w:val="none"/>
                                 <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
                             </w:rPr>
                             <w:t>${teacher}</w:t>
@@ -259,7 +231,7 @@
                             <w:t>）</w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="6605E5D9">
+                    <w:p w14:paraId="56A2B2B9">
                         <w:pPr>
                             <w:spacing w:line="780" w:lineRule="exact"/>
                             <w:ind w:right="521" w:firstLine="7480" w:firstLineChars="1700"/>
@@ -278,7 +250,7 @@
                             <w:t>广东白云学院</w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="55CC1C83">
+                    <w:p w14:paraId="1E56F89D">
                         <w:pPr>
                             <w:wordWrap w:val="0"/>
                             <w:spacing w:line="800" w:lineRule="exact"/>
@@ -288,7 +260,6 @@
                                 <w:rFonts w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
                                 <w:sz w:val="44"/>
                                 <w:szCs w:val="52"/>
-                                <w:u w:val="none"/>
                             </w:rPr>
                         </w:pPr>
                         <w:r>
@@ -296,6 +267,24 @@
                                 <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
                                 <w:sz w:val="44"/>
                                 <w:szCs w:val="52"/>
+                            </w:rPr>
+                            <w:t xml:space="preserve"> </w:t>
+                        </w:r>
+                        <w:r>
+                            <w:rPr>
+                                <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
+                                <w:sz w:val="44"/>
+                                <w:szCs w:val="52"/>
+                                <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
+                            </w:rPr>
+                            <w:t xml:space="preserve"> </w:t>
+                        </w:r>
+                        <w:r>
+                            <w:rPr>
+                                <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
+                                <w:spacing w:val="8"/>
+                                <w:sz w:val="48"/>
+                                <w:szCs w:val="48"/>
                                 <w:u w:val="none"/>
                                 <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
                             </w:rPr>
@@ -306,12 +295,11 @@
                                 <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
                                 <w:sz w:val="44"/>
                                 <w:szCs w:val="52"/>
-                                <w:u w:val="none"/>
                             </w:rPr>
                             <w:t xml:space="preserve"> </w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="5B5AAF87">
+                    <w:p w14:paraId="010C3D72">
                         <w:pPr>
                             <w:spacing w:line="800" w:lineRule="exact"/>
                             <w:ind w:right="561"/>
@@ -340,14 +328,14 @@
                 <Template>Normal</Template>
                 <Company>www.xunchi.com</Company>
                 <Pages>2</Pages>
-                <Words>69</Words>
-                <Characters>82</Characters>
+                <Words>51</Words>
+                <Characters>91</Characters>
                 <Lines>2</Lines>
                 <Paragraphs>1</Paragraphs>
-                <TotalTime>5</TotalTime>
+                <TotalTime>1</TotalTime>
                 <ScaleCrop>false</ScaleCrop>
                 <LinksUpToDate>false</LinksUpToDate>
-                <CharactersWithSpaces>91</CharactersWithSpaces>
+                <CharactersWithSpaces>111</CharactersWithSpaces>
                 <Application>WPS Office_12.1.0.20305_F1E327BC-269C-435d-A152-05C5408002CA</Application>
                 <DocSecurity>0</DocSecurity>
             </Properties>
@@ -360,7 +348,7 @@
                 <dc:creator>梦幻悟哲</dc:creator>
                 <cp:lastModifiedBy>WPS_1695022817</cp:lastModifiedBy>
                 <cp:lastPrinted>2013-03-27T12:54:00Z</cp:lastPrinted>
-                <dcterms:modified xsi:type="dcterms:W3CDTF">2025-03-19T11:35:29Z</dcterms:modified>
+                <dcterms:modified xsi:type="dcterms:W3CDTF">2025-03-20T10:21:30Z</dcterms:modified>
                 <dc:title>部门：</dc:title>
                 <cp:revision>5</cp:revision>
             </cp:coreProperties>
@@ -373,7 +361,7 @@
                     <vt:lpwstr>2052-12.1.0.20305</vt:lpwstr>
                 </property>
                 <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="3" name="ICV">
-                    <vt:lpwstr>23D4AF56B4BD43B495DCF0D090600A30_13</vt:lpwstr>
+                    <vt:lpwstr>ADCF50F241AA43F3AF33D0FE083E1A5C_13</vt:lpwstr>
                 </property>
                 <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="4" name="KSOTemplateDocerSaveRecord">
                     <vt:lpwstr>eyJoZGlkIjoiNWFlZWUwMTE4NDJmM2E1MTQ3YTFkMGJmMmJjZDg0ZTUiLCJ1c2VySWQiOiIxNTM2NDk3NDgxIn0=</vt:lpwstr>
@@ -460,7 +448,7 @@
     <pkg:part pkg:name="/word/header1.xml" pkg:contentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml">
         <pkg:xmlData>
             <w:hdr xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpsCustomData="http://www.wps.cn/officeDocument/2013/wpsCustomData" mc:Ignorable="w14 w15 wp14">
-                <w:p w14:paraId="5185BA7D">
+                <w:p w14:paraId="32291C2E">
                     <w:pPr>
                         <w:pStyle w:val="5"/>
                         <w:pBdr>
@@ -532,22 +520,20 @@
                     <w:rsid w:val="159C2F8C"/>
                     <w:rsid w:val="25595CB5"/>
                     <w:rsid w:val="268F69D3"/>
+                    <w:rsid w:val="2E6D7949"/>
                     <w:rsid w:val="366244AE"/>
                     <w:rsid w:val="3D204412"/>
                     <w:rsid w:val="3ECB2CA9"/>
-                    <w:rsid w:val="3F19736B"/>
-                    <w:rsid w:val="44085E5B"/>
                     <w:rsid w:val="499E00B4"/>
                     <w:rsid w:val="4C9D4B94"/>
                     <w:rsid w:val="4CDB6C44"/>
                     <w:rsid w:val="56CD4777"/>
                     <w:rsid w:val="57F30D5F"/>
-                    <w:rsid w:val="5AE17D64"/>
                     <w:rsid w:val="68AA2CBB"/>
                     <w:rsid w:val="68AB616F"/>
                     <w:rsid w:val="6EBF142E"/>
+                    <w:rsid w:val="70436475"/>
                     <w:rsid w:val="72A640E6"/>
-                    <w:rsid w:val="7E835FAE"/>
                     <w:rsid w:val="7EEF5252"/>
                 </w:rsids>
                 <m:mathPr>
@@ -657,7 +643,7 @@
                     <w:lsdException w:unhideWhenUsed="0" w:uiPriority="0" w:semiHidden="0" w:name="Message Header"/>
                     <w:lsdException w:qFormat="1" w:unhideWhenUsed="0" w:uiPriority="0" w:semiHidden="0" w:name="Subtitle"/>
                     <w:lsdException w:unhideWhenUsed="0" w:uiPriority="0" w:semiHidden="0" w:name="Salutation"/>
-                    <w:lsdException w:unhideWhenUsed="0" w:uiPriority="0" w:semiHidden="0" w:name="Date"/>
+                    <w:lsdException w:qFormat="1" w:unhideWhenUsed="0" w:uiPriority="0" w:semiHidden="0" w:name="Date"/>
                     <w:lsdException w:unhideWhenUsed="0" w:uiPriority="0" w:semiHidden="0" w:name="Body Text First Indent"/>
                     <w:lsdException w:unhideWhenUsed="0" w:uiPriority="0" w:semiHidden="0" w:name="Body Text First Indent 2"/>
                     <w:lsdException w:unhideWhenUsed="0" w:uiPriority="0" w:semiHidden="0" w:name="Note Heading"/>
@@ -869,6 +855,7 @@
                     <w:name w:val="Date"/>
                     <w:basedOn w:val="1"/>
                     <w:next w:val="1"/>
+                    <w:qFormat/>
                     <w:uiPriority w:val="0"/>
                     <w:pPr>
                         <w:ind w:left="100" w:leftChars="2500"/>

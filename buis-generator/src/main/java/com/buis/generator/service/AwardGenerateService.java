@@ -67,7 +67,7 @@ public class AwardGenerateService {
         return awardUtil.generate(response, "/templates", "award.xml", templateParam, "奖状");
     }
 
-    public R<String> generateAwardContents(List<Long> teamIds, HttpServletResponse response) throws TemplateException, IOException {
+    public R<String> generateAwardContents(List<Long> teamIds, HttpServletResponse response){
         AwardUtil awardUtil = new AwardUtil();
         List<Map<String, String>> allParams = new ArrayList<>();
         for (Long teamId : teamIds) {

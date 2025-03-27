@@ -145,6 +145,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </select>
+    <select id="selectRaceTypeBySecondTypeId" resultType="java.lang.Long">
+        select parent_tid from race_type where son_tid = #{id}
+    </select>
 
 
     <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">

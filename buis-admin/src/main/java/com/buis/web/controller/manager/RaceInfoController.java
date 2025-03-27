@@ -8,6 +8,7 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.TeamInfo;
+import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
 import com.buis.service.IRaceInfoService;
@@ -143,7 +144,6 @@ public class RaceInfoController extends BaseController {
     /**
      * 导出老师所负责的第二课堂项目数量
      * (该接口只会导出有指导第大创立项项目的老师的信息)
-     *
      */
     @ApiOperation("导出老师所负责的第二课堂项目数量")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
@@ -155,5 +155,16 @@ public class RaceInfoController extends BaseController {
         util.exportExcel(response, list, "老师所指导的第二课堂项目数量数据");
     }
 
-
+    /**
+     * 统计学生参与的第二课堂比赛数量
+     */
+    @ApiOperation("导出学生参与的第二课堂比赛数量")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
+    @GetMapping("/exportStudentDiProjectCount")
+    public void studentRaceCount(HttpServletResponse response) {
+        List<StudentExportToDiDto> studentExportToDiDtoList = new LinkedList<>(); //要导出的类型
+        List<StudentExportToDiDto> list = raceInfoService.exportStudentDiProjectCount(studentExportToDiDtoList, "第二课堂", response);
+        ExcelUtil<StudentExportToDiDto> util = new ExcelUtil<StudentExportToDiDto>(StudentExportToDiDto.class);
+        util.exportExcel(response, list, "导出学生参与的第二课堂比赛数量");
+    }
 }
