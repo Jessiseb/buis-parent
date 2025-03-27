@@ -78,6 +78,13 @@ public class RaceDetail extends BaseEntity {
     private Long rule;
 
     /**
+     * 每个人可参与的项目数量
+     */
+    @ApiModelProperty("每个学生可参与项目数量")
+    @Excel(name = "每个学生可参与项目数量")
+    private Long count;
+
+    /**
      * 最大可报名人数
      */
     @ApiModelProperty("最大可报名人数")

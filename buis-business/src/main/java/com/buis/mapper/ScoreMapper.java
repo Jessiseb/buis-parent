@@ -6,6 +6,7 @@ import java.util.List;
 import com.buis.domain.RaceType;
 import com.buis.domain.Score;
 import com.buis.vo.ScoreVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 评分管理Mapper接口
@@ -65,4 +66,5 @@ public interface ScoreMapper
 
     List<Score> selectTeamsRanking();
 
+    List<ScoreVo> selectScoreListFuzzyQuery( ScoreVo scoreVo);
 }

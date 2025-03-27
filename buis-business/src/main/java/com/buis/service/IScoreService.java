@@ -75,4 +75,6 @@ public interface IScoreService
      */
 
     List<Score> selectTeamsRanking();
+
+    List<ScoreVo> fuzzyQuery(ScoreVo scoreVo);
 }
