@@ -19,10 +19,7 @@ import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberDto;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.TeamMemberStudentVo;
-import com.buis.vo.TeamMemberTeacherVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -116,6 +114,18 @@ public class TeamApiController extends BaseController {
         TeamInfo teamInfo = teamInfoService.selectTeamInfoById(team);
         if (teamInfo == null) {
             throw new ServiceException("项目团队不存在,请先创建团队~");
+        }
+
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(teamInfo.getRace());
+        // 判断比赛是否允许预报名
+        if (raceInfoVo == null) {
+            throw new ServiceException("比赛信息不存在");
+        }
+
+        // 判断当前时间是否在比赛报名开始时间和结束时间之间
+        Date now = new Date();
+        if (now.before(raceInfoVo.getJoinStart()) || now.after(raceInfoVo.getJoinEnd())) {
+            throw new ServiceException("该比赛不在预报名时间内");
         }
 
         //如果已经邀请过对方就提示已邀请,请勿重复邀请
