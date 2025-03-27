@@ -248,23 +248,41 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Override
     public String userLogin(UserLoginDto userLoginDTO, HttpServletRequest request) {
+        String number = userLoginDTO.getNumber();
         String email = userLoginDTO.getEmail();
         String passWord = userLoginDTO.getPassWord();
         String code = userLoginDTO.getCode();
         Integer isTeacher = userLoginDTO.getIsTeacher();
         //1.对参数做校验
-        if (StringUtils.isEmpty(email)) {
-            throw new ServiceException("邮箱账号不能为空!");
+        if (StringUtils.isEmpty(email) && StringUtils.isEmpty(number)) {
+            throw new ServiceException("账号不能为空!");
         }
-        //查询用户是否存在
-        //根据用户的邮箱查询用户
-        UserInfo userInfo = userInfoMapper.getLoginInfoByEmail(email);
-        //用户不存在
-        if (userInfo == null) {
-            log.info("user login fail,userAccount cannot match userPassword");
-            throw new ServiceException("用户不存在,请先注册!");
+        UserInfo userInfo = null;
+        if (StringUtils.isNotEmpty(email)) {
+            //邮箱登录
+            //查询用户是否存在
+            //根据用户的邮箱查询用户
+            userInfo = userInfoMapper.getLoginInfoByEmail(email);
+            //用户不存在
+            if (userInfo == null) {
+                log.info("user login fail,userAccount cannot match userPassword");
+                throw new ServiceException("用户不存在,请先注册!");
+            }
+        } else if (StringUtils.isNotEmpty(number)) {
+            //学号登录
+            //查询用户是否存在
+            //根据用户的学号查询用户
+            userInfo = userInfoMapper.getLoginInfoByNumber(number);
+            //用户不存在
+            if (userInfo == null) {
+                log.info("user login fail,userAccount cannot match userPassword");
+                throw new ServiceException("用户不存在,请先注册!");
+            }
         }
-        Integer isTeacher1 = userInfo.getIsTeacher();
+        Integer isTeacher1 = null;
+        if (userInfo != null) {
+            isTeacher1 = userInfo.getIsTeacher();
+        }
 
         //判断isTeacher是否对应
         if (isTeacher != null && !isTeacher.equals(isTeacher1)) {
@@ -290,17 +308,18 @@ public class UserInfoServiceImpl implements IUserInfoService {
                 throw new ServiceException("验证码错误~");
             }
         } else {
-            throw new ServiceException("邮箱账号或密码不能为空!");
+            throw new ServiceException("账号或密码不能为空!");
         }
 
         //3.校验账户
         //邮箱的正则表达式
-        FormatUtils.checkEmailFormat(email);
+        if (StringUtils.isNotEmpty(email)) {
+            FormatUtils.checkEmailFormat(email);
+        }
 
         StpUtil.login(userInfo.getId());
         String token = StpUtil.getTokenValue();
         return token;
-
     }
 
     @Override
