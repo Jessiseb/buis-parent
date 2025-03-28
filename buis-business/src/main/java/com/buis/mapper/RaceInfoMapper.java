@@ -99,7 +99,7 @@ public interface RaceInfoMapper
     //根据比赛信息ids查询比赛信息列表
     List<RaceInfo> selectRaceInfoByRaceIds(List<Long> raceIds);
 
-    List<SecondClassCountVo> getSecondClassCountByMonth(Integer mounth);
+    List<SecondClassCountVo> getSecondClassCountByMonth(Integer month);
 
     List<SecondClassCountVo> getSecondClassCountByYear(Integer year);
 

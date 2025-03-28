@@ -297,7 +297,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t_college_major cm ON ui.college = cm.id
         WHERE
             ri.parent_tid = 5
-          AND YEAR(ri.create_time) = IFNULL(#{year},YEAR(CURRENT_DATE))
+              AND YEAR(ri.create_time) = IFNULL(#{year},YEAR(CURRENT_DATE))
         GROUP BY
             cm.name
     </select>

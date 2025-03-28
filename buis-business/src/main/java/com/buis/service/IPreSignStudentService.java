@@ -65,9 +65,5 @@ public interface IPreSignStudentService
 
     List<PreSignStudentVo> fuzzyQuery(String name);
 
-
-    //根据学生id查询已经报名的raceId
-    List<Integer> selectRaceByStudentId(Long id);
-
-
+    PreSignStudent selectByUserIdAndRace(Long id, Long race);
 }
