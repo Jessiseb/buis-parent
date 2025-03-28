@@ -320,8 +320,8 @@ public class UserInfoServiceImpl implements IUserInfoService {
         }
 
         StpUtil.login(userInfo.getId());
-        String token = StpUtil.getTokenValue();
-        return token;
+        return StpUtil.getTokenValue();
+
     }
 
     @Override

@@ -1,31 +1,29 @@
 package com.buis.web.controller.manager;
 
-import java.io.IOException;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-
-import com.buis.common.core.domain.R;
-import com.buis.generator.service.AwardGenerateService;
-import com.buis.service.ITeamMemberStudentService;
-import freemarker.template.TemplateException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Award;
+import com.buis.generator.service.AwardGenerateService;
 import com.buis.service.IAwardService;
 import com.buis.service.ITeamInfoService;
+import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
+import freemarker.template.TemplateException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 
 /**

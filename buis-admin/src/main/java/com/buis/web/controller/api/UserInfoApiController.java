@@ -182,7 +182,7 @@ public class UserInfoApiController extends BaseController {
      * 查询老师或学生信息
      */
     @ApiOperation("查询老师或学生信息")
-    @GetMapping("/teachers")
+    @GetMapping("/getAllUser")
     public R<List<UserInfoVo>> getAllUser(@ApiParam(name = "isTeacher", value = "是否为老师标识", required = true)
                                               @RequestParam("isTeacher") Integer isTeacher){
         try {
@@ -196,5 +196,18 @@ public class UserInfoApiController extends BaseController {
         }
 
     }
+
+    /**
+     * 获取登录用户
+     */
+    @ApiOperation("获取登录用户")
+    @GetMapping("/getLoginUser")
+    public R<UserInfoVo> getCurrentLoginUser(){
+        UserInfo loginUser = userInfoService.getLoginUser();
+        UserInfoVo userInfoVo = new UserInfoVo();
+        BeanUtil.copyProperties(loginUser,userInfoVo);
+        return R.ok(userInfoVo);
+    }
+
 
 }

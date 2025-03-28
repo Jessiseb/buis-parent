@@ -70,7 +70,9 @@ public class RaceApiController extends BaseController {
             //获取缓存
             return raceInfoService.selectRaceInfoListFromRedis(raceInfo);
         }
+
         List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
+
         return new MyPageVo(list);
     }
 
