@@ -108,4 +108,7 @@ public interface IUserInfoService {
      * @return
      */
     UserInfoVo selectUserInfoByName(String name);
+
+    List<UserInfoVo> selectAllTeachers(Integer isTeacher);
+
 }

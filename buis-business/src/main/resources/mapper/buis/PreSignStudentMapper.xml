@@ -43,6 +43,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != 'null' and name != ''">and user_info.name LIKE CONCAT('%', #{name}, '%')</if>
         </where>
     </select>
+    <select id="selectByUserIdAndRace" resultType="com.buis.domain.PreSignStudent">
+        select * from pre_sign_student
+        where student = #{userId} and race = #{raceId} and is_deleted = 0
+    </select>
 
     <select id="selectRaceByStudentId" resultType="java.lang.Integer">
         select race from pre_sign_student where student = #{id} and is_deleted = 0
