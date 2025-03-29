@@ -130,6 +130,11 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         return raceDetailMapper.batchSelectRaceDetailByRaceIds(raceIds);
     }
 
+    @Override
+    public List<RaceDetailVo> selectRaceDetailVoList(RaceDetailVo raceDetailVo) {
+        return raceDetailMapper.selectRaceDetailVoList(raceDetailVo);
+    }
+
     /**
      * 新增分数权重信息
      * 

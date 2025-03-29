@@ -139,7 +139,7 @@ aliyun:
 coze: ***REMOVED***
 
 wenxin:
-  api:
+  app:
     id: ***REMOVED*** #智能体id
     secret:
       key: ***REMOVED*** #密钥

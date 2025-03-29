@@ -75,6 +75,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="raceDetail.race != null and raceDetail.race != ''">and t1.race = #{raceDetail.race}</if>
             <if test="raceDetail.name != null  and raceDetail.name != ''">and t1.name like concat('%', #{raceDetail.name}, '%')
             </if>
+            <if test="raceDetail.count != null and raceDetail.count != ''">and t1.count = #{raceDetail.count}</if>
+            <if test="raceDetail.teamMin != null and raceDetail.teamMin != ''">and t1.team_min = #{raceDetail.teamMin}</if>
+            <if test="raceDetail.teamMax != null and raceDetail.teamMax != ''">and t1.team_max = #{raceDetail.teamMax}</if>
+            <if test="raceDetail.teacherMin != null and raceDetail.teacherMin != ''">and t1.teacher_min = #{raceDetail.teacherMin}</if>
+            <if test="raceDetail.teacherMax != null and raceDetail.teacherMax != ''">and t1.teacher_max = #{raceDetail.teacherMax}</if>
             <if test="raceDetail.phone != null  and raceDetail.phone != ''">and t1.phone = #{raceDetail.phone}</if>
             <if test="raceDetail.email != null  and raceDetail.email != ''">and t1.email = #{raceDetail.email}</if>
             <if test="raceDetail.capacity != null and raceDetail.capacity != ''">and t1.capacity = #{raceDetail.capacity}</if>
@@ -84,7 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectRaceDetailById" parameterType="Long" resultMap="RaceDetailWeightResult">
-        select id, race, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
+        select id, race,count, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
         from race_detail
         where id = #{id} and is_deleted = 0
     </select>
@@ -96,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectRaceDetailByRaceId" resultType="com.buis.domain.RaceDetail">
 -- 查询比赛信息
-        select id, race, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
+        select id, race,count, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
         from race_detail
         where race = #{raceId} and is_deleted = 0
     </select>
@@ -108,6 +113,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{raceId}
         </foreach>
         and is_deleted = 0
+    </select>
+
+    <select id="selectRaceDetailVoList" resultType="com.buis.vo.RaceDetailVo">
+        <include refid="selectRaceDetailVo"/>
+        <where>
+            t1.is_deleted = 0
+            <if test="raceDetailVo.id != null and raceDetailVo.id != '' ">and t1.id = #{raceDetailVo.id}</if>
+            <if test="raceDetailVo.race != null and raceDetailVo.race != ''">and t1.race = #{raceDetailVo.race}</if>
+            <if test="raceDetailVo.name != null  and raceDetailVo.name != ''">and t1.name like concat('%', #{raceDetailVo.name}, '%')
+            </if>
+            <if test="raceDetailVo.raceName != null and raceDetailVo.raceName != ''">and t2.name like concat('%', #{raceDetailVo.raceName}, '%')</if>
+            <if test="raceDetailVo.count != null and raceDetailVo.count != ''">and t1.count = #{raceDetailVo.count}</if>
+            <if test="raceDetailVo.teamMin != null and raceDetailVo.teamMin != ''">and t1.team_min = #{raceDetailVo.teamMin}</if>
+            <if test="raceDetailVo.teamMax != null and raceDetailVo.teamMax != ''">and t1.team_max = #{raceDetailVo.teamMax}</if>
+            <if test="raceDetailVo.teacherMin != null and raceDetailVo.teacherMin != ''">and t1.teacher_min = #{raceDetailVo.teacherMin}</if>
+            <if test="raceDetailVo.teacherMax != null and raceDetailVo.teacherMax != ''">and t1.teacher_max = #{raceDetailVo.teacherMax}</if>
+            <if test="raceDetailVo.phone != null  and raceDetailVo.phone != ''">and t1.phone = #{raceDetailVo.phone}</if>
+            <if test="raceDetailVo.email != null  and raceDetailVo.email != ''">and t1.email = #{raceDetailVo.email}</if>
+            <if test="raceDetailVo.capacity != null and raceDetailVo.capacity != ''">and t1.capacity = #{raceDetailVo.capacity}</if>
+            <if test="raceDetailVo.rRank != null and raceDetailVo.rRank != ''">and t1.r_rank = #{raceDetailVo.rRank}</if>
+            <if test="raceDetailVo.tLimit != null and raceDetailVo.tLimit != ''">and t1.t_limit = #{raceDetailVo.tLimit}</if>
+        </where>
     </select>
 
     <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">

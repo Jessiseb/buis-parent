@@ -13,4 +13,6 @@ public class RaceDetailVo extends RaceDetail {
     @ApiModelProperty("比赛名称")
     @Excel(name = "比赛名称")
     private String raceName;
+
+
 }

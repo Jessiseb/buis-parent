@@ -37,9 +37,9 @@ public class RaceDetailController extends BaseController {
     @ApiOperation("查询比赛详情列表")
     @PreAuthorize("@ss.hasPermi('buis:raceDetail:list')")
     @GetMapping("/list")
-    public TableDataInfo list(RaceDetail raceDetail) {
+    public TableDataInfo list(RaceDetailVo raceDetailVo) {
         startPage();
-        List<RaceDetailVo> list = raceDetailService.selectRaceDetailList(raceDetail);
+        List<RaceDetailVo> list = raceDetailService.selectRaceDetailVoList(raceDetailVo);
         return getDataTable(list);
     }
 
