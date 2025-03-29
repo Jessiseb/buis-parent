@@ -15,6 +15,7 @@ import com.buis.dto.UserLoginDto;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
+import com.buis.system.service.ISysDictDataService;
 import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,7 +40,8 @@ import java.util.regex.Pattern;
 public class UserInfoServiceImpl implements IUserInfoService {
     @Resource
     private UserInfoMapper userInfoMapper;
-
+    @Resource
+    private ISysDictDataService sysDictDataService;
     @Resource
     private ITeamMemberTeacherService teamMemberTeacherService;
 
@@ -111,6 +113,14 @@ public class UserInfoServiceImpl implements IUserInfoService {
         UserInfoVo vo = new UserInfoVo();
         if (userInfo != null) {
             BeanUtils.copyProperties(userInfo, vo);
+            //把年级,班级插入
+            //根据grade查询到字典对应的值
+            int grade = userInfo.getGrade();
+            int sClass = userInfo.getSClass();
+            String stu_grade = sysDictDataService.selectDictLabel("stu_grade", String.valueOf(grade));
+            vo.setStuGrade(stu_grade);
+            String stu_class = sysDictDataService.selectDictLabel("stu_class", String.valueOf(sClass));
+            vo.setStuClass(stu_class);
             if (vo.getIsTeacher() != null && vo.getIsTeacher() == 1) { // 判断是否为老师
                 //是老师
                 Long count = teamMemberTeacherService.getGuideCount(userInfo.getId());

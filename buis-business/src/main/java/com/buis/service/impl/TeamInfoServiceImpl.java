@@ -21,7 +21,10 @@ import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberDto;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
+import com.buis.system.service.ISysDictDataService;
+import com.buis.system.service.ISysDictTypeService;
 import com.buis.vo.TeamInfoVo;
+import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +71,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private RedisCache redisCache;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private ISysDictDataService sysDictDataService;
 
 
     /**
@@ -78,15 +83,37 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public TeamInfo insertTeamInfo(TeamInfo teamInfo) {
+        //获取登录用户信息
+        UserInfo loginUser = userInfoService.getLoginUser();
+        //获取用户vo
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(loginUser.getId());
         // 判断报名条件
-        raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
+        raceInfoService.checkJoinCondition(loginUser.getId(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
         //根据现在参与的比赛id判断创建的队伍个数是否超过限制
+        //TODO 默認兩人,后面根据数据库获取
+        int limit = 2;
+        TeamMemberStudent teamMember = new TeamMemberStudent();
+        teamMember.setDecider(loginUser.getId());
+        List<TeamMemberStudentVo> teamMemberStudentVos = teamStudentService.selectTeamMemberStudentList(teamMember);
+        if (teamMemberStudentVos.size()>limit){
+            throw new ServiceException("当前比赛您已经加入过" + limit + "个队伍,无法再加入!");
+        }
+
         //根据比赛信息设置队伍最大人数
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(teamInfo.getRace());
         int teamMax = raceDetail.getTeamMax();//最大人数
         teamInfo.setNumber(teamMax);
+        teamInfo.setLeader(loginUser.getId()); //leader
+        teamInfo.setLeaderName(loginUser.getName()); //leader_name
+        teamInfo.setPhone(loginUser.getPhone()); //phone
 
+        //班级
+        String stuGrade = userInfoVo.getStuGrade();
+        String majorName = userInfoVo.getMajorName();
+        String stuClass = userInfoVo.getStuClass();
+        //拼接返回
+        teamInfo.setSClass(stuGrade  + majorName + stuClass);
         int ok = teamInfoMapper.insertTeamInfo(teamInfo);
         //更新队伍信息缓存
         if (ok > 0) {
@@ -107,6 +134,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return sucess > 0 ? teamInfo : null;
     }
 
+
     /**
      * 修改队伍信息
      *
@@ -118,7 +146,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
         teamInfo.setUpdateTime(DateUtils.getNowDate());
-        //只有老师和负责人才能修改
+        //只有指导老师和负责人才能修改
         if (!isTeamLeaderOrTeacher(teamInfo.getId())) {
             throw new ServiceException("您不是老师或负责人，不能修改队伍信息!");
         }
@@ -544,6 +572,54 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
     }
 
+    /**
+     * 负责人转让
+     * @param team 团队id
+     * @param user 用户id
+     * @return
+     */
+    @Override
+    public int transfer(Long team, Long user) {
+        //只有队长或指导老师有权限
+        boolean ok = isTeamLeaderOrTeacher(team);
+        if (!ok){
+            throw new ServiceException("您没有操作权限!");
+        }
+
+        //队伍表的leader改成user, leader_name改成user对应的用户名字,
+        // phone改成user对应的联系方式,s_class改成对应的班级,学院改成对应的学院
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
+        //根据user查询到对应用户信息
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(user);
+        //把年级,专业,班级拼接返回
+        String stuGrade = userInfoVo.getStuGrade();
+        String majorName = userInfoVo.getMajorName();
+        String stuClass = userInfoVo.getStuClass();
+        String stuGradeMajorClass = stuGrade + majorName + stuClass;
+
+        teamInfoVo.setLeader(user); //用户id
+        teamInfoVo.setLeaderName(userInfoVo.getName()); //用户名字
+        teamInfoVo.setPhone(userInfoVo.getPhone()); //用户联系方式
+        teamInfoVo.setSClass(stuGradeMajorClass); //用户年级+专业+班级
+        teamInfoVo.setCollege(userInfoVo.getCollege()); //用户学院
+
+        int i = teamInfoService.updateTeamInfo(teamInfoVo);
+        if (i <= 0) {
+            throw new ServiceException("转让失败");
+        }
+
+        //队伍用户中间表的队长修改成user
+        List<TeamMemberStudent> teamMemberStudents = teamStudentService.selectTeamMemberStudentByTeamId(team);
+        int result = 0;
+        for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
+            teamMemberStudent.setDecider(user);
+            result = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
+        }
+        if(result <= 0){
+            throw new ServiceException("更新失败");
+        }
+        return result;
+    }
 
     /**
      * 后台查询队伍信息列表 Vo
@@ -624,32 +700,23 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
 
     /**
-     * 抽取出判断登录用户是否为老师或者团队负责人
+     * 抽取出判断登录用户是否为指导老师或者团队负责人
      */
     public boolean isTeamLeaderOrTeacher(Long team) {
-        //获取登录用户
-        String loginIdStr = StpUtil.getLoginId().toString();
-        Long loginId;
-        try {
-            loginId = Long.parseLong(loginIdStr);
-        } catch (NumberFormatException e) {
-            throw new ServiceException("无效的用户ID格式");
-        }
         //获取用户信息
-        UserInfo loginUser = userInfoService.getLoginInfoByUserId(loginId);
+        UserInfo loginUser = userInfoService.getLoginUser();
+        Long loginId = loginUser.getId();
+        //团队信息
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
         //判断用户是否为老师
         if (loginUser.getIsTeacher() == 1) {
             //是老师
-            return true;
+            //判断是否为指导老师
+            return teamInfoVo.getTeacher1().equals(loginId) || teamInfoVo.getTeacher2().equals(loginId);
         }
         //判断用户是否是负责人
-        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
         Long leader = teamInfoVo.getLeader();
-        if (leader.equals(loginId)) {
-            //是负责人
-            return true;
-        }
-        return false;
+        return leader.equals(loginId);
     }
 
     //更新队伍信息缓存 + 删除队伍信息分页缓存
@@ -691,7 +758,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     public TeamInfoVo selectTeamInfoById(Long id) {
         //从redis中查询队伍缓存
         String key = "team:" + id;
-        String TeamJson = redisCache.getCacheObject("team:" + id);
+        String TeamJson = redisCache.getCacheObject(key);
 
         //判断是否存在
         if (StringUtils.isNotEmpty(TeamJson)) {

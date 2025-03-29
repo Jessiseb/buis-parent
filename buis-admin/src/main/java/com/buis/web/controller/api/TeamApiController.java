@@ -382,14 +382,17 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("修改队伍信息")
     @PutMapping("/update")
-    public R editTeamInfo(
+    public R<TeamInfo> editTeamInfo(
             @ApiParam(name = "teamInfo", value = "队伍信息", required = true)
             @RequestBody TeamInfo teamInfo,
             @ApiParam(name = "id", value = "队伍id", required = true)
             @RequestParam("teamId") Long teamId) {
         teamInfo.setId(teamId);
         int result = teamInfoService.updateTeamInfo(teamInfo);
-        return R.ok(result, "操作成功");
+        if (result == 0) {
+            return R.fail("操作失败");
+        }
+        return R.ok(teamInfo, "操作成功");
     }
 
 
@@ -426,19 +429,19 @@ public class TeamApiController extends BaseController {
         return R.ok(result, "操作成功");
     }
 
-//    /**
-//     * 负责人位置转让
-//     */
-//    @ApiOperation("负责人位置转让")
-//    @PutMapping("/transfer/{team}/{user}")
-//    public R transfer(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team,
-//                      @ApiParam(name = "user", value = "用户id", required = true) @PathVariable("user") Long user) {
-//        int result = teamInfoService.transfer(team, user);
-//        if (result == 0) {
-//            return R.fail("操作失败");
-//        }
-//        return R.ok(result, "操作成功");
-//    }
+    /**
+     * 负责人位置转让
+     */
+    @ApiOperation("负责人位置转让")
+    @PostMapping("/transfer/{team}/{user}")
+    public R<Boolean> transfer(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team,
+                      @ApiParam(name = "user", value = "用户id", required = true) @PathVariable("user") Long user) {
+        int result = teamInfoService.transfer(team, user);
+        if (result == 0) {
+            return R.fail("操作失败");
+        }
+        return R.ok(true, "操作成功");
+    }
 
 
     /**
