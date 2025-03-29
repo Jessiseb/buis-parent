@@ -121,4 +121,5 @@ public interface ITeamInfoService {
      */
     public boolean hasSearchCondition(TeamInfo queryTeam);
 
+    int transfer(Long team, Long user);
 }
