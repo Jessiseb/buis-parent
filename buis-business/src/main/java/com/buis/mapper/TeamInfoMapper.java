@@ -100,4 +100,6 @@ public interface TeamInfoMapper
 
     TeamInfo selectTeamInfoByRaceIdAndUserId(Long race, Long userId);
 
+    TeamInfo selectTeamInfoByName(@Param("name")String name);
+
 }

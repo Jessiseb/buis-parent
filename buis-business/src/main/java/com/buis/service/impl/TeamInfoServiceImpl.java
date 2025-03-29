@@ -536,6 +536,16 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
     }
 
+    /**
+     * 根据队伍负责人姓名查出比赛队伍信息
+     * @param name
+     * @return
+     */
+    @Override
+    public TeamInfo selectTeamInfoByName(String name) {
+        return teamInfoMapper.selectTeamInfoByName(name);
+    }
+
 
     /**
      * 后台查询队伍信息列表 Vo

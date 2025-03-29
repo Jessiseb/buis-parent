@@ -5,6 +5,7 @@ import java.util.List;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.domain.RaceInfo;
+import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
 import com.buis.vo.HotRaceVo;
@@ -112,8 +113,8 @@ public interface IRaceInfoService
      * @return
      */
     List<HotRaceVo> getHotRace();
-    List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
+//    List<TeacherExportToDiDto> exportTeacherDiProjectCount(List<TeacherExportToDiDto> teacherExporToDektDtoList, String name, HttpServletResponse response);
 
-    List<StudentExportToDiDto> exportStudentDiProjectCount(List<StudentExportToDiDto> StudentExporToDektDtoList, String name, HttpServletResponse response);
+    List<StudentExportToDiDto> exportStudentDiProjectCount(int college,int grade,List<StudentExportToDiDto> StudentExporToDektDtoList, String name, HttpServletResponse response);
 
 }

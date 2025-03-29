@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.AwardMapper">
-    
+
     <resultMap type="com.buis.domain.Award" id="AwardResult">
-        <result property="id"    column="id"    />
-        <result property="raceId"    column="race_id"    />
-        <result property="teamId"    column="team_id"    />
-        <result property="year"    column="year"    />
-        <result property="awardLevel"    column="award_level"    />
-        <result property="teachers"    column="teachers"    />
-        <result property="awardDate"    column="award_date"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="isDeleted"    column="is_deleted"    />
+        <result property="id" column="id"/>
+        <result property="raceId" column="race_id"/>
+        <result property="year" column="year"/>
+        <result property="awardLevel" column="award_level"/>
+        <result property="teachers" column="teachers"/>
+        <result property="awardDate" column="award_date"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="name" column="name"/>
     </resultMap>
-    
+
     <resultMap id="AwardraceResult" type="com.buis.vo.AwardVo" extends="AwardResult">
 
-        <result property="raceId" column="race_id" />
+        <result property="raceId" column="race_id"/>
         <result property="winners" column="winners"/>
     </resultMap>
-    
+
     <sql id="selectAwardVo">
-        select id, race_id, team_id, year, award_level, teachers, award_date, update_time, create_time, is_deleted from award
+        select id, race_id, name, year, award_level, teachers, award_date, update_time, create_time, is_deleted
+        from award
     </sql>
 
     <sql id="selectAwardrace">
-        SELECT
-         racename,teachers,winners,race_id
-        FROM
-         award
+        SELECT racename,
+               teachers,
+               winners,
+               race_id
+        FROM award
     </sql>
 
     <select id="selectAwardRaceList" resultMap="AwardraceResult">
-    <include refid="selectAwardrace"/>
+        <include refid="selectAwardrace"/>
         <where>
-            <if test="raceId != null "> and race_id = #{raceId}</if>
+            <if test="raceId != null ">and race_id = #{raceId}</if>
         </where>
     </select>
 
@@ -45,20 +47,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectAwardVo"/>
         <where>
             is_deleted = 0
-            <if test="raceId != null "> and race_id = #{raceId}</if>
-            <if test="teamId != null "> and team_id = #{teamId}</if>
-            <if test="year != null  and year != ''"> and year = #{year}</if>
-            <if test="awardLevel != null  and awardLevel != ''"> and award_level = #{awardLevel}</if>
-            <if test="teachers != null  and teachers != ''"> and teachers = #{teachers}</if>
-            <if test="awardDate != null "> and award_date = #{awardDate}</if>
+            <if test="raceId != null ">and race_id = #{raceId}</if>
+            <if test="name != null ">and name = #{name}</if>
+            <if test="year != null  and year != ''">and year = #{year}</if>
+            <if test="awardLevel != null  and awardLevel != ''">and award_level = #{awardLevel}</if>
+            <if test="teachers != null  and teachers != ''">and teachers = #{teachers}</if>
+            <if test="awardDate != null ">and award_date = #{awardDate}</if>
         </where>
     </select>
 
 
-    <select id="selectAwardByTeam" resultMap="AwardResult">
-        select a.race_id,a.team_id,a.year,a.award_level,a.teachers,a.award_date
+    <select id="selectAwardByName" resultMap="AwardResult">
+        select a.race_id, a.name, a.year, a.award_level, a.teachers, a.award_date
         from award as a
-        where team_id = #{teamId} and is_deleted = 0
+        where name = #{name}
+          and is_deleted = 0
     </select>
 
     <insert id="insertAward" parameterType="com.buis.domain.Award">
@@ -66,7 +69,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="raceId != null">race_id,</if>
-            <if test="teamId != null">team_id,</if>
             <if test="year != null">year,</if>
             <if test="awardLevel != null">award_level,</if>
             <if test="teachers != null">teachers,</if>
@@ -74,11 +76,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="createTime != null">create_time,</if>
             <if test="isDeleted != null">is_deleted,</if>
-         </trim>
+            <if test="name != null">name,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="raceId != null">#{raceId},</if>
-            <if test="teamId != null">#{teamId},</if>
             <if test="year != null">#{year},</if>
             <if test="awardLevel != null">#{awardLevel},</if>
             <if test="teachers != null">#{teachers},</if>
@@ -86,14 +88,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
-         </trim>
+            <if test="name != null">#{name},</if>
+        </trim>
     </insert>
 
     <update id="updateAward" parameterType="com.buis.domain.Award">
         update award
         <trim prefix="SET" suffixOverrides=",">
             <if test="raceId != null">race_id = #{raceId},</if>
-            <if test="teamId != null">team_id = #{teamId},</if>
             <if test="year != null">year = #{year},</if>
             <if test="awardLevel != null">award_level = #{awardLevel},</if>
             <if test="teachers != null">teachers = #{teachers},</if>
@@ -101,6 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="name != null">name = #{name},</if>
         </trim>
         where id = #{id}
     </update>
