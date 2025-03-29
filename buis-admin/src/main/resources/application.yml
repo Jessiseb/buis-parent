@@ -139,9 +139,9 @@ aliyun:
 coze: pat_AOZh3ZemQoBTSWZrSAzjlZ7S50lclMvv0SzB0rrHOQM8P2fnHF4lSTPOmECg1Aui
 
 wenxin:
-  api:
+  app:
     id: h9bKT9qFwv91Q2jXbhkEpyJyUieYAIpq #智能体id
     secret:
-      key: jVFagF3PmOueZXfs3U3VUCAABK8s8j1H #密钥
+      key: p95Sn97XqzMmVxNUMZrjiET75ohFqFj4 #密钥
   agent:
     api-url: https://openapi.baidu.com/oauth/2.0/token

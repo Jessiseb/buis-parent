@@ -63,4 +63,6 @@ public interface IRaceDetailService
     RaceDetail selectRaceDetailByRaceId(Long raceId);
 
     List<RaceDetail> batchSelectRaceDetailByRaceIds(List<Long> raceIds);
+
+    List<RaceDetailVo> selectRaceDetailVoList(RaceDetailVo raceDetailVo);
 }

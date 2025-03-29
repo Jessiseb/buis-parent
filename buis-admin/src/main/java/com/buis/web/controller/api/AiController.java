@@ -97,8 +97,7 @@ public class AiController {
             Generation gen = new Generation();
             Message userMsg = Message.builder().role(Role.USER.getValue()).content(text).build();
 
-            Flux<String> result = aiService.streamCallWithMessage(gen, userMsg);
-            return result;
+            return aiService.streamCallWithMessage(gen, userMsg);
         } catch (ApiException | NoApiKeyException | InputRequiredException e) {
             log.error("ApiException: {}", e.getMessage());
         }
@@ -111,11 +110,12 @@ public class AiController {
      * 智能体对话
      * @return
      */
-    @GetMapping(value = "/stream/chat/agent", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PostMapping(value = "/stream/chat/agent", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ApiOperation("智能体对话")
-    public Flux<String> chatWithAgent(@RequestParam String message,
-                                      @RequestParam(required = false) String threadId) {
-
+    public Flux<String> chatWithAgent(@RequestParam("message") String message,
+                                      @RequestParam(required = false) String threadId, HttpServletResponse response) {
+        //UTF-8
+        response.setCharacterEncoding("UTF-8");
         //流式返回
         return aiService.agentCallWithMessage(message, threadId);
 

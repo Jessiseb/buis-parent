@@ -49,9 +49,9 @@ public class AiServiceImpl implements IAiService {
     @Value("${aliyun.ai.base-url}")
     String baseUrl;
 
-    @Value("${wenxin.api.id}")
-    String apiId; //文心智能体id
-    @Value("${wenxin.api.secret.key}")
+    @Value("${wenxin.app.id}")
+    String appId; //文心智能体id
+    @Value("${wenxin.app.secret.key}")
     String secretKey; //文心智能体密钥
     @Value("${wenxin.agent.api-url}")
     String agentApiUrl; //文心获取token的url
@@ -140,7 +140,7 @@ public class AiServiceImpl implements IAiService {
         // 1. 获取 access_token（增强错误处理）
         RestTemplate restTemplate = new RestTemplate();
         String authUrl = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
-                agentApiUrl, apiId, secretKey);
+                agentApiUrl, appId, secretKey);
 
         // 打印调试信息
         log.info("请求Token URL: {}", authUrl);
@@ -163,17 +163,17 @@ public class AiServiceImpl implements IAiService {
             messageContent.put("value", contentValue);
 
             requestBody.put("message", Collections.singletonMap("content", messageContent));
-            requestBody.put("source", apiId); // 根据文档填写固定值
+            requestBody.put("source", appId); // 根据文档填写固定值
             requestBody.put("from", "openapi");
-            requestBody.put("openId", loginId); //用户id
-            requestBody.put("stream", true);
+            requestBody.put("openId", loginId.toString()); //用户id
+//            requestBody.put("stream", true);
 
-            System.out.println(apiId);
+            System.out.println(appId);
             System.out.println(secretKey);
 
             // 3. 使用正确API地址和鉴权方式
             WebClient client = WebClient.builder()
-                    .baseUrl("https://agentapi.baidu.com/assistant/conversation?appId="+apiId+"&secretKey="+secretKey)
+                    .baseUrl("https://agentapi.baidu.com/assistant/conversation?appId="+appId+"&secretKey="+secretKey)
                     .defaultHeader("Authorization", "Bearer " + accessToken)
                     .build();
 
@@ -184,7 +184,11 @@ public class AiServiceImpl implements IAiService {
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(requestBody)
                     .retrieve()
-                    .bodyToFlux(String.class); // 直接返回字符串流
+                    .bodyToFlux(String.class)
+                    .onErrorResume(e -> {
+                        log.error("Agent call failed", e);
+                        return Flux.just("[ERROR]" + e.getMessage());
+                    }); // 直接返回字符串流
 
         } catch (Exception e) {
             return Flux.error(new RuntimeException("认证流程失败: " + e.getMessage()));

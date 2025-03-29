@@ -377,17 +377,17 @@ public class TeamApiController extends BaseController {
      * 修改队伍信息
      *
      * @param teamInfo 队伍信息对象
-     * @param id       队伍ID
+     * @param teamId       队伍ID
      * @return R
      */
     @ApiOperation("修改队伍信息")
-    @PutMapping("update/{id}")
+    @PutMapping("/update")
     public R editTeamInfo(
             @ApiParam(name = "teamInfo", value = "队伍信息", required = true)
             @RequestBody TeamInfo teamInfo,
             @ApiParam(name = "id", value = "队伍id", required = true)
-            @PathVariable Long id) {
-        teamInfo.setId(id);
+            @RequestParam("teamId") Long teamId) {
+        teamInfo.setId(teamId);
         int result = teamInfoService.updateTeamInfo(teamInfo);
         return R.ok(result, "操作成功");
     }

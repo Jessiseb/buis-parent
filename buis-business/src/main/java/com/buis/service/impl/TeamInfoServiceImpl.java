@@ -229,12 +229,19 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //用户最多加入指定个队伍
         //根据比赛id查询到比赛详情的用户可参与的队伍个数
         Long raceId = teamMemberDto.getRace();
+        Long teamId = teamMemberDto.getTeam();
         if (raceId == null) {
             throw new ServiceException("参数错误,id为空");
         }
-        RaceDetail raceDetail = raceDetailService.selectRaceDetailById(raceId);
-        long count = raceDetail.getCount();
-
+        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+        if (raceDetail == null) {
+            throw new ServiceException("无详细比赛规则");
+        }
+        Long count = raceDetail.getCount();
+        //小于0或为空
+        if (count <= 0 || count == null) {
+            throw new ServiceException("比赛配置错误,最大加入队伍数无效");
+        }
         //根据用户id查出用户已经加入多少个队伍
         Long userId = loginUser.getId();
         //判断用户是老师还是学生 (0-学生 1-老师)
@@ -251,19 +258,20 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             int hasJoin = teamStudentService.selectTeamMemberStudentList(memberStudent).size();
 //            int hasJoin = teamStudentService.getStudentJoinTeamByUserId(userId);
             if (hasJoin >= count) {
-                throw new ServiceException("您已加入其他团队,最多只能加入一个项目团队!!!");
+                throw new ServiceException("在该比赛中您已加入其他团队,最多只能加入一个项目团队!!!");
             }
 
             //分布式锁---->只有抢到锁的人才能加入队伍
             //尝试获得锁
-            String key = JOIN_TEAM_LOCK;
+            String key = JOIN_TEAM_LOCK+ teamId;
             RLock rLock = redissonClient.getLock(key);
             //设置锁过期时间
             try {
-                rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
-//                while (true) {
-                //队伍id
-                Long teamId = teamMemberDto.getTeam();
+                boolean locked = rLock.tryLock(2, 30, TimeUnit.SECONDS);
+                if (!locked) {
+                    throw new ServiceException("系统繁忙,请稍后重试");
+                }
+                //                while (true) {
                 //根据id查询项目队伍信息
                 teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
 
