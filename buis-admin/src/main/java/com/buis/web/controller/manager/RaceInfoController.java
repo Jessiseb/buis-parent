@@ -165,9 +165,11 @@ public class RaceInfoController extends BaseController {
     @ApiOperation("导出学生参与的第二课堂比赛数量")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
     @GetMapping("/exportStudentDiProjectCount")
-    public void studentRaceCount(HttpServletResponse response) {
+    public void studentRaceCount(@RequestParam(value = "college", required = true) int college,
+                                 @RequestParam(value = "grade", required = true) int grade,
+                                 HttpServletResponse response) {
         List<StudentExportToDiDto> studentExportToDiDtoList = new LinkedList<>(); //要导出的类型
-        List<StudentExportToDiDto> list = raceInfoService.exportStudentDiProjectCount(studentExportToDiDtoList, "第二课堂", response);
+        List<StudentExportToDiDto> list = raceInfoService.exportStudentDiProjectCount(college,grade,studentExportToDiDtoList, "第二课堂", response);
         ExcelUtil<StudentExportToDiDto> util = new ExcelUtil<StudentExportToDiDto>(StudentExportToDiDto.class);
         util.exportExcel(response, list, "导出学生参与的第二课堂比赛数量");
     }

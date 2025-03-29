@@ -66,4 +66,6 @@ public interface IPreSignStudentService
     List<PreSignStudentVo> fuzzyQuery(String name);
 
     PreSignStudent selectByUserIdAndRace(Long id, Long race);
+
+    PreSignStudent selectPreSignStudentByRace(Long race);
 }

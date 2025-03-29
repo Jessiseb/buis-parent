@@ -56,10 +56,10 @@ public interface AwardMapper
 
     /**
      * 根据队伍id查询奖状信息
-     * @param teamId
+     * @param name
      * @return
      */
 
-    Award selectAwardByTeam(@Param("teamId") Long teamId);
+    Award selectAwardByName(@Param("name") String name);
 
 }

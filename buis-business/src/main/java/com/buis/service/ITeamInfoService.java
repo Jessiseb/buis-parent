@@ -121,4 +121,11 @@ public interface ITeamInfoService {
      */
     public boolean hasSearchCondition(TeamInfo queryTeam);
 
+    /**
+     * 根据队伍负责人姓名查出比赛队伍信息
+     * @param name
+     * @return
+     */
+    TeamInfo selectTeamInfoByName(String name);
+
 }

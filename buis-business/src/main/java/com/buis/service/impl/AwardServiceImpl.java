@@ -5,6 +5,7 @@ import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.Award;
 import com.buis.domain.Score;
+import com.buis.domain.TeamInfo;
 import com.buis.mapper.AwardMapper;
 import com.buis.service.*;
 import com.buis.vo.RaceInfoVo;
@@ -48,7 +49,7 @@ public class AwardServiceImpl implements IAwardService {
      * @return 奖状信息
      */
     @Override
-    public  List<Award> selectAwardById(Long id) {
+    public List<Award> selectAwardById(Long id) {
         //获取登录用户id
         String loginIdStr = StpUtil.getLoginId().toString();
         Long loginId;
@@ -57,7 +58,7 @@ public class AwardServiceImpl implements IAwardService {
         } catch (NumberFormatException e) {
             throw new ServiceException("无效的用户ID格式");
         }
-        if(!loginId.equals(id)){
+        if (!loginId.equals(id)) {
             throw new ServiceException("无权限操作");
         }
         Award award = new Award();
@@ -123,22 +124,24 @@ public class AwardServiceImpl implements IAwardService {
     }
 
     /**
-     * @param teamId
+     * @param name
      * @return
      */
     @Override
     @Transactional
-    public Award selectAwardByTeam(Long teamId) {
+    public Award selectAwardByName(String name, String level) {
         Award award = new Award();
-        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(teamId);
-        Long race = teamInfoVo.getRace();
+
+        TeamInfo teamInfo = teamInfoService.selectTeamInfoByName(name);
+        Long race = teamInfo.getRace();
+
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(race);
         Date scoreEnd = raceInfoVo.getScoreEnd(); //评分截止时间
 
         // 获取指导老师信息
         String teacherNames = null;
-        Long teacher1 = teamInfoVo.getTeacher1();
-        Long teacher2 = teamInfoVo.getTeacher2();
+        Long teacher1 = teamInfo.getTeacher1();
+        Long teacher2 = teamInfo.getTeacher2();
         if (teacher1 != null || teacher2 != null) {
             UserInfoVo teacherInfo1 = userInfoService.selectUserInfoById(teacher1);
             UserInfoVo teacherInfo2 = userInfoService.selectUserInfoById(teacher2);
@@ -156,38 +159,44 @@ public class AwardServiceImpl implements IAwardService {
         }
 
         // 截止时正常查询
-        List<Score> scores = scoreService.selectTeamsRanking();
-        for (int i = 0; i < scores.size(); i++) { // 记录索引
-            Score score = scores.get(i);
-            if (score.getTeam().equals(teamId)) {
-                int rank = i + 1;
-                if (rank > 3) {
-                    throw new RuntimeException("未查询到奖状");
-                }
+//        List<Score> scores = scoreService.selectTeamsRanking();
+//        for (int i = 0; i < scores.size(); i++) { // 记录索引
+//            Score score = scores.get(i);
+//            if (score.getTeam().equals(teamId)) {
+//                int rank = i + 1;
+//                if (rank > 3) {
+//                    throw new RuntimeException("未查询到奖状");
+//                }
 
-                Award existingAward = awardMapper.selectAwardByTeam(teamId);
+        Award existingAward = awardMapper.selectAwardByName(name);
 
-                // 查询结果不为空直接返回已存在的奖状
-                if (existingAward != null) {
-                    return existingAward;
-                }
+        // 查询结果不为空直接返回已存在的奖状
+        if (existingAward != null) {
+            return existingAward;
+        }
 
-                // 插入奖状信息
-                award.setTeamId(teamId);
-                award.setAwardDate(DateUtils.getNowDate());//todo
-                //获取当前年份
-                int currentYear = LocalDate.now().getYear();
-                award.setYear(currentYear + "-" + currentYear + 1); //学年2025-2026
-                award.setRaceId(race); //比赛id
-                award.setAwardLevel(String.valueOf(rank));
-                award.setTeachers(teacherNames);
-                award.setIsDeleted(0);
-                awardMapper.insertAward(award);
+        // 插入奖状信息
+//        award.setTeamId(teamId);
+        award.setAwardDate(DateUtils.getNowDate());//
+        //获取当前年份
+        int currentYear = LocalDate.now().getYear();
+        award.setYear(currentYear + "-" + currentYear + 1); //学年2025-2026
+        award.setRaceId(race); //比赛id
+//        award.setAwardLevel(String.valueOf(rank));
+        award.setAwardLevel(level);
+        award.setTeachers(teacherNames);
+        award.setIsDeleted(0);
+        awardMapper.insertAward(award);
 
 //              返回查询出来的奖状信息
-                return award;
-            }
-        }
-        throw new RuntimeException("生成奖状信息失败");
+        return award;
     }
+
+//}
+//        throw new
+//
+//RuntimeException("生成奖状信息失败");
+//    }
+//            }
+
 }
