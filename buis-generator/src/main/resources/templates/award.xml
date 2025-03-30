@@ -54,7 +54,7 @@
                                 <w:u w:val="single"/>
                                 <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
                             </w:rPr>
-                            <w:t xml:space="preserve">${name} </w:t>
+                            <w:t>${name}</w:t>
                         </w:r>
                         <w:r>
                             <w:rPr>
@@ -90,7 +90,6 @@
                                 <w:spacing w:val="8"/>
                                 <w:sz w:val="48"/>
                                 <w:szCs w:val="48"/>
-                                <w:u w:val="none"/>
                                 <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
                             </w:rPr>
                             <w:t>${year}</w:t>
@@ -102,7 +101,7 @@
                                 <w:sz w:val="48"/>
                                 <w:szCs w:val="48"/>
                             </w:rPr>
-                            <w:t>学年第二课堂之</w:t>
+                            <w:t>学年</w:t>
                         </w:r>
                         <w:r>
                             <w:rPr>
@@ -110,7 +109,6 @@
                                 <w:spacing w:val="8"/>
                                 <w:sz w:val="48"/>
                                 <w:szCs w:val="48"/>
-                                <w:u w:val="none"/>
                                 <w:lang w:val="en-US" w:eastAsia="zh-CN"/>
                             </w:rPr>
                             <w:t>${race}</w:t>
@@ -136,8 +134,6 @@
                                 <w:szCs w:val="48"/>
                             </w:rPr>
                         </w:pPr>
-                        <w:bookmarkStart w:id="0" w:name="_GoBack"/>
-                        <w:bookmarkEnd w:id="0"/>
                         <w:r>
                             <w:rPr>
                                 <w:rFonts w:hint="eastAsia" w:ascii="黑体" w:hAnsi="宋体" w:eastAsia="黑体"/>
@@ -157,8 +153,10 @@
                                 <w:szCs w:val="48"/>
                                 <w:u w:val="none"/>
                             </w:rPr>
-                            <w:t xml:space="preserve">等奖 </w:t>
+                            <w:t xml:space="preserve">奖 </w:t>
                         </w:r>
+                        <w:bookmarkStart w:id="0" w:name="_GoBack"/>
+                        <w:bookmarkEnd w:id="0"/>
                     </w:p>
                     <w:p w14:paraId="09AA1E23">
                         <w:pPr>
@@ -327,16 +325,16 @@
             <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
                 <Template>Normal</Template>
                 <Company>www.xunchi.com</Company>
-                <Pages>2</Pages>
-                <Words>51</Words>
-                <Characters>91</Characters>
+                <Pages>1</Pages>
+                <Words>66</Words>
+                <Characters>79</Characters>
                 <Lines>2</Lines>
                 <Paragraphs>1</Paragraphs>
-                <TotalTime>1</TotalTime>
+                <TotalTime>2</TotalTime>
                 <ScaleCrop>false</ScaleCrop>
                 <LinksUpToDate>false</LinksUpToDate>
-                <CharactersWithSpaces>111</CharactersWithSpaces>
-                <Application>WPS Office_12.1.0.20305_F1E327BC-269C-435d-A152-05C5408002CA</Application>
+                <CharactersWithSpaces>86</CharactersWithSpaces>
+                <Application>WPS Office_12.1.0.20784_F1E327BC-269C-435d-A152-05C5408002CA</Application>
                 <DocSecurity>0</DocSecurity>
             </Properties>
         </pkg:xmlData>
@@ -348,7 +346,7 @@
                 <dc:creator>梦幻悟哲</dc:creator>
                 <cp:lastModifiedBy>WPS_1695022817</cp:lastModifiedBy>
                 <cp:lastPrinted>2013-03-27T12:54:00Z</cp:lastPrinted>
-                <dcterms:modified xsi:type="dcterms:W3CDTF">2025-03-20T10:21:30Z</dcterms:modified>
+                <dcterms:modified xsi:type="dcterms:W3CDTF">2025-03-30T07:54:08Z</dcterms:modified>
                 <dc:title>部门：</dc:title>
                 <cp:revision>5</cp:revision>
             </cp:coreProperties>
@@ -358,10 +356,10 @@
         <pkg:xmlData>
             <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
                 <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="2" name="KSOProductBuildVer">
-                    <vt:lpwstr>2052-12.1.0.20305</vt:lpwstr>
+                    <vt:lpwstr>2052-12.1.0.20784</vt:lpwstr>
                 </property>
                 <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="3" name="ICV">
-                    <vt:lpwstr>ADCF50F241AA43F3AF33D0FE083E1A5C_13</vt:lpwstr>
+                    <vt:lpwstr>A70565DAFEC149658F9FBB6A73188D63_13</vt:lpwstr>
                 </property>
                 <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="4" name="KSOTemplateDocerSaveRecord">
                     <vt:lpwstr>eyJoZGlkIjoiNWFlZWUwMTE4NDJmM2E1MTQ3YTFkMGJmMmJjZDg0ZTUiLCJ1c2VySWQiOiIxNTM2NDk3NDgxIn0=</vt:lpwstr>
@@ -442,6 +440,21 @@
                     <w:pitch w:val="default"/>
                     <w:sig w:usb0="E1002EFF" w:usb1="C000605B" w:usb2="00000029" w:usb3="00000000" w:csb0="200101FF" w:csb1="20280000"/>
                 </w:font>
+                <w:font w:name="monospace">
+                    <w:altName w:val="Segoe Print"/>
+                    <w:panose1 w:val="00000000000000000000"/>
+                    <w:charset w:val="00"/>
+                    <w:family w:val="auto"/>
+                    <w:pitch w:val="default"/>
+                    <w:sig w:usb0="00000000" w:usb1="00000000" w:usb2="00000000" w:usb3="00000000" w:csb0="00000000" w:csb1="00000000"/>
+                </w:font>
+                <w:font w:name="Segoe Print">
+                    <w:panose1 w:val="02000600000000000000"/>
+                    <w:charset w:val="00"/>
+                    <w:family w:val="auto"/>
+                    <w:pitch w:val="default"/>
+                    <w:sig w:usb0="0000028F" w:usb1="00000000" w:usb2="00000000" w:usb3="00000000" w:csb0="2000009F" w:csb1="47010000"/>
+                </w:font>
             </w:fonts>
         </pkg:xmlData>
     </pkg:part>
@@ -463,15 +476,16 @@
         <pkg:xmlData>
             <w:settings xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:sl="http://schemas.openxmlformats.org/schemaLibrary/2006/main" xmlns:wpsCustomData="http://www.wps.cn/officeDocument/2013/wpsCustomData" mc:Ignorable="w14">
                 <w:zoom w:percent="120"/>
-                <w:bordersDoNotSurroundHeader w:val="1"/>
-                <w:bordersDoNotSurroundFooter w:val="1"/>
+                <w:bordersDoNotSurroundHeader w:val="0"/>
+                <w:bordersDoNotSurroundFooter w:val="0"/>
                 <w:stylePaneFormatFilter w:val="3F01" w:allStyles="1" w:customStyles="0" w:latentStyles="0" w:stylesInUse="0" w:headingStyles="0" w:numberingStyles="0" w:tableStyles="0" w:directFormattingOnRuns="1" w:directFormattingOnParagraphs="1" w:directFormattingOnNumbering="1" w:directFormattingOnTables="1" w:clearFormatting="1" w:top3HeadingStyles="1" w:visibleStyles="0" w:alternateStyleNames="0"/>
                 <w:documentProtection w:enforcement="0"/>
                 <w:defaultTabStop w:val="420"/>
                 <w:hyphenationZone w:val="360"/>
                 <w:drawingGridVerticalSpacing w:val="156"/>
-                <w:displayHorizontalDrawingGridEvery w:val="0"/>
-                <w:displayVerticalDrawingGridEvery w:val="2"/>
+                <w:displayHorizontalDrawingGridEvery w:val="1"/>
+                <w:displayVerticalDrawingGridEvery w:val="1"/>
+                <w:noPunctuationKerning w:val="1"/>
                 <w:characterSpacingControl w:val="compressPunctuation"/>
                 <w:doNotValidateAgainstSchema/>
                 <w:doNotDemarcateInvalidXml/>
@@ -482,6 +496,8 @@
                     <w:ulTrailSpace/>
                     <w:doNotExpandShiftReturn/>
                     <w:adjustLineHeightInTable/>
+                    <w:doNotWrapTextWithPunct/>
+                    <w:doNotUseEastAsianBreakRules/>
                     <w:useFELayout/>
                     <w:useNormalStyleForList/>
                     <w:doNotUseIndentAsNumberingTabStop/>
@@ -518,6 +534,7 @@
                     <w:rsid w:val="0A751EB6"/>
                     <w:rsid w:val="154540FA"/>
                     <w:rsid w:val="159C2F8C"/>
+                    <w:rsid w:val="1AB030DE"/>
                     <w:rsid w:val="25595CB5"/>
                     <w:rsid w:val="268F69D3"/>
                     <w:rsid w:val="2E6D7949"/>
