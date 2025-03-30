@@ -11,12 +11,11 @@ import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.StringUtils;
 import com.buis.reponse.AuthResponse;
-import com.buis.reponse.StreamResponse;
 import com.buis.service.IAiService;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,19 +23,30 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 
+import javax.annotation.Resource;
+import java.rmi.ServerException;
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @ConfigurationProperties(prefix = "aliyun.ai")
 @Slf4j
 public class AiServiceImpl implements IAiService {
+    @Resource
+    private RedissonClient redissonClient;
+
+
     private final Logger logger = LoggerFactory.getLogger(AiServiceImpl.class);
     private static StringBuilder reasoningContent = new StringBuilder(); //思考内容
     private static StringBuilder finalContent = new StringBuilder(); //最终回复内容
@@ -126,6 +136,13 @@ public class AiServiceImpl implements IAiService {
 
     }
 
+    /**
+     * 文心智能体调用
+     *
+     * @param message
+     * @param threadId
+     * @return
+     */
     @Override
     public Flux<String> agentCallWithMessage(String message, String threadId) {
         //获取登录用户id
@@ -136,16 +153,28 @@ public class AiServiceImpl implements IAiService {
         } catch (NumberFormatException e) {
             throw new ServiceException("无效的用户ID格式");
         }
-
-        // 1. 获取 access_token（增强错误处理）
         RestTemplate restTemplate = new RestTemplate();
-        String authUrl = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
-                agentApiUrl, appId, secretKey);
+        //分布式锁控制Token获取
+        String key = "token_lock:" + loginId;
+        RLock rLock = redissonClient.getLock(key);
+        String authUrl = null;
+        try {
+            if (rLock.tryLock(0, 100, TimeUnit.MILLISECONDS)) {
+                // 1. 获取 access_token（增强错误处理）
+                authUrl = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
+                        agentApiUrl, appId, secretKey);
+                // 打印调试信息
+                log.info("请求Token URL: {}", authUrl);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            rLock.unlock();
+        }
 
-        // 打印调试信息
-        log.info("请求Token URL: {}", authUrl);
 
         try {
+            assert authUrl != null;
             ResponseEntity<AuthResponse> response = restTemplate.getForEntity(authUrl, AuthResponse.class);
             if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
                 return Flux.error(new RuntimeException("获取Token失败: " + response.getStatusCode()));
@@ -168,13 +197,15 @@ public class AiServiceImpl implements IAiService {
             requestBody.put("openId", loginId.toString()); //用户id
 //            requestBody.put("stream", true);
 
-            System.out.println(appId);
-            System.out.println(secretKey);
-
             // 3. 使用正确API地址和鉴权方式
             WebClient client = WebClient.builder()
-                    .baseUrl("https://agentapi.baidu.com/assistant/conversation?appId="+appId+"&secretKey="+secretKey)
+                    .baseUrl("https://agentapi.baidu.com/assistant/conversation?appId=" + appId + "&secretKey=" + secretKey)
                     .defaultHeader("Authorization", "Bearer " + accessToken)
+                    .clientConnector(new ReactorClientHttpConnector( //连接池
+                            HttpClient.create()
+                                    .responseTimeout(Duration.ofSeconds(30)) // 设置响应超时
+                                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    ))
                     .build();
 
             return client.post()
@@ -184,6 +215,10 @@ public class AiServiceImpl implements IAiService {
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(requestBody)
                     .retrieve()
+                    .onStatus(HttpStatus::is4xxClientError,
+                            clientResponse -> Mono.error(new RestClientException("客户端错误")))
+                    .onStatus(HttpStatus::is5xxServerError,
+                            clientResponse -> Mono.error(new ServerException("服务端错误")))
                     .bodyToFlux(String.class)
                     .onErrorResume(e -> {
                         log.error("Agent call failed", e);
@@ -194,5 +229,8 @@ public class AiServiceImpl implements IAiService {
             return Flux.error(new RuntimeException("认证流程失败: " + e.getMessage()));
         }
     }
+
+
+
 }
 
