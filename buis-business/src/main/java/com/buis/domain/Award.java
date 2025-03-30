@@ -58,6 +58,12 @@ public class Award extends BaseEntity {
     private String teachers;
 
     /**
+     * 名字
+     */
+    @Excel(name = "名字")
+    private String name;
+
+    /**
      * 颁奖日期(YYY-MM-DD)
      */
     @JsonFormat(pattern = "yyyy-MM-dd")

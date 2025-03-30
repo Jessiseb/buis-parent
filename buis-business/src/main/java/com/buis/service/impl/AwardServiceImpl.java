@@ -60,8 +60,14 @@ public class AwardServiceImpl implements IAwardService {
         if(!loginId.equals(id)){
             throw new ServiceException("无权限操作");
         }
+        //根据登录用户id查询到用户名字
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(loginId);
+        if (userInfoVo == null) {
+            throw new ServiceException("用户不存在!");
+        }
+        String name = userInfoVo.getName();
         Award award = new Award();
-        award.setId(id);
+        award.setName(name);
         return awardMapper.selectAwardList(award);
     }
 
