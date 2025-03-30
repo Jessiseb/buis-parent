@@ -60,6 +60,8 @@ public interface AwardMapper
      * @return
      */
 
-    Award selectAwardByName(@Param("name") String name);
+//    Award selectAwardByName(@Param("name") String name);
+
+    Award selectAwardByNameAndRace(@Param("name") String name,@Param("raceId") Long raceId);
 
 }

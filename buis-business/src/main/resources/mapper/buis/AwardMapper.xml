@@ -64,6 +64,14 @@
           and is_deleted = 0
     </select>
 
+    <select id="selectAwardByNameAndRace" resultType="com.buis.domain.Award">
+        select a.race_id, a.name, a.year, a.award_level, a.teachers, a.award_date
+        from award as a
+        where name = #{name}
+          and race_id = #{raceId}
+          and is_deleted = 0
+    </select>
+
     <insert id="insertAward" parameterType="com.buis.domain.Award">
         insert into award
         <trim prefix="(" suffix=")" suffixOverrides=",">

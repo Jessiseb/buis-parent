@@ -125,11 +125,13 @@ public class AwardController extends BaseController {
 //        return R.ok(awardService.selectAwardByName(name,level));
 //    }
 
-//    @ApiOperation("根据姓名生成奖状信息")
-//    @GetMapping("/generate")
-//    public R<String> generateCertificate(@RequestParam("teamId") Long teamId, HttpServletResponse response) {
-//        return awardGenerateService.generateAwardContent(teamId, response);
-//    }
+    @ApiOperation("生成奖状信息")
+    @GetMapping("/generate/{name}/{raceId}")
+    public R<String> generateCertificate(@PathVariable("name") String name,
+                                         @PathVariable("raceId") Long raceId,
+                                         HttpServletResponse response) {
+        return awardGenerateService.generateAwardContent(name,raceId,response);
+    }
 
 //    @ApiOperation("根据多队伍ids批量生成奖状信息")
 //    @PostMapping("/batchGenerate")
