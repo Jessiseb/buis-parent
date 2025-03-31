@@ -97,4 +97,7 @@ public interface TeamInfoMapper
      * @return
      */
     List<TeamInfo> selectTeamInfoByUserId(Long userId);
+
+    TeamInfo selectTeamInfoByRaceIdAndUserId(Long race, Long userId);
+
 }

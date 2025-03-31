@@ -118,7 +118,7 @@ public class DictApiController {
      * @param dictType 字典类型
      * @return MyPageVo<List<SysDictDataVo>> 返回字典信息的分页数据
      */
-    private MyPageVo<List<SysDictDataVo>> getDictDataByType(String dictType) {
+    public MyPageVo<List<SysDictDataVo>> getDictDataByType(String dictType) {
         SysDictData dictData = new SysDictData();
         dictData.setDictType(dictType);  // 设置字典类型
         dictData.setStatus("0");  // 只查询有效的字典数据

@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
+import com.alibaba.dashscope.utils.EncryptionUtils;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
@@ -14,10 +15,12 @@ import com.buis.dto.UserLoginDto;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
+import com.buis.system.service.ISysDictDataService;
 import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +40,8 @@ import java.util.regex.Pattern;
 public class UserInfoServiceImpl implements IUserInfoService {
     @Resource
     private UserInfoMapper userInfoMapper;
-
+    @Resource
+    private ISysDictDataService sysDictDataService;
     @Resource
     private ITeamMemberTeacherService teamMemberTeacherService;
 
@@ -109,6 +113,14 @@ public class UserInfoServiceImpl implements IUserInfoService {
         UserInfoVo vo = new UserInfoVo();
         if (userInfo != null) {
             BeanUtils.copyProperties(userInfo, vo);
+            //把年级,班级插入
+            //根据grade查询到字典对应的值
+            int grade = userInfo.getGrade();
+            int sClass = userInfo.getSClass();
+            String stu_grade = sysDictDataService.selectDictLabel("stu_grade", String.valueOf(grade));
+            vo.setStuGrade(stu_grade);
+            String stu_class = sysDictDataService.selectDictLabel("stu_class", String.valueOf(sClass));
+            vo.setStuClass(stu_class);
             if (vo.getIsTeacher() != null && vo.getIsTeacher() == 1) { // 判断是否为老师
                 //是老师
                 Long count = teamMemberTeacherService.getGuideCount(userInfo.getId());
@@ -201,7 +213,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         }
 
         //密码加密
-        String encryptPassword = SaSecureUtil.md5(SALT + password);
+        String encryptPassword =  DigestUtils.md5DigestAsHex((SALT + password).getBytes());
 
         //添加注册信息到数据库
         UserInfo member = new UserInfo();
@@ -248,23 +260,41 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Override
     public String userLogin(UserLoginDto userLoginDTO, HttpServletRequest request) {
+        String number = userLoginDTO.getNumber();
         String email = userLoginDTO.getEmail();
         String passWord = userLoginDTO.getPassWord();
         String code = userLoginDTO.getCode();
         Integer isTeacher = userLoginDTO.getIsTeacher();
         //1.对参数做校验
-        if (StringUtils.isEmpty(email)) {
-            throw new ServiceException("邮箱账号不能为空!");
+        if (StringUtils.isEmpty(email) && StringUtils.isEmpty(number)) {
+            throw new ServiceException("账号不能为空!");
         }
-        //查询用户是否存在
-        //根据用户的邮箱查询用户
-        UserInfo userInfo = userInfoMapper.getLoginInfoByEmail(email);
-        //用户不存在
-        if (userInfo == null) {
-            log.info("user login fail,userAccount cannot match userPassword");
-            throw new ServiceException("用户不存在,请先注册!");
+        UserInfo userInfo = null;
+        if (StringUtils.isNotEmpty(email)) {
+            //邮箱登录
+            //查询用户是否存在
+            //根据用户的邮箱查询用户
+            userInfo = userInfoMapper.getLoginInfoByEmail(email);
+            //用户不存在
+            if (userInfo == null) {
+                log.info("user login fail,userAccount cannot match userPassword");
+                throw new ServiceException("用户不存在,请先注册!");
+            }
+        } else if (StringUtils.isNotEmpty(number)) {
+            //学号登录
+            //查询用户是否存在
+            //根据用户的学号查询用户
+            userInfo = userInfoMapper.getLoginInfoByNumber(number);
+            //用户不存在
+            if (userInfo == null) {
+                log.info("user login fail,userAccount cannot match userPassword");
+                throw new ServiceException("用户不存在,请先注册!");
+            }
         }
-        Integer isTeacher1 = userInfo.getIsTeacher();
+        Integer isTeacher1 = null;
+        if (userInfo != null) {
+            isTeacher1 = userInfo.getIsTeacher();
+        }
 
         //判断isTeacher是否对应
         if (isTeacher != null && !isTeacher.equals(isTeacher1)) {
@@ -279,7 +309,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (!StringUtils.isEmpty(passWord)) {
             // 如果密码不为空则是密码登录
             //把输入的密码加密
-            String encryptPassword = SaSecureUtil.md5(SALT + passWord);
+            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + passWord).getBytes());
             if (!encryptPassword.equals(userInfo.getPassword())) {
                 throw new ServiceException("用户密码错误,请重新输入~");
             }
@@ -290,16 +320,17 @@ public class UserInfoServiceImpl implements IUserInfoService {
                 throw new ServiceException("验证码错误~");
             }
         } else {
-            throw new ServiceException("邮箱账号或密码不能为空!");
+            throw new ServiceException("账号或密码不能为空!");
         }
 
         //3.校验账户
         //邮箱的正则表达式
-        FormatUtils.checkEmailFormat(email);
+        if (StringUtils.isNotEmpty(email)) {
+            FormatUtils.checkEmailFormat(email);
+        }
 
         StpUtil.login(userInfo.getId());
-        String token = StpUtil.getTokenValue();
-        return token;
+        return StpUtil.getTokenValue();
 
     }
 
@@ -334,6 +365,11 @@ public class UserInfoServiceImpl implements IUserInfoService {
             throw new ServiceException("用户名不能为空!");
         }
         return userInfoMapper.selectUserInfoByName(name);
+    }
+
+    @Override
+    public List<UserInfoVo> selectAllTeachers(Integer isTeacher) {
+        return userInfoMapper.selectTeachers(isTeacher);
     }
 
 

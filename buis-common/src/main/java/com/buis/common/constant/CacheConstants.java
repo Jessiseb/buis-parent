@@ -46,4 +46,19 @@ public class CacheConstants
      * 加入队伍 join key
      */
     public static final String JOIN_TEAM_LOCK = "lock:join_team";
+
+    /**
+     * 查询队伍 redis key
+     */
+    public static final String QUERY_TEAM_LOCK = "lock:query_team";
+
+    /**
+     * 查询比赛 redis key
+     */
+    public static final String QUERY_RACE_LOCK = "lock:query_race";
+
+    /**
+     * 查询热门比赛 redis key
+     */
+    public static final String QUERY_HOT_RACE_LOCK = "lock:query_hot_race";
 }

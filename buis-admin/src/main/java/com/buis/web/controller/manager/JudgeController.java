@@ -8,7 +8,6 @@ import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.Judge;
 import com.buis.service.IJudgeService;
-import com.buis.vo.AssistantVo;
 import com.buis.vo.JudgeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -84,6 +85,21 @@ public class UserInfo extends BaseEntity {
     @ApiModelProperty("学院")
     @Excel(name = "学院")
     private int college;
+
+    /**
+     * 年级
+     */
+    @ApiModelProperty("年级")
+    @Excel(name = "年级")
+    private int grade;
+
+    /**
+     * 班级
+     */
+    @ApiModelProperty("班级")
+    @Excel(name = "班级")
+    @JsonProperty("sClass")
+    private int sClass;
 
     /**
      * 专业

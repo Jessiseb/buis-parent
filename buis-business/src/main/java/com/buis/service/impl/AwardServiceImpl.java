@@ -1,25 +1,22 @@
 package com.buis.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
 import cn.dev33.satoken.stp.StpUtil;
-import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.Award;
 import com.buis.domain.Score;
-import com.buis.domain.UserInfo;
+import com.buis.mapper.AwardMapper;
 import com.buis.service.*;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.buis.mapper.AwardMapper;
-import com.buis.domain.Award;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 奖状信息Service业务层处理
@@ -63,8 +60,14 @@ public class AwardServiceImpl implements IAwardService {
         if(!loginId.equals(id)){
             throw new ServiceException("无权限操作");
         }
+        //根据登录用户id查询到用户名字
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(loginId);
+        if (userInfoVo == null) {
+            throw new ServiceException("用户不存在!");
+        }
+        String name = userInfoVo.getName();
         Award award = new Award();
-        award.setId(id);
+        award.setName(name);
         return awardMapper.selectAwardList(award);
     }
 
@@ -136,15 +139,26 @@ public class AwardServiceImpl implements IAwardService {
         TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(teamId);
         Long race = teamInfoVo.getRace();
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(race);
-        Date scoreEnd = raceInfoVo.getScoreEnd();
+        Date scoreEnd = raceInfoVo.getScoreEnd(); //评分截止时间
 
         // 获取指导老师信息
-        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(teamInfoVo.getTeacher());
+        String teacherNames = null;
+        Long teacher1 = teamInfoVo.getTeacher1();
+        Long teacher2 = teamInfoVo.getTeacher2();
+        if (teacher1 != null || teacher2 != null) {
+            UserInfoVo teacherInfo1 = userInfoService.selectUserInfoById(teacher1);
+            UserInfoVo teacherInfo2 = userInfoService.selectUserInfoById(teacher2);
+            //拼接指导老师名称
+            String teacher1Name = teacherInfo1.getName();
+            String teacher2Name = teacherInfo2.getName();
+            teacherNames = teacher1Name + "、" + teacher2Name;
+        }
+
 
         // 使用compareTo比较时间，限制查询时间
         if (scoreEnd.compareTo(DateUtils.getNowDate()) >= 0) {
             // 评分未截止
-            throw new RuntimeException("评分未截止，请等待评分截止时间");
+            throw new RuntimeException("评分未截止，请等待评分截止时间~");
         }
 
         // 截止时正常查询
@@ -167,20 +181,19 @@ public class AwardServiceImpl implements IAwardService {
                 // 插入奖状信息
                 award.setTeamId(teamId);
                 award.setAwardDate(DateUtils.getNowDate());//todo
-                award.setYear("2024-2025");
-                award.setRaceId(race);
+                //获取当前年份
+                int currentYear = LocalDate.now().getYear();
+                award.setYear(currentYear + "-" + currentYear + 1); //学年2025-2026
+                award.setRaceId(race); //比赛id
                 award.setAwardLevel(String.valueOf(rank));
-                award.setTeachers(userInfoVo.getName());
+                award.setTeachers(teacherNames);
                 award.setIsDeleted(0);
-
                 awardMapper.insertAward(award);
-                awardMapper.updateAward(award);
 
 //              返回查询出来的奖状信息
                 return award;
             }
         }
-
-        throw new RuntimeException("未查询到奖状");
+        throw new RuntimeException("生成奖状信息失败");
     }
 }

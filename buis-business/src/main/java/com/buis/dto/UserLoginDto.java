@@ -18,6 +18,12 @@ public class UserLoginDto implements Serializable {
     private String email;
 
     /**
+     * 学号
+     */
+    @ApiModelProperty(value = "用户的学号或工号")
+    private String number;
+
+    /**
      * 密码
      */
     @ApiModelProperty(value = "用户的登录密码")

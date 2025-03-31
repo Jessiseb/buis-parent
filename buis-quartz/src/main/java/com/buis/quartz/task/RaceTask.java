@@ -1,13 +1,25 @@
 package com.buis.quartz.task;
 
+import com.buis.common.core.page.MyPageVo;
+import com.buis.common.core.redis.RedisCache;
+import com.buis.common.utils.PageUtils;
 import com.buis.domain.RaceInfo;
 import com.buis.enums.RaceStatus;
+import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.IRaceInfoService;
+import com.buis.vo.HotRaceVo;
+import com.buis.vo.RaceInfoVo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.Page;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时任务
@@ -16,6 +28,12 @@ import java.util.List;
 public class RaceTask {
     @Autowired
     private IRaceInfoService raceInfoService;
+    @Autowired
+    private RedisCache redisCache;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Autowired
+    private RaceInfoMapper raceInfoMapper;
 
 
 
@@ -55,6 +73,71 @@ public class RaceTask {
                 raceInfoService.updateRaceInfo(raceInfo);
             }
         }
+    }
+
+    /**
+     * 缓存首页的比赛信息
+     * 每天2点0分运行
+     * @throws JsonProcessingException
+     */
+    public void warmUp() throws JsonProcessingException {
+        System.out.println("执行定时任务===缓存预热分页比赛信息");
+        //清理缓存
+        String pattern = "races:page:*:size:*";
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (keys != null && !keys.isEmpty()) {
+            // 删除匹配的键
+            redisTemplate.delete(keys);
+        }
+        //删除所有是否报名缓存
+        String pattern1 = "isJoin:race:*:user:*";
+        Set<String> keys1 = redisTemplate.keys(pattern1);
+        if (keys1 != null && !keys1.isEmpty()) {
+            // 删除匹配的键
+            redisTemplate.delete(keys1);
+        }
+
+        //删除所有是否预报名缓存
+        String pattern2 = "isPreJoin:race:*:user:*";
+        Set<String> keys2 = redisTemplate.keys(pattern2);
+        if (keys2 != null && !keys2.isEmpty()) {
+            redisTemplate.delete(keys2);
+        }
+        //分页查询比赛信息
+        //缓存首页的比赛信息
+        int pageNums = 1;
+        int pageSizes = 10;
+        RaceInfo raceInfo = new RaceInfo();
+        Page<RaceInfoVo> page = PageUtils.startPage(pageNums, pageSizes);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+        MyPageVo myPageVo = new MyPageVo(page, raceInfoVos);
+        String pageCacheKey = getPageCacheKey(pageNums, pageSizes);
+        ObjectMapper objectMapper = new ObjectMapper();
+        redisCache.setCacheObject(pageCacheKey, objectMapper.writeValueAsString(myPageVo), 1, TimeUnit.DAYS);
+        System.out.println("缓存预热完成");
+    }
+
+    private String getPageCacheKey(int pageNum, int pageSize) {
+        return String.format("races:page:%d:size:%d", pageNum, pageSize);
+    }
+
+    /**
+     * 缓存热门比赛
+     * 每天0点00分运行
+     * @throws JsonProcessingException
+     */
+    public void warmUpHotRace() throws JsonProcessingException {
+        System.out.println("执行定时任务===缓存预热热门比赛");
+        //清理缓存
+        redisCache.deleteObject("hotRace");
+
+        //缓存热门比赛
+        List<HotRaceVo> hotRaceVoList = raceInfoService.getHotRace();
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (CollectionUtils.isNotEmpty(hotRaceVoList)) {
+            redisCache.setCacheObject("hotRace", objectMapper.writeValueAsString(hotRaceVoList), 1, TimeUnit.DAYS);
+        }
+        System.out.println("缓存预热完成");
     }
 
 

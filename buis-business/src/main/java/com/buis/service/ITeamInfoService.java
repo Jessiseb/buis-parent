@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 
+import com.buis.common.core.page.MyPageVo;
 import com.buis.domain.TeamInfo;
 import com.buis.domain.UserInfo;
 import com.buis.dto.TeamMemberDto;
@@ -106,4 +107,19 @@ public interface ITeamInfoService {
      */
     int agreeJoinTeam(Long userId,Long teamId);
 
+    /**
+     * 根据队伍id查询队伍信息(缓存)
+     * @param teamInfo
+     * @return
+     */
+    public MyPageVo<List<TeamInfoVo>> selectTeamInfoListFromRedis(TeamInfo teamInfo);
+
+    /**
+     * 检查是否带有查询条件
+     * @param queryTeam
+     * @return
+     */
+    public boolean hasSearchCondition(TeamInfo queryTeam);
+
+    int transfer(Long team, Long user);
 }
