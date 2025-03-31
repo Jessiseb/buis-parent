@@ -113,4 +113,6 @@ public interface TeamMemberTeacherMapper
     int insertTeamMemberTeacherBatch(List<TeamMemberTeacherVo> teamMemberTeacherList);
 
     int insertTeamMemberTeacherByList(List<TeamMemberTeacher> teamMemberTeacherList);
+
+    List<TeamMemberTeacher> selectTeamMemberTeacherByTeamId(Long id);
 }
