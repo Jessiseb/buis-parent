@@ -542,7 +542,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return
      */
     @Override
-    public TeamInfo selectTeamInfoByName(String name) {
+    public List<TeamInfo> selectTeamInfoByName(String name) {
         return teamInfoMapper.selectTeamInfoByName(name);
     }
 

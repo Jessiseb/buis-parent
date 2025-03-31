@@ -117,4 +117,6 @@ public interface IRaceInfoService
 
     List<StudentExportToDiDto> exportStudentDiProjectCount(int college,int grade,List<StudentExportToDiDto> StudentExporToDektDtoList, String name, HttpServletResponse response);
 
+    String userAnnualParticipationRate(Long userId, int grade);
+
 }

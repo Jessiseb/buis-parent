@@ -126,6 +126,8 @@ public interface ITeamInfoService {
      * @param name
      * @return
      */
-    TeamInfo selectTeamInfoByName(String name);
+    List<TeamInfo> selectTeamInfoByName(String name);
+
+
 
 }

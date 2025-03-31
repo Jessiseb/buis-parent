@@ -25,7 +25,6 @@ import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
-import com.buis.vo.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +42,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 
 import static com.buis.common.constant.CacheConstants.QUERY_HOT_RACE_LOCK;
 import static com.buis.common.constant.CacheConstants.QUERY_RACE_LOCK;
@@ -76,8 +76,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private RedissonClient redissonClient;
     @Autowired
     private IPreSignStudentService preSignStudentService;
-
-
+    @Resource
+    private IRaceInfoService raceInfoService;
     @Resource
     private SysRoleMapper sysRoleMapper;
 
@@ -779,119 +779,142 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
 //        log.info("统计完成，涉及教师人数:{}",studentExportMap.size());
 
-    //遍历map集合, 把值插入到StudentExportDto
-        for(Map.Entry<String, Long> entry :studentExportMap.entrySet()){
-        StudentExportToDiDto studentExportToDiDto = new StudentExportToDiDto();
-        studentExportToDiDto.setStudentName(entry.getKey());  //老师名称
-        studentExportToDiDto.setProjectCount(entry.getValue()); //指导数量
-        StudentExportToDiDtoList.add(studentExportToDiDto);
-    }
-        log.info("导出数据组装完成，最终记录数:{}",StudentExportToDiDtoList.size());
-        return StudentExportToDiDtoList;
-}
-
-/**
- * 判断当前时间是否在报名时间内
- *
- * @param raceId
- * @return
- */
-public boolean checkJoinTime(Long raceId) {
-    // 查询比赛报名时间
-    RaceInfo raceInfo = raceInfoMapper.selectRaceInfoById(raceId);
-    if (raceInfo != null) {
-        Date joinStart = raceInfo.getJoinStart();
-        Date joinEnd = raceInfo.getJoinEnd();
-        // 获取当前系统时间
-        Date now = DateUtils.getNowDate();
-        return !(now.getTime() >= joinStart.getTime() && now.getTime() <= joinEnd.getTime());
-    }
-    return false;
-}
-
-/**
- * 检查活动报名是否已满
- */
-private boolean checkJoinFull(Long raceId) {
-    // 查询已报名人数
-    int teacher = teamMemberTeacherService.getJoinCount(null, raceId, null);
-    int student = teamMemberStudentService.getJoinCount(null, raceId, null);
-    // 查询比赛信息
-    RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
-    if (raceDetail != null) {
-        Long capacity = raceDetail.getCapacity();
-        if (capacity != 0) {
-            return (teacher + student) >= capacity;
+        //遍历map集合, 把值插入到StudentExportDto
+        for (Map.Entry<String, Long> entry : studentExportMap.entrySet()) {
+            StudentExportToDiDto studentExportToDiDto = new StudentExportToDiDto();
+            studentExportToDiDto.setStudentName(entry.getKey());  //老师名称
+            studentExportToDiDto.setProjectCount(entry.getValue()); //指导数量
+            StudentExportToDiDtoList.add(studentExportToDiDto);
         }
+        log.info("导出数据组装完成，最终记录数:{}", StudentExportToDiDtoList.size());
+        return StudentExportToDiDtoList;
     }
-    return false;
-}
 
-/**
- * 判断对象的所有字段是否为空
- *
- * @param obj
- * @return
- */
-public boolean allFieldsEmpty(Object obj) {
-    if (obj == null) {
+    @Override
+    public String userAnnualParticipationRate(Long userId, int grade) {
+        double count = 0.0;
+        double sum = 0.0;
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(userId);
+        String name = userInfoVo.getName();
+        List<TeamInfo> teamInfos = teamInfoService.selectTeamInfoByName(name);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoAll();
+        for (RaceInfoVo race : raceInfoVos) {
+            Date createDate = race.getCreateTime();
+            LocalDate localDate = createDate.toInstant()
+                    .atZone(ZoneId.systemDefault()) // 指定时区（如系统默认时区）
+                    .toLocalDate();
+            int year = localDate.getYear();
+            if (race.getId() != null && year == grade) {
+                sum++;
+            }
+        }
+
+        if (sum == 0) {
+            throw new RuntimeException("该年份没有比赛");
+        }
+
+        if (teamInfos.isEmpty()) {
+            return 0 + "%";
+        } else {
+
+            for (TeamInfo teamInfo : teamInfos) {
+                Date createDate = teamInfo.getCreateTime();
+                LocalDate localDate = createDate.toInstant()
+                        .atZone(ZoneId.systemDefault()) // 指定时区（如系统默认时区）
+                        .toLocalDate();
+                int year = localDate.getYear();
+                if (teamInfo.getRace() != null && year == grade) {
+                    count++;
+                }
+            }
+            return String.format("%.2f%%", (count / sum) * 100);
+        }
+
+    }
+
+    /**
+     * 判断当前时间是否在报名时间内
+     *
+     * @param raceId
+     * @return
+     */
+    public boolean checkJoinTime(Long raceId) {
+        // 查询比赛报名时间
+        RaceInfo raceInfo = raceInfoMapper.selectRaceInfoById(raceId);
+        if (raceInfo != null) {
+            Date joinStart = raceInfo.getJoinStart();
+            Date joinEnd = raceInfo.getJoinEnd();
+            // 获取当前系统时间
+            Date now = DateUtils.getNowDate();
+            return !(now.getTime() >= joinStart.getTime() && now.getTime() <= joinEnd.getTime());
+        }
+        return false;
+    }
+
+    /**
+     * 检查活动报名是否已满
+     */
+    private boolean checkJoinFull(Long raceId) {
+        // 查询已报名人数
+        int teacher = teamMemberTeacherService.getJoinCount(null, raceId, null);
+        int student = teamMemberStudentService.getJoinCount(null, raceId, null);
+        // 查询比赛信息
+        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+        if (raceDetail != null) {
+            Long capacity = raceDetail.getCapacity();
+            if (capacity != 0) {
+                return (teacher + student) >= capacity;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断对象的所有字段是否为空
+     *
+     * @param obj
+     * @return
+     */
+    public boolean allFieldsEmpty(Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        Class<?> clazz = obj.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getName().equals("serialVersionUID")) {
+                continue;
+            }
+            field.setAccessible(true);
+            try {
+                Object value = field.get(obj);
+                if (value != null) {
+                    return false;
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
         return true;
     }
-    Class<?> clazz = obj.getClass();
-    Field[] fields = clazz.getDeclaredFields();
-    for (Field field : fields) {
-        if (field.getName().equals("serialVersionUID")) {
-            continue;
-        }
-        field.setAccessible(true);
-        try {
-            Object value = field.get(obj);
-            if (value != null) {
-                return false;
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-    return true;
-}
 
-/**
- * 从redis中获取比赛信息列表
- *
- * @param raceInfo
- * @return
- */
-@Override
-public MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo) {
-    //无条件查询
-    //获取key
-    PageDomain pageDomain = TableSupport.buildPageRequest();
-    Integer pageNum = pageDomain.getPageNum();
-    Integer pageSize = pageDomain.getPageSize();
-    String pageCacheKey = getPageCacheKey(pageNum, pageSize);
-    ObjectMapper objectMapper = new ObjectMapper();
+    /**
+     * 从redis中获取比赛信息列表
+     *
+     * @param raceInfo
+     * @return
+     */
+    @Override
+    public MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo) {
+        //无条件查询
+        //获取key
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        Integer pageSize = pageDomain.getPageSize();
+        String pageCacheKey = getPageCacheKey(pageNum, pageSize);
+        ObjectMapper objectMapper = new ObjectMapper();
 
-    String RacesJson = redisCache.getCacheObject(pageCacheKey);
-    if (StringUtils.isNotEmpty(RacesJson)) {
-        //存在直接返回
-        return addFieldToJson(RacesJson);
-    }
-    //判断空值
-    if (RacesJson != null) {
-        return null;
-    }
-
-    String lockKey = QUERY_RACE_LOCK + getPageCacheKey(pageNum, pageSize);
-    RLock rLock = redissonClient.getLock(lockKey);
-    MyPageVo myPageVo = null;
-
-    try {
-        boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
-
-        //再次检查缓存
-        RacesJson = redisCache.getCacheObject(pageCacheKey);
-        //判断是否存在
+        String RacesJson = redisCache.getCacheObject(pageCacheKey);
         if (StringUtils.isNotEmpty(RacesJson)) {
             //存在直接返回
             return addFieldToJson(RacesJson);
@@ -901,209 +924,228 @@ public MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo)
             return null;
         }
 
-        if (!isLock) {
-            Thread.sleep(50);
-            return selectRaceInfoListFromRedis(raceInfo);
+        String lockKey = QUERY_RACE_LOCK + getPageCacheKey(pageNum, pageSize);
+        RLock rLock = redissonClient.getLock(lockKey);
+        MyPageVo myPageVo = null;
+
+        try {
+            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+
+            //再次检查缓存
+            RacesJson = redisCache.getCacheObject(pageCacheKey);
+            //判断是否存在
+            if (StringUtils.isNotEmpty(RacesJson)) {
+                //存在直接返回
+                return addFieldToJson(RacesJson);
+            }
+            //判断空值
+            if (RacesJson != null) {
+                return null;
+            }
+
+            if (!isLock) {
+                Thread.sleep(50);
+                return selectRaceInfoListFromRedis(raceInfo);
+            }
+
+            //拿到锁，查询数据库
+            Page<RaceInfoVo> page = PageUtils.startPage(pageNum, pageSize);
+            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+
+            //不存在，返回错误信息
+            if (raceInfoVos.isEmpty()) {
+                log.info("将空值写入redis");
+                redisCache.setCacheObject(pageCacheKey, "", 5, TimeUnit.MINUTES);
+                return null;
+            }
+            //存在，写入redis
+            myPageVo = new MyPageVo(page, raceInfoVos);
+            String json = objectMapper.writeValueAsString(myPageVo);
+            redisCache.setCacheObject(pageCacheKey, json, 1, TimeUnit.DAYS);
+            myPageVo = addFieldToJson(json);
+        } catch (Exception e) {
+            throw new ServiceException("查询失败: " + e.getMessage());
+        } finally {
+            //释放锁
+            if (rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
         }
-
-        //拿到锁，查询数据库
-        Page<RaceInfoVo> page = PageUtils.startPage(pageNum, pageSize);
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
-
-        //不存在，返回错误信息
-        if (raceInfoVos.isEmpty()) {
-            log.info("将空值写入redis");
-            redisCache.setCacheObject(pageCacheKey, "", 5, TimeUnit.MINUTES);
-            return null;
-        }
-        //存在，写入redis
-        myPageVo = new MyPageVo(page, raceInfoVos);
-        String json = objectMapper.writeValueAsString(myPageVo);
-        redisCache.setCacheObject(pageCacheKey, json, 1, TimeUnit.DAYS);
-        myPageVo = addFieldToJson(json);
-    } catch (Exception e) {
-        throw new ServiceException("查询失败: " + e.getMessage());
-    } finally {
-        //释放锁
-        if (rLock.isHeldByCurrentThread()) {
-            rLock.unlock();
-        }
-    }
-    return myPageVo;
-}
-
-@Override
-public List<SecondClassCountVo> getSecondClassCountByMonth(Integer month) {
-    return raceInfoMapper.getSecondClassCountByMonth(month);
-}
-
-@Override
-public List<SecondClassCountVo> getSecondClassCountByYear(Integer year) {
-    return raceInfoMapper.getSecondClassCountByYear(year);
-}
-
-/**
- * 获取热门比赛
- *
- * @return
- */
-@Override
-public List<HotRaceVo> getHotRace() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    String hotRaceJson = redisCache.getCacheObject("hotRace");
-    if (StringUtils.isNotEmpty(hotRaceJson)) {
-        //存在直接返回
-        return JSON.parseArray(hotRaceJson, HotRaceVo.class);
-    }
-    //判断空值
-    if (hotRaceJson != null) {
-        return null;
+        return myPageVo;
     }
 
-    String lockKey = QUERY_HOT_RACE_LOCK;
-    RLock rLock = redissonClient.getLock(lockKey);
-    try {
-        boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
-        //再次检查缓存
-        hotRaceJson = redisCache.getCacheObject("hotRace");
+    @Override
+    public List<SecondClassCountVo> getSecondClassCountByMonth(Integer month) {
+        return raceInfoMapper.getSecondClassCountByMonth(month);
+    }
+
+    @Override
+    public List<SecondClassCountVo> getSecondClassCountByYear(Integer year) {
+        return raceInfoMapper.getSecondClassCountByYear(year);
+    }
+
+    /**
+     * 获取热门比赛
+     *
+     * @return
+     */
+    @Override
+    public List<HotRaceVo> getHotRace() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String hotRaceJson = redisCache.getCacheObject("hotRace");
         if (StringUtils.isNotEmpty(hotRaceJson)) {
+            //存在直接返回
             return JSON.parseArray(hotRaceJson, HotRaceVo.class);
         }
         //判断空值
         if (hotRaceJson != null) {
             return null;
         }
-        if (!isLock) {
-            Thread.sleep(50);
-            return getHotRace();
-        }
-        //拿到锁，查询数据库
-        // 获取所有比赛信息
-        RaceInfo r = new RaceInfo();
-        List<RaceInfoVo> raceInfoList = raceInfoMapper.selectRaceInfoList(r);
 
-        // 用于存储每个比赛的报名人数
-        Map<Long, Integer> raceRegistrationCountMap = new HashMap<>();
-
-        // 查询未删除的报名记录
-        PreSignStudent p = new PreSignStudent();
-        List<PreSignStudentVo> preSignStudentList = preSignStudentService.selectPreSignStudentList(p);
-
-        // 统计每个比赛的报名人数
-        for (PreSignStudent preSignStudent : preSignStudentList) {
-            Long raceId = preSignStudent.getRace();
-            raceRegistrationCountMap.put(raceId, raceRegistrationCountMap.getOrDefault(raceId, 0) + 1);
-        }
-
-        // 封装结果
-        List<HotRaceVo> resultList = new ArrayList<>();
-        for (RaceInfo raceInfo : raceInfoList) {
-            Long raceId = raceInfo.getId();
-            Integer count = raceRegistrationCountMap.getOrDefault(raceId, 0);
-            HotRaceVo vo = new HotRaceVo();
-            vo.setRaceName(raceInfo.getName());
-            vo.setRegistrationCount(count);
-            resultList.add(vo);
-        }
-
-        // 按报名人数降序排序，并取前10个
-        resultList.sort((o1, o2) -> o2.getRegistrationCount() - o1.getRegistrationCount());
-        if (resultList.size() > 10) {
-            List<HotRaceVo> hotRaceVoList = resultList.subList(0, 10);
-            redisCache.setCacheObject("hotRace", objectMapper.writeValueAsString(hotRaceVoList), 1, TimeUnit.DAYS);
-            return hotRaceVoList;
-        } else {
-            redisCache.setCacheObject("hotRace", objectMapper.writeValueAsString(resultList), 1, TimeUnit.DAYS);
-            return resultList;
-        }
-    } catch (Exception e) {
-        throw new ServiceException("查询失败: " + e.getMessage());
-    } finally {
-        //释放锁
-        if (rLock.isHeldByCurrentThread()) {
-            rLock.unlock();
-        }
-    }
-}
-
-/**
- * 给比赛缓存添加字段
- *
- * @param racesJson
- * @return
- */
-private MyPageVo addFieldToJson(String racesJson) {
-    MyPageVo<List<RaceInfoVo>> myPageVo = JSON.parseObject(
-            racesJson,
-            new TypeReference<MyPageVo<List<RaceInfoVo>>>() {
+        String lockKey = QUERY_HOT_RACE_LOCK;
+        RLock rLock = redissonClient.getLock(lockKey);
+        try {
+            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+            //再次检查缓存
+            hotRaceJson = redisCache.getCacheObject("hotRace");
+            if (StringUtils.isNotEmpty(hotRaceJson)) {
+                return JSON.parseArray(hotRaceJson, HotRaceVo.class);
             }
-    );
-    List<RaceInfoVo> raceInfoVoList = myPageVo.getRows();
-    if (raceInfoVoList != null) {
-        myPageVo.setRows(addField(raceInfoVoList));
-    }
-    return myPageVo;
-}
+            //判断空值
+            if (hotRaceJson != null) {
+                return null;
+            }
+            if (!isLock) {
+                Thread.sleep(50);
+                return getHotRace();
+            }
+            //拿到锁，查询数据库
+            // 获取所有比赛信息
+            RaceInfo r = new RaceInfo();
+            List<RaceInfoVo> raceInfoList = raceInfoMapper.selectRaceInfoList(r);
 
+            // 用于存储每个比赛的报名人数
+            Map<Long, Integer> raceRegistrationCountMap = new HashMap<>();
 
-/**
- * 获取分页缓存的key
- *
- * @param pageNum
- * @param pageSize
- * @return
- */
-private String getPageCacheKey(int pageNum, int pageSize) {
-    return String.format("races:page:%d:size:%d", pageNum, pageSize);
-}
+            // 查询未删除的报名记录
+            PreSignStudent p = new PreSignStudent();
+            List<PreSignStudentVo> preSignStudentList = preSignStudentService.selectPreSignStudentList(p);
 
-/**
- * 获取是否报名缓存的key
- *
- * @param raceId
- * @param userId
- * @return
- */
-private String getIsJoinCacheKey(Long raceId, Long userId) {
-    return String.format("isJoin:race:%d:user:%d", raceId, userId);
-}
+            // 统计每个比赛的报名人数
+            for (PreSignStudent preSignStudent : preSignStudentList) {
+                Long raceId = preSignStudent.getRace();
+                raceRegistrationCountMap.put(raceId, raceRegistrationCountMap.getOrDefault(raceId, 0) + 1);
+            }
 
-/**
- * 获取是否预报名缓存的key
- *
- * @param raceId
- * @param userId
- * @return
- */
-private String getIsPreJoinCacheKey(Long raceId, Long userId) {
-    return String.format("isPreJoin:race:%d:user:%d", raceId, userId);
-}
+            // 封装结果
+            List<HotRaceVo> resultList = new ArrayList<>();
+            for (RaceInfo raceInfo : raceInfoList) {
+                Long raceId = raceInfo.getId();
+                Integer count = raceRegistrationCountMap.getOrDefault(raceId, 0);
+                HotRaceVo vo = new HotRaceVo();
+                vo.setRaceName(raceInfo.getName());
+                vo.setRegistrationCount(count);
+                resultList.add(vo);
+            }
 
-
-//删除比赛信息分页缓存
-private void deleteRacesInfoCache() {
-    //删除所有比赛信息分页缓存
-    String pattern = "races:page:*:size:*";
-    Set<String> keys = redisTemplate.keys(pattern);
-    if (keys != null && !keys.isEmpty()) {
-        // 删除匹配的键
-        redisTemplate.delete(keys);
-    }
-
-    //删除所有是否报名缓存
-    String pattern1 = "isJoin:race:*:user:*";
-    Set<String> keys1 = redisTemplate.keys(pattern1);
-    if (keys1 != null && !keys1.isEmpty()) {
-        // 删除匹配的键
-        redisTemplate.delete(keys1);
+            // 按报名人数降序排序，并取前10个
+            resultList.sort((o1, o2) -> o2.getRegistrationCount() - o1.getRegistrationCount());
+            if (resultList.size() > 10) {
+                List<HotRaceVo> hotRaceVoList = resultList.subList(0, 10);
+                redisCache.setCacheObject("hotRace", objectMapper.writeValueAsString(hotRaceVoList), 1, TimeUnit.DAYS);
+                return hotRaceVoList;
+            } else {
+                redisCache.setCacheObject("hotRace", objectMapper.writeValueAsString(resultList), 1, TimeUnit.DAYS);
+                return resultList;
+            }
+        } catch (Exception e) {
+            throw new ServiceException("查询失败: " + e.getMessage());
+        } finally {
+            //释放锁
+            if (rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
+        }
     }
 
-    //删除所有是否预报名缓存
-    String pattern2 = "isPreJoin:race:*:user:*";
-    Set<String> keys2 = redisTemplate.keys(pattern2);
-    if (keys2 != null && !keys2.isEmpty()) {
-        redisTemplate.delete(keys2);
+    /**
+     * 给比赛缓存添加字段
+     *
+     * @param racesJson
+     * @return
+     */
+    private MyPageVo addFieldToJson(String racesJson) {
+        MyPageVo<List<RaceInfoVo>> myPageVo = JSON.parseObject(
+                racesJson,
+                new TypeReference<MyPageVo<List<RaceInfoVo>>>() {
+                }
+        );
+        List<RaceInfoVo> raceInfoVoList = myPageVo.getRows();
+        if (raceInfoVoList != null) {
+            myPageVo.setRows(addField(raceInfoVoList));
+        }
+        return myPageVo;
     }
-}
+
+
+    /**
+     * 获取分页缓存的key
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    private String getPageCacheKey(int pageNum, int pageSize) {
+        return String.format("races:page:%d:size:%d", pageNum, pageSize);
+    }
+
+    /**
+     * 获取是否报名缓存的key
+     *
+     * @param raceId
+     * @param userId
+     * @return
+     */
+    private String getIsJoinCacheKey(Long raceId, Long userId) {
+        return String.format("isJoin:race:%d:user:%d", raceId, userId);
+    }
+
+    /**
+     * 获取是否预报名缓存的key
+     *
+     * @param raceId
+     * @param userId
+     * @return
+     */
+    private String getIsPreJoinCacheKey(Long raceId, Long userId) {
+        return String.format("isPreJoin:race:%d:user:%d", raceId, userId);
+    }
+
+
+    //删除比赛信息分页缓存
+    private void deleteRacesInfoCache() {
+        //删除所有比赛信息分页缓存
+        String pattern = "races:page:*:size:*";
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (keys != null && !keys.isEmpty()) {
+            // 删除匹配的键
+            redisTemplate.delete(keys);
+        }
+
+        //删除所有是否报名缓存
+        String pattern1 = "isJoin:race:*:user:*";
+        Set<String> keys1 = redisTemplate.keys(pattern1);
+        if (keys1 != null && !keys1.isEmpty()) {
+            // 删除匹配的键
+            redisTemplate.delete(keys1);
+        }
+
+        //删除所有是否预报名缓存
+        String pattern2 = "isPreJoin:race:*:user:*";
+        Set<String> keys2 = redisTemplate.keys(pattern2);
+        if (keys2 != null && !keys2.isEmpty()) {
+            redisTemplate.delete(keys2);
+        }
+    }
 }
 
