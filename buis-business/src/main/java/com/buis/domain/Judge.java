@@ -25,21 +25,18 @@ public class Judge extends BaseEntity {
     /**
      * id
      */
-    @Excel(name = "id")
     @ApiModelProperty(value = "id")
     private Long id;
 
     /**
      * 老师
      */
-    @Excel(name = "老师")
     @ApiModelProperty(value = "老师id")
     private Long teacher;
 
     /**
      * 比赛
      */
-    @Excel(name = "比赛")
     @ApiModelProperty(value = "比赛id")
     private Long race;
 

@@ -14,6 +14,9 @@ public class RaceDetailVo extends RaceDetail {
     @Excel(name = "比赛名称")
     private String raceName;
 
+    /**
+     *
+     */
 
 
 

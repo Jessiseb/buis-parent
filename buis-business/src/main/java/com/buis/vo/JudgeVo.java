@@ -1,5 +1,6 @@
 package com.buis.vo;
 
+import com.buis.common.annotation.Excel;
 import com.buis.domain.Judge;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
