@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="race" column="race"/>
         <result property="name" column="name"/>
         <result property="type" column="type"/>
+        <result property="projectCode" column="project_code"/>
         <result property="description" column="description"/>
         <result property="leader" column="leader"/>
         <result property="leaderName" column="leader_name"/>
@@ -46,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t5.name as race_name,
                t1.name,
                t1.type,
+               t1.project_code,
                t1.description,
                t1.leader_name,
                t1.phone,
@@ -87,6 +89,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="race != null and race != ''">and t1.race = #{race}</if>
             <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
             <if test="type != null and type != ''">and t1.type = #{type}</if>
+            <if test="projectCode != null  and projectCode != ''">and t1.project_code like concat('%', #{projectCode},
+                '%')
+            </if>
             <if test="description != null  and description != '' ">and t1.description like concat('%', #{description},
                 '%')
             </if>
@@ -127,6 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="race != null and race != ''">race,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="type != null and type != ''">type,</if>
+            <if test="projectCode != null and projectCode != ''">project_code,</if>
             <if test="description != null and description != ''">description,</if>
             <if test="leader != null">leader,</if>
             <if test="leaderName != null and leaderName != ''">leader_name,</if>
@@ -156,6 +162,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="race != null and race != ''">#{race},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="type != null and type != ''">#{type},</if>
+            <if test="projectCode != null and projectCode != ''">#{projectCode},</if>
             <if test="description != null and description != ''">#{description},</if>
             <if test="leader != null">#{leader},</if>
             <if test="leaderName != null and leaderName != ''">#{leaderName},</if>
@@ -189,6 +196,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="race != null and race != ''">race = #{race},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="type != null and type != ''">type = #{type},</if>
+            <if test="projectCode != null and projectCode != ''">project_code = #{projectCode},</if>
             <if test="description != null and description != ''">description = #{description},</if>
             <if test="leader != null">leader = #{leader},</if>
             <if test="declarationUrl != null and declarationUrl != ''">declaration_url = #{declarationUrl},</if>
@@ -244,6 +252,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="race != null and race != ''">and t1.race = #{race}</if>
             <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
             <if test="type != null and type != ''">and t1.type = #{type}</if>
+            <if test="projectCode != null  and projectCode != ''">and t1.project_code like concat('%', #{projectCode},
+                '%')
+            </if>
             <if test="description != null  and description != '' ">and t1.description like concat('%', #{description},
                 '%')
             </if>

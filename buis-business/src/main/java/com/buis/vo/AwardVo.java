@@ -21,13 +21,11 @@ public class AwardVo extends Award {
     @Excel(name = "比赛名称")
     private String raceName;
 
-
     /**
      * 获奖成员
      */
     @ApiModelProperty(value = "获奖成员姓名", required = true, example = "张三,李四")
     private String winners;
-
 
 
     /**
@@ -36,9 +34,4 @@ public class AwardVo extends Award {
     @ApiModelProperty(value = "指导老师姓名", example = "王老师")
     private String teachers;
 
-    /**
-     * 比赛id项目名称(第二课堂比赛项目)
-     */
-    @Excel(name = "比赛id项目名称(第二课堂比赛项目)")
-    private Long raceId;
 }

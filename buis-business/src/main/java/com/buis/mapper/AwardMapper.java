@@ -2,6 +2,7 @@ package com.buis.mapper;
 
 import java.util.List;
 import com.buis.domain.Award;
+import com.buis.vo.AwardVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -20,7 +21,7 @@ public interface AwardMapper
      * @param award 奖状信息
      * @return 奖状信息集合
      */
-    public List<Award> selectAwardList(Award award);
+    public List<AwardVo> selectAwardList(AwardVo award);
 
     /**
      * 新增奖状信息

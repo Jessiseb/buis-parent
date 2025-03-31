@@ -16,6 +16,7 @@ import com.buis.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AwardServiceImpl;
+import com.buis.vo.AwardVo;
 import com.buis.vo.FindUserVo;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
@@ -171,10 +172,10 @@ public class UserInfoApiController extends BaseController {
      */
     @ApiOperation("根据用户id返回该用户所获得的奖项")
     @GetMapping("/getUserAward")
-    public R<List<Award>> getawardbyId(
+    public R<List<AwardVo>> getawardbyId(
             @ApiParam(value = "用户id", required = true)
             @RequestParam("userId") Long userId){
-        List<Award> awards = awardService.selectAwardById(userId);
+        List<AwardVo> awards = awardService.selectAwardById(userId);
         return R.ok(awards);
     }
 

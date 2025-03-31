@@ -13,6 +13,7 @@ import com.buis.service.IAwardService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.ITeamMemberTeacherService;
+import com.buis.vo.AwardVo;
 import freemarker.template.TemplateException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,9 +54,9 @@ public class AwardController extends BaseController {
     @ApiOperation("查询奖状信息列表")
     @PreAuthorize("@ss.hasPermi('buis:award:list')")
     @GetMapping("/list")
-    public TableDataInfo list(Award award) {
+    public TableDataInfo list(AwardVo award) {
         startPage();
-        List<Award> list = awardService.selectAwardList(award);
+        List<AwardVo> list = awardService.selectAwardList(award);
         return getDataTable(list);
     }
 
@@ -66,9 +67,9 @@ public class AwardController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:award:export')")
     @Log(title = "奖状信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, Award award) {
-        List<Award> list = awardService.selectAwardList(award);
-        ExcelUtil<Award> util = new ExcelUtil<Award>(Award.class);
+    public void export(HttpServletResponse response, AwardVo award) {
+        List<AwardVo> list = awardService.selectAwardList(award);
+        ExcelUtil<AwardVo> util = new ExcelUtil<AwardVo>(AwardVo.class);
         util.exportExcel(response, list, "奖状信息数据");
     }
 
