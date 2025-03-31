@@ -73,4 +73,6 @@ public interface PreSignStudentMapper
     List<PreSignStudentVo> fuzzyQuery(String name);
 
     PreSignStudent selectByUserIdAndRace(Long userId, Long raceId);
+
+    PreSignStudent selectPreSignStudentByRace(@Param("race") Long race);
 }

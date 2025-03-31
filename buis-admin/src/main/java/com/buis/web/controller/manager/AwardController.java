@@ -117,24 +117,26 @@ public class AwardController extends BaseController {
     }
 
 
-    @ApiOperation("根据队伍id生成奖状信息")
-    @PreAuthorize("@ss.hasPermi('buis:award:query')")
-    @GetMapping("/getAwardByTeam/{teamId}")
-    public R<Award> selectAwardByTeam(@PathVariable("teamId") Long teamId) {
-        return R.ok(awardService.selectAwardByTeam(teamId));
+//    @ApiOperation("根据姓名查询奖状信息")
+//    @PreAuthorize("@ss.hasPermi('buis:award:query')")
+//    @GetMapping("/getAwardByTeam/{name}/{level}")
+//    public R<Award> selectAwardByName(@PathVariable("name") String name,@PathVariable("level") String level) {
+//        return R.ok(awardService.selectAwardByName(name,level));
+//    }
+
+    @ApiOperation("生成奖状信息")
+    @GetMapping("/generate/{name}/{raceId}")
+    public R<String> generateCertificate(@PathVariable("name") String name,
+                                         @PathVariable("raceId") Long raceId,
+                                         HttpServletResponse response) {
+        return awardGenerateService.generateAwardContent(name,raceId,response);
     }
 
-    @ApiOperation("根据队伍id生成奖状信息")
-    @GetMapping("/generate")
-    public R<String> generateCertificate(@RequestParam("teamId") Long teamId, HttpServletResponse response) {
-        return awardGenerateService.generateAwardContent(teamId, response);
-    }
-
-    @ApiOperation("根据多队伍ids批量生成奖状信息")
-    @PostMapping("/batchGenerate")
-    public R<String> batchGenerate(@RequestBody List<Long> teamIds, HttpServletResponse response) throws TemplateException, IOException {
-        return awardGenerateService.generateAwardContents(teamIds, response);
-    }
+//    @ApiOperation("根据多队伍ids批量生成奖状信息")
+//    @PostMapping("/batchGenerate")
+//    public R<String> batchGenerate(@RequestBody List<Long> teamIds, HttpServletResponse response) throws TemplateException, IOException {
+//        return awardGenerateService.generateAwardContents(teamIds, response);
+//    }
 
 
 }

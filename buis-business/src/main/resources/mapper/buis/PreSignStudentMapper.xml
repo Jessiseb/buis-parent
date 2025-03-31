@@ -48,6 +48,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where student = #{userId} and race = #{raceId} and is_deleted = 0
     </select>
 
+    <select id="selectRaceByStudentId" resultType="java.lang.Integer">
+        select race from pre_sign_student where student = #{id} and is_deleted = 0
+    </select>
+
+    <select id="selectPreSignStudentByRace" resultType="com.buis.domain.PreSignStudent">
+        select * from pre_sign_student where race = #{race} and is_deleted = 0
+    </select>
+
     <insert id="insertPreSignStudent" parameterType="com.buis.domain.PreSignStudent" useGeneratedKeys="true" keyProperty="id">
         insert into pre_sign_student
         <trim prefix="(" suffix=")" suffixOverrides=",">

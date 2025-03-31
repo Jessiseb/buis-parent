@@ -3,18 +3,18 @@ package com.buis.web.controller.manager;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceInfo;
-import com.buis.domain.TeamInfo;
+import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.RaceInfoVo;
-import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 比赛信息Controller
@@ -145,7 +142,6 @@ public class RaceInfoController extends BaseController {
     /**
      * 导出大数据学院老师所负责的第二课堂项目数量
      * (该接口只会导出有指导第大创立项项目的老师的信息)
-     *
      */
     @ApiOperation("导出大数据学院老师所负责的第二课堂项目数量")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
@@ -157,6 +153,33 @@ public class RaceInfoController extends BaseController {
         List<TeacherExportToDiDto> list = raceInfoService.exportTeacherDiProjectCount(college,grade,teacherExporToDektDtoList, "第二课堂", response);
         ExcelUtil<TeacherExportToDiDto> util = new ExcelUtil<TeacherExportToDiDto>(TeacherExportToDiDto.class);
         util.exportExcel(response, list, "老师所指导的第二课堂项目数量数据");
+    }
+
+    /**
+     * 统计学生参与的第二课堂比赛数量
+     */
+    @ApiOperation("导出学生参与的第二课堂比赛数量")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
+    @GetMapping("/exportStudentDiProjectCount")
+    public void studentRaceCount(@RequestParam(value = "college", required = true) int college,
+                                 @RequestParam(value = "grade", required = true) int grade,
+                                 HttpServletResponse response) {
+        List<StudentExportToDiDto> studentExportToDiDtoList = new LinkedList<>(); //要导出的类型
+        List<StudentExportToDiDto> list = raceInfoService.exportStudentDiProjectCount(college,grade,studentExportToDiDtoList, "第二课堂", response);
+        ExcelUtil<StudentExportToDiDto> util = new ExcelUtil<StudentExportToDiDto>(StudentExportToDiDto.class);
+        util.exportExcel(response, list, "导出学生参与的第二课堂比赛数量");
+    }
+
+
+    @ApiOperation("查询个人年度参与活动率")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:userQuery')")
+    @GetMapping("/participationRateByUser")
+    public R<String> getUserAnnualParticipationRate(
+            @RequestParam(value = "userId") Long userId,
+            @RequestParam(value = "grade") int grade) {
+
+        String result = raceInfoService.userAnnualParticipationRate(userId, grade);
+        return R.ok(result);
     }
 
 

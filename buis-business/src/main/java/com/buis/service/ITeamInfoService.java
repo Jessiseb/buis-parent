@@ -125,4 +125,13 @@ public interface ITeamInfoService {
 
 
     int updateTeamInfoWithLeader(TeamInfoVo teamInfoVo);
+    /**
+     * 根据队伍负责人姓名查出比赛队伍信息
+     * @param name
+     * @return
+     */
+    List<TeamInfo> selectTeamInfoByName(String name);
+
+
+
 }

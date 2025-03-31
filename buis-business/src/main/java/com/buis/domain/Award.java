@@ -33,11 +33,11 @@ public class Award extends BaseEntity {
     @Excel(name = "比赛id项目名称(第二课堂比赛项目)")
     private Long raceId;
 
-    /**
-     * 团队id
-     */
-    @Excel(name = "团队id")
-    private Long teamId;
+//    /**
+//     * 团队id
+//     */
+//    @Excel(name = "团队id")
+//    private Long teamId;
 
     /**
      * 学年(2024-2025)
@@ -75,5 +75,10 @@ public class Award extends BaseEntity {
      */
     private Integer isDeleted;
 
+    /**
+     * 获奖名字
+     */
+    @Excel(name = "获奖名字")
+    private String name;
 
 }
