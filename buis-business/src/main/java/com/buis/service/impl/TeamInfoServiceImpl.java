@@ -603,7 +603,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfoVo.setSClass(stuGradeMajorClass); //用户年级+专业+班级
         teamInfoVo.setCollege(userInfoVo.getCollege()); //用户学院
 
-        int i = teamInfoService.updateTeamInfo(teamInfoVo);
+        int i = teamInfoService.updateTeamInfoWithLeader(teamInfoVo);
         if (i <= 0) {
             throw new ServiceException("转让失败");
         }
@@ -619,6 +619,20 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             throw new ServiceException("更新失败");
         }
         return result;
+    }
+
+    @Override
+    public int updateTeamInfoWithLeader(TeamInfoVo teamInfoVo) {
+
+
+        //只有指导老师和负责人才能修改
+        if (!isTeamLeaderOrTeacher(teamInfoVo.getId())) {
+            throw new ServiceException("您不是老师或负责人，不能修改队伍信息!");
+        }
+        int i = teamInfoMapper.updateTeamInfo(teamInfoVo);
+        //更新队伍信息缓存
+        updateTeamInfoCache(teamInfoVo);
+        return i;
     }
 
     /**
