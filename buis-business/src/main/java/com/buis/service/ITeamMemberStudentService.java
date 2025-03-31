@@ -115,4 +115,12 @@ public interface ITeamMemberStudentService {
     int getRequestCount(Long id, Long race, Long team);
 
     List<TeamMemberStudentVo> selectTeamMemberStudentListVo(TeamMemberStudentVo teamMemberStudentVo);
+
+    /**
+     * 成员退出队伍
+     * @param team 队伍id
+     * @param userId 用户id
+     * @return
+     */
+    int quitTeam(Long team, Long userId);
 }
