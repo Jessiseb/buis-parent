@@ -139,4 +139,12 @@ public interface ITeamMemberTeacherService
     int batchAddTeamMemberTeacher(TeamMemberTeacherDto dto);
 
     public int insertTeamMemberTeacherByList(List<TeamMemberTeacher> teamMemberTeacherList);
+
+    /**
+     * 根据team获取到指导队伍老师
+     * @param id
+     * @return
+     */
+    List<TeamMemberTeacher> selectTeamMemberTeacherByTeamId(Long id);
+
 }

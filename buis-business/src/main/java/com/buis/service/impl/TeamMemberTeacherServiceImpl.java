@@ -200,6 +200,11 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
         return teamMemberTeacherMapper.insertTeamMemberTeacherByList(teamMemberTeacherList);
     }
 
+    @Override
+    public List<TeamMemberTeacher> selectTeamMemberTeacherByTeamId(Long id) {
+        return teamMemberTeacherMapper.selectTeamMemberTeacherByTeamId(id);
+    }
+
     /**
      * 根据team和user删除邀请
      * @param team

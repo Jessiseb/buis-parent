@@ -1,6 +1,7 @@
 package com.buis.vo;
 
 import com.buis.bo.MemberInfoBO;
+import com.buis.bo.TeacherInfoBO;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.buis.domain.TeamInfo;
@@ -61,6 +62,18 @@ public class TeamInfoVo extends TeamInfo {
      */
     @ApiModelProperty(value = "队长信息")
     private UserInfoVo leaderInfo;
+
+    /**
+     * 指导老师信息
+     */
+    @ApiModelProperty(value = "指导老师信息")
+    private List<TeacherInfoBO> teacherInfoBOList;
+
+    /**
+     * 成员信息
+     */
+    @ApiModelProperty(value = "成员信息")
+    private List<MemberInfoBO> memberInfoBOList;
 
     /**
      * 比赛信息
