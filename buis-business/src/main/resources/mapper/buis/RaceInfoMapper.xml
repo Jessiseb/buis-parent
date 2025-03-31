@@ -301,4 +301,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY
             cm.name
     </select>
+    <select id="selectRaceInfoAll" resultType="com.buis.vo.RaceInfoVo">
+        select id,create_time from race_info where is_deleted = 0
+    </select>
 </mapper>
