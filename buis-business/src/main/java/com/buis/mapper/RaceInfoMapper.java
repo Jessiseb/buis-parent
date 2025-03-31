@@ -110,4 +110,5 @@ public interface RaceInfoMapper
     List<RaceInfoVo> selectRaceInfoAll();
 
 
+    List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo);
 }

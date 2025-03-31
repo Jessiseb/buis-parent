@@ -31,12 +31,18 @@ public interface IRaceInfoService
     public RaceInfoVo selectRaceInfoById(Long id);
 
     /**
-     * 查询比赛信息列表
+     * 管理系统查询比赛信息列表
      * 
      * @param raceInfo 比赛信息
      * @return 比赛信息集合
      */
     public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo);
+
+    /**
+     * 前台获取比赛信息列表(只能查出已经发布了赛事规则的比赛信息)
+     *
+     */
+    public List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo);
 
     /**
      * 新增比赛信息

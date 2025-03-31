@@ -163,6 +163,38 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         return raceInfoVos;
     }
 
+
+    /**
+     * 只能查出已经发布的比赛信息
+     * @param raceInfo
+     * @return
+     */
+    @Override
+    public List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo) {
+        // 根据传入参数获取比赛信息
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.getRaceInfoList(raceInfo);
+        //todo  抽取出一下代码
+        for (RaceInfoVo raceInfoVo : raceInfoVos) {
+            if (raceInfoVo != null) {
+                // 设置是否已报名
+                setIsJoin(raceInfoVo);
+                // 设置是否预报名
+                setIsPreJoin(raceInfoVo);
+                // 设置比赛详情
+                RaceDetail raceDetail = new RaceDetail();
+                raceDetail.setRace(raceInfoVo.getId());
+                List<RaceDetailVo> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+                if (raceDetailVos != null && raceDetailVos.size() > 0) {
+                    raceInfoVo.setRaceDetail(raceDetailVos.get(0));
+                }
+            }
+        }
+        return raceInfoVos;
+    }
+
+
+
+
     /**
      * 为比赛信息添加字段
      *

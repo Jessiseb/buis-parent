@@ -71,7 +71,7 @@ public class RaceApiController extends BaseController {
             return raceInfoService.selectRaceInfoListFromRedis(raceInfo);
         }
 
-        List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
+        List<RaceInfoVo> list = raceInfoService.getRaceInfoList(raceInfo);
 
         return new MyPageVo(list);
     }
