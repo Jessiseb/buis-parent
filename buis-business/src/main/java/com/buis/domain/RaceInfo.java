@@ -109,6 +109,11 @@ public class RaceInfo extends BaseEntity {
     @ApiModelProperty("评分结束时间")
     private Date scoreEnd;
 
+    /**
+     * 审核状态
+     */
+    @ApiModelProperty("审核状态")
+    private Integer reviewStatus;
 
     /**
      * 比赛状态（字典）

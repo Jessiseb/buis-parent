@@ -18,6 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="raceEnd"    column="race_end"    />
         <result property="scoreStart"    column="score_start"    />
         <result property="scoreEnd"    column="score_end"    />
+        <result property="reviewStatus"    column="review_status"    />
         <result property="status"    column="status"    />
         <result property="level"    column="level"    />
         <result property="isDeleted"    column="is_deleted"    />
@@ -73,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.score_end,
                t1.race_type,
                t1.status,
+               t1.review_status,
                t1.level,
                t1.is_deleted,
                t1.create_time,
@@ -98,6 +100,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
              <if test="scoreStart != null "> and t1.score_start &gt;= #{scoreStart}</if>
               <if test="scoreEnd != null "> and t1.score_end &lt;= #{scoreEnd}</if>
             <if test="status != null "> and t1.status = #{status}</if>
+             <if test="reviewStatus != null "> and t1.review_status = #{reviewStatus}</if>
             <if test="level != null "> and t1.level = #{level}</if>
             <if test="raceType != null "> and t1.race_type = #{raceType}</if>
         </where>
@@ -138,7 +141,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         level,
         race_start,
         race_end,
-        status
+        status,
+        review_status
         from race_info
         where id in
         <foreach collection="list" item="id" open="(" separator="," close=")">
@@ -162,6 +166,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="scoreEnd != null">score_end,</if>
             <if test="raceType != null">race_type,</if>
             <if test="status != null">status,</if>
+            <if test="reviewStatus != null">review_status,</if>
             <if test="level != null">level,</if>
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
@@ -180,6 +185,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="scoreEnd != null">#{scoreEnd},</if>
             <if test="raceType != null">#{raceType},</if>
             <if test="status != null">#{status},</if>
+            <if test="reviewStatus != null">#{reviewStatus},</if>
             <if test="level != null">#{level},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -202,6 +208,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="scoreEnd != null">score_end = #{scoreEnd},</if>
             <if test="raceType != null">race_type = #{raceType},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
             <if test="level != null">level = #{level},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
