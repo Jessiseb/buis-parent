@@ -33,6 +33,13 @@ public interface RaceDetailMapper
     public List<RaceDetailVo> selectRaceDetailList(@Param("raceDetail") RaceDetail raceDetail);
 
     /**
+     * 查询比赛详情列表
+     * @param raceDetailVo
+     * @return
+     */
+    public List<RaceDetailVo> selectRaceDetailVoList(@Param("raceDetailVo") RaceDetailVo raceDetailVo);
+
+    /**
      * 新增比赛详情
      * 
      * @param raceDetail 比赛详情
@@ -90,4 +97,6 @@ public interface RaceDetailMapper
     public int deleteWeightByRaceD(Long id);
 
     RaceDetail selectRaceDetailByRaceId(@Param("raceId") Long raceId);
+
+    List<RaceDetail> batchSelectRaceDetailByRaceIds(List<Long> raceIds);
 }

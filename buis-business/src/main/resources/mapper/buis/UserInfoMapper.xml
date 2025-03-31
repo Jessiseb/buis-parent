@@ -13,6 +13,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="description"    column="description"    />
         <result property="sex"    column="sex"    />
         <result property="college"    column="college"    />
+        <result property="grade"    column="grade"    />
+        <result property="sClass"    column="s_class"    />
         <result property="major"    column="major"    />
         <result property="collegeName"    column="college_name"    />
         <result property="majorName"    column="major_name"    />
@@ -25,7 +27,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectUserInfoVo">
-        select t1.id, t1.number,  t1.email, t1.phone, t1.name, t1.description, t1.sex, t1.college,t1.major, t1.is_teacher,t2.name AS major_name,t3.name AS college_name, t1.title, t1.is_disabled, t1.is_deleted, t1.create_time, t1.update_time
+        select t1.id,
+               t1.number,
+               t1.email,
+               t1.phone,
+               t1.name,
+               t1.description,
+               t1.sex,
+               t1.college,
+               t1.grade,
+               t1.s_class,
+               t1.major,
+               t1.is_teacher,
+               t2.name AS major_name,
+               t3.name AS college_name,
+               t1.title,
+               t1.is_disabled,
+               t1.is_deleted,
+               t1.create_time,
+               t1.update_time
         from user_info t1
         LEFT JOIN
         t_college_major t2 ON t1.major = t2.id
@@ -46,11 +66,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="description != null  and description != ''"> and t1.description like concat('%', #{description}, '%')</if>
             <if test="sex != null and sex !=''"> and t1.sex = #{sex}</if>
             <if test="college != null and sex != ''"> and t1.college = #{college}</if>
+             <if test="grade != null and grade != ''"> and t1.grade = #{grade}</if>
+              <if test="sClass != null and sClass != ''"> and t1.s_class = #{sClass}</if>
             <if test="major != null and major != ''">and t1.major = #{major}</if>
-            <if test="isTeacher != null and isTeacher != ''">and t1.is_teacher=#{isTeacher}</if>
+            <if test="isTeacher != null">and t1.is_teacher=#{isTeacher}</if>
             <if test="title != null and title != ''">and t1.title = #{title}</if>
             <if test="isDisabled != null and isDisabled != ''">and t1.is_disabled = #{isDisabled}</if>
-
         </where>
     </select>
 
@@ -78,6 +99,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from user_info
         where email = #{email} and is_deleted = 0
     </select>
+    <select id="getLoginInfoByNumber" resultType="com.buis.domain.UserInfo">
+        select id, email,number,password,is_teacher
+        from user_info
+        where number = #{number} and is_deleted = 0
+    </select>
     <select id="selectUserInfoBynumber" resultType="com.buis.domain.UserInfo">
         select id, number, email, phone, name, description, sex, college, major, title, is_disabled, is_deleted, create_time, update_time
         from user_info
@@ -87,6 +113,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, number, email, phone, name, description, sex, college, major, title, is_disabled, is_deleted, create_time, update_time
         from user_info
         where name = #{name} and is_deleted = 0
+    </select>
+    <select id="selectTeachers" resultType="com.buis.vo.UserInfoVo">
+        select id,
+               number,
+               email,
+               phone,
+               name,
+               description,
+               sex,
+               college,
+               major,
+               title
+        from user_info
+        where is_teacher = #{isTeacher} and is_deleted = 0
     </select>
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info

@@ -98,8 +98,7 @@ public class TeamInfo extends BaseEntity {
      * 第一指导老师
      */
     @ApiModelProperty("第一指导老师")
-    @Excel(name = "第一指导老师")
-    private String teacher1;
+    private Long teacher1;
 
     /**
      * 第一指导老师所在学院
@@ -111,8 +110,7 @@ public class TeamInfo extends BaseEntity {
      * 第二指导老师
      */
     @ApiModelProperty("第二指导老师")
-    @Excel(name = "第二指导老师")
-    private String teacher2;
+    private Long teacher2;
 
     /**
      * 第二指导老师所在学院
@@ -196,10 +194,5 @@ public class TeamInfo extends BaseEntity {
     @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
-    /**
-     * 指导老师
-     */
-    @ApiModelProperty("指导老师")
-    private Long teacher;
 
 }

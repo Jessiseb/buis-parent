@@ -29,10 +29,22 @@ public class UserInfoVo extends UserInfo {
     private String collegeName;
 
     /**
+     * 年级
+     */
+    @ApiModelProperty(value = "年级")
+    private String stuGrade;
+
+    /**
      * 专业名称
      */
     @ApiModelProperty(value = "专业的名称")
     private String majorName;
+
+    /**
+     * 班级
+     */
+    @ApiModelProperty(value = "班级")
+    private String stuClass;
 
     /**
      * 指导队伍数

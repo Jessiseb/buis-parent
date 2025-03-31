@@ -16,7 +16,10 @@ import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
-import com.buis.vo.*;
+import com.buis.vo.TeamInfoVo;
+import com.buis.vo.TeamMemberStudentVo;
+import com.buis.vo.TeamMemberTeacherVo;
+import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,9 +36,9 @@ import java.util.List;
 
 
 /**
- * 队伍管理
+ * 项目团队管理
  */
-@Api(tags = "队伍管理Api")
+@Api(tags = "项目团队管理Api")
 @RestController
 @RequestMapping("/api/team")
 @Slf4j
@@ -45,9 +47,6 @@ public class TeamApiController extends BaseController {
     private ITeamMemberStudentService teamMemberStudentService;
     @Autowired
     private ITeamMemberTeacherService teamMemberTeacherService;
-    
-    @Autowired
-    private IPreSignStudentService preSignStudentService;
     @Autowired
     private ITeamInfoService teamInfoService;
     @Autowired
@@ -58,6 +57,8 @@ public class TeamApiController extends BaseController {
     private ServerConfig serverConfig;
     @Autowired
     private IEmailService emailService;
+    @Autowired
+    private IPreSignStudentService preSignStudentService;
 
     private static final String FILE_DELIMETER = ",";
 
@@ -116,18 +117,6 @@ public class TeamApiController extends BaseController {
             throw new ServiceException("项目团队不存在,请先创建团队~");
         }
 
-        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(teamInfo.getRace());
-        // 判断比赛是否允许预报名
-        if (raceInfoVo == null) {
-            throw new ServiceException("比赛信息不存在");
-        }
-
-        // 判断当前时间是否在比赛报名开始时间和结束时间之间
-        Date now = new Date();
-        if (now.before(raceInfoVo.getJoinStart()) || now.after(raceInfoVo.getJoinEnd())) {
-            throw new ServiceException("该比赛不在预报名时间内");
-        }
-
         //如果已经邀请过对方就提示已邀请,请勿重复邀请
         for (UserInfoVo userInfoVo : userInfoVoList) {
             if (teamMemberStudentService.getRequestCount(userInfoVo.getId(),teamInfo.getRace(),team)>=1) {
@@ -135,6 +124,7 @@ public class TeamApiController extends BaseController {
                 throw new ServiceException("您已经邀请过学号为:"+userInfoVo.getNumber()+"的用户，请勿重复邀请");
             }
         }
+
 
         // 检查邀请的成员是否已经预报名比赛
         for (UserInfoVo userInfoVo : userInfoVoList) {
@@ -327,8 +317,14 @@ public class TeamApiController extends BaseController {
             return new MyPageVo(teamInfoService.selectTeamInfoByUserId(userId));
         }
         teamInfo.setIsPublish(isPublish);//查出已发布招募的队伍信息
-        List<TeamInfoVo> list = teamInfoService.selectTeamInfoList(teamInfo);
-        return new MyPageVo(list);
+        List<TeamInfoVo> list = null;
+        //如果teamInfo有值,则查询带条件的队伍信息
+        if (teamInfoService.hasSearchCondition(teamInfo)) {
+            list = teamInfoService.selectTeamInfoList(teamInfo);
+            return new MyPageVo(list);
+        } else {
+            return teamInfoService.selectTeamInfoListFromRedis(teamInfo);
+        }
     }
 
     /**
@@ -381,19 +377,22 @@ public class TeamApiController extends BaseController {
      * 修改队伍信息
      *
      * @param teamInfo 队伍信息对象
-     * @param id       队伍ID
+     * @param teamId       队伍ID
      * @return R
      */
     @ApiOperation("修改队伍信息")
-    @PutMapping("update/{id}")
-    public R editTeamInfo(
+    @PutMapping("/update")
+    public R<TeamInfo> editTeamInfo(
             @ApiParam(name = "teamInfo", value = "队伍信息", required = true)
             @RequestBody TeamInfo teamInfo,
             @ApiParam(name = "id", value = "队伍id", required = true)
-            @PathVariable Long id) {
-        teamInfo.setId(id);
+            @RequestParam("teamId") Long teamId) {
+        teamInfo.setId(teamId);
         int result = teamInfoService.updateTeamInfo(teamInfo);
-        return R.ok(result, "操作成功");
+        if (result == 0) {
+            return R.fail("操作失败");
+        }
+        return R.ok(teamInfo, "操作成功");
     }
 
 
@@ -430,19 +429,19 @@ public class TeamApiController extends BaseController {
         return R.ok(result, "操作成功");
     }
 
-//    /**
-//     * 负责人位置转让
-//     */
-//    @ApiOperation("负责人位置转让")
-//    @PutMapping("/transfer/{team}/{user}")
-//    public R transfer(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team,
-//                      @ApiParam(name = "user", value = "用户id", required = true) @PathVariable("user") Long user) {
-//        int result = teamInfoService.transfer(team, user);
-//        if (result == 0) {
-//            return R.fail("操作失败");
-//        }
-//        return R.ok(result, "操作成功");
-//    }
+    /**
+     * 负责人位置转让
+     */
+    @ApiOperation("负责人位置转让")
+    @PostMapping("/transfer/{team}/{user}")
+    public R<Boolean> transfer(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team,
+                      @ApiParam(name = "user", value = "用户id", required = true) @PathVariable("user") Long user) {
+        int result = teamInfoService.transfer(team, user);
+        if (result == 0) {
+            return R.fail("操作失败");
+        }
+        return R.ok(true, "操作成功");
+    }
 
 
     /**

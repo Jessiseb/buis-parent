@@ -7,7 +7,6 @@ import com.buis.mapper.RaceInfoMapper;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.JudgeVo;
 import com.buis.vo.PreSignStudentVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +24,8 @@ import java.util.List;
 @Service
 @Slf4j
 public class PreSignStudentServiceImpl implements IPreSignStudentService {
-    @Autowired
+    @Resource
     private PreSignStudentMapper preSignStudentMapper;
-    @Autowired
-    private UserInfoMapper userInfoMapper;
-    @Autowired
-    private RaceInfoMapper raceInfoMapper;
 
     @Resource
     private IUserInfoService userInfoService;

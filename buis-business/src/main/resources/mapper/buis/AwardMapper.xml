@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="raceId"    column="race_id"    />
         <result property="teamId"    column="team_id"    />
         <result property="year"    column="year"    />
+        <result property="name"    column="name"    />
         <result property="awardLevel"    column="award_level"    />
         <result property="teachers"    column="teachers"    />
         <result property="awardDate"    column="award_date"    />
@@ -24,12 +25,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
     
     <sql id="selectAwardVo">
-        select id, race_id, team_id, year, award_level, teachers, award_date, update_time, create_time, is_deleted from award
+        select id, race_id,name, team_id, year, award_level, teachers, award_date, update_time, create_time, is_deleted from award
     </sql>
 
     <sql id="selectAwardrace">
         SELECT
-         racename,teachers,winners,race_id
+         racename,teachers,winners,race_id,name
         FROM
          award
     </sql>
@@ -47,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             is_deleted = 0
             <if test="raceId != null "> and race_id = #{raceId}</if>
             <if test="teamId != null "> and team_id = #{teamId}</if>
+             <if test="name != null  and name != ''"> and name = #{name}</if>
             <if test="year != null  and year != ''"> and year = #{year}</if>
             <if test="awardLevel != null  and awardLevel != ''"> and award_level = #{awardLevel}</if>
             <if test="teachers != null  and teachers != ''"> and teachers = #{teachers}</if>
@@ -56,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectAwardByTeam" resultMap="AwardResult">
-        select a.race_id,a.team_id,a.year,a.award_level,a.teachers,a.award_date
+        select a.race_id,a.team_id,a.year,a.award_level,a.teachers,a.award_date,a.name
         from award as a
         where team_id = #{teamId} and is_deleted = 0
     </select>
@@ -67,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="id != null">id,</if>
             <if test="raceId != null">race_id,</if>
             <if test="teamId != null">team_id,</if>
+            <if test="name != null">name,</if>
             <if test="year != null">year,</if>
             <if test="awardLevel != null">award_level,</if>
             <if test="teachers != null">teachers,</if>
@@ -79,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="id != null">#{id},</if>
             <if test="raceId != null">#{raceId},</if>
             <if test="teamId != null">#{teamId},</if>
+            <if test="name != null">#{name},</if>
             <if test="year != null">#{year},</if>
             <if test="awardLevel != null">#{awardLevel},</if>
             <if test="teachers != null">#{teachers},</if>
@@ -95,6 +99,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="raceId != null">race_id = #{raceId},</if>
             <if test="teamId != null">team_id = #{teamId},</if>
             <if test="year != null">year = #{year},</if>
+            <if test="name != null">name = #{name},</if>
             <if test="awardLevel != null">award_level = #{awardLevel},</if>
             <if test="teachers != null">teachers = #{teachers},</if>
             <if test="awardDate != null">award_date = #{awardDate},</if>

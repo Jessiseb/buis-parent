@@ -8,12 +8,14 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
+import com.buis.domain.Award;
 import com.buis.domain.CollegeMajor;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
+import com.buis.service.impl.AwardServiceImpl;
 import com.buis.vo.FindUserVo;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
@@ -22,6 +24,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -41,6 +44,9 @@ public class UserInfoApiController extends BaseController {
     private ICollegeMajorService collegeMajorService;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private AwardServiceImpl awardService;
+
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
     public R<String> login(@ApiParam(name = "userLoginDTO", value = "用户登录信息", required = true)@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
@@ -153,13 +159,55 @@ public class UserInfoApiController extends BaseController {
             throw new ServiceException("两次输入的密码不一致,请校验~");
         }
         //密码加密
-        String encryptPassword = SaSecureUtil.md5(SALT + newPassword);
+        String encryptPassword =  DigestUtils.md5DigestAsHex((SALT + newPassword).getBytes());
         user.setPassword(encryptPassword);
         //更新
         return R.ok(userInfoService.updateUserInfo(user));
 
     }
 
+    /**
+     * 根据用户id返回用户所获得的奖项
+     */
+    @ApiOperation("根据用户id返回该用户所获得的奖项")
+    @GetMapping("/getUserAward")
+    public R<List<Award>> getawardbyId(
+            @ApiParam(value = "用户id", required = true)
+            @RequestParam("userId") Long userId){
+        List<Award> awards = awardService.selectAwardById(userId);
+        return R.ok(awards);
+    }
+
+    /**
+     * 查询老师或学生信息
+     */
+    @ApiOperation("查询老师或学生信息")
+    @GetMapping("/getAllUser")
+    public R<List<UserInfoVo>> getAllUser(@ApiParam(name = "isTeacher", value = "是否为老师标识", required = true)
+                                              @RequestParam("isTeacher") Integer isTeacher){
+        try {
+            List<UserInfoVo> userInfoVoList = userInfoService.selectAllTeachers(isTeacher);
+            if (userInfoVoList.isEmpty()) {
+                return R.fail("暂无老师信息!");
+            }
+            return R.ok(userInfoVoList);
+        }catch (Exception e){
+            return  R.fail("查询失败，请稍后重试！");
+        }
+
+    }
+
+    /**
+     * 获取登录用户
+     */
+    @ApiOperation("获取登录用户")
+    @GetMapping("/getLoginUser")
+    public R<UserInfoVo> getCurrentLoginUser(){
+        UserInfo loginUser = userInfoService.getLoginUser();
+        UserInfoVo userInfoVo = new UserInfoVo();
+        BeanUtil.copyProperties(loginUser,userInfoVo);
+        return R.ok(userInfoVo);
+    }
 
 
 }

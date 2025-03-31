@@ -3,22 +3,29 @@ package com.buis.web.controller.manager;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
-import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceInfo;
+import com.buis.domain.TeamInfo;
+import com.buis.dto.TeacherExportToDaDto;
+import com.buis.dto.TeacherExportToDiDto;
 import com.buis.service.IRaceInfoService;
+import com.buis.service.ITeamInfoService;
+import com.buis.service.IUserInfoService;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 比赛信息Controller
@@ -32,18 +39,25 @@ import java.util.List;
 public class RaceInfoController extends BaseController {
     @Autowired
     private IRaceInfoService raceInfoService;
+    @Autowired
+    private ITeamInfoService teamInfoService;
+    @Autowired
+    private IUserInfoService userInfoService;
+
 
     /**
      * 审核第二课堂活动
+     *
      * @param id
      * @return
      */
     @ApiOperation("审核第二课堂活动")
     @PutMapping("/updateApproval/{id}")
 //    @PreAuthorize("@ss.hasPermi('buis:raceInfo:updateApproval')")
-    public AjaxResult updateApproval( @PathVariable("id") Long id) {
+    public AjaxResult updateApproval(@PathVariable("id") Long id) {
         return success(raceInfoService.updateApproval(id));
     }
+
     /**
      * 查询比赛信息列表
      */
@@ -111,4 +125,39 @@ public class RaceInfoController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(raceInfoService.deleteRaceInfoByIds(ids));
     }
+
+    /**
+     * 导出老师所指导的大创立项项目数量
+     * (该接口只会导出有指导第大创立项项目的老师的信息)
+     */
+    @ApiOperation("导出老师所指导的大创立项项目数量")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
+    @PostMapping("/exportTeacherDaProjectCount")
+    public void exportTeacherDaProjectCount(@RequestParam(value = "college", required = true) int college,
+                                            @RequestParam(value = "grade", required = true) int grade,
+                                            HttpServletResponse response) {
+        List<TeacherExportToDaDto> teacherExporToDektDtoList = new LinkedList<>(); //要导出的类型
+        List<TeacherExportToDaDto> list = raceInfoService.exportTeacherDaProjectCount(college,grade,teacherExporToDektDtoList, "大创立项", response);
+        ExcelUtil<TeacherExportToDaDto> util = new ExcelUtil<TeacherExportToDaDto>(TeacherExportToDaDto.class);
+        util.exportExcel(response, list, "老师所指导的大创项目数量数据");
+    }
+
+    /**
+     * 导出大数据学院老师所负责的第二课堂项目数量
+     * (该接口只会导出有指导第大创立项项目的老师的信息)
+     *
+     */
+    @ApiOperation("导出大数据学院老师所负责的第二课堂项目数量")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
+    @PostMapping("/exportTeacherDiProjectCount")
+    public void exportTeacherDiProjectCount(@RequestParam(value = "college", required = true) int college,
+                                            @RequestParam(value = "grade", required = true) int grade,
+                                            HttpServletResponse response) {
+        List<TeacherExportToDiDto> teacherExporToDektDtoList = new LinkedList<>(); //要导出的类型
+        List<TeacherExportToDiDto> list = raceInfoService.exportTeacherDiProjectCount(college,grade,teacherExporToDektDtoList, "第二课堂", response);
+        ExcelUtil<TeacherExportToDiDto> util = new ExcelUtil<TeacherExportToDiDto>(TeacherExportToDiDto.class);
+        util.exportExcel(response, list, "老师所指导的第二课堂项目数量数据");
+    }
+
+
 }
