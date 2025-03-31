@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.Award;
+import com.buis.vo.AwardVo;
 
 /**
  * 奖状信息Service接口
@@ -17,7 +18,7 @@ public interface IAwardService
      * @param id 奖状信息主键
      * @return 奖状信息
      */
-    public  List<Award> selectAwardById(Long id);
+    public  List<AwardVo> selectAwardById(Long id);
 
     /**
      * 查询奖状信息列表
@@ -25,7 +26,7 @@ public interface IAwardService
      * @param award 奖状信息
      * @return 奖状信息集合
      */
-    public List<Award> selectAwardList(Award award);
+    public List<AwardVo> selectAwardList(AwardVo award);
 
     /**
      * 新增奖状信息

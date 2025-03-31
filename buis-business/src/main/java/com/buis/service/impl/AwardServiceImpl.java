@@ -7,6 +7,7 @@ import com.buis.domain.Award;
 import com.buis.domain.Score;
 import com.buis.mapper.AwardMapper;
 import com.buis.service.*;
+import com.buis.vo.AwardVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
@@ -48,7 +49,7 @@ public class AwardServiceImpl implements IAwardService {
      * @return 奖状信息
      */
     @Override
-    public  List<Award> selectAwardById(Long id) {
+    public  List<AwardVo> selectAwardById(Long id) {
         //获取登录用户id
         String loginIdStr = StpUtil.getLoginId().toString();
         Long loginId;
@@ -66,7 +67,7 @@ public class AwardServiceImpl implements IAwardService {
             throw new ServiceException("用户不存在!");
         }
         String name = userInfoVo.getName();
-        Award award = new Award();
+        AwardVo award = new AwardVo();
         award.setName(name);
         return awardMapper.selectAwardList(award);
     }
@@ -78,7 +79,8 @@ public class AwardServiceImpl implements IAwardService {
      * @return 奖状信息
      */
     @Override
-    public List<Award> selectAwardList(Award award) {
+    public List<AwardVo> selectAwardList(AwardVo award)
+    {
         return awardMapper.selectAwardList(award);
     }
 

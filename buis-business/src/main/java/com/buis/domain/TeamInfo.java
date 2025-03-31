@@ -54,6 +54,13 @@ public class TeamInfo extends BaseEntity {
     private int type;
 
     /**
+     * 项目编号
+     */
+    @ApiModelProperty("项目编号")
+    @Excel(name = "项目编号")
+    private String projectCode;
+
+    /**
      * 项目简介
      */
     @ApiModelProperty("项目简介")
