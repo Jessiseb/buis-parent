@@ -89,7 +89,7 @@ public class AwardController extends BaseController {
     @ApiOperation("新增奖状信息")
     @PreAuthorize("@ss.hasPermi('buis:award:add')")
     @Log(title = "奖状信息", businessType = BusinessType.INSERT)
-    @PostMapping
+    @PostMapping("/add")
     public AjaxResult add(@RequestBody Award award) {
         return toAjax(awardService.insertAward(award));
     }
@@ -100,7 +100,7 @@ public class AwardController extends BaseController {
     @ApiOperation("修改奖状信息")
     @PreAuthorize("@ss.hasPermi('buis:award:edit')")
     @Log(title = "奖状信息", businessType = BusinessType.UPDATE)
-    @PutMapping
+    @PutMapping("/edit")
     public AjaxResult edit(@RequestBody Award award) {
         return toAjax(awardService.updateAward(award));
     }
