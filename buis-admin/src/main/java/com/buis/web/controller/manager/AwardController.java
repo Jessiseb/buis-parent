@@ -125,7 +125,8 @@ public class AwardController extends BaseController {
 //    }
 
     @ApiOperation("生成奖状信息")
-    @GetMapping("/generate/{name}/{raceId}")
+    @PreAuthorize("@ss.hasPermi('buis:award:export')")
+    @PostMapping("/generate/{name}/{raceId}")
     public R<String> generateCertificate(@PathVariable("name") String name,
                                          @PathVariable("raceId") Long raceId,
                                          HttpServletResponse response) {
