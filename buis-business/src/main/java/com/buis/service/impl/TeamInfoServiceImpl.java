@@ -406,7 +406,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 }
             } else {
                 //不是负责人退出队伍
-                return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
+                return teamStudentService.quitTeam(team, userId);
             }
         }
 

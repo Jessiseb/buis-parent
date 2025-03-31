@@ -228,6 +228,14 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return teamMemberStudentVos;
     }
 
+    @Override
+    public int quitTeam(Long team, Long userId) {
+        if (team == null || userId == null) {
+            throw new ServiceException("参数错误");
+        }
+        return teamMemberStudentMapper.quitTeam(team, userId);
+    }
+
     /**
      * 抽出判断是否为负责人的方法
      */

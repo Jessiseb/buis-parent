@@ -93,4 +93,7 @@ public interface TeamMemberStudentMapper {
     List<TeamMemberStudent> selectTeamMemberStudentByUserId(Long userId);
 
     List<TeamMemberStudentVo> selectTeamMemberStudentListVo(TeamMemberStudentVo teamMemberStudentVo);
+
+    int quitTeam(Long team, Long userId);
+
 }
