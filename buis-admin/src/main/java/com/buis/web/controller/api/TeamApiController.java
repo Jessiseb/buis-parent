@@ -2,6 +2,8 @@ package com.buis.web.controller.api;
 
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.buis.bo.MemberInfoBO;
+import com.buis.bo.TeacherInfoBO;
 import com.buis.common.config.RuoYiConfig;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -24,6 +26,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,8 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-
+import java.util.stream.Collectors;
 
 
 /**
@@ -332,8 +334,43 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("根据项目团队id查询团队信息")
     @GetMapping("/{id}")
-    public R<TeamInfoVo> getTeamInfoById(@ApiParam(name = "id", value = "项目队伍id", required = true) @PathVariable("id") Long id) {
+    public R<TeamInfoVo> getTeamInfoById(@ApiParam(name = "id", value = "项目队伍id", required = true)
+                                         @PathVariable("id") Long id) {
         TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(id);
+        if (teamInfoVo == null) {
+            return R.fail("查询失败");
+        }
+        //根据团队id获取到团队成员信息
+        List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByTeamId(id);
+        //获取到对应的用户信息
+        List<UserInfoVo> students = userInfoService.selectUserInfoByIds(teamMemberStudents.stream()
+                .map(TeamMemberStudent::getStudent)
+                .collect(Collectors.toList()));
+        //获取到指导老师信息
+        List<TeamMemberTeacher> teamMemberTeachers = teamMemberTeacherService.selectTeamMemberTeacherByTeamId(id);
+        //获取到对应的用户信息
+        List<UserInfoVo> teachers = userInfoService.selectUserInfoByIds(teamMemberTeachers.stream()
+                .map(TeamMemberTeacher::getTeacher)
+                .collect(Collectors.toList()));
+        //students转换成BO
+        List<MemberInfoBO> teamMemberStudentsBO = students.stream()
+                .map(userInfoVo -> {
+                    MemberInfoBO memberStudentBO = new MemberInfoBO();
+                    BeanUtils.copyProperties(userInfoVo, memberStudentBO);
+                    return memberStudentBO;
+                })
+                .collect(Collectors.toList());
+        //teacher转换成BO
+        List<TeacherInfoBO> teamMemberTeachersBO = teachers.stream()
+                .map(userInfoVo -> {
+                    TeacherInfoBO memberTeacherBO = new TeacherInfoBO();
+                    BeanUtils.copyProperties(userInfoVo, memberTeacherBO);
+                    return memberTeacherBO;
+                })
+                .collect(Collectors.toList());
+        //把团队成员信息返回给teamInfoVo
+        teamInfoVo.setMemberInfoBOList(teamMemberStudentsBO);
+        teamInfoVo.setTeacherInfoBOList(teamMemberTeachersBO);
         return R.ok(teamInfoVo);
     }
 
@@ -513,6 +550,8 @@ public class TeamApiController extends BaseController {
         }
         return R.ok("操作成功");
     }
+
+
 }
 
 
