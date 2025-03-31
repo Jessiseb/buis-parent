@@ -151,8 +151,9 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             throw new ServiceException("您不是老师或负责人，不能修改队伍信息!");
         }
         int i = teamInfoMapper.updateTeamInfo(teamInfo);
+        TeamInfo teamInfoNewest = teamInfoMapper.selectTeamInfoById(teamInfo.getId());
         //更新队伍信息缓存
-        updateTeamInfoCache(teamInfo);
+        updateTeamInfoCache(teamInfoNewest);
         return i;
     }
 
