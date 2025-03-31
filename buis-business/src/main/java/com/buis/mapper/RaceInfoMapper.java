@@ -102,4 +102,12 @@ public interface RaceInfoMapper
     List<SecondClassCountVo> getSecondClassCountByMonth(Integer month);
 
     List<SecondClassCountVo> getSecondClassCountByYear(Integer year);
+
+    //根据二级类型id查询一级类型id
+    Long selectRaceTypeBySecondTypeId(@Param("id")Long id);
+
+    //查询所有比赛
+    List<RaceInfoVo> selectRaceInfoAll();
+
+
 }

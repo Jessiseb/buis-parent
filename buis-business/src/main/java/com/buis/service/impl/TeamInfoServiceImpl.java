@@ -71,8 +71,6 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private RedisCache redisCache;
     @Resource
     private RedisTemplate redisTemplate;
-    @Resource
-    private ISysDictDataService sysDictDataService;
 
 
     /**
@@ -133,7 +131,6 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
         return sucess > 0 ? teamInfo : null;
     }
-
 
     /**
      * 修改队伍信息
@@ -634,6 +631,16 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         updateTeamInfoCache(teamInfoVo);
         return i;
     }
+    /**
+     * 根据队伍负责人姓名查出比赛队伍信息
+     * @param name
+     * @return
+     */
+    @Override
+    public List<TeamInfo> selectTeamInfoByName(String name) {
+        return teamInfoMapper.selectTeamInfoByName(name);
+    }
+
 
     /**
      * 后台查询队伍信息列表 Vo

@@ -149,6 +149,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </select>
+    <select id="selectRaceTypeBySecondTypeId" resultType="java.lang.Long">
+        select parent_tid from race_type where son_tid = #{id}
+    </select>
 
 
     <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">
@@ -304,5 +307,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
               AND YEAR(ri.create_time) = IFNULL(#{year},YEAR(CURRENT_DATE))
         GROUP BY
             cm.name
+    </select>
+    <select id="selectRaceInfoAll" resultType="com.buis.vo.RaceInfoVo">
+        select id,create_time from race_info where is_deleted = 0
     </select>
 </mapper>

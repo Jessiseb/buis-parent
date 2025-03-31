@@ -14,16 +14,17 @@ import com.buis.common.utils.PageUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
+import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
+import com.buis.vo.*;
 import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
-import com.buis.vo.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 
 import static com.buis.common.constant.CacheConstants.QUERY_HOT_RACE_LOCK;
 import static com.buis.common.constant.CacheConstants.QUERY_RACE_LOCK;
@@ -74,8 +76,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private RedissonClient redissonClient;
     @Autowired
     private IPreSignStudentService preSignStudentService;
-
-
+    @Resource
+    private IRaceInfoService raceInfoService;
     @Resource
     private SysRoleMapper sysRoleMapper;
 
@@ -140,6 +142,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo) {
+
         // 根据传入参数获取比赛信息
         List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
@@ -162,6 +165,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 为比赛信息添加字段
+     *
      * @param raceInfoVos
      */
     private List<RaceInfoVo> addField(List<RaceInfoVo> raceInfoVos) {
@@ -396,6 +400,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 审批第二课堂
+     *
      * @param id
      * @return
      */
@@ -420,7 +425,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             Long roleId = (Long) map.get("roleId");
             roleIdsMap.put(roleType, roleId);
         }
-       //获取院级和校级角色id
+        //获取院级和校级角色id
         Long schoolRoleId = roleIdsMap.get("校级id");
         Long collegeRoleId = roleIdsMap.get("院级id");
 
@@ -435,36 +440,37 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             } catch (Exception e) {
                 e.printStackTrace();
                 return AjaxResult.error("校级审核失败: " + e.getMessage());
-             }
-            } else if (isCollegeUser) {
-                // 用户是院级用户
-                try {
-                    raceInfoMapper.updateRaceInfoStatus(id, 5);
-                    return AjaxResult.success("院级审核成功");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return AjaxResult.error("院级审核失败: " + e.getMessage());
-                }
             }
+        } else if (isCollegeUser) {
+            // 用户是院级用户
+            try {
+                raceInfoMapper.updateRaceInfoStatus(id, 5);
+                return AjaxResult.success("院级审核成功");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return AjaxResult.error("院级审核失败: " + e.getMessage());
+            }
+        }
 
         return AjaxResult.error("当前用户不是院级或校级用户");
     }
 
 
-
     /**
      * 根据状态查询比赛信息
+     *
      * @param i
      * @return
      */
     @Override
     public List<RaceInfo> selectRaceInfoByStatu(Long i) {
-        return  raceInfoMapper.selectRaceInfoByStatu(i);
+        return raceInfoMapper.selectRaceInfoByStatu(i);
 
     }
 
     /**
      * 根据用户id查询出用户所参加的所有比赛
+     *
      * @param userId
      * @return
      */
@@ -517,6 +523,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 导出大数据学院的老师负责的第二课堂项目
+     *
      * @param teacherExporToDektDtoList
      * @param name
      * @param response
@@ -576,7 +583,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                         teacherExportMap.put(tName, 1L);
                     }
                 }
-            }else{
+            } else {
                 UserInfoVo userInfoVo = userInfoService.selectUserInfoByName(teacherName);
                 //只留下指定的学院的
                 if (userInfoVo == null || userInfoVo.getCollege() != college) {
@@ -685,6 +692,146 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
 
+    @Override
+    public List<StudentExportToDiDto> exportStudentDiProjectCount(int college,
+                                                                  int grade,
+                                                                  List<StudentExportToDiDto> StudentExportToDiDtoList,
+                                                                  String name, HttpServletResponse response) {
+        Map<String, Long> studentExportMap = new HashMap<>(); //老师id : 指导的项目数量
+        //遍历所有race_info
+        RaceInfo raceInfo = new RaceInfo();
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+        //根据传入的学年来过滤
+        List<RaceInfoVo> raceInfoVoList = raceInfoVos.stream()
+                .filter(raceInfoVo -> raceInfoVo.getCreateTime().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate().getYear() == grade)
+                .collect(Collectors.toList());
+
+        log.debug("查询到原始比赛数据量:{}", raceInfoVoList.size());
+//        过滤parent_id != 5 的List<RaceInfoVo>
+        List<RaceInfoVo> collect = Optional.ofNullable(raceInfoVoList).orElse(Collections.emptyList())
+                .stream()
+                .filter(raceInfoVo -> raceInfoVo.getParentTid() != null && raceInfoVo.getParentTid() == 5)
+                .collect(Collectors.toList());
+        log.info("过滤后第二课堂比赛数量:{}", collect.size());
+
+        //第二课堂的比赛详情
+        List<RaceDetail> list = new ArrayList<>();
+        for (RaceInfoVo raceInfoVo : collect) {
+            Optional.ofNullable(raceDetailService.selectRaceDetailByRaceId(raceInfoVo.getId()))
+                    .ifPresent(list::add);
+        }
+        log.debug("获取到比赛详情数量:{}", list.size());
+
+        //遍历list,计算出每个老师负责的比赛有多少个  并且老师的学院是等于指定学院的
+        for (RaceDetail raceDetail : list) {
+
+            Long race = raceDetail.getRace();
+            //通过预报名查出学生
+            PreSignStudent preSignStudent = preSignStudentService.selectPreSignStudentByRace(race);
+            Long student = preSignStudent.getStudent();
+
+
+//            String teacherName = Optional.ofNullable(raceDetail)
+//                    .map(RaceDetail::getName)
+//                    .orElse("");
+//            //根据名字查询到用户信息
+            UserInfo userInfo;
+//            //如果名字有多个, 按照"、"分割
+//            if (teacherName.contains("、")) {
+//                String[] split = teacherName.split("、");
+//                for (String tName : split) {
+            //根据名字查询到用户信息
+            userInfo = userInfoService.selectUserInfoById(student);
+            //只留下指定学院的
+            if (userInfo == null || userInfo.getCollege() != college) {
+                continue;
+            }
+            if (studentExportMap.containsKey(name)) {
+                Long count = studentExportMap.get(name);
+                count++;
+                studentExportMap.put(name, count);
+            } else {
+                studentExportMap.put(name, 1L);
+            }
+
+            UserInfoVo userInfoVo = userInfoService.selectUserInfoById(student);
+            //只留下指定的学院的
+            if (userInfoVo == null || userInfoVo.getCollege() != college) {
+                continue;
+            }
+
+            String studentName = userInfoVo.getName();
+
+            if (StringUtils.isEmpty(studentName)) {
+                log.warn("比赛ID:{} 无负责人信息", raceDetail.getId());
+                continue;
+            }
+            if (studentExportMap.containsKey(studentName)) {
+                Long count = studentExportMap.get(studentName);
+                count++;
+                studentExportMap.put(studentName, count);
+            } else {
+                studentExportMap.put(studentName, 1L);
+            }
+        }
+
+//        log.info("统计完成，涉及教师人数:{}",studentExportMap.size());
+
+        //遍历map集合, 把值插入到StudentExportDto
+        for (Map.Entry<String, Long> entry : studentExportMap.entrySet()) {
+            StudentExportToDiDto studentExportToDiDto = new StudentExportToDiDto();
+            studentExportToDiDto.setStudentName(entry.getKey());  //老师名称
+            studentExportToDiDto.setProjectCount(entry.getValue()); //指导数量
+            StudentExportToDiDtoList.add(studentExportToDiDto);
+        }
+        log.info("导出数据组装完成，最终记录数:{}", StudentExportToDiDtoList.size());
+        return StudentExportToDiDtoList;
+    }
+
+    @Override
+    public String userAnnualParticipationRate(Long userId, int grade) {
+        double count = 0.0;
+        double sum = 0.0;
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(userId);
+        String name = userInfoVo.getName();
+        List<TeamInfo> teamInfos = teamInfoService.selectTeamInfoByName(name);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoAll();
+        for (RaceInfoVo race : raceInfoVos) {
+            Date createDate = race.getCreateTime();
+            LocalDate localDate = createDate.toInstant()
+                    .atZone(ZoneId.systemDefault()) // 指定时区（如系统默认时区）
+                    .toLocalDate();
+            int year = localDate.getYear();
+            if (race.getId() != null && year == grade) {
+                sum++;
+            }
+        }
+
+        if (sum == 0) {
+            throw new RuntimeException("该年份没有比赛");
+        }
+
+        if (teamInfos.isEmpty()) {
+            return 0 + "%";
+        } else {
+
+            for (TeamInfo teamInfo : teamInfos) {
+                Date createDate = teamInfo.getCreateTime();
+                LocalDate localDate = createDate.toInstant()
+                        .atZone(ZoneId.systemDefault()) // 指定时区（如系统默认时区）
+                        .toLocalDate();
+                int year = localDate.getYear();
+                if (teamInfo.getRace() != null && year == grade) {
+                    count++;
+                }
+            }
+            return String.format("%.2f%%", (count / sum) * 100);
+        }
+
+    }
+
     /**
      * 判断当前时间是否在报名时间内
      *
@@ -724,6 +871,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 判断对象的所有字段是否为空
+     *
      * @param obj
      * @return
      */
@@ -752,6 +900,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 从redis中获取比赛信息列表
+     *
      * @param raceInfo
      * @return
      */
@@ -849,7 +998,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             return JSON.parseArray(hotRaceJson, HotRaceVo.class);
         }
         //判断空值
-        if (hotRaceJson!= null) {
+        if (hotRaceJson != null) {
             return null;
         }
 
@@ -863,7 +1012,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 return JSON.parseArray(hotRaceJson, HotRaceVo.class);
             }
             //判断空值
-            if (hotRaceJson!= null) {
+            if (hotRaceJson != null) {
                 return null;
             }
             if (!isLock) {
@@ -921,13 +1070,15 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 给比赛缓存添加字段
+     *
      * @param racesJson
      * @return
      */
     private MyPageVo addFieldToJson(String racesJson) {
         MyPageVo<List<RaceInfoVo>> myPageVo = JSON.parseObject(
                 racesJson,
-                new TypeReference<MyPageVo<List<RaceInfoVo>>>() {}
+                new TypeReference<MyPageVo<List<RaceInfoVo>>>() {
+                }
         );
         List<RaceInfoVo> raceInfoVoList = myPageVo.getRows();
         if (raceInfoVoList != null) {
@@ -937,9 +1088,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
 
-
     /**
      * 获取分页缓存的key
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -950,6 +1101,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 获取是否报名缓存的key
+     *
      * @param raceId
      * @param userId
      * @return
@@ -960,6 +1112,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 获取是否预报名缓存的key
+     *
      * @param raceId
      * @param userId
      * @return
@@ -967,7 +1120,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private String getIsPreJoinCacheKey(Long raceId, Long userId) {
         return String.format("isPreJoin:race:%d:user:%d", raceId, userId);
     }
-
 
 
     //删除比赛信息分页缓存

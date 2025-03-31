@@ -60,5 +60,5 @@ public interface IAwardService
      */
     public int deleteAwardById(Long id);
 
-    Award selectAwardByTeam(Long teamId);
+    Award selectAwardByNameAndRace(String name,Long raceId);
 }

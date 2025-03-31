@@ -63,23 +63,31 @@ public class AwardUtil {
             Configuration configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
             configuration.setDefaultEncoding("utf-8");
             // 设置模板加载器，加载模板文件
-            configuration.setTemplateLoader(new ClassTemplateLoader(getClass(), basePackagePath));
-            Template t = configuration.getTemplate(templateFileName, "utf-8");
-            // 创建主输出流
-            Writer out = new BufferedWriter(
-                    new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8),
-                    102400
-            );
+
+//            configuration.setTemplateLoader(new ClassTemplateLoader(getClass(), basePackagePath));
+//            Template t = configuration.getTemplate(templateFileName, "utf-8");
+
+//            // 创建主输出流
+//            Writer out = new BufferedWriter(
+//                    new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8),
+//                    10240000
+//            );
             // 遍历所有参数，生成每个实例的内容
-            for (Object templateParam : templateParams) {
-                // 临时缓冲区保存当前参数生成的内容
-                StringWriter tempWriter = new StringWriter();
-                t.process(templateParam, out); // 使用当前参数生成内容
-                out.write(tempWriter.toString()); // 追加到主输出流
+            for (Map<String, String> templateParam : templateParams) {
+                // 创建主输出流
+                Writer out = new BufferedWriter(
+                        new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8),
+                        10240000
+                );
+                // 设置模板加载器，加载模板文件
+                configuration.setTemplateLoader(new ClassTemplateLoader(getClass(), basePackagePath));
+                Template t = configuration.getTemplate(templateFileName, "utf-8");
+                t.process(templateParam, out);
+                out.close();
             }
 
-            // 关闭输出流
-            out.close();
+//            // 关闭输出流
+//            out.close();
         } catch (Exception e) {
             throw new RuntimeException("批量生成奖状异常，异常原因：" + e.getMessage(), e);
         }
