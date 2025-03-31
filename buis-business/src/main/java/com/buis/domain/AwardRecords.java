@@ -28,6 +28,11 @@ public class AwardRecords extends BaseEntity {
     private Long id;
 
     /**
+     * 奖状图片路径
+     */
+    private String awardUrl;
+
+    /**
      * 获奖成员
      */
     @Excel(name = "获奖成员")

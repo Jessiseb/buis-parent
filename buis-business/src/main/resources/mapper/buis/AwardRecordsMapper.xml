@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="com.buis.domain.AwardRecords" id="AwardRecordsResult">
         <result property="id"    column="id"    />
+        <result property="awardUrl"    column="award_url"    />
         <result property="members"    column="members"    />
         <result property="project"    column="project"    />
         <result property="competitionName"    column="competition_name"    />
@@ -20,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectAwardRecordsVo">
-        select id, members, project, competition_name, teacher, award_date, award_level, school, status, create_time, update_time, is_deleted from award_records
+        select id, award_url,members, project, competition_name, teacher, award_date, award_level, school, status, create_time, update_time, is_deleted from award_records
     </sql>
 
     <select id="selectAwardRecordsList" parameterType="com.buis.domain.AwardRecords" resultMap="AwardRecordsResult">
