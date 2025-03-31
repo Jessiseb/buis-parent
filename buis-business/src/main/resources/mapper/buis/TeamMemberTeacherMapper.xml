@@ -215,6 +215,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getMemberTeachersByTeamId" resultType="java.lang.Long">
         select teacher from team_member_teacher where team = #{id} and is_deleted = 0
     </select>
+    <select id="selectTeamMemberTeacherByTeamId" resultType="com.buis.domain.TeamMemberTeacher">
+        select * from team_member_teacher where team = #{id} and is_deleted = 0
+    </select>
 
 
 </mapper>
