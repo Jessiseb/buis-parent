@@ -40,12 +40,11 @@ public class AwardGenerateService {
 //        String studentNames = String.join("、", names);
 //
         Award awards = awardService.selectAwardByNameAndRace(name, raceId);
-        if (awards == null) {
-            return R.fail("未找到" + name + "对应的该奖项");
-        }
-
         //比赛名字
         String race = raceInfoService.selectRaceInfoById(raceId).getName();
+        if (awards == null) {
+            return R.fail("在" + race + "中未找到" + name + "对应的奖项");
+        }
 
         //转换成汉字
         Map<String, String> levelMapping = new HashMap<>();
@@ -84,8 +83,10 @@ public class AwardGenerateService {
             Long raceId = raceIds.get(i);
 
             Award awards = awardService.selectAwardByNameAndRace(name, raceId);
+            //比赛名字
+            String race = raceInfoService.selectRaceInfoById(raceId).getName();
             if (awards == null) {
-                return R.fail("未找到" + name + "对应的该奖项");
+                return R.fail("在" + race + "中未找到" + name + "对应的奖项");
             }
 
 //            //通过teamId查出队伍全部学生的名字
@@ -95,9 +96,6 @@ public class AwardGenerateService {
 //                names.add(user.getName());
 //            }
 //            String studentNames = String.join("、", names);
-
-            //比赛名字
-            String race = raceInfoService.selectRaceInfoById(awards.getRaceId()).getName();
 
             //转换成汉字
             Map<String, String> levelMapping = new HashMap<>();
