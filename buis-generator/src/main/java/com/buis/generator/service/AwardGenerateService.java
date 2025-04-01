@@ -27,7 +27,7 @@ public class AwardGenerateService {
     @Resource
     private IRaceInfoService raceInfoService;
 
-    public R<String> generateAwardContent(String name,Long raceId, HttpServletResponse response) {
+    public R<String> generateAwardContent(String name, Long raceId, HttpServletResponse response) {
 
         AwardUtil awardUtil = new AwardUtil();
 
@@ -40,6 +40,9 @@ public class AwardGenerateService {
 //        String studentNames = String.join("、", names);
 //
         Award awards = awardService.selectAwardByNameAndRace(name, raceId);
+        if (awards == null) {
+            return R.fail("未找到" + name + "对应的该奖项");
+        }
 
         //比赛名字
         String race = raceInfoService.selectRaceInfoById(raceId).getName();
@@ -69,13 +72,22 @@ public class AwardGenerateService {
         return awardUtil.generate(response, "/templates", "award.xml", templateParam, "奖状");
     }
 
-//    public R<String> generateAwardContents(List<Long> teamIds, HttpServletResponse response){
-//        AwardUtil awardUtil = new AwardUtil();
-//        List<Map<String, String>> allParams = new ArrayList<>();
-//        for (Long teamId : teamIds) {
-//
-//            Award awards = awardService.selectAwardByTeam(teamId);
-//
+    public R<String> generateAwardContents(List<String> names, List<Long> raceIds, HttpServletResponse response) throws IOException {
+        AwardUtil awardUtil = new AwardUtil();
+        List<Map<String, String>> templateParams = new ArrayList<>();
+
+        if (names.size() != raceIds.size()) {
+            throw new RuntimeException("传入的姓名和比赛不一致");
+        }
+        for (int i = 0; i < names.size(); i++) {
+            String name = names.get(i);
+            Long raceId = raceIds.get(i);
+
+            Award awards = awardService.selectAwardByNameAndRace(name, raceId);
+            if (awards == null) {
+                return R.fail("未找到" + name + "对应的该奖项");
+            }
+
 //            //通过teamId查出队伍全部学生的名字
 //            List<String> names = new ArrayList<>();
 //            List<UserInfoVo> student = teamMemberStudentService.getMemberStudentByTeamId(teamId);
@@ -83,37 +95,37 @@ public class AwardGenerateService {
 //                names.add(user.getName());
 //            }
 //            String studentNames = String.join("、", names);
-//
-//            //比赛名字
-//            String race = raceInfoService.selectRaceInfoById(awards.getRaceId()).getName();
-//
-//            //转换成汉字
-//            Map<String, String> levelMapping = new HashMap<>();
-//            levelMapping.put("1", "一");
-//            levelMapping.put("2", "二");
-//            levelMapping.put("3", "三");
-//
-//            String level = levelMapping.getOrDefault(awards.getAwardLevel(), " ");
-//
-//            // 2. 准备数据（将实体类转换为 Velocity 需要的 Map 格式）
-//            Map<String, String> templateParam = new HashMap<>();
-//            templateParam.put("name", studentNames);
-//            templateParam.put("year", awards.getYear());
-//            templateParam.put("race", race);
-//            templateParam.put("level", level);
-//            if (awards.getTeachers() != null) {
-//                templateParam.put("teacher", awards.getTeachers()); // 允许空值
-//            } else {
-//                templateParam.put("teacher", " ");
-//            }
-//            templateParam.put("date", DateUtil.format(awards.getAwardDate(), "yyyy年MM月dd日")); // 格式化日期
-//
-//            // 将数据添加到列表
-//            allParams.add(templateParam);
-//        }
-//        awardUtil.batchGenerate(response, "/templates", "award.xml", allParams, "奖状");
-//        return R.ok("生成成功");
-//    }
+
+            //比赛名字
+            String race = raceInfoService.selectRaceInfoById(awards.getRaceId()).getName();
+
+            //转换成汉字
+            Map<String, String> levelMapping = new HashMap<>();
+            levelMapping.put("1", "一等");
+            levelMapping.put("2", "二等");
+            levelMapping.put("3", "三等");
+            levelMapping.put("4", "优秀");
+
+            String level = levelMapping.getOrDefault(awards.getAwardLevel(), " ");
+
+            // 2. 准备数据（将实体类转换为 Velocity 需要的 Map 格式）
+            Map<String, String> templateParam = new HashMap<>();
+            templateParam.put("name", awards.getName());
+            templateParam.put("year", awards.getYear());
+            templateParam.put("race", race);
+            templateParam.put("level", level);
+            if (awards.getTeachers() != null) {
+                templateParam.put("teacher", awards.getTeachers()); // 允许空值
+            } else {
+                templateParam.put("teacher", " ");
+            }
+            templateParam.put("date", DateUtil.format(awards.getAwardDate(), "yyyy年MM月dd日"));
+
+            // 将数据添加到列表
+            templateParams.add(templateParam);
+        }
+        return awardUtil.batchGenerate(response, "/templates", "award.xml", templateParams, "奖状");
+    }
 }
 
 
