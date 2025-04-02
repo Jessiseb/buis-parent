@@ -160,7 +160,7 @@ public class RaceInfoController extends BaseController {
      */
     @ApiOperation("导出学生参与的第二课堂比赛数量")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
-    @GetMapping("/exportStudentDiProjectCount")
+    @PostMapping("/exportStudentDiProjectCount")
     public void studentRaceCount(@RequestParam(value = "college", required = true) int college,
                                  @RequestParam(value = "grade", required = true) int grade,
                                  HttpServletResponse response) {

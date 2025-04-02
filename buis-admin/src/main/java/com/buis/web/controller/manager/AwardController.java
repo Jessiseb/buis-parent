@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.util.List;
 
@@ -125,19 +126,20 @@ public class AwardController extends BaseController {
 //    }
 
     @ApiOperation("生成奖状信息")
-    @PreAuthorize("@ss.hasPermi('buis:award:export')")
-    @PostMapping("/generate/{name}/{raceId}")
-    public R<String> generateCertificate(@PathVariable("name") String name,
-                                         @PathVariable("raceId") Long raceId,
+    @GetMapping("/generate")
+    public R<String> generateCertificate(@PathParam(value = "name") String name,
+                                         @PathParam(value = "raceId") Long raceId,
                                          HttpServletResponse response) {
-        return awardGenerateService.generateAwardContent(name,raceId,response);
+        return awardGenerateService.generateAwardContent(name, raceId, response);
     }
 
-//    @ApiOperation("根据多队伍ids批量生成奖状信息")
-//    @PostMapping("/batchGenerate")
-//    public R<String> batchGenerate(@RequestBody List<Long> teamIds, HttpServletResponse response) throws TemplateException, IOException {
-//        return awardGenerateService.generateAwardContents(teamIds, response);
-//    }
+    @ApiOperation("批量生成奖状信息")
+    @GetMapping("/batchGenerate")
+    public R<String> batchGenerate(@RequestParam List<String> name,
+                                   @RequestParam List<Long> raceId,
+                                   HttpServletResponse response) throws IOException {
+        return awardGenerateService.generateAwardContents(name, raceId, response);
+    }
 
 
 }
