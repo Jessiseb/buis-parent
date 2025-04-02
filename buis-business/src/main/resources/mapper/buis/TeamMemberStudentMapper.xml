@@ -77,9 +77,7 @@
 
     <select id="getCountJoin" resultType="java.lang.Integer">
         select count(1)
-
         from team_member_student
-
         <where>
             is_deleted = 0 and is_choosed = 1
             <if test="raceId != null">and race = #{raceId}</if>

@@ -118,7 +118,6 @@ public class TeamApiController extends BaseController {
         if (teamInfo == null) {
             throw new ServiceException("项目团队不存在,请先创建团队~");
         }
-
         //如果已经邀请过对方就提示已邀请,请勿重复邀请
         for (UserInfoVo userInfoVo : userInfoVoList) {
             if (teamMemberStudentService.getRequestCount(userInfoVo.getId(),teamInfo.getRace(),team)>=1) {
@@ -126,7 +125,6 @@ public class TeamApiController extends BaseController {
                 throw new ServiceException("您已经邀请过学号为:"+userInfoVo.getNumber()+"的用户，请勿重复邀请");
             }
         }
-
 
         // 检查邀请的成员是否已经预报名比赛
         for (UserInfoVo userInfoVo : userInfoVoList) {
@@ -305,7 +303,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("带条件分页查询队伍列表")
     @PostMapping("/list")
-    public MyPageVo<List<TeamInfoVo>> list(
+    public MyPageVo list(
             @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
             @RequestBody(required = false) TeamInfo teamInfo,
@@ -314,9 +312,16 @@ public class TeamApiController extends BaseController {
             @ApiParam(name = "isPublish", value = "是否发布招募",required = false)
             @RequestParam(required = false) String isPublish){
         startPage();
-        //如果userId不为空,则查询这个用户所创建的队伍
+        //如果userId不为空,则查询这个用户所参与的队伍
         if (userId != null) {
-            return new MyPageVo(teamInfoService.selectTeamInfoByUserId(userId));
+            List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
+            List<Long> collect = teamMemberStudents.stream()
+                    .map(teamMemberStudent -> teamMemberStudent.getTeam())
+                    .collect(Collectors.toList());
+            //转成数组类型
+            Long[] ids = collect.toArray(new Long[collect.size()]);
+
+            return new MyPageVo(teamInfoService.selectTeamInfoByIds(ids));
         }
         teamInfo.setIsPublish(isPublish);//查出已发布招募的队伍信息
         List<TeamInfoVo> list = null;
@@ -340,6 +345,7 @@ public class TeamApiController extends BaseController {
         if (teamInfoVo == null) {
             return R.fail("查询失败");
         }
+
         //根据团队id获取到团队成员信息
         List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByTeamId(id);
         //获取到对应的用户信息

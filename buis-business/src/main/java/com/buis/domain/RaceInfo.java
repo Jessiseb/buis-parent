@@ -130,6 +130,49 @@ public class RaceInfo extends BaseEntity {
     private Long level;
 
     /**
+     * 指导老师资历
+     */
+    @Excel(name = "指导老师资历")
+    @ApiModelProperty("指导老师资历")
+    private String seniority;
+
+    /**
+     * 活动说明材料
+     */
+    @Excel(name = "活动说明材料")
+    @ApiModelProperty("活动说明材料")
+    private String descUrl;
+
+    /**
+     * 所在部门
+     */
+    @Excel(name = "所在部门")
+    @ApiModelProperty("所在部门")
+    private String department;
+
+    /**
+     * 承办单位
+     */
+    @Excel(name = "承办单位")
+    @ApiModelProperty("承办单位")
+    private String organizers;
+
+    /**
+     * 来源课程
+     */
+    @Excel(name = "来源课程")
+    @ApiModelProperty("来源课程")
+    private String course;
+
+    /**
+     * 专业名称及具体学生人数
+     */
+    @Excel(name = "专业名称及具体学生人数")
+    @ApiModelProperty("专业名称及具体学生人数")
+    private String majorCount;
+
+
+    /**
      * 标识是否被删除，0表示未删除
      */
     private Integer isDeleted;

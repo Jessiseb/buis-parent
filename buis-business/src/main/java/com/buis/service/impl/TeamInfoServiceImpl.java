@@ -372,6 +372,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //如果队伍只有一个人就直接解散
         if (teamStudentService.getJoinCountByTeamId(team) == 1) {
             //删除队伍
+            //并且吧队伍用户中间表设置为已删除
+            teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team,userId);
             return teamInfoMapper.deleteTeamInfoById(team);
         } else {
             //队伍不止一个人

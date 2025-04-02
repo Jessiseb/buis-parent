@@ -6,9 +6,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="com.buis.vo.RaceDetailVo" id="RaceDetailResult">
         <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
         <result property="raceName" column="race_name"/>
         <result property="race" column="race"/>
         <result property="name" column="name"/>
+        <result property="reviewStatus" column="review_status"/>
+        <result property="raceType" column="race_type"/>
         <result property="count" column="count"/>
         <result property="phone" column="phone"/>
         <result property="email" column="email"/>
@@ -45,8 +48,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectRaceDetailVo">
         select t2.name as race_name,
                t1.id,
+               t1.parent_id,
                t1.race,
                t1.name,
+               t1.review_status,
+               t3.name as race_type,
                t1.count,
                t1.phone,
                t1.email,
@@ -62,9 +68,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.t_limit,
                t1.is_deleted,
                t1.create_time,
-               t1.update_time
+               t1.update_time,
+               t2.son_tid
         from race_detail t1
                  left join race_info t2 ON t1.race = t2.id
+                 left join race_type t3 on t2.son_tid = t3.id
     </sql>
 
     <select id="selectRaceDetailList" parameterType="com.buis.vo.RaceDetailVo" resultMap="RaceDetailResult">
@@ -72,26 +80,62 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             t1.is_deleted = 0
             <if test="raceDetail.id != null and raceDetail.id != '' ">and t1.id = #{raceDetail.id}</if>
+            <if test="raceDetail.parentId != null and raceDetail.parentId != '' ">and t1.parent_id =
+                #{raceDetail.parentId}
+            </if>
             <if test="raceDetail.race != null and raceDetail.race != ''">and t1.race = #{raceDetail.race}</if>
-            <if test="raceDetail.name != null  and raceDetail.name != ''">and t1.name like concat('%', #{raceDetail.name}, '%')
+            <if test="raceDetail.name != null  and raceDetail.name != ''">and t1.name like concat('%',
+                #{raceDetail.name}, '%')
+            </if>
+            <if test="raceDetail.reviewStatus != null and raceDetail.reviewStatus != ''">and t1.review_status =
+                #{raceDetail.reviewStatus}
             </if>
             <if test="raceDetail.count != null and raceDetail.count != ''">and t1.count = #{raceDetail.count}</if>
-            <if test="raceDetail.teamMin != null and raceDetail.teamMin != ''">and t1.team_min = #{raceDetail.teamMin}</if>
-            <if test="raceDetail.teamMax != null and raceDetail.teamMax != ''">and t1.team_max = #{raceDetail.teamMax}</if>
-            <if test="raceDetail.teacherMin != null and raceDetail.teacherMin != ''">and t1.teacher_min = #{raceDetail.teacherMin}</if>
-            <if test="raceDetail.teacherMax != null and raceDetail.teacherMax != ''">and t1.teacher_max = #{raceDetail.teacherMax}</if>
+            <if test="raceDetail.teamMin != null and raceDetail.teamMin != ''">and t1.team_min = #{raceDetail.teamMin}
+            </if>
+            <if test="raceDetail.teamMax != null and raceDetail.teamMax != ''">and t1.team_max = #{raceDetail.teamMax}
+            </if>
+            <if test="raceDetail.teacherMin != null and raceDetail.teacherMin != ''">and t1.teacher_min =
+                #{raceDetail.teacherMin}
+            </if>
+            <if test="raceDetail.teacherMax != null and raceDetail.teacherMax != ''">and t1.teacher_max =
+                #{raceDetail.teacherMax}
+            </if>
             <if test="raceDetail.phone != null  and raceDetail.phone != ''">and t1.phone = #{raceDetail.phone}</if>
             <if test="raceDetail.email != null  and raceDetail.email != ''">and t1.email = #{raceDetail.email}</if>
-            <if test="raceDetail.capacity != null and raceDetail.capacity != ''">and t1.capacity = #{raceDetail.capacity}</if>
+            <if test="raceDetail.capacity != null and raceDetail.capacity != ''">and t1.capacity =
+                #{raceDetail.capacity}
+            </if>
             <if test="raceDetail.rRank != null and raceDetail.rRank != ''">and t1.r_rank = #{raceDetail.rRank}</if>
             <if test="raceDetail.tLimit != null and raceDetail.tLimit != ''">and t1.t_limit = #{raceDetail.tLimit}</if>
         </where>
     </select>
 
     <select id="selectRaceDetailById" parameterType="Long" resultMap="RaceDetailWeightResult">
-        select id, race,count, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
+        select id,
+               parent_id,
+               race,
+               count,
+               name,
+               review_status,
+               phone,
+               email,
+               desc_url,
+               group_url,
+               rule,
+               capacity,
+               team_min,
+               team_max,
+               teacher_min,
+               teacher_max,
+               r_rank,
+               t_limit,
+               is_deleted,
+               create_time,
+               update_time
         from race_detail
-        where id = #{id} and is_deleted = 0
+        where id = #{id}
+          and is_deleted = 0
     </select>
 
     <select id="selectWeightList" resultMap="WeightResult">
@@ -100,13 +144,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where race_d = #{race_d} and is_deleted = 0
     </select>
     <select id="selectRaceDetailByRaceId" resultType="com.buis.domain.RaceDetail">
--- 查询比赛信息
-        select id, race,count, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
+        -- 查询比赛信息
+        select id,
+               parent_id,
+               race,
+               count,
+               name,
+               review_status,
+               phone,
+               email,
+               desc_url,
+               group_url,
+               rule,
+               capacity,
+               team_min,
+               team_max,
+               teacher_min,
+               teacher_max,
+               r_rank,
+               t_limit,
+               is_deleted,
+               create_time,
+               update_time
         from race_detail
-        where race = #{raceId} and is_deleted = 0
+        where race = #{raceId}
+          and is_deleted = 0
     </select>
     <select id="batchSelectRaceDetailByRaceIds" resultType="com.buis.domain.RaceDetail">
-        select id, race, name, phone, email, desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted, create_time, update_time
+        select id,parent_id, race, name,money,review_status, phone, email,
+        desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted,
+        create_time, update_time
         from race_detail
         where race in
         <foreach collection="raceIds" item="raceId" open="(" separator="," close=")">
@@ -120,28 +187,66 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             t1.is_deleted = 0
             <if test="raceDetailVo.id != null and raceDetailVo.id != '' ">and t1.id = #{raceDetailVo.id}</if>
-            <if test="raceDetailVo.race != null and raceDetailVo.race != ''">and t1.race = #{raceDetailVo.race}</if>
-            <if test="raceDetailVo.name != null  and raceDetailVo.name != ''">and t1.name like concat('%', #{raceDetailVo.name}, '%')
+            <!-- 新增递归查询子分类的条件 -->
+            <if test="raceDetailVo.parentId != null and raceDetailVo.parentId != ''">
+                AND t1.parent_id IN (
+                WITH RECURSIVE category_tree AS (
+                SELECT id FROM race_type WHERE id = #{raceDetailVo.parentId}
+                UNION ALL
+                SELECT rt.id FROM race_type rt INNER JOIN category_tree ct ON rt.parent_id = ct.id
+                )
+                SELECT id FROM category_tree
+                )
             </if>
-            <if test="raceDetailVo.raceName != null and raceDetailVo.raceName != ''">and t2.name like concat('%', #{raceDetailVo.raceName}, '%')</if>
+            <if test="raceDetailVo.race != null and raceDetailVo.race != ''">and t1.race = #{raceDetailVo.race}</if>
+            <if test="raceDetailVo.name != null  and raceDetailVo.name != ''">and t1.name like concat('%',
+                #{raceDetailVo.name}, '%')
+            </if>
+            <if test="raceDetailVo.raceName != null and raceDetailVo.raceName != ''">and t2.name like concat('%',
+                #{raceDetailVo.raceName}, '%')
+            </if>
+            <if test="raceDetailVo.raceType != null  and raceDetailVo.raceType != ''">and t3.name =
+                #{raceDetailVo.raceType}
+            </if>
+            <if test="raceDetailVo.reviewStatus != null and raceDetailVo.reviewStatus != ''">and t1.review_status =
+                #{raceDetailVo.reviewStatus}
+            </if>
             <if test="raceDetailVo.count != null and raceDetailVo.count != ''">and t1.count = #{raceDetailVo.count}</if>
-            <if test="raceDetailVo.teamMin != null and raceDetailVo.teamMin != ''">and t1.team_min = #{raceDetailVo.teamMin}</if>
-            <if test="raceDetailVo.teamMax != null and raceDetailVo.teamMax != ''">and t1.team_max = #{raceDetailVo.teamMax}</if>
-            <if test="raceDetailVo.teacherMin != null and raceDetailVo.teacherMin != ''">and t1.teacher_min = #{raceDetailVo.teacherMin}</if>
-            <if test="raceDetailVo.teacherMax != null and raceDetailVo.teacherMax != ''">and t1.teacher_max = #{raceDetailVo.teacherMax}</if>
-            <if test="raceDetailVo.phone != null  and raceDetailVo.phone != ''">and t1.phone = #{raceDetailVo.phone}</if>
-            <if test="raceDetailVo.email != null  and raceDetailVo.email != ''">and t1.email = #{raceDetailVo.email}</if>
-            <if test="raceDetailVo.capacity != null and raceDetailVo.capacity != ''">and t1.capacity = #{raceDetailVo.capacity}</if>
-            <if test="raceDetailVo.rRank != null and raceDetailVo.rRank != ''">and t1.r_rank = #{raceDetailVo.rRank}</if>
-            <if test="raceDetailVo.tLimit != null and raceDetailVo.tLimit != ''">and t1.t_limit = #{raceDetailVo.tLimit}</if>
+            <if test="raceDetailVo.teamMin != null and raceDetailVo.teamMin != ''">and t1.team_min =
+                #{raceDetailVo.teamMin}
+            </if>
+            <if test="raceDetailVo.teamMax != null and raceDetailVo.teamMax != ''">and t1.team_max =
+                #{raceDetailVo.teamMax}
+            </if>
+            <if test="raceDetailVo.teacherMin != null and raceDetailVo.teacherMin != ''">and t1.teacher_min =
+                #{raceDetailVo.teacherMin}
+            </if>
+            <if test="raceDetailVo.teacherMax != null and raceDetailVo.teacherMax != ''">and t1.teacher_max =
+                #{raceDetailVo.teacherMax}
+            </if>
+            <if test="raceDetailVo.phone != null  and raceDetailVo.phone != ''">and t1.phone = #{raceDetailVo.phone}
+            </if>
+            <if test="raceDetailVo.email != null  and raceDetailVo.email != ''">and t1.email = #{raceDetailVo.email}
+            </if>
+            <if test="raceDetailVo.capacity != null and raceDetailVo.capacity != ''">and t1.capacity =
+                #{raceDetailVo.capacity}
+            </if>
+            <if test="raceDetailVo.rRank != null and raceDetailVo.rRank != ''">and t1.r_rank = #{raceDetailVo.rRank}
+            </if>
+            <if test="raceDetailVo.tLimit != null and raceDetailVo.tLimit != ''">and t1.t_limit =
+                #{raceDetailVo.tLimit}
+            </if>
         </where>
     </select>
 
     <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
         insert into race_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="parentId != null">parent_id,</if>
             <if test="race != null">race,</if>
             <if test="name != null and name != ''">name,</if>
+            <if test="reviewStatus != null">review_status,</if>
             <if test="count != null">count,</if>
             <if test="phone != null and phone != ''">phone,</if>
             <if test="email != null and email != ''">email,</if>
@@ -160,8 +265,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="parentId != null">#{parentId},</if>
             <if test="race != null">#{race},</if>
             <if test="name != null and name != ''">#{name},</if>
+            <if test="reviewStatus != null">#{reviewStatus},</if>
+            <if test="count != null">#{count},</if>
             <if test="phone != null and phone != ''">#{phone},</if>
             <if test="email != null and email != ''">#{email},</if>
             <if test="descUrl != null and descUrl != ''">#{descUrl},</if>
@@ -185,6 +294,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>
             <if test="name != null and name != ''">name = #{name},</if>
+            <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
+            <if test="count != null">count = #{count},</if>
             <if test="phone != null and phone != ''">phone = #{phone},</if>
             <if test="email != null and email != ''">email = #{email},</if>
             <if test="descUrl != null and descUrl != ''">desc_url = #{descUrl},</if>
@@ -239,7 +350,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="batchWeight">
         insert into t_weight( id, race_d, name, weight, is_deleted, create_time, update_time) values
         <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.id}, #{item.raceD}, #{item.name}, #{item.weight}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
+            ( #{item.id}, #{item.raceD}, #{item.name}, #{item.weight}, #{item.isDeleted}, #{item.createTime},
+            #{item.updateTime})
         </foreach>
     </insert>
 

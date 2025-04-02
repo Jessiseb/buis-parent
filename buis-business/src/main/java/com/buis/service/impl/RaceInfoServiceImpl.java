@@ -261,15 +261,17 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Transactional
     @Override
     public int insertRaceInfo(RaceInfo raceInfo) {
-        // 获取用户id
-        LoginUser loginUser = SecurityUtils.getLoginUser();
-        Long userId = loginUser.getUser().getUserId();
-        //获取比赛id
-        Long raceId = raceInfo.getId();
-        // 判断报名条件
-        this.checkJoinCondition(userId, raceId);
+//        // 获取用户id
+//        LoginUser loginUser = SecurityUtils.getLoginUser();
+//        Long userId = loginUser.getUser().getUserId();
+//        //获取比赛id
+//        Long raceId = raceInfo.getId();
+//        // 判断报名条件
+//        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setCreateTime(DateUtils.getNowDate());
+        raceInfo.setReviewStatus(0);//
+        raceInfo.setStatus(0L);//设置为筹备中
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         if (rows > 0) {
             deleteRacesInfoCache();

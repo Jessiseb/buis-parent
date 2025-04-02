@@ -7,8 +7,9 @@ import com.buis.domain.Weight;
 import com.buis.mapper.RaceDetailMapper;
 import com.buis.service.IRaceDetailService;
 import com.buis.service.IRaceInfoService;
+import com.buis.system.service.ISysDictDataService;
 import com.buis.vo.RaceDetailVo;
-import org.springframework.beans.BeanUtils;
+import com.buis.vo.RaceInfoVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     private RaceDetailMapper raceDetailMapper;
     @Resource
     private IRaceInfoService raceInfoService;
+    @Resource
+    private ISysDictDataService sysDictDataService;
 
 
     /**
@@ -76,17 +79,23 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
 
     /**
      * 修改比赛详情
-     * 
+     *
      * @param raceDetail 比赛详情
      * @return 结果
      */
     @Transactional
     @Override
-    public int updateRaceDetail(RaceDetail raceDetail)
-    {
+    public int updateRaceDetail(RaceDetail raceDetail) {
         raceDetail.setUpdateTime(DateUtils.getNowDate());
-        raceDetailMapper.deleteWeightByRaceD(raceDetail.getId());
-        insertWeight(raceDetail);
+//        raceDetailMapper.deleteWeightByRaceD(raceDetail.getId());
+        Long race = raceDetail.getRace();
+        int reviewStatus = raceDetail.getReviewStatus();
+        //审核通过之后把对应的比赛信息状态设置为报名中
+        if (reviewStatus == 1) {
+            RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(race);
+            raceInfoVo.setStatus(1L); //报名中
+            raceInfoService.updateRaceInfo(raceInfoVo);
+        }
         return raceDetailMapper.updateRaceDetail(raceDetail);
     }
 
