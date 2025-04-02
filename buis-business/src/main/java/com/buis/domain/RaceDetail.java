@@ -32,23 +32,27 @@ public class RaceDetail extends BaseEntity {
     private Long id;
 
     /**
+     * 比赛的一级类型id
+     */
+    @ApiModelProperty("比赛的一级类型id")
+    private int parentId;
+
+    /**
      * 比赛(关联比赛表id)
      */
     @ApiModelProperty("比赛(关联比赛表id)")
-    @Excel(name = "比赛(关联比赛表id)")
     private Long race;
 
     /**
      * 比赛负责人姓名
      */
     @ApiModelProperty("比赛负责人姓名")
-    @Excel(name = "比赛负责人姓名")
     private String name;
+
 
     /**
      * 比赛负责人手机号
      */
-    @Excel(name = "比赛负责人手机号")
     @ApiModelProperty("负责人手机号")
     private String phone;
 
@@ -56,7 +60,6 @@ public class RaceDetail extends BaseEntity {
      * 比赛负责人邮箱
      */
     @ApiModelProperty("比赛负责人手机号")
-    @Excel(name = "比赛负责人邮箱")
     private String email;
 
     /**
@@ -81,7 +84,6 @@ public class RaceDetail extends BaseEntity {
      * 每个人可参与的项目数量
      */
     @ApiModelProperty("每个学生可参与项目数量")
-    @Excel(name = "每个学生可参与项目数量")
     private Long count;
 
     /**
@@ -118,17 +120,21 @@ public class RaceDetail extends BaseEntity {
     /**
      * 推荐排名
      */
-    @Excel(name = "推荐排名")
     @ApiModelProperty("推荐排名")
     private int rRank;
 
     /**
      * 限制老师最大指导数量
      */
-    @Excel(name = "限制老师最大指导数量")
     @ApiModelProperty("限制老师最大指导数量")
     @JsonProperty("tLimit")
     private int tLimit;
+
+    /**
+     * 审核状态
+     */
+    @ApiModelProperty("审核状态")
+    private int reviewStatus;
 
     /**
      * 标识是否被删除，0表示未删除
