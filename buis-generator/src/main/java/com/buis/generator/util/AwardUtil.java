@@ -29,7 +29,7 @@ public class AwardUtil {
             // 使用 URLEncoder 对文件名进行编码，以防止中文文件名在不同浏览器和操作系统下出现乱码问题
             String filename = URLEncoder.encode(fileName + "_" + System.currentTimeMillis(), "utf-8");
             // 设置响应头，指定文档将以附件的形式下载，并定义文件名
-            response.setHeader("Content-disposition", "attachment;filename=" + filename + ".doc");
+            response.setHeader("Content-disposition", "attachment;filename=" + filename + ".docx");
             // 创建 Freemarker 的 Configuration 对象，设置默认的不兼容改进选项
             Configuration configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
             configuration.setDefaultEncoding("utf-8");
