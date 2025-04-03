@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.RacePublishMapper">
+
+    <resultMap type="RacePublish" id="RacePublishResult">
+        <result property="id"    column="id"    />
+        <result property="organizers"    column="organizers"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="joinStart"    column="join_start"    />
+        <result property="joinEnd"    column="join_end"    />
+        <result property="raceTab"    column="race_tab"    />
+        <result property="raceType"    column="race_type"    />
+        <result property="particpationWay"    column="particpation_way"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="teacherInfo"    column="teacher_info"    />
+        <result property="raceTerm"    column="race_term"    />
+        <result property="assistant"    column="assistant"    />
+        <result property="status"    column="status"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectRacePublishVo">
+        select id, organizers, name, description, start_time, end_time, join_start, join_end, race_tab, race_type, particpation_way, capacity, teacher, teacher_info, race_term, assistant, status, update_time, create_time, is_deleted from race_publish
+    </sql>
+
+    <select id="selectRacePublishList" parameterType="RacePublish" resultMap="RacePublishResult">
+        <include refid="selectRacePublishVo"/>
+        <where>
+            is_deleted = 0
+            <if test="organizers != null  and organizers != ''"> and organizers = #{organizers}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="joinStart != null "> and join_start = #{joinStart}</if>
+            <if test="joinEnd != null "> and join_end = #{joinEnd}</if>
+            <if test="raceTab != null "> and race_tab = #{raceTab}</if>
+            <if test="raceType != null "> and race_type = #{raceType}</if>
+            <if test="particpationWay != null  and particpationWay != ''"> and particpation_way = #{particpationWay}</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="teacher != null  and teacher != ''"> and teacher = #{teacher}</if>
+            <if test="teacherInfo != null  and teacherInfo != ''"> and teacher_info = #{teacherInfo}</if>
+            <if test="raceTerm != null  and raceTerm != ''"> and race_term = #{raceTerm}</if>
+            <if test="assistant != null  and assistant != ''"> and assistant = #{assistant}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectRacePublishById" parameterType="Long" resultMap="RacePublishResult">
+        <include refid="selectRacePublishVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertRacePublish" parameterType="RacePublish" useGeneratedKeys="true" keyProperty="id">
+        insert into race_publish
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="organizers != null">organizers,</if>
+            <if test="name != null">name,</if>
+            <if test="description != null">description,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="joinStart != null">join_start,</if>
+            <if test="joinEnd != null">join_end,</if>
+            <if test="raceTab != null">race_tab,</if>
+            <if test="raceType != null">race_type,</if>
+            <if test="particpationWay != null">particpation_way,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="teacher != null">teacher,</if>
+            <if test="teacherInfo != null">teacher_info,</if>
+            <if test="raceTerm != null">race_term,</if>
+            <if test="assistant != null">assistant,</if>
+            <if test="status != null">status,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="organizers != null">#{organizers},</if>
+            <if test="name != null">#{name},</if>
+            <if test="description != null">#{description},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="joinStart != null">#{joinStart},</if>
+            <if test="joinEnd != null">#{joinEnd},</if>
+            <if test="raceTab != null">#{raceTab},</if>
+            <if test="raceType != null">#{raceType},</if>
+            <if test="particpationWay != null">#{particpationWay},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="teacher != null">#{teacher},</if>
+            <if test="teacherInfo != null">#{teacherInfo},</if>
+            <if test="raceTerm != null">#{raceTerm},</if>
+            <if test="assistant != null">#{assistant},</if>
+            <if test="status != null">#{status},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateRacePublish" parameterType="RacePublish">
+        update race_publish
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="organizers != null">organizers = #{organizers},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="joinStart != null">join_start = #{joinStart},</if>
+            <if test="joinEnd != null">join_end = #{joinEnd},</if>
+            <if test="raceTab != null">race_tab = #{raceTab},</if>
+            <if test="raceType != null">race_type = #{raceType},</if>
+            <if test="particpationWay != null">particpation_way = #{particpationWay},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="teacher != null">teacher = #{teacher},</if>
+            <if test="teacherInfo != null">teacher_info = #{teacherInfo},</if>
+            <if test="raceTerm != null">race_term = #{raceTerm},</if>
+            <if test="assistant != null">assistant = #{assistant},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRacePublishById" parameterType="Long">
+        update race_publish
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteRacePublishByIds" parameterType="String">
+        update race_publish
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
