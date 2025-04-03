@@ -1,4 +1,4 @@
-package com.buis.web.controller.api;
+package com.buis.web.controller.manager;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
