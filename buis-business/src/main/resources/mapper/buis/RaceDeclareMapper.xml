@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.RaceDeclareMapper">
+    
+    <resultMap type="com.buis.domain.RaceDeclare" id="RaceDeclareResult">
+        <result property="id"    column="id"    />
+        <result property="race"    column="race"    />
+        <result property="name"    column="name"    />
+        <result property="department"    column="department"    />
+        <result property="organizers"    column="organizers"    />
+        <result property="course"    column="course"    />
+        <result property="majorCount"    column="major_count"    />
+        <result property="raceType"    column="race_type"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="seniority"    column="seniority"    />
+        <result property="count"    column="count"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="place"    column="place"    />
+        <result property="fund"    column="fund"    />
+        <result property="reviewStatus"    column="review_status"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="idDeleted"    column="id_deleted"    />
+    </resultMap>
+
+    <sql id="selectRaceDeclareVo">
+        select id, race, name, department, organizers, course, major_count, race_type, teacher, seniority, count, start_time, end_time, place, fund, review_status, update_time, create_time, id_deleted from race_declare
+    </sql>
+
+    <select id="selectRaceDeclareList" parameterType="com.buis.domain.RaceDeclare" resultMap="RaceDeclareResult">
+        <include refid="selectRaceDeclareVo"/>
+        <where>
+            is_deleted = 0
+            <if test="race != null  and race != ''"> and race = #{race}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="department != null  and department != ''"> and department like concat('%', #{department}, '%')</if>
+            <if test="organizers != null  and organizers != ''"> and organizers like concat('%', #{organizers}, '%')</if>
+            <if test="course != null  and course != ''"> and course like concat('%', #{course}, '%')</if>
+            <if test="majorCount != null  and majorCount != ''"> and major_count like concat('%', #{majorCount}, '%')</if>
+            <if test="raceType != null "> and race_type = #{raceType}</if>
+            <if test="teacher != null  and teacher != ''"> and teacher = #{teacher}</if>
+            <if test="seniority != null  and seniority != ''"> and seniority = #{seniority}</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="place != null  and place != ''"> and place = #{place}</if>
+            <if test="fund != null "> and fund = #{fund}</if>
+            <if test="reviewStatus != null "> and review_status = #{reviewStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectRaceDeclareById" parameterType="Long" resultMap="RaceDeclareResult">
+        <include refid="selectRaceDeclareVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertRaceDeclare" parameterType="com.buis.domain.RaceDeclare" useGeneratedKeys="true" keyProperty="id">
+        insert into race_declare
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="race != null">race,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="department != null and department != ''">department,</if>
+            <if test="organizers != null and organizers != ''">organizers,</if>
+            <if test="course != null and course != ''">course,</if>
+            <if test="majorCount != null and majorCount != ''">major_count,</if>
+            <if test="raceType != null">race_type,</if>
+            <if test="teacher != null and teacher != ''">teacher,</if>
+            <if test="seniority != null and seniority != ''">seniority,</if>
+            <if test="count != null">count,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="place != null and place != ''">place,</if>
+            <if test="fund != null">fund,</if>
+            <if test="reviewStatus != null">review_status,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="idDeleted != null">id_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="race != null">#{race},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="department != null and department != ''">#{department},</if>
+            <if test="organizers != null and organizers != ''">#{organizers},</if>
+            <if test="course != null and course != ''">#{course},</if>
+            <if test="majorCount != null and majorCount != ''">#{majorCount},</if>
+            <if test="raceType != null">#{raceType},</if>
+            <if test="teacher != null and teacher != ''">#{teacher},</if>
+            <if test="seniority != null and seniority != ''">#{seniority},</if>
+            <if test="count != null">#{count},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="place != null and place != ''">#{place},</if>
+            <if test="fund != null">#{fund},</if>
+            <if test="reviewStatus != null">#{reviewStatus},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="idDeleted != null">#{idDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRaceDeclare" parameterType="com.buis.domain.RaceDeclare">
+        update race_declare
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="race != null">race = #{race},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="department != null and department != ''">department = #{department},</if>
+            <if test="organizers != null and organizers != ''">organizers = #{organizers},</if>
+            <if test="course != null and course != ''">course = #{course},</if>
+            <if test="majorCount != null and majorCount != ''">major_count = #{majorCount},</if>
+            <if test="raceType != null">race_type = #{raceType},</if>
+            <if test="teacher != null and teacher != ''">teacher = #{teacher},</if>
+            <if test="seniority != null and seniority != ''">seniority = #{seniority},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="place != null and place != ''">place = #{place},</if>
+            <if test="fund != null">fund = #{fund},</if>
+            <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="idDeleted != null">id_deleted = #{idDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRaceDeclareById" parameterType="Long">
+        update race_declare
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteRaceDeclareByIds" parameterType="String">
+        update race_declare
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
