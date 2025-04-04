@@ -384,4 +384,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="raceType != null ">and t1.race_type = #{raceType}</if>
         </where>
     </select>
+    <select id="selectRaceSecondActivities" resultType="com.buis.domain.RaceInfo">
+        select id,
+               name,
+               description,
+               join_start,
+               join_end,
+               race_start,
+               race_end,
+               review_status,
+               seniority,
+               desc_url,
+               department,
+               organizers,
+               course,
+               major_count
+        from race_info
+        where is_deleted = 0 and parent_tid = 5
+    </select>
 </mapper>

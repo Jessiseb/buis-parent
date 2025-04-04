@@ -125,4 +125,6 @@ public interface IRaceInfoService
 
     String userAnnualParticipationRate(Long userId, int grade);
 
+    //分页查询第二课堂活动申报
+    List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo);
 }

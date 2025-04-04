@@ -56,6 +56,7 @@ public class RaceDeclareServiceImpl implements IRaceDeclareService
     public int insertRaceDeclare(RaceDeclare raceDeclare)
     {
         raceDeclare.setCreateTime(DateUtils.getNowDate());
+        //设置状态为待审核
         raceDeclare.setReviewStatus(0L);
         return raceDeclareMapper.insertRaceDeclare(raceDeclare);
     }

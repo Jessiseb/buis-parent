@@ -113,7 +113,7 @@ public class RaceInfo extends BaseEntity {
      * 审核状态
      */
     @ApiModelProperty("审核状态")
-    private Integer reviewStatus;
+    private Long reviewStatus;
 
     /**
      * 比赛状态（字典）

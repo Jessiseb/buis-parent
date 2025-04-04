@@ -58,4 +58,5 @@ public interface IRaceDeclareService
      * @return 结果
      */
     public int deleteRaceDeclareById(Long id);
+
 }

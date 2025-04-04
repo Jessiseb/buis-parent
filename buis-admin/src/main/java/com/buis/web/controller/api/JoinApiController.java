@@ -54,7 +54,8 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("新增预报名")
     @PostMapping("/addPre/{isTeacher}/{race}")
-    public R addPre(@ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer isTeacher, @ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
+    public R addPre(@ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true)
+                        @PathVariable Integer isTeacher, @ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         if (isTeacher == 1) {
             PreSignTeacher preSignTeacher = new PreSignTeacher();
@@ -125,8 +126,6 @@ public class JoinApiController extends BaseController {
         //返回结果
         return new MyPageVo(preSignStudentVos);
     }
-
-
 
 
 
