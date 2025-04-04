@@ -9,12 +9,14 @@ import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.Award;
+import com.buis.domain.AwardRecords;
 import com.buis.domain.CollegeMajor;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.IUserInfoService;
+import com.buis.service.impl.AwardRecordsServiceImpl;
 import com.buis.service.impl.AwardServiceImpl;
 import com.buis.vo.AwardVo;
 import com.buis.vo.FindUserVo;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +50,8 @@ public class UserInfoApiController extends BaseController {
     private RedisTemplate redisTemplate;
     @Resource
     private AwardServiceImpl awardService;
+    @Resource
+    private AwardRecordsServiceImpl awardRecordsService;
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
@@ -211,4 +216,19 @@ public class UserInfoApiController extends BaseController {
     }
 
 
+    /**
+     * 用户上传奖状功能,String类型
+     */
+    @ApiOperation("用户上传奖状功能")
+    @PostMapping("/uploadAward")
+    public R<AwardRecords> uploadAward(@ApiParam(name ="awardURL", value = "奖状URL", required = true )
+                                    @RequestParam String awardURL){
+        AwardRecords awardRecords  = new AwardRecords();
+        awardRecords.setAwardUrl(awardURL);
+        int i = awardRecordsService.insertAwardRecords(awardRecords);
+        if (i==0){
+            return R.fail("上传失败!");
+        }
+        return R.ok(awardRecords);
+    }
 }
