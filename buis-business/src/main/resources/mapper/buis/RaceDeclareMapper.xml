@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="reviewStatus"    column="review_status"    />
         <result property="updateTime"    column="update_time"    />
         <result property="createTime"    column="create_time"    />
-        <result property="idDeleted"    column="id_deleted"    />
+        <result property="isDeleted"    column="is_deleted"    />
     </resultMap>
 
     <sql id="selectRaceDeclareVo">
@@ -77,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="reviewStatus != null">review_status,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="createTime != null">create_time,</if>
-            <if test="idDeleted != null">id_deleted,</if>
+            <if test="isDeleted != null">is_deleted,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="race != null">#{race},</if>
@@ -97,7 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="reviewStatus != null">#{reviewStatus},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="createTime != null">#{createTime},</if>
-            <if test="idDeleted != null">#{idDeleted},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
          </trim>
     </insert>
 
@@ -121,7 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="idDeleted != null">id_deleted = #{idDeleted},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
         </trim>
         where id = #{id}
     </update>

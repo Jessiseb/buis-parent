@@ -122,7 +122,7 @@ public class RaceDeclare extends BaseEntity {
     /**
      * 是否删除
      */
-    private Long idDeleted;
+    private Long isDeleted;
 
 
 }

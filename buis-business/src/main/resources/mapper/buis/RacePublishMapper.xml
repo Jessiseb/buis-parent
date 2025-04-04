@@ -4,8 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RacePublishMapper">
 
-    <resultMap type="RacePublish" id="RacePublishResult">
+    <resultMap type="com.buis.domain.RacePublish" id="RacePublishResult">
         <result property="id"    column="id"    />
+        <result property="race"    column="race"    />
         <result property="organizers"    column="organizers"    />
         <result property="name"    column="name"    />
         <result property="description"    column="description"    />
@@ -28,14 +29,15 @@
     </resultMap>
 
     <sql id="selectRacePublishVo">
-        select id, organizers, name, description, start_time, end_time, join_start, join_end, race_tab, race_type, particpation_way, capacity, teacher, teacher_info, race_term, assistant, status, update_time, create_time, is_deleted from race_publish
+        select id,declare _id,organizers, name, description, start_time, end_time, join_start, join_end, race_tab, race_type, particpation_way, capacity, teacher, teacher_info, race_term, assistant, status, update_time, create_time, is_deleted from race_publish
     </sql>
 
-    <select id="selectRacePublishList" parameterType="RacePublish" resultMap="RacePublishResult">
+    <select id="selectRacePublishList" parameterType="com.buis.domain.RacePublish" resultMap="RacePublishResult">
         <include refid="selectRacePublishVo"/>
         <where>
             is_deleted = 0
             <if test="organizers != null  and organizers != ''"> and organizers = #{organizers}</if>
+            <if test="race != null "> and race = #{race}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="description != null  and description != ''"> and description = #{description}</if>
             <if test="startTime != null "> and start_time = #{startTime}</if>
@@ -59,9 +61,10 @@
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertRacePublish" parameterType="RacePublish" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRacePublish" parameterType="com.buis.domain.RacePublish" useGeneratedKeys="true" keyProperty="id">
         insert into race_publish
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="race != null">race,</if>
             <if test="organizers != null">organizers,</if>
             <if test="name != null">name,</if>
             <if test="description != null">description,</if>
@@ -83,6 +86,7 @@
             <if test="isDeleted != null">is_deleted,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="race != null">#{race},</if>
             <if test="organizers != null">#{organizers},</if>
             <if test="name != null">#{name},</if>
             <if test="description != null">#{description},</if>
@@ -105,9 +109,10 @@
         </trim>
     </insert>
 
-    <update id="updateRacePublish" parameterType="RacePublish">
+    <update id="updateRacePublish" parameterType="com.buis.domain.RacePublish">
         update race_publish
         <trim prefix="SET" suffixOverrides=",">
+            <if test="race != null">race = #{race},</if>
             <if test="organizers != null">organizers = #{organizers},</if>
             <if test="name != null">name = #{name},</if>
             <if test="description != null">description = #{description},</if>

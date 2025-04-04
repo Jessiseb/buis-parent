@@ -111,4 +111,6 @@ public interface RaceInfoMapper
 
 
     List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo);
+
+    List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo);
 }

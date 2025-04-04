@@ -270,7 +270,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 //        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setCreateTime(DateUtils.getNowDate());
-        raceInfo.setReviewStatus(0);//
+        raceInfo.setReviewStatus(0L);//
         raceInfo.setStatus(0L);//设置为筹备中
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         if (rows > 0) {
@@ -864,6 +864,16 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             return String.format("%.2f%%", (count / sum) * 100);
         }
 
+    }
+
+    /**
+     * 分页查询第二课堂活动申报
+     * @param raceInfo
+     * @return
+     */
+    @Override
+    public List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo) {
+        return raceInfoMapper.selectRaceSecondActivities(raceInfo);
     }
 
     /**

@@ -1,29 +1,19 @@
 package com.buis.web.controller.api;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
-import com.buis.common.exception.ServiceException;
-import com.buis.domain.PreSignStudent;
-import com.buis.domain.PreSignTeacher;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.RaceType;
-import com.buis.service.*;
-import com.buis.vo.PreSignStudentVo;
-import com.buis.vo.PreSignTeacherVo;
+import com.buis.service.IRaceInfoService;
+import com.buis.service.IRaceTypeService;
 import com.buis.vo.RaceInfoVo;
-import com.buis.vo.SecondClassCountVo;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -97,9 +87,5 @@ public class RaceApiController extends BaseController {
         List<RaceInfo> result = raceInfoService.getUserRaceList(userId);
         return R.ok(result);
     }
-
-
-
-
 
 }
