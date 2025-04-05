@@ -15,7 +15,6 @@ import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.redisson.api.RList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -144,7 +143,12 @@ public class StatisticsApiController {
     }
 
 
-
-
+    @ApiOperation("查询个人年度参与活动率")
+    @GetMapping("/participationRateByUser")
+    public R<String> getUserAnnualParticipationRate(@RequestParam(value = "userId") Long userId,
+                                                    @RequestParam(value = "grade") int grade) {
+        String result = raceInfoService.userAnnualParticipationRate(userId, grade);
+        return R.ok(result);
+    }
 
 }
