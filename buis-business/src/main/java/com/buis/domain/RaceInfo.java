@@ -48,6 +48,13 @@ public class RaceInfo extends BaseEntity {
     private Long sonTid;
 
     /**
+     * 负责老师名称
+     */
+    @Excel(name = "负责老师名称")
+    @ApiModelProperty("负责老师名称")
+    private String teacherName;
+
+    /**
      * 比赛名称
      */
     @Excel(name = "比赛名称")
