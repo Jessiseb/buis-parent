@@ -165,6 +165,21 @@ public class RaceInfo extends BaseEntity {
     private String course;
 
     /**
+     * 开展地点
+     */
+    @Excel(name = "开展地点")
+    @ApiModelProperty("开展地点")
+    private String place;
+
+    /**
+     * 项目经费
+     */
+    @Excel(name = "项目经费")
+    @ApiModelProperty("项目经费")
+    private String fund;
+
+
+    /**
      * 专业名称及具体学生人数
      */
     @Excel(name = "专业名称及具体学生人数")

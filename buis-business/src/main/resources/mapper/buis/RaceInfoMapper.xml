@@ -26,6 +26,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="department" column="department"/>
         <result property="organizers" column="organizers"/>
         <result property="course" column="course"/>
+        <result property="place" column="place"/>
+        <result property="fund" column="fund"/>
         <result property="majorCount" column="major_count"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createTime" column="create_time"/>
@@ -87,6 +89,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.department,
                t1.organizers,
                t1.course,
+               t1.place,
+               t1.fund,
                t1.major_count,
                t1.is_deleted,
                t1.create_time,
@@ -123,6 +127,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="organizers != null  and organizers != ''">and t1.organizers like concat('%', #{organizers}, '%')
             </if>
             <if test="course != null  and course != ''">and t1.course like concat('%', #{course}, '%')</if>
+            <if test="place != null  and place != ''">and t1.place like concat('%', #{place}, '%')</if>
+            <if test="fund != null  and fund != ''">and t1.fund like concat('%', #{fund}, '%')</if>
             <if test="majorCount != null  and majorCount != ''">and t1.major_count like concat('%', #{majorCount},
                 '%')
             </if>
@@ -200,6 +206,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="department != null and department != ''">department,</if>
             <if test="organizers != null and organizers != ''">organizers,</if>
             <if test="course != null and course != ''">course,</if>
+            <if test="place != null and place != ''">place,</if>
+            <if test="fund != null and fund != ''">fund,</if>
             <if test="majorCount != null and majorCount != ''">majorCount,</if>
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
@@ -225,6 +233,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="department != null and department != ''">#{department},</if>
             <if test="organizers != null and organizers != ''">#{organizers},</if>
             <if test="course != null and course != ''">#{course},</if>
+            <if test="place != null and place != ''">#{place},</if>
+            <if test="fund != null and fund != ''">#{fund},</if>
             <if test="majorCount != null and majorCount != ''">#{majorCount},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -254,6 +264,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="department != null and department != ''">department = #{department},</if>
             <if test="organizers != null and organizers != ''">organizers = #{organizers},</if>
             <if test="course != null and course != ''">course = #{course},</if>
+            <if test="place != null and place != ''">place = #{place},</if>
+            <if test="fund != null and fund != ''">fund = #{fund},</if>
             <if test="majorCount != null and majorCount != ''">major_count = #{majorCount},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
@@ -379,6 +391,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="course != null  and course != ''">and t1.course like concat('%', #{course}, '%')</if>
             <if test="descUrl != null  and descUrl != ''">and t1.desc_url like concat('%', #{descUrl}, '%')</if>
             <if test="seniority != null  and seniority != ''">and t1.seniority like concat('%', #{seniority}, '%')</if>
+            <if test="place != null  and place != ''">and t1.place like concat('%', #{place}, '%')</if>
+            <if test="fund != null  and fund != ''">and t1.fund like concat('%', #{fund}, '%')</if>
             <if test="majorCount != null and majorCount != ''">and t1.major_count = #{majorCount}</if>
             <if test="level != null ">and t1.level = #{level}</if>
             <if test="raceType != null ">and t1.race_type = #{raceType}</if>
@@ -398,6 +412,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                department,
                organizers,
                course,
+               place,
+               fund,
                major_count
         from race_info
         where is_deleted = 0 and parent_tid = 5
