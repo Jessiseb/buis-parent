@@ -1,28 +1,22 @@
 package com.buis.web.controller.manager;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.domain.RaceSecond;
 import com.buis.service.IRaceSecondService;
-import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.common.core.page.TableDataInfo;
+import com.buis.vo.RaceSecondVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 关联第二课堂表Controller
@@ -33,21 +27,19 @@ import com.buis.common.core.page.TableDataInfo;
 @Api(tags = "关联第二课堂表Controller")
 @RestController
 @RequestMapping("/buis/second")
-public class RaceSecondController extends BaseController
-{
+public class RaceSecondController extends BaseController {
     @Autowired
     private IRaceSecondService raceSecondService;
 
-/**
- * 查询关联第二课堂表列表
- */
-@ApiOperation("查询关联第二课堂表列表")
-@PreAuthorize("@ss.hasPermi('buis:second:list')")
-@GetMapping("/list")
-    public TableDataInfo list(RaceSecond raceSecond)
-    {
+    /**
+     * 查询关联第二课堂表列表
+     */
+    @ApiOperation("查询关联第二课堂表列表")
+    @PreAuthorize("@ss.hasPermi('buis:second:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(RaceSecond raceSecond) {
         startPage();
-        List<RaceSecond> list = raceSecondService.selectRaceSecondList(raceSecond);
+        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecond);
         return getDataTable(list);
     }
 
@@ -60,8 +52,8 @@ public class RaceSecondController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, RaceSecond raceSecond)
     {
-        List<RaceSecond> list = raceSecondService.selectRaceSecondList(raceSecond);
-        ExcelUtil<RaceSecond> util = new ExcelUtil<RaceSecond>(RaceSecond.class);
+        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecond);
+        ExcelUtil<RaceSecondVo> util = new ExcelUtil<RaceSecondVo>(RaceSecondVo.class);
         util.exportExcel(response, list, "关联第二课堂表数据");
     }
 

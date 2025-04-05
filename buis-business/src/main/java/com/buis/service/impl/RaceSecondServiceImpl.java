@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.vo.RaceSecondVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceSecondMapper;
@@ -41,7 +42,7 @@ public class RaceSecondServiceImpl implements IRaceSecondService
      * @return 关联第二课堂表
      */
     @Override
-    public List<RaceSecond> selectRaceSecondList(RaceSecond raceSecond)
+    public List<RaceSecondVo> selectRaceSecondList(RaceSecond raceSecond)
     {
         return raceSecondMapper.selectRaceSecondList(raceSecond);
     }

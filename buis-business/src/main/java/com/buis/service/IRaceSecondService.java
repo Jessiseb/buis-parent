@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 import com.buis.domain.RaceSecond;
+import com.buis.vo.RaceSecondVo;
 
 /**
  * 关联第二课堂表Service接口
@@ -25,7 +26,7 @@ public interface IRaceSecondService
      * @param raceSecond 关联第二课堂表
      * @return 关联第二课堂表集合
      */
-    public List<RaceSecond> selectRaceSecondList(RaceSecond raceSecond);
+    public List<RaceSecondVo> selectRaceSecondList(RaceSecond raceSecond);
 
     /**
      * 新增关联第二课堂表
