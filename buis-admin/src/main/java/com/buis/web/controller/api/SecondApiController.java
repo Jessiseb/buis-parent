@@ -46,7 +46,7 @@ public class SecondApiController {
     /**
      * 分页查看第二课堂申报信息
      */
-    @ApiOperation("分页查看第二课堂申报信息")
+    @ApiOperation("分页查看第二课堂信息")
     @PostMapping("/publish/list")
     public MyPageVo<List<RacePublish>> publishList(@RequestBody RacePublish racePublish) {
         List<RacePublish> racePublishes = racePublishService.selectRacePublishList(racePublish);
@@ -60,7 +60,7 @@ public class SecondApiController {
     @ApiOperation("教师申报第二课堂活动")
     @PostMapping("/declare")
     @Transactional
-    public R<RaceInfo> declare(@ApiParam(name = "raceInfo", value = "申报信息", required = true)
+    public R<RaceInfoVo> declare(@ApiParam(name = "raceInfo", value = "申报信息", required = true)
                                   @RequestBody RaceInfo raceInfo,
                                   @ApiParam(name = "id", value = "关联第二课堂表id", required = true)
                                   @RequestParam Long id) {
@@ -76,13 +76,14 @@ public class SecondApiController {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoList(raceInfo).get(0);
         Long race = raceInfoVo.getId();
 
+        //关联比赛id
         RaceSecond raceSecond = raceSecondService.selectRaceSecondById(id);
         raceSecond.setRace(race);
         int i = raceSecondService.updateRaceSecond(raceSecond);
         if (i <= 0) {
             return R.fail("申报失败");
         }
-        return R.ok(raceInfo);
+        return R.ok(raceInfoVo);
     }
 
     /**
