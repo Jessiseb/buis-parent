@@ -28,6 +28,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -425,6 +426,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("修改队伍信息")
     @PutMapping("/update")
+    @Transactional
     public R<TeamInfo> editTeamInfo(
             @ApiParam(name = "teamInfo", value = "队伍信息", required = true)
             @RequestBody TeamInfo teamInfo,
@@ -447,6 +449,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("删除队伍信息(解散项目团队)")
     @DeleteMapping("/{id}")
+    @Transactional
     public R removeTeamInfo(@ApiParam(name = "id", value = "队伍id", required = true)@PathVariable Long id) {
         int result = teamInfoService.deleteTeamInfoById(id);
         return R.ok(result, "操作成功");
@@ -458,6 +461,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("加入队伍")
     @PostMapping("/joinTeam")
+    @Transactional
     public R JoinTeam(@ApiParam(name = "teamMemberDto", value = "加入队伍信息", required = true)
                           @RequestBody TeamMemberDto teamMemberDto) {
        //获取登录用户信息
@@ -477,6 +481,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("负责人位置转让")
     @PostMapping("/transfer/{team}/{user}")
+    @Transactional
     public R<Boolean> transfer(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team,
                       @ApiParam(name = "user", value = "用户id", required = true) @PathVariable("user") Long user) {
         int result = teamInfoService.transfer(team, user);
@@ -492,6 +497,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("退出队伍")
     @PostMapping("/quit/{team}")
+    @Transactional
     public R quit(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team) {
         //判空
         if (team == null) {

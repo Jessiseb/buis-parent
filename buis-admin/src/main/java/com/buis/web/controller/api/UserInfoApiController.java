@@ -27,6 +27,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -221,6 +222,7 @@ public class UserInfoApiController extends BaseController {
      */
     @ApiOperation("用户上传奖状功能")
     @PostMapping("/uploadAward")
+    @Transactional
     public R<AwardRecords> uploadAward(@ApiParam(name ="awardURL", value = "奖状URL", required = true )
                                     @RequestParam String awardURL){
         AwardRecords awardRecords  = new AwardRecords();
