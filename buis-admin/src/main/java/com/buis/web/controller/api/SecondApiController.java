@@ -10,6 +10,7 @@ import com.buis.service.IRaceInfoService;
 import com.buis.service.IRacePublishService;
 import com.buis.service.IRaceSecondService;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.RaceSecondVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -109,6 +110,16 @@ public class SecondApiController {
             return R.ok(racePublish);
         }
         return R.fail("请待活动审核通过再填写发布内容~");
+    }
+
+    /**
+     * 分页查查询关联xx年第二课堂信息
+     */
+    @ApiOperation("分页查查询关联xx年第二课堂信息")
+    @PostMapping("/second/list")
+    public MyPageVo<List<RaceSecondVo>> list(@RequestBody RaceSecond raceSecond) {
+        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecond);
+        return new MyPageVo(list);
     }
 
 }
