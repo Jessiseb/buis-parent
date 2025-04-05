@@ -15,6 +15,7 @@ import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.redisson.api.RList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,8 +69,8 @@ public class StatisticsApiController {
      */
     @ApiOperation("查询热门比赛")
     @GetMapping("/getHotRaces")
-    public List<HotRaceVo> getHotRaces() {
-        return raceInfoService.getHotRace();
+    public R<List<HotRaceVo>> getHotRaces() {
+        return R.ok(raceInfoService.getHotRace());
     }
 
 
