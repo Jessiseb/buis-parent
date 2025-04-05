@@ -14,6 +14,7 @@ import com.buis.common.utils.PageUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
+import com.buis.dto.GradeStatistic;
 import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
@@ -874,6 +875,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo) {
         return raceInfoMapper.selectRaceSecondActivities(raceInfo);
+    }
+
+    @Override
+    public List<GradeStatistic> getStudentGradeCount() {
+        return raceInfoMapper.getStudentGradeCount();
     }
 
     /**

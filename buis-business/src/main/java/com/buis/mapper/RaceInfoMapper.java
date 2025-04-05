@@ -6,6 +6,7 @@ import java.util.List;
 import com.buis.domain.RaceDetail;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.Reward;
+import com.buis.dto.GradeStatistic;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
@@ -113,4 +114,6 @@ public interface RaceInfoMapper
     List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo);
 
     List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo);
+
+    List<GradeStatistic> getStudentGradeCount();
 }
