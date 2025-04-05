@@ -5,6 +5,7 @@ import java.util.List;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.domain.RaceInfo;
+import com.buis.dto.GradeStatistic;
 import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
@@ -127,4 +128,6 @@ public interface IRaceInfoService
 
     //分页查询第二课堂活动申报
     List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo);
+
+    List<GradeStatistic> getStudentGradeCount();
 }

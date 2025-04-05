@@ -80,66 +80,7 @@ public class StatisticsApiController {
     @ApiOperation("统计各年级学生的参与第二课堂的活动占比")
     @GetMapping("/getStudentGradeCount")
     public R<List<GradeStatistic>> getStudentGradeCount() {
-        //一. 获取所有参与第二课堂活动的用户ids
-        TeamInfo teamInfo = new TeamInfo();
-        List<TeamInfoVo> teamInfoVos = teamInfoService.selectTeamInfoList(teamInfo).stream()
-                .filter(Objects::nonNull).collect(Collectors.toList());
-        //所有用户id
-        List<Long> userIds = new ArrayList<>();
-
-        for (TeamInfoVo teamInfoVo : teamInfoVos) {
-            Long race = teamInfoVo.getRace();
-            //根据race获取到对应的比赛信息,并判断是否为第二课堂
-            if (race != null) {
-                RaceInfo raceInfo = raceInfoService.selectRaceInfoById(race);
-                if (raceInfo != null && raceInfo.getParentTid() == 5) {
-                    //是第二课堂
-                    //根据这个比赛id获取到队伍成员信息
-                    List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByTeamId(teamInfoVo.getId());
-                   //去重
-                    for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
-                        userIds.add(teamMemberStudent.getStudent());
-                    }
-
-                    userIds.add(teamInfoVo.getLeader());
-                    //userIds去重
-                    userIds = userIds.stream().distinct().collect(Collectors.toList());
-                }
-            }
-
-        }
-
-
-        //根据leaderIds查询到对应的用户信息
-        List<UserInfoVo> userInfoVos = Optional.ofNullable(userInfoService.selectUserInfoByIds(userIds))
-                .orElseGet(Collections::emptyList)
-                .stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        //提取年级并统计
-        Map<String, Long> gradeCount = userInfoVos.stream()
-                .filter(u -> u.getNumber() != null)
-                .collect(Collectors.groupingBy(
-                        u -> u.getNumber().substring(0, 4), // 假设学号前4位是年级
-                        Collectors.counting()
-                ));
-
-
-        //计算总参与人数和占比
-        long total = gradeCount.values().stream().mapToLong(Long::longValue).sum();
-        if (total == 0) {
-            return R.ok(Collections.emptyList()); // 或抛出业务异常
-        }
-
-        return R.ok(gradeCount.entrySet().stream()
-                .map(entry -> GradeStatistic.builder()
-                        .grade(entry.getKey())
-                        .count(entry.getValue())
-                        .percentage(entry.getValue() / (double) total * 100)
-                        .build())
-                .collect(Collectors.toList()));
-
+        return R.ok(raceInfoService.getStudentGradeCount());
     }
 
 
