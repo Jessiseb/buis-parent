@@ -48,8 +48,8 @@ public class StatisticsApiController {
      */
     @ApiOperation("查询本月各学院第二课堂活动数量")
     @GetMapping("/getSecondClassCount/month")
-    public List<SecondClassCountVo> getSecondClassCountByMonth(@RequestParam(required = false) Integer month) {
-        return raceInfoService.getSecondClassCountByMonth(month);
+    public R<List<SecondClassCountVo>> getSecondClassCountByMonth(@RequestParam(required = false) Integer month) {
+        return R.ok(raceInfoService.getSecondClassCountByMonth(month));
     }
 
     /**
@@ -58,8 +58,8 @@ public class StatisticsApiController {
      */
     @ApiOperation("查询今年各学院第二课堂活动数量")
     @GetMapping("/getSecondClassCount/year")
-    public List<SecondClassCountVo> getSecondClassCountByYear(@RequestParam(required = false) Integer year) {
-        return raceInfoService.getSecondClassCountByYear(year);
+    public R<List<SecondClassCountVo>> getSecondClassCountByYear(@RequestParam(required = false) Integer year) {
+        return R.ok(raceInfoService.getSecondClassCountByYear(year));
     }
 
     /**
