@@ -171,16 +171,6 @@ public class RaceInfoController extends BaseController {
     }
 
 
-    @ApiOperation("查询个人年度参与活动率")
-    @PreAuthorize("@ss.hasPermi('buis:raceInfo:userQuery')")
-    @GetMapping("/participationRateByUser")
-    public R<String> getUserAnnualParticipationRate(
-            @RequestParam(value = "userId") Long userId,
-            @RequestParam(value = "grade") int grade) {
-
-        String result = raceInfoService.userAnnualParticipationRate(userId, grade);
-        return R.ok(result);
-    }
 
 
 }
