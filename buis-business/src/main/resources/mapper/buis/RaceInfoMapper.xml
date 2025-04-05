@@ -427,4 +427,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from race_info
         where is_deleted = 0 and parent_tid = 5
     </select>
+
+    <select id="getStudentGradeCount" resultType="com.buis.dto.GradeStatistic">
+        WITH second_class_user_ids AS (
+            SELECT DISTINCT
+                tms.student AS user_id
+            FROM
+                team_info ti
+                    JOIN
+                race_info ri ON ti.race = ri.id
+                    JOIN
+                team_member_student tms ON ti.id = tms.team
+            WHERE
+                ri.parent_tid = 5
+            UNION
+            SELECT DISTINCT
+                ti.leader AS user_id
+            FROM
+                team_info ti
+                    JOIN
+                race_info ri ON ti.race = ri.id
+            WHERE
+                ri.parent_tid = 5
+        )
+        SELECT
+            LEFT(ui.number, 4) AS grade,
+            COUNT(*) AS count,
+            COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS percentage
+        FROM
+            user_info ui
+                JOIN
+            second_class_user_ids scui ON ui.id = scui.user_id
+        WHERE
+            ui.number IS NOT NULL
+          AND LEFT(ui.number, 4) REGEXP '^[0-9]{4}$'
+          AND is_teacher = 0
+        GROUP BY
+            LEFT(ui.number, 4)
+    </select>
 </mapper>
