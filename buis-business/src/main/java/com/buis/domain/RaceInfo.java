@@ -208,5 +208,6 @@ public class RaceInfo extends BaseEntity {
     @ApiModelProperty("比赛类型(0-创新创业类比赛，1-蓝桥杯，2-第二课堂)")
     private Integer raceType;
 
-
+    @ApiModelProperty("学生数量")
+    private Integer studentCount;
 }
