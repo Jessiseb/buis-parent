@@ -18,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+
+import static com.buis.common.utils.PageUtils.startPage;
 
 @Api(tags = "第二课堂Api")
 @RestController
@@ -118,7 +121,11 @@ public class SecondApiController {
     @ApiOperation("分页查查询关联xx年第二课堂信息")
     @PostMapping("/second/list")
     public MyPageVo<List<RaceSecondVo>> list(@RequestBody RaceSecond raceSecond) {
+        startPage();
         List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecond);
+        if(list.isEmpty()){
+            return new MyPageVo(Collections.emptyList());
+        }
         return new MyPageVo(list);
     }
 
