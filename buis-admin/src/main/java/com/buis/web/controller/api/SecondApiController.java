@@ -43,6 +43,7 @@ public class SecondApiController {
     @ApiOperation("分页查询第二课堂活动申报")
     @PostMapping("/list")
     public MyPageVo<List<RaceInfo>> list(@RequestBody RaceInfo raceInfo) {
+        startPage();
         List<RaceInfo> raceInfoList = raceInfoService.selectRaceSecondActivities(raceInfo);
         return new MyPageVo(raceInfoList);
     }
@@ -53,6 +54,7 @@ public class SecondApiController {
     @ApiOperation("分页查看第二课堂信息")
     @PostMapping("/publish/list")
     public MyPageVo<List<RacePublish>> publishList(@RequestBody RacePublish racePublish) {
+        startPage();
         List<RacePublish> racePublishes = racePublishService.selectRacePublishList(racePublish);
         return new MyPageVo(racePublishes);
     }
