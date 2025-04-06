@@ -200,7 +200,7 @@ public class FileUploadUtils
      *
      * @param extension
      * @param allowedExtension
-     * @return
+     * @returnsystem/user/profile/avatar
      */
     public static final boolean isAllowedExtension(String extension, String[] allowedExtension)
     {

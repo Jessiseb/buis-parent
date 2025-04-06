@@ -8,7 +8,7 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
-import com.buis.domain.Award;
+import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.domain.AwardRecords;
 import com.buis.domain.CollegeMajor;
 import com.buis.domain.UserInfo;
@@ -223,14 +223,27 @@ public class UserInfoApiController extends BaseController {
     @ApiOperation("用户上传奖状功能")
     @PostMapping("/uploadAward")
     @Transactional
-    public R<AwardRecords> uploadAward(@ApiParam(name ="awardURL", value = "奖状URL", required = true )
-                                    @RequestParam String awardURL){
-        AwardRecords awardRecords  = new AwardRecords();
-        awardRecords.setAwardUrl(awardURL);
-        int i = awardRecordsService.insertAwardRecords(awardRecords);
-        if (i==0){
-            return R.fail("上传失败!");
+    public R<AwardRecords> uploadAward(@RequestParam("file") MultipartFile file) {
+        try {
+            // 校验文件是否为空
+            if (file.isEmpty()) {
+              throw new ServiceException("上传奖状不能为空");
+            }
+
+            // 使用若依的工具类上传文件
+            String filePath = FileUploadUtils.upload(file);
+
+            // 返回文件访问地址
+            AwardRecords awardRecords = new AwardRecords();
+            awardRecords.setAwardUrl(filePath);
+            int i = awardRecordsService.insertAwardRecords(awardRecords);
+            if (i>0){
+                return R.ok(awardRecords);
+            }else {
+                throw new ServiceException("上传文件失败");
+            }
+        } catch (Exception e) {
+            throw new ServiceException("上传奖状失败");
         }
-        return R.ok(awardRecords);
     }
 }

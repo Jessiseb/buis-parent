@@ -56,7 +56,7 @@ public class AwardRecordsServiceImpl implements IAwardRecordsService
     public int insertAwardRecords(AwardRecords awardRecords)
     {
         awardRecords.setCreateTime(DateUtils.getNowDate());
-        return awardRecordsMapper.insertAwardRecords(awardRecords);
+         return awardRecordsMapper.insertAwardRecords(awardRecords);
     }
 
     /**
