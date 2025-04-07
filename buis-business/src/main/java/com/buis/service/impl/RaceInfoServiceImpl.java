@@ -873,8 +873,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @return
      */
     @Override
-    public List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo) {
-        return raceInfoMapper.selectRaceSecondActivities(raceInfo);
+    public List<RaceInfo> selectSecondActivities(RaceInfo raceInfo) {
+        return raceInfoMapper.selectSecondActivities(raceInfo);
     }
 
     @Override

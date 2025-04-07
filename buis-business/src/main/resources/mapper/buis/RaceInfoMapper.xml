@@ -406,7 +406,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="raceType != null ">and t1.race_type = #{raceType}</if>
         </where>
     </select>
-    <select id="selectRaceSecondActivities" resultType="com.buis.domain.RaceInfo">
+    <select id="selectSecondActivities" resultType="com.buis.domain.RaceInfo">
         select id,
                teacher_name,
                name,
