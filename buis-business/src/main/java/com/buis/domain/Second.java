@@ -20,17 +20,12 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RaceSecond extends BaseEntity {
+public class Second extends BaseEntity {
     private static final long serialVersionUID = 1L;
     /**
      * id
      */
     private Long id;
-
-    /**
-     * 关联race_info.id
-     */
-    private Long race;
 
     /**
      * xx年第二课堂

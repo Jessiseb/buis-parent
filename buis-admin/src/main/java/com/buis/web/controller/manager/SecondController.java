@@ -6,8 +6,8 @@ import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.RaceSecond;
-import com.buis.service.IRaceSecondService;
+import com.buis.domain.Second;
+import com.buis.service.ISecondService;
 import com.buis.vo.RaceSecondVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,9 +27,9 @@ import java.util.List;
 @Api(tags = "关联第二课堂表Controller")
 @RestController
 @RequestMapping("/buis/second")
-public class RaceSecondController extends BaseController {
+public class SecondController extends BaseController {
     @Autowired
-    private IRaceSecondService raceSecondService;
+    private ISecondService SecondService;
 
     /**
      * 查询关联第二课堂表列表
@@ -37,9 +37,9 @@ public class RaceSecondController extends BaseController {
     @ApiOperation("查询关联第二课堂表列表")
     @PreAuthorize("@ss.hasPermi('buis:second:list')")
     @GetMapping("/list")
-    public TableDataInfo list(RaceSecondVo raceSecondVo) {
+    public TableDataInfo list(Second second) {
         startPage();
-        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecondVo);
+        List<Second> list = SecondService.selectSecondList(second);
         return getDataTable(list);
     }
 
@@ -50,10 +50,10 @@ public class RaceSecondController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:second:export')")
     @Log(title = "关联第二课堂表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, RaceSecondVo raceSecondVo)
+    public void export(HttpServletResponse response, Second second)
     {
-        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecondVo);
-        ExcelUtil<RaceSecondVo> util = new ExcelUtil<RaceSecondVo>(RaceSecondVo.class);
+        List<Second> list = SecondService.selectSecondList(second);
+        ExcelUtil<Second> util = new ExcelUtil<Second>(Second.class);
         util.exportExcel(response, list, "关联第二课堂表数据");
     }
 
@@ -65,7 +65,7 @@ public class RaceSecondController extends BaseController {
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return success(raceSecondService.selectRaceSecondById(id));
+        return success(SecondService.selectSecondById(id));
     }
 
     /**
@@ -75,9 +75,9 @@ public class RaceSecondController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:second:add')")
     @Log(title = "关联第二课堂表", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody RaceSecond raceSecond)
+    public AjaxResult add(@RequestBody Second second)
     {
-        return toAjax(raceSecondService.insertRaceSecond(raceSecond));
+        return toAjax(SecondService.insertSecond(second));
     }
 
     /**
@@ -87,9 +87,9 @@ public class RaceSecondController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:second:edit')")
     @Log(title = "关联第二课堂表", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody RaceSecond raceSecond)
+    public AjaxResult edit(@RequestBody Second second)
     {
-        return toAjax(raceSecondService.updateRaceSecond(raceSecond));
+        return toAjax(SecondService.updateSecond(second));
     }
 
     /**
@@ -101,6 +101,6 @@ public class RaceSecondController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(raceSecondService.deleteRaceSecondByIds(ids));
+        return toAjax(SecondService.deleteSecondByIds(ids));
     }
 }

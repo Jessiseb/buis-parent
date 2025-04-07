@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.SecondMapper">
+
+    <resultMap type="com.buis.domain.Second" id="SecondResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectSecondVo">
+        select t1.id,
+               t1.name,
+               t1.start_time,
+               t1.end_time,
+               t1.update_time,
+               t1.create_time,
+               t1.is_deleted
+        from second t1
+    </sql>
+
+    <select id="selectSecondList" parameterType="com.buis.domain.Second" resultMap="SecondResult">
+        <include refid="selectSecondVo"/>
+        <where>
+            t1.is_deleted = 0
+            <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
+            <if test="startTime != null ">and t1.start_time = #{startTime}</if>
+            <if test="endTime != null ">and t1.end_time = #{endTime}</if>
+            <if test="isDeleted != null ">and t1.is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+
+    <select id="selectSecondById" parameterType="Long" resultMap="SecondResult">
+        <include refid="selectSecondVo"/>
+        where t1.id = #{id} and t1.is_deleted = 0
+    </select>
+
+    <insert id="insertSecond" parameterType="com.buis.vo.RaceSecondVo">
+        insert into second
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSecond" parameterType="com.buis.domain.Second">
+        update second
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecondById" parameterType="Long">
+        update second
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteSecondByIds" parameterType="String">
+        update second
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
