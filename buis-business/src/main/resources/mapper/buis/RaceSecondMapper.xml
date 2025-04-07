@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.RaceSecondMapper">
+
+    <resultMap type="com.buis.vo.RaceSecondVo" id="RaceSecondResult">
+        <result property="id" column="id"/>
+        <result property="secondName" column="second_name"/>
+        <result property="raceName" column="race_name"/>
+        <result property="second" column="second"/>
+        <result property="race" column="race"/>
+        <result property="reviewStatus" column="review_status"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectRaceSecondVo">
+        select t1.id,
+               t1.second,
+               t1.race,
+               t1.review_status,
+               t1.update_time,
+               t1.create_time,
+               t1.is_deleted,
+               t2.name as race_name,
+               t3.name as second_name
+        from race_second t1
+                 left join race_info t2
+                           on t1.race = t2.id
+                 left join second t3 on t1.second = t3.id
+    </sql>
+
+    <select id="selectRaceSecondList" parameterType="com.buis.vo.RaceSecondVo" resultMap="RaceSecondResult">
+        <include refid="selectRaceSecondVo"/>
+        <where>
+            t1.is_deleted = 0
+            <if test="second != null ">and t1.second = #{second}</if>
+            <if test="reviewStatus != null ">and t1.review_</if>
+            <if test="secondName != null ">and t3.name = #{secondName}</if>
+            <if test="raceName != null ">and t2.name = #{raceName}</if>
+            <if test="race != null ">and t1.race = #{race}</if>
+        </where>
+    </select>
+
+    <select id="selectRaceSecondById" parameterType="Long" resultMap="RaceSecondResult">
+        <include refid="selectRaceSecondVo"/>
+        where t1.id = #{id} and t1.is_deleted = 0
+    </select>
+
+    <insert id="insertRaceSecond" parameterType="com.buis.vo.RaceSecondVo" useGeneratedKeys="true" keyProperty="id">
+        insert into race_second
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="second != null">second,</if>
+            <if test="race != null">race,</if>
+            <if test="reviewStatus != null">review_status,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="second != null">#{second},</if>
+            <if test="race != null">#{race},</if>
+            <if test="reviewStatus != null">#{reviewStatus},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateRaceSecond" parameterType="com.buis.vo.RaceSecondVo">
+        update race_second
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="second != null">second = #{second},</if>
+            <if test="race != null">race = #{race},</if>
+            <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRaceSecondById" parameterType="Long">
+        update race_second
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteRaceSecondByIds" parameterType="String">
+        update race_second
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
