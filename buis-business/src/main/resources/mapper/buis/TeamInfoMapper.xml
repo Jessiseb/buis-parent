@@ -283,6 +283,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from team_info
         where leader_name = #{name} or name = #{name} and is_deleted = 0
     </select>
+    <select id="getTeacherInstructCountFromContest" resultType="java.lang.String"
+            parameterType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM (
+                 SELECT t.*
+                 FROM team_info t
+                          JOIN (
+                     SELECT id
+                     FROM race_info
+                     WHERE parent_tid = 3
+                 ) r ON t.race = r.id
+             ) sub
+        WHERE sub.teacher1 = #{userId} OR sub.teacher2 = #{userId}
+    </select>
+
+    <select id="getTeacherInstructCountFromInnovation" resultType="java.lang.String"
+            parameterType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM (
+                 SELECT t.*
+                 FROM team_info t
+                          JOIN (
+                     SELECT id
+                     FROM race_info
+                     WHERE parent_tid = 1
+                 ) r ON t.race = r.id
+             ) sub
+        WHERE sub.teacher1 = #{userId} OR sub.teacher2 = #{userId}
+    </select>
 
     <delete id="deleteTeamInfoByRaceIdAndUserId">
         update team_info

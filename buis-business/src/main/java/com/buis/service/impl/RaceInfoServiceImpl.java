@@ -882,6 +882,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         return raceInfoMapper.getStudentGradeCount();
     }
 
+    @Override
+    public String getTeacherInstructCountFromSecond(Long userId) {
+        return raceInfoMapper.getTeacherInstructCountFromSecond(userId);
+    }
+
     /**
      * 判断当前时间是否在报名时间内
      *
