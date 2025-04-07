@@ -80,7 +80,7 @@ public class SecondApiController {
                                   @ApiParam(name = "id", value = "关联第二课堂表id", required = true)
                                   @RequestParam Long id) {
         //申报第二课堂活动
-        raceInfo.setParentTid(3L);
+        raceInfo.setParentTid(5L);
         int ok = raceInfoService.insertRaceInfo(raceInfo);
         if (ok <= 0) {
             return R.fail("申报失败");
