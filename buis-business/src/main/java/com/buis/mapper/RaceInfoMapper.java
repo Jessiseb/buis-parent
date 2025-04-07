@@ -116,4 +116,6 @@ public interface RaceInfoMapper
     List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo);
 
     List<GradeStatistic> getStudentGradeCount();
+
+    String getTeacherInstructCountFromSecond(Long userId);
 }

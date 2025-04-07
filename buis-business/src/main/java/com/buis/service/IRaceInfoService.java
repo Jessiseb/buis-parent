@@ -130,4 +130,6 @@ public interface IRaceInfoService
     List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo);
 
     List<GradeStatistic> getStudentGradeCount();
+
+    String getTeacherInstructCountFromSecond(Long userId);
 }
