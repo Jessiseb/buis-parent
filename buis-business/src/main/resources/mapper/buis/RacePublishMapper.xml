@@ -29,7 +29,7 @@
     </resultMap>
 
     <sql id="selectRacePublishVo">
-        select id,declare _id,organizers, name, description, start_time, end_time, join_start, join_end, race_tab, race_type, particpation_way, capacity, teacher, teacher_info, race_term, assistant, status, update_time, create_time, is_deleted from race_publish
+        select id,race,organizers, name, description, start_time, end_time, join_start, join_end, race_tab, race_type, particpation_way, capacity, teacher, teacher_info, race_term, assistant, status, update_time, create_time, is_deleted from race_publish
     </sql>
 
     <select id="selectRacePublishList" parameterType="com.buis.domain.RacePublish" resultMap="RacePublishResult">
