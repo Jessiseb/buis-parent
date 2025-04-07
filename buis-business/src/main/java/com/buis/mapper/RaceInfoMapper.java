@@ -113,7 +113,7 @@ public interface RaceInfoMapper
 
     List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo);
 
-    List<RaceInfo> selectRaceSecondActivities(RaceInfo raceInfo);
+    List<RaceInfo> selectSecondActivities(RaceInfo raceInfo);
 
     List<GradeStatistic> getStudentGradeCount();
 
