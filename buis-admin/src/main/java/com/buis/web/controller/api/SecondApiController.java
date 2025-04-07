@@ -156,9 +156,9 @@ public class SecondApiController {
     }
 
     /**
-     * 教师端 分页查查询关联xx年第二课堂信息
+     * 教师端 分页查询关联xx年第二课堂信息
      */
-    @ApiOperation("分页查查询xx年第二课堂信息(教师端)")
+    @ApiOperation("分页查询xx年第二课堂信息(教师端)")
     @PostMapping("/second/list")
     public MyPageVo<List<Second>> list(@RequestBody Second second) {
         startPage();
