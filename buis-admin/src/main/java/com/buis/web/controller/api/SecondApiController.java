@@ -73,7 +73,7 @@ public class SecondApiController {
         //申报第二课堂活动
 //        RaceInfo raceInfo = new RaceInfo();
 //        BeanUtils.copyProperties(raceDeclare, raceInfo);
-        raceInfo.setReviewStatus(0L); //待审核
+//        raceInfo.setReviewStatus(0L); //待审核
         int ok = raceInfoService.insertRaceInfo(raceInfo);
         if (ok <= 0) {
             return R.fail("申报失败");
@@ -122,9 +122,9 @@ public class SecondApiController {
      */
     @ApiOperation("分页查查询关联xx年第二课堂信息")
     @PostMapping("/second/list")
-    public MyPageVo<List<RaceSecondVo>> list(@RequestBody RaceSecond raceSecond) {
+    public MyPageVo<List<RaceSecondVo>> list(@RequestBody RaceSecondVo raceSecondVo) {
         startPage();
-        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecond);
+        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecondVo);
         if(list.isEmpty()){
             return new MyPageVo(Collections.emptyList());
         }

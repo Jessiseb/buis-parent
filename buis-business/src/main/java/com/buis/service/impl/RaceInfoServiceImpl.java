@@ -271,7 +271,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 //        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setCreateTime(DateUtils.getNowDate());
-        raceInfo.setReviewStatus(0L);//
+        raceInfo.setReviewStatus(0L);//待审核
         raceInfo.setStatus(0L);//设置为筹备中
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         if (rows > 0) {
