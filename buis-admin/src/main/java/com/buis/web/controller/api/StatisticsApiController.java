@@ -108,5 +108,6 @@ public class StatisticsApiController {
     @GetMapping("/getTeacherInstructCount/second")
     public R<String> getTeacherInstructCountFromSecond(@RequestParam(value = "userId") Long userId) {
         return R.ok(raceInfoService.getTeacherInstructCountFromSecond(userId));
+
     }
 }
