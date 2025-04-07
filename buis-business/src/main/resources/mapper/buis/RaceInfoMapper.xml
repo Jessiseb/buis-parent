@@ -423,9 +423,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                course,
                place,
                fund,
-               major_count
+               major_count,
+               create_time
         from race_info
         where is_deleted = 0 and parent_tid = 5
+        order by id desc
     </select>
 
     <select id="getStudentGradeCount" resultType="com.buis.dto.GradeStatistic">
