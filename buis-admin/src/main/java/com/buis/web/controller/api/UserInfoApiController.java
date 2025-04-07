@@ -246,4 +246,6 @@ public class UserInfoApiController extends BaseController {
             throw new ServiceException("上传奖状失败");
         }
     }
+
+
 }

@@ -214,7 +214,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="course != null and course != ''">course,</if>
             <if test="place != null and place != ''">place,</if>
             <if test="fund != null and fund != ''">fund,</if>
-            <if test="majorCount != null and majorCount != ''">majorCount,</if>
+            <if test="majorCount != null and majorCount != ''">major_count,</if>
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>

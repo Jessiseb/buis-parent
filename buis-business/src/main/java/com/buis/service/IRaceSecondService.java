@@ -23,10 +23,10 @@ public interface IRaceSecondService
     /**
      * 查询关联第二课堂表列表
      * 
-     * @param raceSecond 关联第二课堂表
+     * @param raceSecondVo 关联第二课堂表
      * @return 关联第二课堂表集合
      */
-    public List<RaceSecondVo> selectRaceSecondList(RaceSecond raceSecond);
+    public List<RaceSecondVo> selectRaceSecondList(RaceSecondVo raceSecondVo);
 
     /**
      * 新增关联第二课堂表

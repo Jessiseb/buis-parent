@@ -38,13 +38,13 @@ public class RaceSecondServiceImpl implements IRaceSecondService
     /**
      * 查询关联第二课堂表列表
      * 
-     * @param raceSecond 关联第二课堂表
+     * @param raceSecondvo 关联第二课堂表
      * @return 关联第二课堂表
      */
     @Override
-    public List<RaceSecondVo> selectRaceSecondList(RaceSecond raceSecond)
+    public List<RaceSecondVo> selectRaceSecondList(RaceSecondVo raceSecondvo)
     {
-        return raceSecondMapper.selectRaceSecondList(raceSecond);
+        return raceSecondMapper.selectRaceSecondList(raceSecondvo);
     }
 
     /**

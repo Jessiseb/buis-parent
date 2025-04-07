@@ -37,9 +37,9 @@ public class RaceSecondController extends BaseController {
     @ApiOperation("查询关联第二课堂表列表")
     @PreAuthorize("@ss.hasPermi('buis:second:list')")
     @GetMapping("/list")
-    public TableDataInfo list(RaceSecond raceSecond) {
+    public TableDataInfo list(RaceSecondVo raceSecondVo) {
         startPage();
-        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecond);
+        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecondVo);
         return getDataTable(list);
     }
 
@@ -50,9 +50,9 @@ public class RaceSecondController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:second:export')")
     @Log(title = "关联第二课堂表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, RaceSecond raceSecond)
+    public void export(HttpServletResponse response, RaceSecondVo raceSecondVo)
     {
-        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecond);
+        List<RaceSecondVo> list = raceSecondService.selectRaceSecondList(raceSecondVo);
         ExcelUtil<RaceSecondVo> util = new ExcelUtil<RaceSecondVo>(RaceSecondVo.class);
         util.exportExcel(response, list, "关联第二课堂表数据");
     }
