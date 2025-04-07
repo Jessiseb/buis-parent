@@ -1,9 +1,11 @@
 package com.buis.service.impl;
 
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.RaceDetail;
 import com.buis.domain.Weight;
+import com.buis.dto.UserLoginDto;
 import com.buis.mapper.RaceDetailMapper;
 import com.buis.service.IRaceDetailService;
 import com.buis.service.IRaceInfoService;
@@ -71,6 +73,14 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     @Transactional
     @Override
     public int insertRaceDetail(RaceDetail raceDetail) {
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(raceDetail.getRace());
+
+        if (raceInfoVo.getReviewStatus() == 2){
+            throw new ServiceException("比赛审核未通过");
+        }
+        if (raceInfoVo.getParentTid() == 5 && raceInfoVo.getReviewStatus() != 1) {
+            throw new ServiceException("比赛审核中，请耐心等待");
+        }
         raceDetail.setCreateTime(DateUtils.getNowDate());
         int rows = raceDetailMapper.insertRaceDetail(raceDetail);
         insertWeight(raceDetail);
@@ -101,33 +111,31 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
 
     /**
      * 批量删除比赛详情
-     * 
+     *
      * @param ids 需要删除的比赛详情主键
      * @return 结果
      */
     @Transactional
     @Override
-    public int deleteRaceDetailByIds(Long[] ids)
-    {
+    public int deleteRaceDetailByIds(Long[] ids) {
         raceDetailMapper.deleteWeightByRaceDs(ids);
         return raceDetailMapper.deleteRaceDetailByIds(ids);
     }
 
     /**
      * 删除比赛详情信息
-     * 
+     *
      * @param id 比赛详情主键
      * @return 结果
      */
     @Transactional
     @Override
-    public int deleteRaceDetailById(Long id)
-    {
+    public int deleteRaceDetailById(Long id) {
         raceDetailMapper.deleteWeightByRaceD(id);
         return raceDetailMapper.deleteRaceDetailById(id);
     }
 
-//    查询比赛信息
+    //    查询比赛信息
     @Override
     public RaceDetail selectRaceDetailByRaceId(Long raceId) {
         RaceDetail raceDetail = raceDetailMapper.selectRaceDetailByRaceId(raceId);
@@ -146,23 +154,19 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
 
     /**
      * 新增分数权重信息
-     * 
+     *
      * @param raceDetail 比赛详情对象
      */
-    public void insertWeight(RaceDetail raceDetail)
-    {
+    public void insertWeight(RaceDetail raceDetail) {
         List<Weight> weightList = raceDetail.getWeightList();
         Long id = raceDetail.getId();
-        if (StringUtils.isNotNull(weightList))
-        {
+        if (StringUtils.isNotNull(weightList)) {
             List<Weight> list = new ArrayList<Weight>();
-            for (Weight weight : weightList)
-            {
+            for (Weight weight : weightList) {
                 weight.setRaceD(id);
                 list.add(weight);
             }
-            if (list.size() > 0)
-            {
+            if (list.size() > 0) {
                 raceDetailMapper.batchWeight(list);
             }
         }
