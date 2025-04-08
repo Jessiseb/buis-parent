@@ -8,6 +8,7 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
+import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.domain.AwardRecords;
 import com.buis.domain.CollegeMajor;
@@ -223,12 +224,21 @@ public class UserInfoApiController extends BaseController {
     @ApiOperation("用户上传奖状功能")
     @PostMapping("/uploadAward")
     @Transactional
-    public R<AwardRecords> uploadAward(@RequestParam("file") MultipartFile file) {
+    public R<AwardRecords> uploadAward(@ApiParam(name = "file", value = "图片路径", required = true)
+            @RequestParam("file") MultipartFile file,
+            @ApiParam(name = "name", value = "奖状参与的项目名称", required = true)
+            @RequestParam("name")String name) {
         try {
             // 校验文件是否为空
             if (file.isEmpty()) {
-              throw new ServiceException("上传奖状不能为空");
+                throw new ServiceException("上传奖状不能为空");
             }
+
+            //项目名称不能为空
+            if(StringUtils.isEmpty(name)){
+                throw new ServiceException("请输入获奖所参与的项目~");
+            }
+
 
             // 使用若依的工具类上传文件
             String filePath = FileUploadUtils.upload(file);
@@ -236,6 +246,7 @@ public class UserInfoApiController extends BaseController {
             // 返回文件访问地址
             AwardRecords awardRecords = new AwardRecords();
             awardRecords.setAwardUrl(filePath);
+            awardRecords.setCompetitionName(name);
             int i = awardRecordsService.insertAwardRecords(awardRecords);
             if (i>0){
                 return R.ok(awardRecords);
