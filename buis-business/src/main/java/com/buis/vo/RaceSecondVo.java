@@ -1,7 +1,6 @@
 package com.buis.vo;
 
 import com.buis.domain.RaceSecond;
-import com.buis.domain.Second;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

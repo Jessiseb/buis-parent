@@ -320,9 +320,13 @@ public class TeamApiController extends BaseController {
                     .map(teamMemberStudent -> teamMemberStudent.getTeam())
                     .collect(Collectors.toList());
             //转成数组类型
-            Long[] ids = collect.toArray(new Long[collect.size()]);
+            if (collect.size() != 0) {
+                Long[] ids = collect.toArray(new Long[collect.size()]);
+                return new MyPageVo(teamInfoService.selectTeamInfoByIds(ids));
+            } else {
+                return new MyPageVo();
+            }
 
-            return new MyPageVo(teamInfoService.selectTeamInfoByIds(ids));
         }
         teamInfo.setIsPublish(isPublish);//查出已发布招募的队伍信息
         List<TeamInfoVo> list = null;
