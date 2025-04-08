@@ -643,6 +643,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return teamInfoMapper.selectTeamInfoByName(name);
     }
 
+    @Override
+    public String getTeacherInstructCountFromContest(Long userId) {
+        return teamInfoMapper.getTeacherInstructCountFromContest(userId);
+    }
+
+    @Override
+    public String getTeacherInstructCountFromInnovation(Long userId) {
+        return teamInfoMapper.getTeacherInstructCountFromInnovation(userId);
+    }
 
     /**
      * 后台查询队伍信息列表 Vo

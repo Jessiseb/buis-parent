@@ -102,4 +102,7 @@ public interface TeamInfoMapper
 
     List<TeamInfo> selectTeamInfoByName(@Param("name")String name);
 
+    String getTeacherInstructCountFromContest(Long userId);
+
+    String getTeacherInstructCountFromInnovation(Long userId);
 }
