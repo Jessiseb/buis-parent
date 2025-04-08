@@ -133,5 +133,7 @@ public interface ITeamInfoService {
     List<TeamInfo> selectTeamInfoByName(String name);
 
 
+    String getTeacherInstructCountFromContest(Long userId);
 
+    String getTeacherInstructCountFromInnovation(Long userId);
 }

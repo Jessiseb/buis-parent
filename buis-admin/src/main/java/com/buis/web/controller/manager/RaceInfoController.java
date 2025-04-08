@@ -33,7 +33,8 @@ import java.util.*;
 @Api(tags = "比赛信息Controller")
 @RestController
 @RequestMapping("/buis/raceInfo")
-public class RaceInfoController extends BaseController {
+public class
+RaceInfoController extends BaseController {
     @Autowired
     private IRaceInfoService raceInfoService;
     @Autowired

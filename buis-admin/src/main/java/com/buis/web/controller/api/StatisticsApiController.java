@@ -92,4 +92,21 @@ public class StatisticsApiController {
         return R.ok(result);
     }
 
+    @ApiOperation("查询学科竞赛教师指导项目数")
+    @GetMapping("/getTeacherInstructCount/contest")
+    public R<String> getTeacherInstructCountFromContest(@RequestParam(value = "userId") Long userId) {
+        return R.ok(teamInfoService.getTeacherInstructCountFromContest(userId));
+    }
+
+    @ApiOperation("查询大创申报教师指导项目数")
+    @GetMapping("/getTeacherInstructCount/innovation")
+    public R<String> getTeacherInstructCountFromInnovation(@RequestParam(value = "userId") Long userId) {
+        return R.ok(teamInfoService.getTeacherInstructCountFromInnovation(userId));
+    }
+
+    @ApiOperation("查询第二课堂教师指导项目数")
+    @GetMapping("/getTeacherInstructCount/second")
+    public R<String> getTeacherInstructCountFromSecond(@RequestParam(value = "userId") Long userId) {
+        return R.ok(raceInfoService.getTeacherInstructCountFromSecond(userId));
+    }
 }
