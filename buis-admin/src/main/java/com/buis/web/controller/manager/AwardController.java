@@ -126,7 +126,7 @@ public class AwardController extends BaseController {
 //    }
 
     @ApiOperation("生成奖状信息")
-    @GetMapping("/generate")
+    @PostMapping("/generate")
     public R<String> generateCertificate(@PathParam(value = "name") String name,
                                          @PathParam(value = "raceId") Long raceId,
                                          HttpServletResponse response) {
@@ -134,7 +134,7 @@ public class AwardController extends BaseController {
     }
 
     @ApiOperation("批量生成奖状信息")
-    @GetMapping("/batchGenerate")
+    @PostMapping("/batchGenerate")
     public R<String> batchGenerate(@RequestParam List<String> name,
                                    @RequestParam List<Long> raceId,
                                    HttpServletResponse response) throws IOException {
