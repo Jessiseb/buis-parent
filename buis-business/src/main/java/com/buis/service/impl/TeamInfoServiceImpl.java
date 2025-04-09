@@ -83,6 +83,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         UserInfo loginUser = userInfoService.getLoginUser();
         //获取用户vo
         UserInfoVo userInfoVo = userInfoService.selectUserInfoById(loginUser.getId());
+        //
+        if(teamInfo.getTeacher1().equals(teamInfo.getTeacher2())){
+            throw new ServiceException("同一指导老师不能重复选择");
+        }
         // 判断报名条件
         raceInfoService.checkJoinCondition(loginUser.getId(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
@@ -129,6 +133,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberTeacher.setRace(teamInfo.getRace());
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
+                teamMemberTeacher.setTeam(teamInfo.getId());
                 teamMemberStudent.setIsChoosed(1L); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
@@ -137,6 +142,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberTeacher.setRace(teamInfo.getRace());
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
+                teamMemberTeacher.setTeam(teamInfo.getId());
                 teamMemberStudent.setIsChoosed(1L); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
