@@ -210,4 +210,7 @@ public class RaceInfo extends BaseEntity {
 
     @ApiModelProperty("学生数量")
     private Integer studentCount;
+
+    @ApiModelProperty("创建者")
+    private Long createBy;
 }
