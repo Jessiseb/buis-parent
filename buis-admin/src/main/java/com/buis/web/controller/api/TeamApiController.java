@@ -405,14 +405,13 @@ public class TeamApiController extends BaseController {
     }
     /**
      * 新增队伍信息
-     *
      * @param teamInfo 队伍信息对象
      * @return R
      */
     @ApiOperation("新增队伍信息(创建项目)")
     @PostMapping("/createTeam")
     public R<TeamInfo> addTeamInfo(@RequestBody TeamInfo teamInfo) {
-        //获取当前创建队伍的用户id
+        //获取当前创建队伍的用户idapi/teamapi/team
         Long userId = SecurityUtils.getFrontLoginUserId();
         teamInfo.setLeader(userId);
         TeamInfo result =  teamInfoService.insertTeamInfo(teamInfo);
