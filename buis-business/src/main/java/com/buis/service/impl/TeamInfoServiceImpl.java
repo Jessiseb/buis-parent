@@ -14,10 +14,7 @@ import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.PageUtils;
 import com.buis.common.utils.StringUtils;
-import com.buis.domain.RaceDetail;
-import com.buis.domain.TeamInfo;
-import com.buis.domain.TeamMemberStudent;
-import com.buis.domain.UserInfo;
+import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
@@ -80,6 +77,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return 结果
      */
     @Override
+    @Transactional
     public TeamInfo insertTeamInfo(TeamInfo teamInfo) {
         //获取登录用户信息
         UserInfo loginUser = userInfoService.getLoginUser();
@@ -126,6 +124,22 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             teamMemberStudent.setStudent(teamInfo.getLeader()); //队长
             teamMemberStudent.setDecider(teamInfo.getLeader()); //决定者 = 创建该队伍的人
             teamMemberStudent.setIsChoosed(1L); //选定状态
+            if(teamInfo.getTeacher1()!=null){
+                TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
+                teamMemberTeacher.setRace(teamInfo.getRace());
+                teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
+                teamMemberTeacher.setDecider(teamInfo.getLeader());
+                teamMemberStudent.setIsChoosed(1L); //选定状态
+                teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
+            }
+            if (teamInfo.getTeacher2()!=null){
+                TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
+                teamMemberTeacher.setRace(teamInfo.getRace());
+                teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
+                teamMemberTeacher.setDecider(teamInfo.getLeader());
+                teamMemberStudent.setIsChoosed(1L); //选定状态
+                teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
+            }
             sucess = teamStudentService.insertTeamMemberStudent(teamMemberStudent);
         }
 
@@ -139,6 +153,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return 结果
      */
     @Override
+    @Transactional
     public int updateTeamInfo(TeamInfo teamInfo) {
         // 判断报名条件
         raceInfoService.checkJoinCondition(teamInfo.getLeader(), teamInfo.getRace());
@@ -412,6 +427,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     }
 
     @Override
+    @Transactional
     public int agreeJoinTeam(Long userId,Long teamId) {
 
         TeamMemberStudent teamMemberStudent = teamStudentService.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
@@ -578,6 +594,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      * @return
      */
     @Override
+    @Transactional
     public int transfer(Long team, Long user) {
         //只有队长或指导老师有权限
         boolean ok = isTeamLeaderOrTeacher(team);
