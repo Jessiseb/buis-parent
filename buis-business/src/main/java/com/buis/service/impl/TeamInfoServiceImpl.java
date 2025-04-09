@@ -68,6 +68,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private RedisCache redisCache;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private ITeamMemberStudentService teamMemberStudentService;
+    @Resource
+    private ITeamMemberTeacherService teamMemberTeacherService;
 
 
     /**
@@ -83,6 +87,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         UserInfo loginUser = userInfoService.getLoginUser();
         //获取用户vo
         UserInfoVo userInfoVo = userInfoService.selectUserInfoById(loginUser.getId());
+        //
+        if(teamInfo.getTeacher1().equals(teamInfo.getTeacher2())){
+            throw new ServiceException("同一指导老师不能重复选择");
+        }
         // 判断报名条件
         raceInfoService.checkJoinCondition(loginUser.getId(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
@@ -129,6 +137,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberTeacher.setRace(teamInfo.getRace());
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
+                teamMemberTeacher.setTeam(teamInfo.getId());
                 teamMemberStudent.setIsChoosed(1L); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
@@ -137,6 +146,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberTeacher.setRace(teamInfo.getRace());
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
+                teamMemberTeacher.setTeam(teamInfo.getId());
                 teamMemberStudent.setIsChoosed(1L); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
@@ -178,6 +188,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Override
     public int deleteTeamInfoByIds(Long[] ids) {
         int i = teamInfoMapper.deleteTeamInfoByIds(ids);
+
         //删除队伍信息缓存
         for (Long id : ids) {
             deleteTeamInfoCache(id);
@@ -206,10 +217,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //根据用户id查出该用户是不是队伍的队长
         //根据id查出队伍信息
         TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(id);
+
         //根据队伍信息查出队长id
         if (teamInfo.getLeader().equals(loginId)) {
             //是队长-->能进行删除
             int i = teamInfoMapper.deleteTeamInfoById(id);
+            //删除队伍中间表
+            teamMemberStudentService.deleteTeamMemberStudentByTeam(id);
+            teamMemberTeacherService.deleteTeamMemberTeacherByTeam(id);
+
             //删除队伍信息缓存
             deleteTeamInfoCache(id);
             return i;
@@ -669,6 +685,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Override
     public String getTeacherInstructCountFromInnovation(Long userId) {
         return teamInfoMapper.getTeacherInstructCountFromInnovation(userId);
+    }
+
+    @Override
+    public List<TeamInfoVo> selectMyPublishedTeams(Long userId) {
+        return teamInfoMapper.selectMyPublishedTeams(userId);
     }
 
     /**
