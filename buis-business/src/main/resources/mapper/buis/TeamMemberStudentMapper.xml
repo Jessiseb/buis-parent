@@ -249,4 +249,9 @@
         where team = #{team}
           and student = #{user}
     </delete>
+    <delete id="deleteTeamMemberStudentByTeam">
+        update team_member_student
+        set is_deleted = 1
+        where team = #{team}
+    </delete>
 </mapper>

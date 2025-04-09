@@ -123,4 +123,6 @@ public interface ITeamMemberStudentService {
      * @return
      */
     int quitTeam(Long team, Long userId);
+    //根据队伍id删除中间表
+    int deleteTeamMemberStudentByTeam(Long team);
 }

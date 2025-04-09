@@ -68,6 +68,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private RedisCache redisCache;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private ITeamMemberStudentService teamMemberStudentService;
+    @Resource
+    private ITeamMemberTeacherService teamMemberTeacherService;
 
 
     /**
@@ -183,6 +187,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Override
     public int deleteTeamInfoByIds(Long[] ids) {
         int i = teamInfoMapper.deleteTeamInfoByIds(ids);
+
         //删除队伍信息缓存
         for (Long id : ids) {
             deleteTeamInfoCache(id);
@@ -211,10 +216,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //根据用户id查出该用户是不是队伍的队长
         //根据id查出队伍信息
         TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(id);
+
         //根据队伍信息查出队长id
         if (teamInfo.getLeader().equals(loginId)) {
             //是队长-->能进行删除
             int i = teamInfoMapper.deleteTeamInfoById(id);
+            //删除队伍中间表
+            teamMemberStudentService.deleteTeamMemberStudentByTeam(id);
+            teamMemberTeacherService.deleteTeamMemberTeacherByTeam(id);
+
             //删除队伍信息缓存
             deleteTeamInfoCache(id);
             return i;
