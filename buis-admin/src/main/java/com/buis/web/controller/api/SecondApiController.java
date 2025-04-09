@@ -2,6 +2,7 @@ package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
+import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.*;
 import com.buis.service.*;
 import com.buis.vo.RaceDetailVo;
@@ -79,8 +80,10 @@ public class SecondApiController {
                                   @RequestBody RaceInfo raceInfo,
                                   @ApiParam(name = "id", value = "关联第二课堂表id", required = true)
                                   @RequestParam Long id) {
+        Long user = SecurityUtils.getUserId();
         //申报第二课堂活动
         raceInfo.setParentTid(5L);
+        raceInfo.setCreateBy(user);
         int ok = raceInfoService.insertRaceInfo(raceInfo);
         if (ok <= 0) {
             return R.fail("申报失败");
