@@ -62,8 +62,10 @@ public interface TeamMemberStudentMapper {
     public int deleteTeamMemberStudentByIds(Long[] ids);
 
     Long getJoinCountByTeamId(Long id);
+
     /**
      * 查询队伍内学生列表
+     *
      * @param team
      * @return
      */
@@ -72,6 +74,7 @@ public interface TeamMemberStudentMapper {
 
     /**
      * 判断用户是否已加入
+     *
      * @param userId
      * @param raceId
      * @return
@@ -86,14 +89,16 @@ public interface TeamMemberStudentMapper {
 
     List<TeamMemberStudent> selectTeamMemberStudentByTeamId(Long team);
 
-    TeamMemberStudent selectTeamMemberStudentByTeamAndStudent(@Param("user") Long user,@Param("team") Long team);
+    TeamMemberStudent selectTeamMemberStudentByTeamAndStudent(@Param("user") Long user, @Param("team") Long team);
 
-    int getRequestCount(@Param("userId")Long userId, @Param("raceId")Long raceId, @Param("team")Long team);
+    int getRequestCount(@Param("userId") Long userId, @Param("raceId") Long raceId, @Param("team") Long team);
 
     List<TeamMemberStudent> selectTeamMemberStudentByUserId(Long userId);
 
     List<TeamMemberStudentVo> selectTeamMemberStudentListVo(TeamMemberStudentVo teamMemberStudentVo);
 
     int quitTeam(Long team, Long userId);
+
+    int deleteTeamMemberStudentByTeam(@Param("team") Long team);
 
 }

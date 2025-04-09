@@ -64,7 +64,7 @@ public interface ITeamInfoService {
     public int deleteTeamInfoByIds(Long[] ids);
 
     /**
-     * 删除队伍信息信息
+     * 删除队伍信息
      *
      * @param id 队伍信息主键
      * @return 结果
