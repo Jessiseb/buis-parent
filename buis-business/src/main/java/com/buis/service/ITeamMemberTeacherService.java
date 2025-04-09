@@ -147,4 +147,6 @@ public interface ITeamMemberTeacherService
      */
     List<TeamMemberTeacher> selectTeamMemberTeacherByTeamId(Long id);
 
+    int deleteTeamMemberTeacherByTeam(Long team);
+
 }
