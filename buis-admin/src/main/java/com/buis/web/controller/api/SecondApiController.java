@@ -83,7 +83,7 @@ public class SecondApiController {
         Long user = SecurityUtils.getUserId();
         //申报第二课堂活动
         raceInfo.setParentTid(5L);
-        raceInfo.setCreateBy(user);
+        raceInfo.setCreateId(user);
         int ok = raceInfoService.insertRaceInfo(raceInfo);
         if (ok <= 0) {
             return R.fail("申报失败");
