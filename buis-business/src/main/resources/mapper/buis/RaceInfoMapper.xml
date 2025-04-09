@@ -481,6 +481,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  FROM race_info r
                  WHERE parent_tid = 5
              ) sub
-        WHERE sub.create_by = #{userId}
+        WHERE sub.create_id = #{userId}
     </select>
 </mapper>
