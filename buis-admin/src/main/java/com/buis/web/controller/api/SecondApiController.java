@@ -8,6 +8,7 @@ import com.buis.service.*;
 import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.RaceSecondVo;
+import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,6 +36,10 @@ public class SecondApiController {
     private ISecondService secondService;
     @Autowired
     private IRaceSecondService raceSecondService;
+    @Autowired
+    private IPreSignStudentService preSignStudentService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
     /**
      * 分页查询第二课堂活动申报
@@ -170,6 +175,29 @@ public class SecondApiController {
             return new MyPageVo(Collections.emptyList());
         }
         return new MyPageVo(list);
+    }
+
+    /**
+     * 学生报名第二课堂活动
+     * @param secondId
+     * @return
+     */
+    @ApiOperation("学生报名第二课堂活动")
+    @PostMapping("/second/add")
+    public R addPreStudent(@ApiParam(name = "secondId", value = "第二课堂活动id", required = true) @PathVariable Long secondId) {
+        Long userId = SecurityUtils.getUserId();
+        UserInfoVo user = userInfoService.selectUserInfoById(userId);
+        PreSignStudent preSignStudent = preSignStudentService.selectByUserIdAndRace(userId, secondId);
+        if (preSignStudent != null) {
+            return R.fail("您已经报名过了");
+        }
+        preSignStudent.setStudent(userId);
+        preSignStudent.setRace(secondId);
+        preSignStudent.setNumber(user.getNumber());
+        preSignStudent.setS_class(user.getStuGrade() + user.getMajorName() + user.getStuClass());
+        preSignStudent.setPhone(user.getPhone());
+        int i = preSignStudentService.insertPreSignStudent(preSignStudent);
+        return R.ok(i);
     }
 
 
