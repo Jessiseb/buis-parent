@@ -676,6 +676,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return teamInfoMapper.getTeacherInstructCountFromInnovation(userId);
     }
 
+    @Override
+    public List<TeamInfoVo> selectMyPublishedTeams(Long userId) {
+        return teamInfoMapper.selectMyPublishedTeams(userId);
+    }
+
     /**
      * 后台查询队伍信息列表 Vo
      *

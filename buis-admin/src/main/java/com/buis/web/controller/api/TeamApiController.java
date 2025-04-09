@@ -567,6 +567,22 @@ public class TeamApiController extends BaseController {
         return R.ok("操作成功");
     }
 
+    /**
+     * 查询自己发布招募的队伍
+     */
+    @ApiOperation("查询自己发布招募的队伍")
+    @PostMapping("/listMyPublishedTeams")
+    public MyPageVo listMyPublishedTeams(
+            @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+            @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
+            @ApiParam(name = "userId", value = "用户id", required = true) @RequestParam Long userId)
+    {
+        startPage();
+        List<TeamInfoVo> list = teamInfoService.selectMyPublishedTeams(userId);
+        return new MyPageVo<>(list);
+    }
+
+
 
 }
 
