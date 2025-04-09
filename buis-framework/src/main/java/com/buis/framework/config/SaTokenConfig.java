@@ -35,6 +35,7 @@ public class SaTokenConfig {
                             .notMatch("/api/user/getUserInfo")
                             .notMatch("/api/user/getToken")
                             .notMatch("/**/doc.html")
+                            .notMatch("/api/user/getCollegeMajor")
                             .check(r -> StpUtil.checkLogin());
                 })
                 // 异常处理函数：每次认证函数发生异常时执行此函数
