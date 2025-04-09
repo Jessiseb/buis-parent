@@ -547,7 +547,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             for (String fieldName : TeamQueryConstants.CONDITION_FIELDS1) {
                 Field field = TeamInfo.class.getDeclaredField(fieldName);
                 field.setAccessible(true);
-                if (field.get(queryTeam) != null) {
+                if (field.get(queryTeam) != null && !field.get(queryTeam).equals("")) {
                     return true;
                 }
             }
