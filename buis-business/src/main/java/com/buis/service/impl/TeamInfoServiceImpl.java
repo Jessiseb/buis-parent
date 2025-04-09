@@ -480,11 +480,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             return null;
         }
 
-        String lockKey = QUERY_TEAM_LOCK + getPageCacheKey(pageNum, pageSize);
-        RLock rLock = redissonClient.getLock(lockKey);
+//        String lockKey = QUERY_TEAM_LOCK + getPageCacheKey(pageNum, pageSize);
+//        RLock rLock = redissonClient.getLock(lockKey);
         MyPageVo myPageVo = null;
         try {
-            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+//            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
 
             //再次检查缓存
             TeamsJson = redisCache.getCacheObject(pageCacheKey);
@@ -498,10 +498,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 return null;
             }
 
-            if (!isLock) {
-                Thread.sleep(50);
-                return selectTeamInfoListFromRedis(teamInfo);
-            }
+//            if (!isLock) {
+//                Thread.sleep(50);
+//                return selectTeamInfoListFromRedis(teamInfo);
+//            }
 
             //拿到锁，查询数据库
             Page<TeamInfoVo> page = PageUtils.startPage(pageNum, pageSize);
@@ -515,15 +515,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             }
             //存在，写入redis
             myPageVo = new MyPageVo(page, teamInfoVos);
-            redisCache.setCacheObject(pageCacheKey, JSON.toJSONString(myPageVo), 1, TimeUnit.DAYS);
+            redisCache.setCacheObject(pageCacheKey, JSON.toJSONString(myPageVo), 10, TimeUnit.MINUTES);
 
         } catch (Exception e) {
             throw new ServiceException("查询失败: " + e.getMessage());
         } finally {
             //释放锁
-            if (rLock.isHeldByCurrentThread()) {
-                rLock.unlock();
-            }
+//            if (rLock.isHeldByCurrentThread()) {
+//                rLock.unlock();
+//            }
         }
         return myPageVo;
     }
@@ -772,7 +772,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private void updateTeamInfoCache(TeamInfo teamInfo) {
         String teamInfoCacheKey = "team:" + teamInfo.getId();
         TeamInfoVo teamInfoVo = createTeamInfoVo(teamInfo);
-        redisCache.setCacheObject(teamInfoCacheKey, JSON.toJSONString(teamInfoVo), 1, TimeUnit.DAYS);
+        redisCache.setCacheObject(teamInfoCacheKey, JSON.toJSONString(teamInfoVo), 10, TimeUnit.MINUTES);
 
         //删除所有队伍信息分页缓存
         String pattern = "teams:page:*:size:*";
@@ -820,11 +820,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             return null;
         }
 
-        String lockKey = QUERY_TEAM_LOCK + id;
-        RLock rLock = redissonClient.getLock(lockKey);
+//        String lockKey = QUERY_TEAM_LOCK + id;
+//        RLock rLock = redissonClient.getLock(lockKey);
         TeamInfoVo teamInfoVo = null;
         try {
-            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+//            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
 
             //再次检查缓存
             TeamJson = redisCache.getCacheObject("team:" + id);
@@ -838,10 +838,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 return null;
             }
 
-            if (!isLock) {
-                Thread.sleep(50);
-                return selectTeamInfoById(id);
-            }
+//            if (!isLock) {
+//                Thread.sleep(50);
+//                return selectTeamInfoById(id);
+//            }
 
             //拿到锁，查询数据库
             TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(id);
@@ -854,15 +854,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             }
             //存在，写入redis
             teamInfoVo = createTeamInfoVo(teamInfo);
-            redisCache.setCacheObject("team:" + id, JSONUtil.toJsonStr(teamInfoVo), 1, TimeUnit.DAYS);
+            redisCache.setCacheObject("team:" + id, JSONUtil.toJsonStr(teamInfoVo), 10, TimeUnit.MINUTES);
 
         } catch (Exception e) {
             throw new ServiceException("查询失败: " + e.getMessage());
         } finally {
             //释放锁
-            if (rLock.isHeldByCurrentThread()) {
-                rLock.unlock();
-            }
+//            if (rLock.isHeldByCurrentThread()) {
+//                rLock.unlock();
+//            }
         }
         return teamInfoVo;
     }

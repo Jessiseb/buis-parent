@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -45,6 +46,27 @@ public class PreSignStudent extends BaseEntity {
     @Excel(name = "比赛")
     @ApiModelProperty(value = "比赛id")
     private Long race;
+
+    /**
+     * 学号
+     */
+    @Excel(name = "学号")
+    @ApiModelProperty(value = "学号")
+    private String number;
+
+    /**
+     * 班级
+     */
+    @Excel(name = "班级")
+    @ApiModelProperty(value = "班级")
+    private String s_class;
+
+    /**
+     * 班级
+     */
+    @Excel(name = "手机号")
+    @ApiModelProperty(value = "手机号")
+    private String phone;
 
     /**
      * 标识是否被删除，0表示未删除
