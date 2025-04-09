@@ -943,7 +943,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             field.setAccessible(true);
             try {
                 Object value = field.get(obj);
-                if (value != null) {
+                if (value != null && !"".equals(value)) {
                     return false;
                 }
             } catch (IllegalAccessException e) {
