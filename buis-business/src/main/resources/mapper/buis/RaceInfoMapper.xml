@@ -29,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="course" column="course"/>
         <result property="place" column="place"/>
         <result property="fund" column="fund"/>
-        <result property="createBy" column="create_by"/>
+        <result property="createId" column="create_id"/>
         <result property="majorCount" column="major_count"/>
         <result property="isDeleted" column="is_deleted"/>
         <result property="createTime" column="create_time"/>
@@ -97,7 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.major_count,
                t1.is_deleted,
                t1.create_time,
-               t1.creatr_by,
+               t1.create_id,
                t1.update_time
         from race_info t1
                  left join race_type t2 on t2.id = t1.son_tid
@@ -403,7 +403,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="seniority != null  and seniority != ''">and t1.seniority like concat('%', #{seniority}, '%')</if>
             <if test="place != null  and place != ''">and t1.place like concat('%', #{place}, '%')</if>
             <if test="fund != null  and fund != ''">and t1.fund like concat('%', #{fund}, '%')</if>
-            <if test="createBy != null and createBy != ''">and t1.create_by like concat('%', #{createBy}, '%')
+            <if test="createId != null and createId != ''">and t1.create_id like concat('%', #{createId}, '%')
             </if>
             <if test="majorCount != null and majorCount != ''">and t1.major_count = #{majorCount}</if>
             <if test="level != null ">and t1.level = #{level}</if>

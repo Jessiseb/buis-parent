@@ -5,10 +5,7 @@ import com.buis.common.core.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
@@ -19,6 +16,7 @@ import java.util.List;
  * @author kaven
  * @date 2024-10-23
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -212,5 +210,6 @@ public class RaceInfo extends BaseEntity {
     private Integer studentCount;
 
     @ApiModelProperty("创建者")
-    private Long createBy;
+    private Long createId;
+
 }
