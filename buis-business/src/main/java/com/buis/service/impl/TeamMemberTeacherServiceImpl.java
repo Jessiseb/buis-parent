@@ -205,6 +205,11 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
         return teamMemberTeacherMapper.selectTeamMemberTeacherByTeamId(id);
     }
 
+    @Override
+    public int deleteTeamMemberTeacherByTeam(Long team) {
+        return teamMemberTeacherMapper.deleteTeamMemberTeacherByTeam(team);
+    }
+
     /**
      * 根据team和user删除邀请
      * @param team

@@ -58,7 +58,7 @@ public class AiController {
     @ApiOperation("图像识别文字")
     public R<MultiModalConversationResult> imageAnalysis(@RequestParam("image") String image)
             throws ApiException, NoApiKeyException, UploadFileException {
-        System.out.println(apiKey);
+//        System.out.println(apiKey);
         MultiModalConversation conv = new MultiModalConversation();
         MultiModalMessage userMessage = MultiModalMessage.builder().role(Role.USER.getValue())
                 .content(Arrays.asList(

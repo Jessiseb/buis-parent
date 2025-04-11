@@ -236,6 +236,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         return teamMemberStudentMapper.quitTeam(team, userId);
     }
 
+    @Override
+    public int deleteTeamMemberStudentByTeam(Long team) {
+        return teamMemberStudentMapper.deleteTeamMemberStudentByTeam(team);
+    }
+
     /**
      * 抽出判断是否为负责人的方法
      */

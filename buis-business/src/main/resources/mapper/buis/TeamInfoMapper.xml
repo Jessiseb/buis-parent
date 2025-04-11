@@ -312,6 +312,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
              ) sub
         WHERE sub.teacher1 = #{userId} OR sub.teacher2 = #{userId}
     </select>
+    <select id="selectMyPublishedTeams" resultType="com.buis.vo.TeamInfoVo">
+        select *
+        from team_info
+        where leader = #{userId}
+          and is_publish = 0
+          and is_deleted = 0
+    </select>
 
     <delete id="deleteTeamInfoByRaceIdAndUserId">
         update team_info

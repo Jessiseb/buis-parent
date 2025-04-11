@@ -405,14 +405,13 @@ public class TeamApiController extends BaseController {
     }
     /**
      * 新增队伍信息
-     *
      * @param teamInfo 队伍信息对象
      * @return R
      */
     @ApiOperation("新增队伍信息(创建项目)")
     @PostMapping("/createTeam")
     public R<TeamInfo> addTeamInfo(@RequestBody TeamInfo teamInfo) {
-        //获取当前创建队伍的用户id
+        //获取当前创建队伍的用户idapi/teamapi/team
         Long userId = SecurityUtils.getFrontLoginUserId();
         teamInfo.setLeader(userId);
         TeamInfo result =  teamInfoService.insertTeamInfo(teamInfo);
@@ -566,6 +565,22 @@ public class TeamApiController extends BaseController {
         }
         return R.ok("操作成功");
     }
+
+    /**
+     * 查询自己发布招募的队伍
+     */
+    @ApiOperation("查询自己发布招募的队伍")
+    @PostMapping("/listMyPublishedTeams")
+    public MyPageVo listMyPublishedTeams(
+            @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+            @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
+            @ApiParam(name = "userId", value = "用户id", required = true) @RequestParam Long userId)
+    {
+        startPage();
+        List<TeamInfoVo> list = teamInfoService.selectMyPublishedTeams(userId);
+        return new MyPageVo<>(list);
+    }
+
 
 
 }
