@@ -282,6 +282,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="description != null">description,</if>
+            <if test="startTime != null">startTime,</if>
+            <if test="endTime != null">endTime,</if>
+            <if test="joinStart != null">joinStart,</if>
+            <if test="joinEnd != null">joinEnd,</if>
+            <if test="raceTab != null">raceTab,</if>
+            <if test="raceType != null">raceType,</if>
+            <if test="particpationWay != null">particpationWay,</if>
+            <if test="teacher != null">teacher,</if>
+            <if test="teacherInfo != null">teacherInfo,</if>
+            <if test="raceTerm != null">raceTerm,</if>
+            <if test="assistant != null">assistant,</if>
+            <if test="status != null">status,</if>
+            <if test="raceName != null">raceName,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -305,6 +319,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="description != null">#{description},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="joinStart != null">#{joinStart},</if>
+            <if test="joinEnd != null">#{joinEnd},</if>
+            <if test="raceTab != null">#{raceTab},</if>
+            <if test="raceType != null">#{raceType},</if>
+            <if test="particpationWay != null">#{particpationWay},</if>
+            <if test="teacher != null">#{teacher},</if>
+            <if test="teacherInfo != null">#{teacherInfo},</if>
+            <if test="raceTerm != null">#{raceTerm},</if>
+            <if test="assistant != null">#{assistant},</if>
+            <if test="status != null">#{status},</if>
+            <if test="raceName != null">#{raceName},</if>
          </trim>
     </insert>
 
