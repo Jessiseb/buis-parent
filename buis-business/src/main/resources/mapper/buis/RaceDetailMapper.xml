@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="joinStart"    column="join_start"    />
         <result property="joinEnd"    column="join_end"    />
         <result property="raceTab"    column="race_tab"    />
-        <result property="raceType"    column="race_type"    />
+        <result property="secondType"    column="second_type"    />
         <result property="particpationWay"    column="particpation_way"    />
         <result property="teacher"    column="teacher"    />
         <result property="teacherInfo"    column="teacher_info"    />
@@ -288,7 +288,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinStart != null">joinStart,</if>
             <if test="joinEnd != null">joinEnd,</if>
             <if test="raceTab != null">raceTab,</if>
-            <if test="raceType != null">raceType,</if>
+            <if test="raceType != null">secondType,</if>
             <if test="particpationWay != null">particpationWay,</if>
             <if test="teacher != null">teacher,</if>
             <if test="teacherInfo != null">teacherInfo,</if>
@@ -325,7 +325,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinStart != null">#{joinStart},</if>
             <if test="joinEnd != null">#{joinEnd},</if>
             <if test="raceTab != null">#{raceTab},</if>
-            <if test="raceType != null">#{raceType},</if>
+            <if test="raceType != null">#{secondType},</if>
             <if test="particpationWay != null">#{particpationWay},</if>
             <if test="teacher != null">#{teacher},</if>
             <if test="teacherInfo != null">#{teacherInfo},</if>
