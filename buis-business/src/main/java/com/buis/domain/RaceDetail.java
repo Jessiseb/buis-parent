@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -147,6 +149,133 @@ public class RaceDetail extends BaseEntity {
     @ApiModelProperty("分数权重")
     private List<Weight> weightList;
 
+    /**
+     * 指导老师资历（职称、教学年限）
+     */
+    @Excel(name = "指导老师资历", readConverterExp = "职=称、教学年限")
+    private String seniority;
 
+    /**
+     * 所在部门
+     */
+    @Excel(name = "所在部门")
+    private String department;
 
+    /**
+     * 承办单位
+     */
+    @Excel(name = "承办单位")
+    private String organizers;
+
+    /**
+     * 来源课程
+     */
+    @Excel(name = "来源课程")
+    private String course;
+
+    /**
+     * 专业名称及具体学生人数
+     */
+    @Excel(name = "专业名称及具体学生人数")
+    private String majorCount;
+
+    /**
+     * 开展地点
+     */
+    @Excel(name = "开展地点")
+    private String address;
+
+    /**
+     * 经费预算
+     */
+    @Excel(name = "经费预算")
+    private String money;
+
+    /**
+     * 活动介绍
+     */
+    @Excel(name = "活动介绍")
+    private String description;
+
+    /**
+     * 活动开始时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "活动开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date startTime;
+
+    /**
+     * 活动结束时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "活动结束时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date endTime;
+
+    /**
+     * 活动报名开始时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "活动报名开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date joinStart;
+
+    /**
+     * 活动报名截止时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "活动报名截止时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date joinEnd;
+
+    /**
+     * 活动标签（字典）
+     */
+    @Excel(name = "活动标签", readConverterExp = "字=典")
+    private Long raceTab;
+
+    /**
+     * 活动类型（字典）
+     */
+    @Excel(name = "活动类型", readConverterExp = "字=典")
+    private Long raceType;
+
+    /**
+     * 参与方式
+     */
+    @Excel(name = "参与方式")
+    private String particpationWay;
+
+    /**
+     * 负责老师
+     */
+    @Excel(name = "负责老师")
+    private String teacher;
+
+    /**
+     * 负责老师信息
+     */
+    @Excel(name = "负责老师信息")
+    private String teacherInfo;
+
+    /**
+     * 活动举办学期
+     */
+    @Excel(name = "活动举办学期")
+    private String raceTerm;
+
+    /**
+     * 学生助理
+     */
+    @Excel(name = "学生助理")
+    private Long assistant;
+
+    /**
+     * 活动状态
+     */
+    @Excel(name = "活动状态")
+    private Long status;
+
+    /**
+     * 活动名称
+     */
+    @Excel(name = "活动名称")
+    private String raceName;
 }
