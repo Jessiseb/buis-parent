@@ -3,18 +3,23 @@ package com.buis.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
+import com.buis.domain.RaceInfo;
 import com.buis.domain.TeamMemberStudent;
 import com.buis.mapper.TeamMemberStudentMapper;
+import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
+import com.buis.vo.RaceInfoVo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 队伍成员管理Service业务层处理
@@ -30,6 +35,8 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     private IUserInfoService userInfoService;
     @Resource
     private ITeamInfoService teamInfoService;
+    @Resource
+    private IRaceInfoService raceInfoService;
 
     /**
      * 查询队伍成员管理
@@ -239,6 +246,19 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     @Override
     public int deleteTeamMemberStudentByTeam(Long team) {
         return teamMemberStudentMapper.deleteTeamMemberStudentByTeam(team);
+    }
+
+    @Override
+    public int getStudentJoinSecondCountByUserId(Long userId) {
+        //获取到该用户所参与的所有比赛
+        List<RaceInfo> userRaceList = raceInfoService.getUserRaceList(userId);
+        if (userRaceList == null || userRaceList.size() == 0) {
+            return 0;
+        }
+//        过滤掉不是第二课堂(parent_tid == 5)的比赛
+        return (int)userRaceList.stream()
+                .filter(raceInfo -> raceInfo.getParentTid() != null && raceInfo.getParentTid() == 5)
+                .count();
     }
 
     /**

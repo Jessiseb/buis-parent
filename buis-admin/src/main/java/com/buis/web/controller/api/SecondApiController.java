@@ -35,6 +35,8 @@ public class SecondApiController {
     private ISecondService secondService;
     @Autowired
     private IRaceSecondService raceSecondService;
+    @Autowired
+    private IPreSignStudentService preSignStudentService;
 
     /**
      * 分页查询第二课堂活动申报
@@ -172,5 +174,18 @@ public class SecondApiController {
         return new MyPageVo(list);
     }
 
+    /**
+     * 学生报名第二课堂
+     */
+    @ApiOperation("学生报名第二课堂")
+    @PostMapping("/student/sign")
+    public R<Integer> studentSign(@ApiParam(name = "id", value = "第二课堂活动id", required = true)
+                                  @RequestParam(value = "id") Long id,
+                                  @ApiParam(name = "preSignStudent", value = "第二课堂活动报名表", required = true)
+                                  @RequestBody PreSignStudent preSignStudent) {
+        //登录用户
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(preSignStudentService.studentSign(id, userId, preSignStudent));
+    }
 
 }
