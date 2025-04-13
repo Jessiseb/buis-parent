@@ -19,7 +19,7 @@ public class RaceDetailVo extends RaceDetail {
      */
     @ApiModelProperty("项目类别")
     @Excel(name = "项目类别")
-    private String raceType;
+    private Long raceType;
 
 
 
