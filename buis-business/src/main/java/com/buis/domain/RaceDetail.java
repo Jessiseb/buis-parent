@@ -235,7 +235,7 @@ public class RaceDetail extends BaseEntity {
      * 活动类型（字典）
      */
     @Excel(name = "活动类型", readConverterExp = "字=典")
-    private Long raceType;
+    private Long secondType;
 
     /**
      * 参与方式
