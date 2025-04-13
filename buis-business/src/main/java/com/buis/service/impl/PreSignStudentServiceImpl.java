@@ -6,11 +6,14 @@ import com.buis.mapper.PreSignStudentMapper;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.mapper.UserInfoMapper;
 import com.buis.service.IPreSignStudentService;
+import com.buis.service.IRaceInfoService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.PreSignStudentVo;
+import com.buis.vo.RaceInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -26,9 +29,11 @@ import java.util.List;
 public class PreSignStudentServiceImpl implements IPreSignStudentService {
     @Resource
     private PreSignStudentMapper preSignStudentMapper;
-
     @Resource
     private IUserInfoService userInfoService;
+    @Resource
+    private IRaceInfoService raceInfoService;
+
 
     /**
      * 查询学生预报名
@@ -136,6 +141,36 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     @Override
     public PreSignStudent selectPreSignStudentByRace(Long race) {
         return preSignStudentMapper.selectPreSignStudentByRace(race);
+    }
+
+    @Override
+    @Transactional
+    public int studentSign(Long id, Long userId,PreSignStudent preSignStudent) {
+        //参数校验
+        if (id == null || userId == null) {
+            throw new RuntimeException("参数错误");
+        }
+        if (preSignStudent == null) {
+            throw new RuntimeException("报名信息不能为空!");
+        }
+
+        //判断活动是否存在
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(id);
+        if (raceInfoVo == null) {
+            throw new RuntimeException("活动不存在");
+        }
+
+        //判断活动是否已经发布
+        if (raceInfoVo.getReviewStatus() != 3) {
+            throw new RuntimeException("活动未发布");
+        }
+
+        int ok = this.insertPreSignStudent(preSignStudent);
+        if (ok > 0) {
+            return ok;
+        } else {
+            throw new RuntimeException("报名失败");
+        }
     }
 
     @Override
