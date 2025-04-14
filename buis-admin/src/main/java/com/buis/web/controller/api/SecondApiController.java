@@ -8,7 +8,6 @@ import com.buis.service.*;
 import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.RaceSecondVo;
-import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -38,8 +37,6 @@ public class SecondApiController {
     private IRaceSecondService raceSecondService;
     @Autowired
     private IPreSignStudentService preSignStudentService;
-    @Autowired
-    private IUserInfoService userInfoService;
 
     /**
      * 分页查询第二课堂活动申报
@@ -178,27 +175,17 @@ public class SecondApiController {
     }
 
     /**
-     * 学生报名第二课堂活动
-     * @param secondId
-     * @return
+     * 学生报名第二课堂
      */
-    @ApiOperation("学生报名第二课堂活动")
-    @PostMapping("/second/add")
-    public R addPreStudent(@ApiParam(name = "secondId", value = "第二课堂活动id", required = true) @PathVariable Long secondId) {
-        Long userId = SecurityUtils.getUserId();
-        UserInfoVo user = userInfoService.selectUserInfoById(userId);
-        PreSignStudent preSignStudent = preSignStudentService.selectByUserIdAndRace(userId, secondId);
-        if (preSignStudent != null) {
-            return R.fail("您已经报名过了");
-        }
-        preSignStudent.setStudent(userId);
-        preSignStudent.setRace(secondId);
-        preSignStudent.setNumber(user.getNumber());
-        preSignStudent.setS_class(user.getStuGrade() + user.getMajorName() + user.getStuClass());
-        preSignStudent.setPhone(user.getPhone());
-        int i = preSignStudentService.insertPreSignStudent(preSignStudent);
-        return R.ok(i);
+    @ApiOperation("学生报名第二课堂")
+    @PostMapping("/student/sign")
+    public R<Integer> studentSign(@ApiParam(name = "id", value = "第二课堂活动id", required = true)
+                                  @RequestParam(value = "id") Long id,
+                                  @ApiParam(name = "preSignStudent", value = "第二课堂活动报名表", required = true)
+                                  @RequestBody PreSignStudent preSignStudent) {
+        //登录用户
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(preSignStudentService.studentSign(id, userId, preSignStudent));
     }
-
 
 }

@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/team")
 @Slf4j
 public class TeamApiController extends BaseController {
+
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
     @Autowired
@@ -403,6 +404,8 @@ public class TeamApiController extends BaseController {
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId,race,name);
         return new MyPageVo(teamInfoVos);
     }
+
+
     /**
      * 新增队伍信息
      * @param teamInfo 队伍信息对象

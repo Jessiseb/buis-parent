@@ -84,6 +84,12 @@ public class StatisticsApiController {
     }
 
 
+    /**
+     * 查询个人年度参与活动率
+     * @param userId
+     * @param grade
+     * @return
+     */
     @ApiOperation("查询个人年度参与活动率")
     @GetMapping("/participationRateByUser")
     public R<String> getUserAnnualParticipationRate(@RequestParam(value = "userId") Long userId,
@@ -92,21 +98,47 @@ public class StatisticsApiController {
         return R.ok(result);
     }
 
+    /**
+     * 查询学科竞赛教师指导项目数
+     * @param userId
+     * @return
+     */
     @ApiOperation("查询学科竞赛教师指导项目数")
     @GetMapping("/getTeacherInstructCount/contest")
     public R<String> getTeacherInstructCountFromContest(@RequestParam(value = "userId") Long userId) {
         return R.ok(teamInfoService.getTeacherInstructCountFromContest(userId));
     }
 
+    /**
+     * 查询大创申报教师指导项目数
+     * @param userId
+     * @return
+     */
     @ApiOperation("查询大创申报教师指导项目数")
     @GetMapping("/getTeacherInstructCount/innovation")
     public R<String> getTeacherInstructCountFromInnovation(@RequestParam(value = "userId") Long userId) {
         return R.ok(teamInfoService.getTeacherInstructCountFromInnovation(userId));
     }
 
+    /**
+     * 查询第二课堂教师指导项目数
+     * @param userId
+     * @return
+     */
     @ApiOperation("查询第二课堂教师指导项目数")
     @GetMapping("/getTeacherInstructCount/second")
     public R<String> getTeacherInstructCountFromSecond(@RequestParam(value = "userId") Long userId) {
         return R.ok(raceInfoService.getTeacherInstructCountFromSecond(userId));
     }
+
+    /**
+     * 查询学生参与第二课堂活动数
+     */
+    @ApiOperation("查询学生参与第二课堂活动数")
+    @GetMapping("/getStudentJoinCount/second")
+    public R<Integer> getStudentInstructCountFromSecond(@RequestParam(value = "userId") Long userId) {
+        return R.ok(teamMemberStudentService.getStudentJoinSecondCountByUserId(userId));
+    }
+
+
 }

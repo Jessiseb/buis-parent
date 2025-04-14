@@ -124,12 +124,15 @@ public interface IRaceInfoService
 
     List<StudentExportToDiDto> exportStudentDiProjectCount(int college,int grade,List<StudentExportToDiDto> StudentExporToDektDtoList, String name, HttpServletResponse response);
 
+    //查询个人年度参与活动率
     String userAnnualParticipationRate(Long userId, int grade);
 
     //分页查询第二课堂活动申报
     List<RaceInfo> selectSecondActivities(RaceInfo raceInfo);
 
+    //统计各年级学生的参与第二课堂的活动占比
     List<GradeStatistic> getStudentGradeCount();
 
+    //查询第二课堂教师指导项目数
     String getTeacherInstructCountFromSecond(Long userId);
 }

@@ -125,4 +125,8 @@ public interface ITeamMemberStudentService {
     int quitTeam(Long team, Long userId);
     //根据队伍id删除中间表
     int deleteTeamMemberStudentByTeam(Long team);
+
+    //查询学生参与的第二课堂活动数量
+    int getStudentJoinSecondCountByUserId(Long userId);
+
 }

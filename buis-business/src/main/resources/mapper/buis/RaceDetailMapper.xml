@@ -5,30 +5,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.buis.mapper.RaceDetailMapper">
 
     <resultMap type="com.buis.vo.RaceDetailVo" id="RaceDetailResult">
-        <result property="id" column="id"/>
-        <result property="parentId" column="parent_id"/>
-        <result property="raceName" column="race_name"/>
-        <result property="race" column="race"/>
-        <result property="name" column="name"/>
-        <result property="reviewStatus" column="review_status"/>
-        <result property="raceType" column="race_type"/>
-        <result property="count" column="count"/>
-        <result property="phone" column="phone"/>
-        <result property="email" column="email"/>
-        <result property="descUrl" column="desc_url"/>
-        <result property="groupUrl" column="group_url"/>
-        <result property="rule" column="rule"/>
-        <result property="capacity" column="capacity"/>
-        <result property="teamMin" column="team_min"/>
-        <result property="teamMax" column="team_max"/>
-        <result property="teacherMin" column="teacher_min"/>
-        <result property="teacherMax" column="teacher_max"/>
-        <result property="rRank" column="r_rank"/>
-        <result property="tLimit" column="t_limit"/>
-        <result property="isDeleted" column="is_deleted"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
-
+        <result property="id"    column="id"    />
+        <result property="race"    column="race"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="name"    column="name"    />
+        <result property="seniority"    column="seniority"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="descUrl"    column="desc_url"    />
+        <result property="groupUrl"    column="group_url"    />
+        <result property="rule"    column="rule"    />
+        <result property="department"    column="department"    />
+        <result property="organizers"    column="organizers"    />
+        <result property="course"    column="course"    />
+        <result property="majorCount"    column="major_count"    />
+        <result property="count"    column="count"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="teamMin"    column="team_min"    />
+        <result property="teamMax"    column="team_max"    />
+        <result property="teacherMin"    column="teacher_min"    />
+        <result property="teacherMax"    column="teacher_max"    />
+        <result property="rRank"    column="r_rank"    />
+        <result property="tLimit"    column="t_limit"    />
+        <result property="address"    column="address"    />
+        <result property="money"    column="money"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="remark"    column="remark"    />
+        <result property="reviewStatus"    column="review_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="description"    column="description"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="joinStart"    column="join_start"    />
+        <result property="joinEnd"    column="join_end"    />
+        <result property="raceTab"    column="race_tab"    />
+        <result property="secondType"    column="second_type"    />
+        <result property="particpationWay"    column="particpation_way"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="teacherInfo"    column="teacher_info"    />
+        <result property="raceTerm"    column="race_term"    />
+        <result property="assistant"    column="assistant"    />
+        <result property="status"    column="status"    />
+        <result property="raceName"    column="race_name"    />
     </resultMap>
 
     <resultMap id="RaceDetailWeightResult" type="com.buis.vo.RaceDetailVo" extends="RaceDetailResult">
@@ -263,6 +282,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="description != null">description,</if>
+            <if test="startTime != null">startTime,</if>
+            <if test="endTime != null">endTime,</if>
+            <if test="joinStart != null">joinStart,</if>
+            <if test="joinEnd != null">joinEnd,</if>
+            <if test="raceTab != null">raceTab,</if>
+            <if test="raceType != null">secondType,</if>
+            <if test="particpationWay != null">particpationWay,</if>
+            <if test="teacher != null">teacher,</if>
+            <if test="teacherInfo != null">teacherInfo,</if>
+            <if test="raceTerm != null">raceTerm,</if>
+            <if test="assistant != null">assistant,</if>
+            <if test="status != null">status,</if>
+            <if test="raceName != null">raceName,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -286,6 +319,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="description != null">#{description},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="joinStart != null">#{joinStart},</if>
+            <if test="joinEnd != null">#{joinEnd},</if>
+            <if test="raceTab != null">#{raceTab},</if>
+            <if test="raceType != null">#{secondType},</if>
+            <if test="particpationWay != null">#{particpationWay},</if>
+            <if test="teacher != null">#{teacher},</if>
+            <if test="teacherInfo != null">#{teacherInfo},</if>
+            <if test="raceTerm != null">#{raceTerm},</if>
+            <if test="assistant != null">#{assistant},</if>
+            <if test="status != null">#{status},</if>
+            <if test="raceName != null">#{raceName},</if>
          </trim>
     </insert>
 
