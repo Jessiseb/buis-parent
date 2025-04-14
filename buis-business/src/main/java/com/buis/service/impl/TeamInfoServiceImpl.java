@@ -95,7 +95,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         raceInfoService.checkJoinCondition(loginUser.getId(), teamInfo.getRace());
         teamInfo.setCreateTime(DateUtils.getNowDate());
         //根据现在参与的比赛id判断创建的队伍个数是否超过限制
-        //TODO 默認兩人,后面根据数据库获取
+        //TODO 默認兩,后面根据数据库获取
         int limit = 2;
         TeamMemberStudent teamMember = new TeamMemberStudent();
         teamMember.setDecider(loginUser.getId());
