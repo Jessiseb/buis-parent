@@ -40,6 +40,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != 'null' and name != ''">and user_info.name LIKE CONCAT('%', #{name}, '%')</if>
         </where>
     </select>
+    <select id="selectAssistantListByRace" resultType="com.buis.vo.UserInfoVo">
+        select user_info.id,
+               user_info.name
+        from t_assistant
+        JOIN user_info ON t_assistant.student = user_info.id
+        where t_assistant.race = #{id} and t_assistant.is_deleted = 0
+    </select>
 
     <insert id="insertAssistant" parameterType="com.buis.domain.Assistant" useGeneratedKeys="true" keyProperty="id">
         insert into t_assistant
