@@ -179,6 +179,11 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
 
+    /**
+     * 用户注册
+     * @param registerDTO
+     * @return
+     */
     @Override
     @Transactional
     public int register(RegisterDto registerDTO) {

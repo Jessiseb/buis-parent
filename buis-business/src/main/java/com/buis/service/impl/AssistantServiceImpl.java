@@ -6,6 +6,7 @@ import com.buis.service.IRaceInfoService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.AssistantVo;
 import com.buis.vo.TeamMemberTeacherVo;
+import com.buis.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.AssistantMapper;
@@ -23,7 +24,7 @@ import javax.annotation.Resource;
 @Service
 public class AssistantServiceImpl implements IAssistantService 
 {
-    @Autowired
+    @Resource
     private AssistantMapper assistantMapper;
     @Resource
     private IUserInfoService userInfoService;
@@ -126,6 +127,11 @@ public class AssistantServiceImpl implements IAssistantService
             setRaceInfo(assistantVo);
         }
         return assistantVos;
+    }
+
+    @Override
+    public List<UserInfoVo> selectAssistantListByRace(Long id) {
+        return assistantMapper.selectAssistantListByRace(id);
     }
 
     /**
