@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,18 +29,21 @@ public class RaceSecond extends BaseEntity {
      * 关联race_second表
      */
     @Excel(name = "关联race_second表")
+    @ApiModelProperty(value = "关联race_second表")
     private Long second;
 
     /**
      * 关联race_info表
      */
     @Excel(name = "关联race_info表")
+    @ApiModelProperty(value = "关联race_info表")
     private Long race;
 
     /**
      * 审核状态
      */
     @Excel(name = "审核状态")
+    @ApiModelProperty(value = "审核状态")
     private Long reviewStatus;
 
     /**
