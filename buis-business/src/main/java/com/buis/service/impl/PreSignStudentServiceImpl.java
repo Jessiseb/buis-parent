@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.PreSignStudent;
+import com.buis.enums.ReviewStatus;
 import com.buis.mapper.PreSignStudentMapper;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.mapper.UserInfoMapper;
@@ -161,7 +162,7 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
         }
 
         //判断活动是否已经发布
-        if (raceInfoVo.getReviewStatus() != 3) {
+        if (raceInfoVo.getReviewStatus() != ReviewStatus.PUBLISH.getCode()) {
             throw new RuntimeException("活动未发布");
         }
 
