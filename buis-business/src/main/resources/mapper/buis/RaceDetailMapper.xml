@@ -261,7 +261,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
         insert into race_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
             <if test="parentId != null">parent_id,</if>
             <if test="race != null">race,</if>
             <if test="name != null and name != ''">name,</if>

@@ -32,7 +32,6 @@ public class DictApiController {
     /**
      * 查询职称信息字典
      */
-
     @ApiOperation("查询职称信息字典")
     @GetMapping("/getTitle")
     public MyPageVo<List<SysDictDataVo>> getTitle() {
