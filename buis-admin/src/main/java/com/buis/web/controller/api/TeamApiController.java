@@ -16,6 +16,7 @@ import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.common.utils.file.FileUtils;
 import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
+import com.buis.enums.RecruitStatus;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
@@ -329,6 +330,7 @@ public class TeamApiController extends BaseController {
             }
 
         }
+
         teamInfo.setIsPublish(isPublish);//查出已发布招募的队伍信息
         List<TeamInfoVo> list = null;
         //如果teamInfo有值,则查询带条件的队伍信息
