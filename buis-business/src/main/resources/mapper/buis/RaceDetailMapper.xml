@@ -48,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="assistant"    column="assistant"    />
         <result property="status"    column="status"    />
         <result property="raceName"    column="race_name"    />
+        <result property="raceType" column="race_type"/>
     </resultMap>
 
     <resultMap id="RaceDetailWeightResult" type="com.buis.vo.RaceDetailVo" extends="RaceDetailResult">
@@ -70,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.parent_id,
                t1.race,
                t1.name,
+               t1.race_tab,
                t1.review_status,
                t3.name as race_type,
                t1.count,
@@ -261,11 +263,55 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
         insert into race_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
             <if test="parentId != null">parent_id,</if>
             <if test="race != null">race,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="reviewStatus != null">review_status,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="descUrl != null and descUrl != ''">desc_url,</if>
+            <if test="groupUrl != null and groupUrl != ''">group_url,</if>
+            <if test="rule != null">rule,</if>
             <if test="count != null">count,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="teamMin != null">team_min,</if>
+            <if test="teamMax != null">team_max,</if>
+            <if test="teacherMin != null">teacher_min,</if>
+            <if test="teacherMax != null">teacher_max,</if>
+            <if test="rRank != null">r_rank,</if>
+            <if test="tLimit != null">t_limit,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="seniority != null and seniority != ''">seniority,</if>
+            <if test="department != null and department != ''">department,</if>
+            <if test="organizers != null and organizers != ''">organizers,</if>
+            <if test="course != null and course != ''">course,</if>
+            <if test="majorCount != null and majorCount != ''">major_count,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="money != null and money != ''">money,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="joinStart != null">join_start,</if>
+            <if test="joinEnd != null">join_end,</if>
+            <if test="raceTab != null">race_tab,</if>
+            <if test="secondType != null">second_type,</if>
+            <if test="particpationWay != null and particpationWay != ''">particpation_way,</if>
+            <if test="teacher != null and teacher != ''">teacher,</if>
+            <if test="teacherInfo != null and teacherInfo != ''">teacher_info,</if>
+            <if test="raceTerm != null and raceTerm != ''">race_term,</if>
+            <if test="assistant != null and assistant != ''">assistant,</if>
+            <if test="status != null">status,</if>
+            <if test="raceName != null and raceName != ''">race_name,</if>
+        </trim>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null and parentId != ''">parent_id,</if>
+            <if test="race != null and race != ''">race,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="reviewStatus != null and reviewStatus != ''">review_status,</if>
+            <if test="count != null and count != ''">count,</if>
             <if test="phone != null and phone != ''">phone,</if>
             <if test="email != null and email != ''">email,</if>
             <if test="descUrl != null and descUrl != ''">desc_url,</if>
@@ -284,18 +330,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="description != null">description,</if>
             <if test="startTime != null">startTime,</if>
             <if test="endTime != null">endTime,</if>
-            <if test="joinStart != null">joinStart,</if>
-            <if test="joinEnd != null">joinEnd,</if>
-            <if test="raceTab != null">raceTab,</if>
-            <if test="raceType != null">secondType,</if>
-            <if test="particpationWay != null">particpationWay,</if>
+            <if test="joinStart != null">join_start,</if>
+            <if test="joinEnd != null">join_end,</if>
+            <if test="raceTab != null and raceTab != ''">race_tab,</if>
+            <if test="secondType != null">second_type,</if>
+            <if test="particpationWay != null">particpation_way,</if>
             <if test="teacher != null">teacher,</if>
-            <if test="teacherInfo != null">teacherInfo,</if>
-            <if test="raceTerm != null">raceTerm,</if>
+            <if test="teacherInfo != null">teacher_info,</if>
+            <if test="raceTerm != null">race_term,</if>
             <if test="assistant != null">assistant,</if>
+            <if test="seniority != null">seniority,</if>
+            <if test="department != null">department,</if>
+            <if test="organizers != null">organizers,</if>
+            <if test="course != null">course,</if>
+            <if test="majorCount != null">major_count,</if>
+            <if test="address != null">address,</if>
+            <if test="money != null">money,</if>
             <if test="status != null">status,</if>
-            <if test="raceName != null">raceName,</if>
-         </trim>
+            <if test="raceName != null">race_name,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="parentId != null">#{parentId},</if>
@@ -323,16 +376,67 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="endTime != null">#{endTime},</if>
             <if test="joinStart != null">#{joinStart},</if>
             <if test="joinEnd != null">#{joinEnd},</if>
-            <if test="raceTab != null">#{raceTab},</if>
-            <if test="raceType != null">#{secondType},</if>
+            <if test="raceTab != null and raceTab != ''">#{raceTab},</if>
+            <if test="secondType != null">#{secondType},</if>
             <if test="particpationWay != null">#{particpationWay},</if>
             <if test="teacher != null">#{teacher},</if>
             <if test="teacherInfo != null">#{teacherInfo},</if>
             <if test="raceTerm != null">#{raceTerm},</if>
             <if test="assistant != null">#{assistant},</if>
+            <if test="seniority != null">#{seniority},</if>
+            <if test="department != null">#{department},</if>
+            <if test="organizers != null">#{organizers},</if>
+            <if test="course != null">#{course},</if>
+            <if test="majorCount != null">#{majorCount},</if>
+            <if test="address != null">#{address},</if>
+            <if test="money != null">#{money},</if>
             <if test="status != null">#{status},</if>
             <if test="raceName != null">#{raceName},</if>
-         </trim>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="race != null">#{race},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="reviewStatus != null">#{reviewStatus},</if>
+            <if test="count != null">#{count},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="descUrl != null and descUrl != ''">#{descUrl},</if>
+            <if test="groupUrl != null and groupUrl != ''">#{groupUrl},</if>
+            <if test="rule != null">#{rule},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="teamMin != null">#{teamMin},</if>
+            <if test="teamMax != null">#{teamMax},</if>
+            <if test="teacherMin != null">#{teacherMin},</if>
+            <if test="teacherMax != null">#{teacherMax},</if>
+            <if test="rRank != null">#{rRank},</if>
+            <if test="tLimit != null">#{tLimit},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="description != null">#{description},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="joinStart != null">#{joinStart},</if>
+            <if test="joinEnd != null">#{joinEnd},</if>
+            <if test="raceTab != null and raceTab != ''">#{raceTab},</if>
+            <if test="secondType != null">#{secondType},</if>
+            <if test="particpationWay != null">#{particpationWay},</if>
+            <if test="teacher != null">#{teacher},</if>
+            <if test="teacherInfo != null">#{teacherInfo},</if>
+            <if test="raceTerm != null">#{raceTerm},</if>
+            <if test="assistant != null">#{assistant},</if>
+            <if test="seniority != null">#{seniority},</if>
+            <if test="department != null">#{department},</if>
+            <if test="organizers != null">#{organizers},</if>
+            <if test="course != null">#{course},</if>
+            <if test="majorCount != null">#{majorCount},</if>
+            <if test="address != null">#{address},</if>
+            <if test="money != null">#{money},</if>
+            <if test="status != null">#{status},</if>
+            <if test="raceName != null">#{raceName},</if>
+        </trim>
     </insert>
 
     <update id="updateRaceDetail" parameterType="com.buis.domain.RaceDetail">
