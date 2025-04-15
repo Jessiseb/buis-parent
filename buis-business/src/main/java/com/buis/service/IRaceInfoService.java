@@ -140,4 +140,6 @@ public interface IRaceInfoService
 
     //查询第二课堂教师指导项目数
     String getTeacherInstructCountFromSecond(Long userId);
+
+    RaceInfo selectRaceInfoByName(String name);
 }
