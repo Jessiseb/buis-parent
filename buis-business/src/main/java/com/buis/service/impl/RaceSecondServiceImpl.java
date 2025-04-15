@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import com.buis.common.utils.DateUtils;
 import com.buis.vo.RaceSecondVo;
@@ -44,7 +45,11 @@ public class RaceSecondServiceImpl implements IRaceSecondService
     @Override
     public List<RaceSecondVo> selectRaceSecondList(RaceSecondVo raceSecondVo)
     {
-        return raceSecondMapper.selectRaceSecondList(raceSecondVo);
+        List<RaceSecondVo> raceSecondVos = raceSecondMapper.selectRaceSecondList(raceSecondVo);
+        if(raceSecondVos==null || raceSecondVos.isEmpty()){
+            return Collections.emptyList();
+        }
+        return raceSecondVos;
     }
 
     /**
