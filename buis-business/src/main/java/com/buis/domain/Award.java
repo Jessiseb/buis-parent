@@ -75,5 +75,10 @@ public class Award extends BaseEntity {
      */
     private Integer isDeleted;
 
+    /**
+     * 比赛名称
+     */
+    @Excel(name = "比赛名称")
+    private String raceName;
 
 }
