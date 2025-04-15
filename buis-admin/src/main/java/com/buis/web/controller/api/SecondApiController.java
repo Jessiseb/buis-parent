@@ -145,12 +145,13 @@ public class SecondApiController {
     public R<RaceDetail> publish(@ApiParam(name = "raceDetail", value = "发布信息", required = true)
                                  @RequestBody RaceDetail raceDetail,
                                  @ApiParam(name = "id", value = "申报的活动id", required = true)
-                                 @RequestParam Long secondId) {
+                                 @RequestParam(value = "secondId",required = true) Long secondId) {
         //发布的时候只有等审核状态为已通过才能发布, 而且只能发布是自己申报的活动
         //判断申报的活动是否审核通过
-        RaceSecondVo raceSecondVo = new RaceSecondVo();
-        raceSecondVo.setSecond(secondId);
-        RaceSecondVo res = raceSecondService.selectRaceSecondList(raceSecondVo).get(0);
+        RaceInfoVo res = raceInfoService.selectRaceInfoVoById(secondId);
+        if (res == null) {
+            return R.fail("请先申报活动再填写发布内容~");
+        }
         Long status = res.getReviewStatus();
         //审核通过才能填写
         if (status == 1) {
@@ -201,5 +202,6 @@ public class SecondApiController {
         List<UserInfoVo> list = assistantService.selectAssistantListByRace(id);
         return R.ok(list);
     }
+
 
 }

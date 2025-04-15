@@ -75,7 +75,7 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     @Transactional
     @Override
     public int insertRaceDetail(RaceDetail raceDetail) {
-        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(raceDetail.getRace());
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoVoById(raceDetail.getRace());
 
         if (raceInfoVo.getReviewStatus() == ReviewStatus.REFUSE.getCode()){
             throw new ServiceException("比赛审核未通过");
@@ -84,9 +84,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
             throw new ServiceException("比赛审核中，请耐心等待");
         }
         raceDetail.setCreateTime(DateUtils.getNowDate());
-        int rows = raceDetailMapper.insertRaceDetail(raceDetail);
-        insertWeight(raceDetail);
-        return rows;
+         return raceDetailMapper.insertRaceDetail(raceDetail);
+
     }
 
     /**

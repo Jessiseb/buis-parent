@@ -265,7 +265,7 @@ public class RaceDetail extends BaseEntity {
      * 学生助理
      */
     @Excel(name = "学生助理")
-    private Long assistant;
+    private String assistant;
 
     /**
      * 活动状态
