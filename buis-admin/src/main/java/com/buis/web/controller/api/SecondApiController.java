@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.buis.common.utils.PageUtils.startPage;
 
@@ -155,7 +156,8 @@ public class SecondApiController {
         }
         Long status = res.getReviewStatus();
         //审核通过才能填写
-        if (status == 1) {
+        if (Objects.equals(status, ReviewStatus.PASS.getCode())) {
+            raceDetail.setRace(secondId);
             int i = raceDetailService.insertRaceDetail(raceDetail);
             if (i <= 0) {
                 return R.fail("发布失败");
