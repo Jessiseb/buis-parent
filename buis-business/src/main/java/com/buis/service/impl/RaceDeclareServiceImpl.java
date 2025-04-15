@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import com.buis.enums.ReviewStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceDeclareMapper;
@@ -57,7 +58,7 @@ public class RaceDeclareServiceImpl implements IRaceDeclareService
     {
         raceDeclare.setCreateTime(DateUtils.getNowDate());
         //设置状态为待审核
-        raceDeclare.setReviewStatus(0L);
+        raceDeclare.setReviewStatus(ReviewStatus.PREPARE.getCode());
         return raceDeclareMapper.insertRaceDeclare(raceDeclare);
     }
 

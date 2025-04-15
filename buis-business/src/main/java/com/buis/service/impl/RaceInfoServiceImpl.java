@@ -18,6 +18,8 @@ import com.buis.dto.GradeStatistic;
 import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
+import com.buis.enums.RaceStatus;
+import com.buis.enums.ReviewStatus;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
@@ -271,8 +273,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 //        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setCreateTime(DateUtils.getNowDate());
-        raceInfo.setReviewStatus(0L);//待审核
-        raceInfo.setStatus(0L);//设置为筹备中
+        raceInfo.setReviewStatus(ReviewStatus.PREPARE.getCode());//待审核
+        raceInfo.setStatus(RaceStatus.PREPARE.getCode());//设置为筹备中
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         if (rows > 0) {
             deleteRacesInfoCache();

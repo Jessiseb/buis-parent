@@ -6,6 +6,8 @@ import com.buis.common.utils.StringUtils;
 import com.buis.domain.RaceDetail;
 import com.buis.domain.Weight;
 import com.buis.dto.UserLoginDto;
+import com.buis.enums.RaceStatus;
+import com.buis.enums.ReviewStatus;
 import com.buis.mapper.RaceDetailMapper;
 import com.buis.service.IRaceDetailService;
 import com.buis.service.IRaceInfoService;
@@ -75,10 +77,10 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     public int insertRaceDetail(RaceDetail raceDetail) {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(raceDetail.getRace());
 
-        if (raceInfoVo.getReviewStatus() == 2){
+        if (raceInfoVo.getReviewStatus() == ReviewStatus.REFUSE.getCode()){
             throw new ServiceException("比赛审核未通过");
         }
-        if (raceInfoVo.getParentTid() == 5 && raceInfoVo.getReviewStatus() != 1) {
+        if (raceInfoVo.getParentTid() == 5 && raceInfoVo.getReviewStatus() != ReviewStatus.PASS.getCode()) {
             throw new ServiceException("比赛审核中，请耐心等待");
         }
         raceDetail.setCreateTime(DateUtils.getNowDate());
@@ -103,7 +105,7 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         //审核通过之后把对应的比赛信息状态设置为报名中
         if (reviewStatus == 1) {
             RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(race);
-            raceInfoVo.setStatus(1L); //报名中
+            raceInfoVo.setStatus(RaceStatus.JOIN.getCode()); //报名中
             raceInfoService.updateRaceInfo(raceInfoVo);
         }
         return raceDetailMapper.updateRaceDetail(raceDetail);
