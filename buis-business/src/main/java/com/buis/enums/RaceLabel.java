@@ -1,8 +1,13 @@
 package com.buis.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Getter
+@AllArgsConstructor
 public enum RaceLabel {
     CONTEST(1L, "竞赛训练"),
     SPECIAL(2L, "专项训练"),
@@ -14,15 +19,29 @@ public enum RaceLabel {
     CULTURE(8L, "文化艺术"),
     SPORTS(9L, "体育活动"),
     INNOVATION(10L, "创新创业"),
-    PRACTICE(10L, "实践实习"),
-    VOLUNTEER(10L, "志愿公益");
+    PRACTICE(11L, "实践实习"),
+    VOLUNTEER(12L, "志愿公益");
+
 
     private final Long code;
-    private final String info;
+    private final String value;
 
-    RaceLabel(Long code, String info) {
-        this.code = code;
-        this.info = info;
+    public final static Map<Long, RaceLabel> STATUS_MAP = new HashMap<>();
+
+    static {
+        for (RaceLabel value : RaceLabel.values()) {
+            STATUS_MAP.put(value.getCode(), value);
+        }
+    }
+
+    // 根据code获取枚举
+    public static RaceLabel getEnumByCode(Long code) {
+        return STATUS_MAP.get(code);
+    }
+
+    // 根据code获取枚举对应的value
+    public static String getValueByCode(Long code) {
+        return STATUS_MAP.get(code).getValue();
     }
 
 }
