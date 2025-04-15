@@ -9,6 +9,7 @@ import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
+import com.buis.common.utils.alioss.AliOssUtil;
 import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.domain.AwardRecords;
 import com.buis.domain.CollegeMajor;
@@ -54,6 +55,8 @@ public class UserInfoApiController extends BaseController {
     private AwardServiceImpl awardService;
     @Resource
     private AwardRecordsServiceImpl awardRecordsService;
+    @Autowired
+    private AliOssUtil aliOssUtil;
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
@@ -244,6 +247,8 @@ public class UserInfoApiController extends BaseController {
 
             // 使用若依的工具类上传文件
             String filePath = FileUploadUtils.upload(file);
+            // 使用阿里云的工具类上传文件
+            //String filePath = aliOssUtil.upload(file.getBytes(), file.getOriginalFilename());
 
             // 返回文件访问地址
             AwardRecords awardRecords = new AwardRecords();
