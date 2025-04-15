@@ -150,13 +150,13 @@ public class RaceDetail extends BaseEntity {
     private List<Weight> weightList;
 
     /**
-     * 指导老师资历（职称、教学年限）
+     *TODO 指导老师资历（职称、教学年限）
      */
     @Excel(name = "指导老师资历", readConverterExp = "职=称、教学年限")
     private String seniority;
 
     /**
-     * 所在部门
+     *TODO 所在部门
      */
     @Excel(name = "所在部门")
     private String department;
@@ -168,25 +168,25 @@ public class RaceDetail extends BaseEntity {
     private String organizers;
 
     /**
-     * 来源课程
+     * TODO 来源课程
      */
     @Excel(name = "来源课程")
     private String course;
 
     /**
-     * 专业名称及具体学生人数
+     * TODO 专业名称及具体学生人数
      */
     @Excel(name = "专业名称及具体学生人数")
     private String majorCount;
 
     /**
-     * 开展地点
+     * TODO 开展地点
      */
     @Excel(name = "开展地点")
     private String address;
 
     /**
-     * 经费预算
+     * TODO 经费预算
      */
     @Excel(name = "经费预算")
     private String money;

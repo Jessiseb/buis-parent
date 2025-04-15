@@ -17,6 +17,7 @@ import com.buis.common.utils.file.FileUtils;
 import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
 import com.buis.enums.ChooseStatus;
+import com.buis.enums.RecruitStatus;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;

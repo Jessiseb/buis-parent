@@ -1,5 +1,6 @@
 package com.buis.web.controller.api;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
@@ -85,10 +86,10 @@ public class SecondApiController {
                                   @RequestBody RaceInfo raceInfo,
                                   @ApiParam(name = "id", value = "关联第二课堂表id", required = true)
                                   @RequestParam Long id) {
-        Long user = SecurityUtils.getUserId();
+        String user = StpUtil.getLoginId()+"";
         //申报第二课堂活动
         raceInfo.setParentTid(5L);
-        raceInfo.setCreateId(user);
+        raceInfo.setCreateId(Long.valueOf(user));
         int ok = raceInfoService.insertRaceInfo(raceInfo);
         if (ok <= 0) {
             return R.fail("申报失败");
@@ -144,8 +145,8 @@ public class SecondApiController {
     @Transactional
     public R<RaceDetail> publish(@ApiParam(name = "raceDetail", value = "发布信息", required = true)
                                  @RequestBody RaceDetail raceDetail,
-                                 @ApiParam(name = "id", value = "申报的活动id", required = true)
-                                 @RequestParam(value = "secondId",required = true) Long secondId) {
+                                 @ApiParam(name = "secondId", value = "申报的活动id", required = true)
+                                 @RequestParam Long secondId) {
         //发布的时候只有等审核状态为已通过才能发布, 而且只能发布是自己申报的活动
         //判断申报的活动是否审核通过
         RaceInfoVo res = raceInfoService.selectRaceInfoVoById(secondId);
@@ -202,6 +203,5 @@ public class SecondApiController {
         List<UserInfoVo> list = assistantService.selectAssistantListByRace(id);
         return R.ok(list);
     }
-
 
 }

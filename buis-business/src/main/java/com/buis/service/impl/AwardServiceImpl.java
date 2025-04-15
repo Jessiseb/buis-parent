@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.Award;
+import com.buis.domain.RaceInfo;
 import com.buis.domain.Score;
 import com.buis.domain.TeamInfo;
 import com.buis.mapper.AwardMapper;
@@ -50,7 +51,7 @@ public class AwardServiceImpl implements IAwardService {
      * @return 奖状信息
      */
     @Override
-    public  List<AwardVo> selectAwardById(Long id) {
+    public List<AwardVo> selectAwardById(Long id) {
         //获取登录用户id
         String loginIdStr = StpUtil.getLoginId().toString();
         Long loginId;
@@ -59,7 +60,7 @@ public class AwardServiceImpl implements IAwardService {
         } catch (NumberFormatException e) {
             throw new ServiceException("无效的用户ID格式");
         }
-        if(!loginId.equals(id)){
+        if (!loginId.equals(id)) {
             throw new ServiceException("无权限操作");
         }
         //根据登录用户id查询到用户名字
@@ -74,7 +75,6 @@ public class AwardServiceImpl implements IAwardService {
     }
 
 
-
     /**
      * 查询奖状信息列表
      *
@@ -82,8 +82,7 @@ public class AwardServiceImpl implements IAwardService {
      * @return 奖状信息
      */
     @Override
-    public List<AwardVo> selectAwardList(AwardVo award)
-    {
+    public List<AwardVo> selectAwardList(AwardVo award) {
         return awardMapper.selectAwardList(award);
     }
 
@@ -96,6 +95,31 @@ public class AwardServiceImpl implements IAwardService {
     @Override
     public int insertAward(Award award) {
         award.setCreateTime(DateUtils.getNowDate());
+        String awardLevel = award.getAwardLevel();
+        if(awardLevel.equals("一等奖")) {
+            award.setAwardLevel("1");
+        }
+        if (awardLevel.equals("二等奖")) {
+            award.setAwardLevel("2");
+        }
+        if(awardLevel.equals("三等奖")){
+            award.setAwardLevel("3");
+        }
+        if(awardLevel.equals("优秀奖")){
+            award.setAwardLevel("4");
+        }
+        if(!(award.getAwardLevel().equals("1")||award.getAwardLevel().equals("2")
+        ||award.getAwardLevel().equals("3")||award.getAwardLevel().equals("4"))){
+            throw new ServiceException("奖项等级填写有误");
+        }
+
+        String raceName = award.getRaceName();
+        RaceInfo raceInfo = raceInfoService.selectRaceInfoByName(raceName);
+        if (raceInfo == null) {
+            throw new ServiceException("比赛不存在!");
+        }
+        Long raceId = raceInfo.getId();
+        award.setRaceId(raceId);
         return awardMapper.insertAward(award);
     }
 
