@@ -261,6 +261,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
         insert into race_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
             <if test="parentId != null">parent_id,</if>
             <if test="race != null">race,</if>
             <if test="name != null and name != ''">name,</if>
@@ -282,19 +283,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="description != null">description,</if>
-            <if test="startTime != null">startTime,</if>
-            <if test="endTime != null">endTime,</if>
-            <if test="joinStart != null">joinStart,</if>
-            <if test="joinEnd != null">joinEnd,</if>
-            <if test="raceTab != null">raceTab,</if>
-            <if test="raceType != null">secondType,</if>
-            <if test="particpationWay != null">particpationWay,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="joinStart != null">join_start,</if>
+            <if test="joinEnd != null">join_end,</if>
+            <if test="raceTab != null">race_tab,</if>
+            <if test="raceType != null">second_type,</if>
+            <if test="particpationWay != null">particpation_way,</if>
             <if test="teacher != null">teacher,</if>
-            <if test="teacherInfo != null">teacherInfo,</if>
+            <if test="teacherInfo != null">teacher_info,</if>
             <if test="raceTerm != null">raceTerm,</if>
             <if test="assistant != null">assistant,</if>
             <if test="status != null">status,</if>
-            <if test="raceName != null">raceName,</if>
+            <if test="raceName != null">race_name,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
