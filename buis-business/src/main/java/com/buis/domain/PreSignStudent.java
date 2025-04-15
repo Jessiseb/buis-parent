@@ -62,7 +62,7 @@ public class PreSignStudent extends BaseEntity {
     private String s_class;
 
     /**
-     * 班级
+     * 手机号
      */
     @Excel(name = "手机号")
     @ApiModelProperty(value = "手机号")
