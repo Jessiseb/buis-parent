@@ -82,9 +82,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
             throw new ServiceException("比赛审核中，请耐心等待");
         }
         raceDetail.setCreateTime(DateUtils.getNowDate());
-        int rows = raceDetailMapper.insertRaceDetail(raceDetail);
-        insertWeight(raceDetail);
-        return rows;
+         return raceDetailMapper.insertRaceDetail(raceDetail);
+
     }
 
     /**
