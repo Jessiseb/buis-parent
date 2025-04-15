@@ -73,7 +73,7 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     @Transactional
     @Override
     public int insertRaceDetail(RaceDetail raceDetail) {
-        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(raceDetail.getRace());
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoVoById(raceDetail.getRace());
 
         if (raceInfoVo.getReviewStatus() == 2){
             throw new ServiceException("比赛审核未通过");

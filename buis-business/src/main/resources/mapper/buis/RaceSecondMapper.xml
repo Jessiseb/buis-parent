@@ -37,7 +37,7 @@
         <where>
             t1.is_deleted = 0
             <if test="second != null ">and t1.second = #{second}</if>
-            <if test="reviewStatus != null ">and t1.review_</if>
+            <if test="reviewStatus != null ">and t1.review_status = #{reviewStatus}</if>
             <if test="secondName != null ">and t3.name = #{secondName}</if>
             <if test="raceName != null ">and t2.name = #{raceName}</if>
             <if test="race != null ">and t1.race = #{race}</if>
