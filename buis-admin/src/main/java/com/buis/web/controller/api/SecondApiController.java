@@ -2,17 +2,17 @@ package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
+import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.*;
 import com.buis.enums.ReviewStatus;
 import com.buis.service.*;
-import com.buis.vo.RaceDetailVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.RaceSecondVo;
+import com.buis.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +38,8 @@ public class SecondApiController {
     private IRaceSecondService raceSecondService;
     @Autowired
     private IPreSignStudentService preSignStudentService;
+    @Autowired
+    private IAssistantService assistantService;
 
     /**
      * 分页查询第二课堂活动申报
@@ -187,6 +189,17 @@ public class SecondApiController {
         //登录用户
         Long userId = SecurityUtils.getFrontLoginUserId();
         return R.ok(preSignStudentService.studentSign(id, userId, preSignStudent));
+    }
+
+    /**
+     * 根据活动id查询学生助理
+     */
+    @ApiOperation("根据活动id查询学生助理")
+    @GetMapping("/list")
+    public R<List<UserInfoVo>> list(@ApiParam(name = "id", value = "第二课堂活动id", required = true)
+                                    @RequestParam(value = "id")Long id) {
+        List<UserInfoVo> list = assistantService.selectAssistantListByRace(id);
+        return R.ok(list);
     }
 
 }

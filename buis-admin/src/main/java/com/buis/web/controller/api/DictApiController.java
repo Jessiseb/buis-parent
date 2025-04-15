@@ -1,18 +1,23 @@
 package com.buis.web.controller.api;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.domain.entity.SysDictData;
 import com.buis.common.core.page.MyPageVo;
+import com.buis.common.utils.StringUtils;
 import com.buis.system.service.ISysDictDataService;
+import com.buis.system.service.ISysDictTypeService;
 import com.buis.vo.SysDictDataVo;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(tags = "字典信息管理Api")
@@ -21,6 +26,8 @@ import java.util.List;
 public class DictApiController {
     @Autowired
     private ISysDictDataService sysDictDataService;
+    @Autowired
+    private ISysDictTypeService dictTypeService;
 
     /**
      * 查询职称信息字典
@@ -126,6 +133,21 @@ public class DictApiController {
         // 将字典数据列表转换为VO对象
         List<SysDictDataVo> sysDictDataVo = BeanUtil.copyToList(list, SysDictDataVo.class);
         return new MyPageVo<>(sysDictDataVo);
+    }
+
+
+    /**
+     * 根据字典类型查询字典数据信息
+     */
+    @GetMapping(value = "/type/{dictType}")
+    public AjaxResult dictType(@PathVariable String dictType)
+    {
+        List<SysDictData> data = dictTypeService.selectDictDataByType(dictType);
+        if (StringUtils.isNull(data))
+        {
+            data = new ArrayList<SysDictData>();
+        }
+        return AjaxResult.success(data);
     }
 
 }

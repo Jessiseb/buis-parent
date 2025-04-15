@@ -20,6 +20,7 @@ import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
@@ -178,7 +179,13 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
 
+    /**
+     * 用户注册
+     * @param registerDTO
+     * @return
+     */
     @Override
+    @Transactional
     public int register(RegisterDto registerDTO) {
 
         //获取注册信息，进行校验
@@ -201,6 +208,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
         //校验校验验证码
         //从redis获取发送的验证码
         String rCode = (String) redisTemplate.opsForValue().get(RedisConstant.EMAIL + email);
+        if (rCode == null) {
+            throw new ServiceException("验证码已过期,请重新获取!");
+        }
         if (!rCode.equals(code)) {
             throw new ServiceException("验证码错误,请重新输入!");
         }

@@ -3,6 +3,7 @@ package com.buis.domain;
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,24 +31,28 @@ public class RacePublish extends BaseEntity {
     /**
      * 对应申报表id
      */
+    @ApiModelProperty(value = "对应申报表id")
     private Long race;
 
     /**
      * 承办单位
      */
     @Excel(name = "承办单位")
+    @ApiModelProperty(value = "承办单位")
     private String organizers;
 
     /**
      * 活动名称
      */
     @Excel(name = "活动名称")
+    @ApiModelProperty(value = "活动名称")
     private String name;
 
     /**
      * 活动介绍
      */
     @Excel(name = "活动介绍")
+    @ApiModelProperty(value = "活动介绍")
     private String description;
 
     /**
@@ -55,6 +60,7 @@ public class RacePublish extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "活动开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty(value = "活动开始时间")
     private Date startTime;
 
     /**
@@ -62,6 +68,7 @@ public class RacePublish extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "活动结束时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty(value = "活动结束时间")
     private Date endTime;
 
     /**
@@ -69,6 +76,7 @@ public class RacePublish extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "报名开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty(value = "报名开始时间")
     private Date joinStart;
 
     /**
@@ -76,12 +84,14 @@ public class RacePublish extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "报名结束时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty(value = "报名结束时间")
     private Date joinEnd;
 
     /**
      * 活动标签（字典）
      */
     @Excel(name = "活动标签", readConverterExp = "字=典")
+    @ApiModelProperty(value = "活动标签(字典)")
     private Long raceTab;
 
     /**
