@@ -1,8 +1,11 @@
 package com.buis.enums;
 
+import lombok.Getter;
+
 /**
- * 比赛状态
+ * 比赛状态字典
  */
+@Getter
 public enum RaceStatus {
     PREPARE(0L, "筹备中"),
     CHECK(1L, "审核中"),
@@ -19,11 +22,4 @@ public enum RaceStatus {
         this.info = info;
     }
 
-    public Long getCode() {
-        return code;
-    }
-
-    public String getInfo() {
-        return info;
-    }
 }
