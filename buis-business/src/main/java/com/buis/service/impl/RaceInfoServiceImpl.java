@@ -112,6 +112,16 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     /**
+     * 通用查询比赛信息
+     * @param id
+     * @return
+     */
+    @Override
+    public RaceInfoVo selectRaceInfoVoById(Long id) {
+       return raceInfoMapper.selectRaceInfoById(id);
+    }
+
+    /**
      * 为isJoin赋值
      */
     public void setIsJoin(RaceInfoVo raceInfoVo) {
