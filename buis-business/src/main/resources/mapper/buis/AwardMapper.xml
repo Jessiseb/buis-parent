@@ -101,6 +101,7 @@
             <if test="updateTime != null">update_time,</if>
             <if test="createTime != null">create_time,</if>
             <if test="isDeleted != null">is_deleted,</if>
+            <if test="raceName != null">race_name,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -114,6 +115,7 @@
             <if test="updateTime != null">#{updateTime},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="raceName != null">#{raceName},</if>
         </trim>
     </insert>
 
