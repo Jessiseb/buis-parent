@@ -121,6 +121,25 @@ public class DictApiController {
     }
 
     /**
+     * 查询项目(大创)类型字典
+     */
+    @ApiOperation("查询项目(大创)类型字典")
+    @GetMapping("/getInnovationType")
+    public MyPageVo<List<SysDictDataVo>> getInnovationType() {
+        return getDictDataByType("innovation_type");
+    }
+
+    /**
+     * 查询第二课堂竞赛标签
+     */
+    @ApiOperation("查询第二课堂竞赛标签")
+    @GetMapping("/getSecondLabel")
+    public MyPageVo<List<SysDictDataVo>> getSecondLabel() {
+        return getDictDataByType("second_label");
+    }
+
+
+    /**
      * 查询字典信息
      * @param dictType 字典类型
      * @return MyPageVo<List<SysDictDataVo>> 返回字典信息的分页数据
