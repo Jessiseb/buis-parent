@@ -8,8 +8,8 @@ import lombok.Getter;
 @Getter
 public enum RaceStatus {
     PREPARE(0L, "筹备中"),
-    CHECK(1L, "审核中"),
-    JOIN(2L, "报名中"),
+    JOIN(1L, "报名中"),
+    CHECK(2L, "审核中"),
     RUN(3L, "进行中"),
     END(4L, "已结束");
 

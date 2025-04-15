@@ -5,6 +5,7 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.*;
+import com.buis.enums.ReviewStatus;
 import com.buis.service.*;
 import com.buis.vo.*;
 import io.swagger.annotations.Api;
@@ -101,7 +102,7 @@ public class SecondApiController {
         RaceSecond raceSecond = new RaceSecond();
         raceSecond.setRace(race);
         raceSecond.setSecond(id);
-        raceSecond.setReviewStatus(0L); //待审核
+        raceSecond.setReviewStatus(ReviewStatus.PREPARE.getCode()); //待审核
         int i = raceSecondService.insertRaceSecond(raceSecond);
         if (i <= 0) {
             return R.fail("申报失败");
