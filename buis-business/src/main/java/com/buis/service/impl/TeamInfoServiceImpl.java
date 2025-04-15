@@ -16,6 +16,7 @@ import com.buis.common.utils.PageUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
+import com.buis.enums.ChooseStatus;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
 import com.buis.system.service.ISysDictDataService;
@@ -131,14 +132,14 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             teamMemberStudent.setRace(teamInfo.getRace()); //比赛id
             teamMemberStudent.setStudent(teamInfo.getLeader()); //队长
             teamMemberStudent.setDecider(teamInfo.getLeader()); //决定者 = 创建该队伍的人
-            teamMemberStudent.setIsChoosed(1L); //选定状态
+            teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
             if(teamInfo.getTeacher1()!=null){
                 TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
                 teamMemberTeacher.setRace(teamInfo.getRace());
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
                 teamMemberTeacher.setTeam(teamInfo.getId());
-                teamMemberStudent.setIsChoosed(1L); //选定状态
+                teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
             if (teamInfo.getTeacher2()!=null){
@@ -147,7 +148,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
                 teamMemberTeacher.setTeam(teamInfo.getId());
-                teamMemberStudent.setIsChoosed(1L); //选定状态
+                teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
             sucess = teamStudentService.insertTeamMemberStudent(teamMemberStudent);
@@ -357,7 +358,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberStudent.setRace(teamInfo.getRace()); //比赛
                 teamMemberStudent.setDecider(teamInfo.getLeader());//负责人
                 teamMemberStudent.setStudent(userId); //成员
-                teamMemberStudent.setIsChoosed(0L); //是否选择
+                teamMemberStudent.setIsChoosed(ChooseStatus.TOBESELECTED.getCode()); //是否选择
                 teamMemberStudent.setReason(teamMemberDto.getReason()); //加入理由
 //                }
             } catch (Exception e) {
@@ -450,7 +451,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         TeamMemberStudent teamMemberStudent = teamStudentService.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
 
         // 获取申请记录
-        if (teamMemberStudent.getIsChoosed() != 0L) { // 0表示待审核
+        if (teamMemberStudent.getIsChoosed() != ChooseStatus.TOBESELECTED.getCode()) { // 0表示待审核
             throw new ServiceException("申请不存在或已处理");
         }
 
@@ -463,7 +464,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
 
         // 5. 更新状态为已同意
-        teamMemberStudent.setIsChoosed(1L); // 1表示已同意
+        teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); // 1表示已同意
         int ok = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
         if (ok == 0) {
             throw new ServiceException("同意失败");
@@ -497,11 +498,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             return null;
         }
 
-        String lockKey = QUERY_TEAM_LOCK + getPageCacheKey(pageNum, pageSize);
-        RLock rLock = redissonClient.getLock(lockKey);
+//        String lockKey = QUERY_TEAM_LOCK + getPageCacheKey(pageNum, pageSize);
+//        RLock rLock = redissonClient.getLock(lockKey);
         MyPageVo myPageVo = null;
         try {
-            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+//            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
 
             //再次检查缓存
             TeamsJson = redisCache.getCacheObject(pageCacheKey);
@@ -515,10 +516,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 return null;
             }
 
-            if (!isLock) {
-                Thread.sleep(50);
-                return selectTeamInfoListFromRedis(teamInfo);
-            }
+//            if (!isLock) {
+//                Thread.sleep(50);
+//                return selectTeamInfoListFromRedis(teamInfo);
+//            }
 
             //拿到锁，查询数据库
             Page<TeamInfoVo> page = PageUtils.startPage(pageNum, pageSize);
@@ -532,15 +533,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             }
             //存在，写入redis
             myPageVo = new MyPageVo(page, teamInfoVos);
-            redisCache.setCacheObject(pageCacheKey, JSON.toJSONString(myPageVo), 1, TimeUnit.DAYS);
+            redisCache.setCacheObject(pageCacheKey, JSON.toJSONString(myPageVo), 10, TimeUnit.MINUTES);
 
         } catch (Exception e) {
             throw new ServiceException("查询失败: " + e.getMessage());
         } finally {
             //释放锁
-            if (rLock.isHeldByCurrentThread()) {
-                rLock.unlock();
-            }
+//            if (rLock.isHeldByCurrentThread()) {
+//                rLock.unlock();
+//            }
         }
         return myPageVo;
     }
@@ -794,7 +795,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private void updateTeamInfoCache(TeamInfo teamInfo) {
         String teamInfoCacheKey = "team:" + teamInfo.getId();
         TeamInfoVo teamInfoVo = createTeamInfoVo(teamInfo);
-        redisCache.setCacheObject(teamInfoCacheKey, JSON.toJSONString(teamInfoVo), 1, TimeUnit.DAYS);
+        redisCache.setCacheObject(teamInfoCacheKey, JSON.toJSONString(teamInfoVo), 10, TimeUnit.MINUTES);
 
         //删除所有队伍信息分页缓存
         String pattern = "teams:page:*:size:*";
@@ -842,11 +843,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             return null;
         }
 
-        String lockKey = QUERY_TEAM_LOCK + id;
-        RLock rLock = redissonClient.getLock(lockKey);
+//        String lockKey = QUERY_TEAM_LOCK + id;
+//        RLock rLock = redissonClient.getLock(lockKey);
         TeamInfoVo teamInfoVo = null;
         try {
-            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+//            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
 
             //再次检查缓存
             TeamJson = redisCache.getCacheObject("team:" + id);
@@ -860,10 +861,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 return null;
             }
 
-            if (!isLock) {
-                Thread.sleep(50);
-                return selectTeamInfoById(id);
-            }
+//            if (!isLock) {
+//                Thread.sleep(50);
+//                return selectTeamInfoById(id);
+//            }
 
             //拿到锁，查询数据库
             TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(id);
@@ -876,15 +877,15 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             }
             //存在，写入redis
             teamInfoVo = createTeamInfoVo(teamInfo);
-            redisCache.setCacheObject("team:" + id, JSONUtil.toJsonStr(teamInfoVo), 1, TimeUnit.DAYS);
+            redisCache.setCacheObject("team:" + id, JSONUtil.toJsonStr(teamInfoVo), 10, TimeUnit.MINUTES);
 
         } catch (Exception e) {
             throw new ServiceException("查询失败: " + e.getMessage());
         } finally {
             //释放锁
-            if (rLock.isHeldByCurrentThread()) {
-                rLock.unlock();
-            }
+//            if (rLock.isHeldByCurrentThread()) {
+//                rLock.unlock();
+//            }
         }
         return teamInfoVo;
     }

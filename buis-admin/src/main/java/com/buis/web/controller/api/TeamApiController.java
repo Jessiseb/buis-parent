@@ -16,6 +16,7 @@ import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.common.utils.file.FileUtils;
 import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
+import com.buis.enums.ChooseStatus;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
@@ -148,7 +149,7 @@ public class TeamApiController extends BaseController {
             teamMemberStudent.setRace(teamInfo.getRace()); //比赛id
             teamMemberStudent.setStudent(userInfoVo.getId()); //成员
             teamMemberStudent.setDecider(teamInfo.getLeader()); //负责人
-            teamMemberStudent.setIsChoosed(0L); //选定状态 0待同意
+            teamMemberStudent.setIsChoosed(ChooseStatus.TOBESELECTED.getCode()); //选定状态 0待同意
             teamMemberStudentList.add(teamMemberStudent);
         }
         //插入
