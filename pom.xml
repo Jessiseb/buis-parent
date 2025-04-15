@@ -31,6 +31,7 @@
         <poi.version>4.1.2</poi.version>
         <velocity.version>2.3</velocity.version>
         <jwt.version>0.9.1</jwt.version>
+        <aliyun.sdk.oss>3.10.2</aliyun.sdk.oss>
     </properties>
 
     <!-- 依赖声明 -->
@@ -192,6 +193,12 @@
                 <artifactId>buis-business</artifactId>
                 <groupId>com.buis</groupId>
                 <version>${buis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun.sdk.oss}</version>
             </dependency>
 
         </dependencies>
