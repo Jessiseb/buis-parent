@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.buis.domain.Assistant;
 import com.buis.vo.AssistantVo;
+import com.buis.vo.UserInfoVo;
 
 /**
  * 学生助理Mapper接口
@@ -67,4 +68,7 @@ public interface AssistantMapper{
      * @param name
      */
     public List<AssistantVo> fuzzyQuery(String name);
+
+    //根据活动id查询学生助理信息
+    List<UserInfoVo> selectAssistantListByRace(Long id);
 }

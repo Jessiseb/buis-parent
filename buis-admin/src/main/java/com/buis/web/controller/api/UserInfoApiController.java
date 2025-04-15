@@ -68,7 +68,8 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户注册功能")
     @PostMapping("/register")
-    public R<Long> register(@ApiParam(name = "registerDTO", value = "用户注册信息", required = true)@RequestBody RegisterDto registerDTO) {
+    public R<Long> register(@ApiParam(name = "registerDTO", value = "用户注册信息", required = true)
+                            @RequestBody RegisterDto registerDTO) {
         //判空
         if (registerDTO == null) {
             throw new ServiceException("参数错误!");
@@ -143,6 +144,7 @@ public class UserInfoApiController extends BaseController {
      */
     @ApiOperation("找回密码")
     @PostMapping("/findPassword")
+    @Transactional
     public R findPassword(@ApiParam(name = "findUserVo", value = "找回密码信息", required = true) @RequestBody FindUserVo findUserVo) {
         //判空
         if (findUserVo == null) {
