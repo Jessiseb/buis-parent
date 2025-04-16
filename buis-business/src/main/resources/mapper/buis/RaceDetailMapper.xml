@@ -163,7 +163,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where race_d = #{race_d} and is_deleted = 0
     </select>
     <select id="selectRaceDetailByRaceId" resultType="com.buis.domain.RaceDetail">
-        -- 查询比赛信息
         select id,
                parent_id,
                race,
@@ -288,11 +287,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinStart != null">join_start,</if>
             <if test="joinEnd != null">join_end,</if>
             <if test="raceTab != null">race_tab,</if>
-            <if test="raceType != null">second_type,</if>
+            <if test="secondType != null">second_type,</if>
             <if test="particpationWay != null">particpation_way,</if>
             <if test="teacher != null">teacher,</if>
             <if test="teacherInfo != null">teacher_info,</if>
-            <if test="raceTerm != null">raceTerm,</if>
+            <if test="raceTerm != null">race_term,</if>
             <if test="assistant != null">assistant,</if>
             <if test="status != null">status,</if>
             <if test="raceName != null">race_name,</if>
@@ -325,7 +324,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="joinStart != null">#{joinStart},</if>
             <if test="joinEnd != null">#{joinEnd},</if>
             <if test="raceTab != null">#{raceTab},</if>
-            <if test="raceType != null">#{secondType},</if>
+            <if test="secondType != null">#{secondType},</if>
             <if test="particpationWay != null">#{particpationWay},</if>
             <if test="teacher != null">#{teacher},</if>
             <if test="teacherInfo != null">#{teacherInfo},</if>
