@@ -1,8 +1,13 @@
 package com.buis.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Getter
+@AllArgsConstructor
 public enum StuClass {
 
     CLASS_ONE(0L, "1班"),
@@ -17,11 +22,24 @@ public enum StuClass {
     CLASS_TEN(9L, "10班");
 
     private final Long code;
-    private final String info;
+    private final String value;
 
-    StuClass(Long code, String info) {
-        this.code = code;
-        this.info = info;
+    public final static Map<Long, StuClass> STATUS_MAP = new HashMap<>();
+
+    static {
+        for (StuClass value : StuClass.values()) {
+            STATUS_MAP.put(value.getCode(), value);
+        }
+    }
+
+    // 根据code获取枚举
+    public static StuClass getEnumByCode(Long code) {
+        return STATUS_MAP.get(code);
+    }
+
+    // 根据code获取枚举对应的value
+    public static String getValueByCode(Long code) {
+        return STATUS_MAP.get(code).getValue();
     }
 
 }
