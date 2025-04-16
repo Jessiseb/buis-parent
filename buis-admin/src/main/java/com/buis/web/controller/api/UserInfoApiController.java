@@ -123,7 +123,7 @@ public class UserInfoApiController extends BaseController {
         Long userId = SecurityUtils.getFrontLoginUserId();
         userInfo.setId(userId);
         String password = userInfo.getPassword();
-        String encryptPassword = SaSecureUtil.md5(SALT + password);
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
         userInfo.setPassword(encryptPassword);
         return R.ok(userInfoService.updateUserInfo(userInfo));
     }
