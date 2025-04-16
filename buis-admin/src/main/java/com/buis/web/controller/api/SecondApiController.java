@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.buis.common.utils.PageUtils.startPage;
 
@@ -148,6 +149,7 @@ public class SecondApiController {
                                  @ApiParam(name = "secondId", value = "申报的活动id", required = true)
                                  @RequestParam Long secondId) {
         //发布的时候只有等审核状态为已通过才能发布, 而且只能发布是自己申报的活动
+        //发布过不能再次发布
         //判断申报的活动是否审核通过
         RaceInfoVo res = raceInfoService.selectRaceInfoVoById(secondId);
         if (res == null) {
@@ -155,7 +157,8 @@ public class SecondApiController {
         }
         Long status = res.getReviewStatus();
         //审核通过才能填写
-        if (status == 1) {
+        if (Objects.equals(status, ReviewStatus.PASS.getCode())) {
+            raceDetail.setRace(secondId);
             int i = raceDetailService.insertRaceDetail(raceDetail);
             if (i <= 0) {
                 return R.fail("发布失败");

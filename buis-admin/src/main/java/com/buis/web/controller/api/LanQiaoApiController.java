@@ -1,5 +1,6 @@
 package com.buis.web.controller.api;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
@@ -108,14 +109,20 @@ public class LanQiaoApiController extends BaseController {
     public R add(@ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race,
                  @ApiParam(name = "raceLanqiaoStudent", value = "学生报名信息表", required = true) @RequestBody RaceLanqiaoStudent raceLanqiaoStudent) {
         //获取登录用户id
-        Long userId = SecurityUtils.getFrontLoginUserId();
+        String loginIdStr = StpUtil.getLoginId().toString();
+        long loginId;
+        try {
+            loginId = Long.parseLong(loginIdStr);
+        } catch (NumberFormatException e) {
+            throw new ServiceException("无效的用户ID格式");
+        }
         //获取被操作用户id
         Long id = raceLanqiaoStudent.getUserId();
         //校验是否本人操作
-        if (userInfoService.isSelf(userId,id)){
-            throw new ServiceException("非本人修改!");
+        if (userInfoService.isSelf(loginId,id)){
+            throw new ServiceException("非本人操作!");
         }
-        raceLanqiaoStudent.setUserId(userId);
+        raceLanqiaoStudent.setUserId(loginId);
         raceLanqiaoStudent.setRaceId(race);
         int res = raceLanqiaoStudentService.insertRaceLanqiaoStudent(raceLanqiaoStudent);
         return R.ok(res);
