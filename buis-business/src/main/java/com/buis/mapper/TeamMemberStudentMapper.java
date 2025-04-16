@@ -93,7 +93,7 @@ public interface TeamMemberStudentMapper {
 
     int getRequestCount(@Param("userId") Long userId, @Param("raceId") Long raceId, @Param("team") Long team);
 
-    List<TeamMemberStudent> selectTeamMemberStudentByUserId(Long userId);
+    List<TeamMemberStudent> selectTeamMemberStudentByUserId(@Param("userId") Long userId);
 
     List<TeamMemberStudentVo> selectTeamMemberStudentListVo(TeamMemberStudentVo teamMemberStudentVo);
 
