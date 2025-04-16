@@ -928,14 +928,14 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     private boolean checkJoinFull(Long raceId) {
         // 查询已报名人数
-        int teacher = teamMemberTeacherService.getJoinCount(null, raceId, null);
+//        int teacher = teamMemberTeacherService.getJoinCount(null, raceId, null);
         int student = teamMemberStudentService.getJoinCount(null, raceId, null);
         // 查询比赛信息
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
         if (raceDetail != null) {
             Long capacity = raceDetail.getCapacity();
             if (capacity != 0) {
-                return (teacher + student) >= capacity;
+                return  student >= capacity;
             }
         }
         return false;
