@@ -32,7 +32,6 @@ public class DictApiController {
     /**
      * 查询职称信息字典
      */
-
     @ApiOperation("查询职称信息字典")
     @GetMapping("/getTitle")
     public MyPageVo<List<SysDictDataVo>> getTitle() {
@@ -119,6 +118,25 @@ public class DictApiController {
     public MyPageVo<List<SysDictDataVo>> getReviewStatus() {
         return getDictDataByType("review_status");
     }
+
+    /**
+     * 查询项目(大创)类型字典
+     */
+    @ApiOperation("查询项目(大创)类型字典")
+    @GetMapping("/getInnovationType")
+    public MyPageVo<List<SysDictDataVo>> getInnovationType() {
+        return getDictDataByType("innovation_type");
+    }
+
+    /**
+     * 查询第二课堂竞赛标签
+     */
+    @ApiOperation("查询第二课堂竞赛标签")
+    @GetMapping("/getSecondLabel")
+    public MyPageVo<List<SysDictDataVo>> getSecondLabel() {
+        return getDictDataByType("second_label");
+    }
+
 
     /**
      * 查询字典信息

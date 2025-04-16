@@ -24,12 +24,17 @@ import javax.servlet.http.HttpServletResponse;
 public interface IRaceInfoService 
 {
     /**
-     * 查询比赛信息
+     * 前台查询比赛信息
      * 
      * @param id 比赛信息主键
      * @return 比赛信息
      */
     public RaceInfoVo selectRaceInfoById(Long id);
+
+    /**
+     * 通用查询比赛信息
+     */
+    public RaceInfoVo selectRaceInfoVoById(Long id);
 
     /**
      * 管理系统查询比赛信息列表

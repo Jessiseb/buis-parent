@@ -6,6 +6,8 @@ import com.buis.common.utils.StringUtils;
 import com.buis.domain.RaceDetail;
 import com.buis.domain.Weight;
 import com.buis.dto.UserLoginDto;
+import com.buis.enums.RaceStatus;
+import com.buis.enums.ReviewStatus;
 import com.buis.mapper.RaceDetailMapper;
 import com.buis.service.IRaceDetailService;
 import com.buis.service.IRaceInfoService;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 比赛详情Service业务层处理
@@ -73,18 +76,17 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     @Transactional
     @Override
     public int insertRaceDetail(RaceDetail raceDetail) {
-        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(raceDetail.getRace());
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoVoById(raceDetail.getRace());
 
-        if (raceInfoVo.getReviewStatus() == 2){
+        if (Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.REFUSE.getCode())){
             throw new ServiceException("比赛审核未通过");
         }
-        if (raceInfoVo.getParentTid() == 5 && raceInfoVo.getReviewStatus() != 1) {
+        if (raceInfoVo.getParentTid() == 5 && !Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.PASS.getCode())) {
             throw new ServiceException("比赛审核中，请耐心等待");
         }
         raceDetail.setCreateTime(DateUtils.getNowDate());
-        int rows = raceDetailMapper.insertRaceDetail(raceDetail);
-        insertWeight(raceDetail);
-        return rows;
+         return raceDetailMapper.insertRaceDetail(raceDetail);
+
     }
 
     /**
@@ -103,7 +105,7 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         //审核通过之后把对应的比赛信息状态设置为报名中
         if (reviewStatus == 1) {
             RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(race);
-            raceInfoVo.setStatus(1L); //报名中
+            raceInfoVo.setStatus(RaceStatus.JOIN.getCode()); //报名中
             raceInfoService.updateRaceInfo(raceInfoVo);
         }
         return raceDetailMapper.updateRaceDetail(raceDetail);
