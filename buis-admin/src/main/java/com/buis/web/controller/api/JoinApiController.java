@@ -6,10 +6,13 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.PreSignStudent;
 import com.buis.domain.PreSignTeacher;
+import com.buis.domain.UserInfo;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IPreSignTeacherService;
+import com.buis.service.IUserInfoService;
 import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.PreSignTeacherVo;
+import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,6 +32,8 @@ public class JoinApiController extends BaseController {
     private IPreSignTeacherService preTeacherService;
     @Autowired
     private IPreSignStudentService preStudentService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
 
     /**
@@ -50,7 +55,7 @@ public class JoinApiController extends BaseController {
     }
 
     /**
-     * 新增老师预报名
+     * 新增预报名
      */
     @ApiOperation("新增预报名")
     @PostMapping("/addPre/{isTeacher}/{race}")
@@ -63,16 +68,20 @@ public class JoinApiController extends BaseController {
             preSignTeacher.setRace(race);
             preTeacherService.insertPreSignTeacher(preSignTeacher);
         } else if (isTeacher == 0) {
+            UserInfoVo user = userInfoService.selectUserInfoById(userId);
             PreSignStudent preSignStudent = new PreSignStudent();
             preSignStudent.setStudent(userId);
             preSignStudent.setRace(race);
+            preSignStudent.setNumber(user.getNumber());
+            preSignStudent.setS_class(user.getStuGrade() + user.getMajorName() + user.getStuClass());
+            preSignStudent.setPhone(user.getPhone());
             preStudentService.insertPreSignStudent(preSignStudent);
         }
         return R.ok();
 
     }
     /**
-     * 删除老师预报名
+     * 删除预报名
      */
     @ApiOperation("删除老师预报名")
     @DeleteMapping("/removePre/{isTeacher}/{race}")

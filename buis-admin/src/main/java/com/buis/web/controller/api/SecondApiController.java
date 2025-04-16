@@ -6,6 +6,7 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.*;
+import com.buis.enums.ReviewStatus;
 import com.buis.service.*;
 import com.buis.vo.*;
 import io.swagger.annotations.Api;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.buis.common.utils.PageUtils.startPage;
 
@@ -102,7 +104,7 @@ public class SecondApiController {
         RaceSecond raceSecond = new RaceSecond();
         raceSecond.setRace(race);
         raceSecond.setSecond(id);
-        raceSecond.setReviewStatus(0L); //待审核
+        raceSecond.setReviewStatus(ReviewStatus.PREPARE.getCode()); //待审核
         int i = raceSecondService.insertRaceSecond(raceSecond);
         if (i <= 0) {
             return R.fail("申报失败");
@@ -148,12 +150,14 @@ public class SecondApiController {
                                  @RequestParam Long secondId) {
         //发布的时候只有等审核状态为已通过才能发布, 而且只能发布是自己申报的活动
         //判断申报的活动是否审核通过
-        RaceSecondVo raceSecondVo = new RaceSecondVo();
-        raceSecondVo.setSecond(secondId);
-        RaceSecondVo res = raceSecondService.selectRaceSecondList(raceSecondVo).get(0);
+        RaceInfoVo res = raceInfoService.selectRaceInfoVoById(secondId);
+        if (res == null) {
+            return R.fail("请先申报活动再填写发布内容~");
+        }
         Long status = res.getReviewStatus();
         //审核通过才能填写
-        if (status == 1) {
+        if (Objects.equals(status, ReviewStatus.PASS.getCode())) {
+            raceDetail.setRace(secondId);
             int i = raceDetailService.insertRaceDetail(raceDetail);
             if (i <= 0) {
                 return R.fail("发布失败");

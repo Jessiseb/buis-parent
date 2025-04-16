@@ -18,6 +18,8 @@ import com.buis.dto.GradeStatistic;
 import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
+import com.buis.enums.RaceStatus;
+import com.buis.enums.ReviewStatus;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
@@ -107,6 +109,16 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             }
         }
         return raceInfoVo;
+    }
+
+    /**
+     * 通用查询比赛信息
+     * @param id
+     * @return
+     */
+    @Override
+    public RaceInfoVo selectRaceInfoVoById(Long id) {
+       return raceInfoMapper.selectRaceInfoById(id);
     }
 
     /**
@@ -233,7 +245,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 }
 
                 int status = checkJoin(userId, raceInfoVo.getId(), null);
-                redisCache.setCacheObject(cacheKey, JSON.toJSONString(status), 1, TimeUnit.DAYS);
+                redisCache.setCacheObject(cacheKey, JSON.toJSONString(status), 10, TimeUnit.MINUTES);
                 setStatus(raceInfoVo, isPreJoin, status);
             } catch (Exception e) {
                 throw new ServiceException("查询失败: " + e.getMessage());
@@ -271,8 +283,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 //        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setCreateTime(DateUtils.getNowDate());
-        raceInfo.setReviewStatus(0L);//待审核
-        raceInfo.setStatus(0L);//设置为筹备中
+        raceInfo.setReviewStatus(ReviewStatus.PREPARE.getCode());//待审核
+        raceInfo.setStatus(RaceStatus.PREPARE.getCode());//设置为筹备中
         int rows = raceInfoMapper.insertRaceInfo(raceInfo);
         if (rows > 0) {
             deleteRacesInfoCache();
@@ -984,12 +996,12 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             return null;
         }
 
-        String lockKey = QUERY_RACE_LOCK + getPageCacheKey(pageNum, pageSize);
-        RLock rLock = redissonClient.getLock(lockKey);
+//        String lockKey = QUERY_RACE_LOCK + getPageCacheKey(pageNum, pageSize);
+//        RLock rLock = redissonClient.getLock(lockKey);
         MyPageVo myPageVo = null;
 
         try {
-            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+//            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
 
             //再次检查缓存
             RacesJson = redisCache.getCacheObject(pageCacheKey);
@@ -1003,10 +1015,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 return null;
             }
 
-            if (!isLock) {
-                Thread.sleep(50);
-                return selectRaceInfoListFromRedis(raceInfo);
-            }
+//            if (!isLock) {
+//                Thread.sleep(50);
+//                return selectRaceInfoListFromRedis(raceInfo);
+//            }
 
             //拿到锁，查询数据库
             Page<RaceInfoVo> page = PageUtils.startPage(pageNum, pageSize);
@@ -1021,15 +1033,15 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             //存在，写入redis
             myPageVo = new MyPageVo(page, raceInfoVos);
             String json = objectMapper.writeValueAsString(myPageVo);
-            redisCache.setCacheObject(pageCacheKey, json, 1, TimeUnit.DAYS);
+            redisCache.setCacheObject(pageCacheKey, json, 10, TimeUnit.MINUTES);
             myPageVo = addFieldToJson(json);
         } catch (Exception e) {
             throw new ServiceException("查询失败: " + e.getMessage());
         } finally {
-            //释放锁
-            if (rLock.isHeldByCurrentThread()) {
-                rLock.unlock();
-            }
+//            //释放锁
+//            if (rLock.isHeldByCurrentThread()) {
+//                rLock.unlock();
+//            }
         }
         return myPageVo;
     }
@@ -1062,10 +1074,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             return null;
         }
 
-        String lockKey = QUERY_HOT_RACE_LOCK;
-        RLock rLock = redissonClient.getLock(lockKey);
+//        String lockKey = QUERY_HOT_RACE_LOCK;
+//        RLock rLock = redissonClient.getLock(lockKey);
         try {
-            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
+//            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
             //再次检查缓存
             hotRaceJson = redisCache.getCacheObject("hotRace");
             if (StringUtils.isNotEmpty(hotRaceJson)) {
@@ -1075,10 +1087,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             if (hotRaceJson != null) {
                 return null;
             }
-            if (!isLock) {
-                Thread.sleep(50);
-                return getHotRace();
-            }
+//            if (!isLock) {
+//                Thread.sleep(50);
+//                return getHotRace();
+//            }
             //拿到锁，查询数据库
             // 获取所有比赛信息
             RaceInfo r = new RaceInfo();
@@ -1122,9 +1134,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             throw new ServiceException("查询失败: " + e.getMessage());
         } finally {
             //释放锁
-            if (rLock.isHeldByCurrentThread()) {
-                rLock.unlock();
-            }
+//            if (rLock.isHeldByCurrentThread()) {
+//                rLock.unlock();
+//            }
         }
     }
 
