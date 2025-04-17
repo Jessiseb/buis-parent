@@ -2,6 +2,7 @@ package com.buis.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -59,6 +60,7 @@ public class PreSignStudent extends BaseEntity {
      */
     @Excel(name = "班级")
     @ApiModelProperty(value = "班级")
+    @JsonProperty("sClass")
     private String s_class;
 
     /**
