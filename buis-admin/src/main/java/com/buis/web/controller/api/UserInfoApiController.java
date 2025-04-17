@@ -246,14 +246,16 @@ public class UserInfoApiController extends BaseController {
 
 
             // 使用若依的工具类上传文件
-            String filePath = FileUploadUtils.upload(file);
+            //String filePath = FileUploadUtils.upload(file);
             // 使用阿里云的工具类上传文件
-            //String filePath = aliOssUtil.upload(file.getBytes(), file.getOriginalFilename());
+            String filePath = aliOssUtil.upload(file.getBytes(), file.getOriginalFilename());
 
             // 返回文件访问地址
             AwardRecords awardRecords = new AwardRecords();
             awardRecords.setAwardUrl(filePath);
-            awardRecords.setCompetitionName(name);
+            String[] split = name.split(",");
+            awardRecords.setCompetitionName(split[0]);
+            awardRecords.setUser(userInfoService.getLoginUser().getId());
             int i = awardRecordsService.insertAwardRecords(awardRecords);
             if (i>0){
                 return R.ok(awardRecords);
@@ -263,6 +265,15 @@ public class UserInfoApiController extends BaseController {
         } catch (Exception e) {
             throw new ServiceException("上传奖状失败");
         }
+    }
+
+    /**
+     * 查询用户上传的奖状
+     */
+    @ApiOperation("查询用户上传的奖状")
+    @GetMapping("/getAward")
+    public R<List<AwardRecords>> getAward() {
+        return R.ok(awardRecordsService.getAwardByUserId(userInfoService.getLoginUser().getId()));
     }
 
 

@@ -58,4 +58,6 @@ public interface AwardRecordsMapper
      * @return 结果
      */
     public int deleteAwardRecordsByIds(Long[] ids);
+
+    List<AwardRecords> getAwardByUserId(Long id);
 }
