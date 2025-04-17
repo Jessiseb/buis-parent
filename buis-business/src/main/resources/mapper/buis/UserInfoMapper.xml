@@ -178,6 +178,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="description != null and description != ''">description = #{description},</if>
             <if test="sex != null">sex = #{sex},</if>
             <if test="college != null">college = #{college},</if>
+            <if test="sClass != null">s_class = #{sClass},</if>
             <if test="major != null">major = #{major},</if>
             <if test="isTeacher != null ">is_teacher=#{isTeacher},</if>
             <if test="title != null">title = #{title},</if>
