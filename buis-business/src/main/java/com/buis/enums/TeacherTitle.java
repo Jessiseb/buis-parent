@@ -1,25 +1,38 @@
 package com.buis.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Getter
+@AllArgsConstructor
 public enum TeacherTitle {
-    ASSISTANT(0L,"助教"),
-    LECTURER(1L,"讲师"),
-    ASSOCIATE_PROFESSOR(2L,"副教授"),
-    PROFESSOR(3L,"教授"),
-    OUTSIDE_GUIDE(4L,"校外指导");
+    ASSISTANT(0L, "助教"),
+    LECTURER(1L, "讲师"),
+    ASSOCIATE_PROFESSOR(2L, "副教授"),
+    PROFESSOR(3L, "教授"),
+    OUTSIDE_GUIDE(4L, "校外指导");
 
     private final Long code;
-    private final String info;
+    private final String value;
 
-    TeacherTitle(Long code, String info) {
-        this.code = code;
-        this.info = info;
+    public final static Map<Long, TeacherTitle> STATUS_MAP = new HashMap<>();
+
+    static {
+        for (TeacherTitle value : TeacherTitle.values()) {
+            STATUS_MAP.put(value.getCode(), value);
+        }
     }
 
-    public Long getCode() {
-        return code;
+    // 根据code获取枚举
+    public static TeacherTitle getEnumByCode(Long code) {
+        return STATUS_MAP.get(code);
     }
 
-    public String getInfo() {
-        return info;
+    // 根据code获取枚举对应的value
+    public static String getValueByCode(Long code) {
+        return STATUS_MAP.get(code).getValue();
     }
 }

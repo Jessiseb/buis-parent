@@ -140,4 +140,14 @@ public class StatisticsApiController {
         return R.ok(teamMemberStudentService.getStudentJoinSecondCountByUserId(userId));
     }
 
+    /**
+     * 查询学生参与活动数
+     */
+    @ApiOperation("查询学生参与活动数")
+    @GetMapping("/getStudentJoinCount/activity")
+    public R<Integer> getStudentInstructCountFromActivity(@RequestParam(value = "userId") Long userId) {
+        return R.ok(teamMemberStudentService.getStudentActivityByUserId(userId));
+    }
+
+
 }

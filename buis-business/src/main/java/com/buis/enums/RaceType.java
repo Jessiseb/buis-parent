@@ -1,8 +1,16 @@
 package com.buis.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 比赛类型
  */
+@Getter
+@AllArgsConstructor
 public enum RaceType {
     COMPETITION(0L, "学科竞赛类比赛"),
     LANQIAO(1L, "蓝桥杯"),
@@ -10,18 +18,23 @@ public enum RaceType {
     CREATION(3L, "大创比赛");
 
     private final Long code;
-    private final String info;
+    private final String value;
 
-    RaceType(Long code, String info) {
-        this.code = code;
-        this.info = info;
+    public final static Map<Long, RaceType> STATUS_MAP = new HashMap<>();
+
+    static {
+        for (RaceType value : RaceType.values()) {
+            STATUS_MAP.put(value.getCode(), value);
+        }
     }
 
-    public Long getCode() {
-        return code;
+    // 根据code获取枚举
+    public static RaceType getEnumByCode(Long code) {
+        return STATUS_MAP.get(code);
     }
 
-    public String getInfo() {
-        return info;
+    // 根据code获取枚举对应的value
+    public static String getValueByCode(Long code) {
+        return STATUS_MAP.get(code).getValue();
     }
 }
