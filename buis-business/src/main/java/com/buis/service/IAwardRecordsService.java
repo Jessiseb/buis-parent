@@ -60,4 +60,6 @@ public interface IAwardRecordsService
     public int deleteAwardRecordsById(Long id);
 
     boolean audit(Long id,int status);
+
+    List<AwardRecords> getAwardByUserId(Long id);
 }
