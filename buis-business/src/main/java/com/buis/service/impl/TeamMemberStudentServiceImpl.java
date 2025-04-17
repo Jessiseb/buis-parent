@@ -223,7 +223,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
 
     @Override
     public int getRequestCount(Long userId, Long raceId, Long team) {
-        return teamMemberStudentMapper.getRequestCount(userId,raceId,team);
+        return teamMemberStudentMapper.getRequestCount(userId, raceId, team);
     }
 
     @Override
@@ -256,7 +256,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
             return 0;
         }
 //        过滤掉不是第二课堂(parent_tid == 5)的比赛
-        return (int)userRaceList.stream()
+        return (int) userRaceList.stream()
                 .filter(raceInfo -> raceInfo.getParentTid() != null && raceInfo.getParentTid() == 5)
                 .count();
     }
@@ -264,6 +264,24 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     @Override
     public Integer getStudentJoinInnovationCountByUserId(Long userId) {
         return teamMemberStudentMapper.getStudentJoinInnovationCountByUserId(userId);
+    }
+
+    @Override
+    public int getStudentActivityByUserId(Long userId) {
+        //获取到该用户所参与的所有比赛
+        List<RaceInfo> userRaceList = raceInfoService.getUserRaceList(userId);
+        if (userRaceList == null || userRaceList.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+
+        for (RaceInfo raceInfo : userRaceList) {
+            if (raceInfo != null) {
+                count++;
+            }
+        }
+        return count;
+
     }
 
     /**

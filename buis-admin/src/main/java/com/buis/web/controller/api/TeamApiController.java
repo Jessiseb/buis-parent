@@ -322,7 +322,7 @@ public class TeamApiController extends BaseController {
         if (userId != null) {
             List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
             List<Long> collect = teamMemberStudents.stream()
-                    .map(teamMemberStudent -> teamMemberStudent.getTeam())
+                    .map(TeamMemberStudent::getTeam)
                     .collect(Collectors.toList());
             //转成数组类型
             if (collect.size() != 0) {
@@ -347,6 +347,7 @@ public class TeamApiController extends BaseController {
     /**
      * 根据项目队伍id查询团队信息
      */
+
     @ApiOperation("根据项目团队id查询团队信息")
     @GetMapping("/{id}")
     public R<TeamInfoVo> getTeamInfoById(@ApiParam(name = "id", value = "项目队伍id", required = true)
