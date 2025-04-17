@@ -44,10 +44,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
+    <select id="getAwardByUserId" resultType="com.buis.domain.AwardRecords" parameterType="java.lang.Long">
+        select award_url,status,create_time from award_records
+        where user = #{id} and is_deleted = 0
+    </select>
+
     <insert id="insertAwardRecords" parameterType="com.buis.domain.AwardRecords">
         insert into award_records
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
+            <if test="user != null and user != ''">user,</if>
             <if test="awardUrl != null and awardUrl != ''">award_url,</if>
             <if test="members != null ">members,</if>
             <if test="project != null">project,</if>
@@ -63,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
+            <if test="user != null and user != ''">#{user},</if>
             <if test="awardUrl != null and awardUrl != ''">#{awardUrl},</if>
             <if test="members != null and members != ''">#{members},</if>
             <if test="project != null">#{project},</if>
