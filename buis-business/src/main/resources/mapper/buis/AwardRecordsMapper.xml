@@ -45,7 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getAwardByUserId" resultType="com.buis.domain.AwardRecords" parameterType="java.lang.Long">
-        select award_url,status,create_time from award_records
+        select id,award_url,status,create_time from award_records
         where user = #{id} and is_deleted = 0
     </select>
 
