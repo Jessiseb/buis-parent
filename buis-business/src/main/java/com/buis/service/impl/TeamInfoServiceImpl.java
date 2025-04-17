@@ -88,9 +88,13 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         UserInfo loginUser = userInfoService.getLoginUser();
         //获取用户vo
         UserInfoVo userInfoVo = userInfoService.selectUserInfoById(loginUser.getId());
-        //
-        if(teamInfo.getTeacher1().equals(teamInfo.getTeacher2())){
-            throw new ServiceException("同一指导老师不能重复选择");
+        //TODO 要有第三个指导老师
+        Long teacher1 = teamInfo.getTeacher1();
+        Long teacher2 = teamInfo.getTeacher2();
+        if(teacher1 != null && teacher2 != null){
+            if (teacher1.equals(teacher2)) {
+                throw new ServiceException("同一指导老师不能重复选择");
+            }
         }
         // 判断报名条件
         raceInfoService.checkJoinCondition(loginUser.getId(), teamInfo.getRace());

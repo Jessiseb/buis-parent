@@ -149,6 +149,7 @@ public class SecondApiController {
                                  @ApiParam(name = "secondId", value = "申报的活动id", required = true)
                                  @RequestParam Long secondId) {
         //发布的时候只有等审核状态为已通过才能发布, 而且只能发布是自己申报的活动
+        //发布过不能再次发布
         //判断申报的活动是否审核通过
         RaceInfoVo res = raceInfoService.selectRaceInfoVoById(secondId);
         if (res == null) {

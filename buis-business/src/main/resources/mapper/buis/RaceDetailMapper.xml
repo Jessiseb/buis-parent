@@ -163,7 +163,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where race_d = #{race_d} and is_deleted = 0
     </select>
     <select id="selectRaceDetailByRaceId" resultType="com.buis.domain.RaceDetail">
-        -- 查询比赛信息
         select id,
                parent_id,
                race,
