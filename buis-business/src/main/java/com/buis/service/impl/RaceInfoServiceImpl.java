@@ -1195,7 +1195,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
 
     //删除比赛信息分页缓存
-    private void deleteRacesInfoCache() {
+    public void deleteRacesInfoCache() {
         //删除所有比赛信息分页缓存
         String pattern = "races:page:*:size:*";
         Set<String> keys = redisTemplate.keys(pattern);
