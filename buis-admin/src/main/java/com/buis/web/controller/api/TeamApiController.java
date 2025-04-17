@@ -111,6 +111,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("添加成员(邀请)")
     @PostMapping("/addTeamMember")
+    @Transactional
     public R<Long> addTeamMember(
             @ApiParam(name = "userInfoVoList", value = "用户信息列表")
             @RequestBody List<UserInfoVo> userInfoVoList,
@@ -132,8 +133,9 @@ public class TeamApiController extends BaseController {
 
         // 检查邀请的成员是否已经预报名比赛
         for (UserInfoVo userInfoVo : userInfoVoList) {
+
             PreSignStudent preSignStudent = preSignStudentService.selectByUserIdAndRace(userInfoVo.getId(), teamInfo.getRace());
-            if (preSignStudent == null || preSignStudent.getIsDeleted() != 0) {
+            if (preSignStudent == null || preSignStudent.getIsDeleted() == 1) {
                 throw new ServiceException("学号为:" + userInfoVo.getNumber() + "的用户尚未预报名该比赛");
             }
         }
