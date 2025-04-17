@@ -140,5 +140,14 @@ public class StatisticsApiController {
         return R.ok(teamMemberStudentService.getStudentJoinSecondCountByUserId(userId));
     }
 
+    /**
+     * 查询学生参与大创立项活动数
+     */
+    @ApiOperation("查询学生参与大创立项活动数")
+    @GetMapping("/getStudentJoinCount/innovation")
+    public R<Integer> getStudentInstructCountFromInnovation(@RequestParam(value = "userId") Long userId) {
+        return R.ok(teamMemberStudentService.getStudentJoinInnovationCountByUserId(userId));
+    }
+
 
 }
