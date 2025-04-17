@@ -1,11 +1,16 @@
 package com.buis.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 比赛状态字典
  */
 @Getter
+@AllArgsConstructor
 public enum RaceStatus {
     PREPARE(0L, "筹备中"),
     JOIN(1L, "报名中"),
@@ -15,11 +20,24 @@ public enum RaceStatus {
 
 
     private final Long code;
-    private final String info;
+    private final String value;
 
-    RaceStatus(Long code, String info) {
-        this.code = code;
-        this.info = info;
+    public final static Map<Long, RaceStatus> STATUS_MAP = new HashMap<>();
+
+    static {
+        for (RaceStatus value : RaceStatus.values()) {
+            STATUS_MAP.put(value.getCode(), value);
+        }
+    }
+
+    // 根据code获取枚举
+    public static RaceStatus getEnumByCode(Long code) {
+        return STATUS_MAP.get(code);
+    }
+
+    // 根据code获取枚举对应的value
+    public static String getValueByCode(Long code) {
+        return STATUS_MAP.get(code).getValue();
     }
 
 }
