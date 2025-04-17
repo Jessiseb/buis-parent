@@ -262,6 +262,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
     }
 
     @Override
+    public Integer getStudentJoinInnovationCountByUserId(Long userId) {
+        return teamMemberStudentMapper.getStudentJoinInnovationCountByUserId(userId);
+    }
+
+    @Override
     public int getStudentActivityByUserId(Long userId) {
         //获取到该用户所参与的所有比赛
         List<RaceInfo> userRaceList = raceInfoService.getUserRaceList(userId);

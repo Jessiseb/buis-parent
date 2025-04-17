@@ -131,4 +131,6 @@ public interface ITeamMemberStudentService {
 
     int getStudentActivityByUserId(Long userId);
 
+    //查询学生参与的大创活动数量
+    Integer getStudentJoinInnovationCountByUserId(Long userId);
 }
