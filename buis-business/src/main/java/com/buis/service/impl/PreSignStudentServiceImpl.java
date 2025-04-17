@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.PreSignStudent;
 import com.buis.enums.ReviewStatus;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 学生预报名Service业务层处理
@@ -149,28 +151,34 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     public int studentSign(Long id, Long userId,PreSignStudent preSignStudent) {
         //参数校验
         if (id == null || userId == null) {
-            throw new RuntimeException("参数错误");
+            throw new ServiceException("参数错误");
         }
         if (preSignStudent == null) {
-            throw new RuntimeException("报名信息不能为空!");
+            throw new ServiceException("报名信息不能为空!");
         }
 
+        preSignStudent.setStudent(userId);
         //判断活动是否存在
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(id);
         if (raceInfoVo == null) {
-            throw new RuntimeException("活动不存在");
+            throw new ServiceException("活动不存在");
+        }
+
+        //判断是否重复报名
+        if (this.selectByUserIdAndRace(userId, id) != null) {
+            throw new ServiceException("您已经报名过该活动");
         }
 
         //判断活动是否已经发布
-        if (raceInfoVo.getReviewStatus() != ReviewStatus.PUBLISH.getCode()) {
-            throw new RuntimeException("活动未发布");
+        if (!Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.PUBLISH.getCode())) {
+            throw new ServiceException("活动未发布");
         }
 
         int ok = this.insertPreSignStudent(preSignStudent);
         if (ok > 0) {
             return ok;
         } else {
-            throw new RuntimeException("报名失败");
+            throw new ServiceException("报名失败");
         }
     }
 
