@@ -114,4 +114,9 @@ public class AwardRecordsServiceImpl implements IAwardRecordsService
         }
         return false;
     }
+
+    @Override
+    public List<AwardRecords> getAwardByUserId(Long id) {
+        return awardRecordsMapper.getAwardByUserId(id);
+    }
 }
