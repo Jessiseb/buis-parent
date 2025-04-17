@@ -99,7 +99,7 @@ public class UserInfo extends BaseEntity {
     @ApiModelProperty("班级")
     @Excel(name = "班级")
     @JsonProperty("sClass")
-    private int sClass;
+    private String sClass;
 
     /**
      * 专业

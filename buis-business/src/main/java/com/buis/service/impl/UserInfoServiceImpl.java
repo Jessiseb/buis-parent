@@ -117,10 +117,10 @@ public class UserInfoServiceImpl implements IUserInfoService {
             //把年级,班级插入
             //根据grade查询到字典对应的值
             int grade = userInfo.getGrade();
-            int sClass = userInfo.getSClass();
+            String sClass = userInfo.getSClass();
             String stu_grade = sysDictDataService.selectDictLabel("stu_grade", String.valueOf(grade));
             vo.setStuGrade(stu_grade);
-            String stu_class = sysDictDataService.selectDictLabel("stu_class", String.valueOf(sClass));
+            String stu_class = sysDictDataService.selectDictLabel("stu_class", sClass);
             vo.setStuClass(stu_class);
             if (vo.getIsTeacher() != null && vo.getIsTeacher() == 1) { // 判断是否为老师
                 //是老师
