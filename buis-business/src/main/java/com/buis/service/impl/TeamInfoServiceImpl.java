@@ -118,11 +118,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfo.setPhone(loginUser.getPhone()); //phone
 
         //班级
-        String stuGrade = userInfoVo.getStuGrade();
-        String majorName = userInfoVo.getMajorName();
-        String stuClass = userInfoVo.getStuClass();
+//        String stuGrade = userInfoVo.getStuGrade();
+//        String majorName = userInfoVo.getMajorName();
+//        String stuClass = userInfoVo.getStuClass();
         //拼接返回
-        teamInfo.setSClass(stuGrade  + majorName + stuClass);
+        teamInfo.setSClass(userInfoVo.getSClass());
         int ok = teamInfoMapper.insertTeamInfo(teamInfo);
         //更新队伍信息缓存
         if (ok > 0) {
