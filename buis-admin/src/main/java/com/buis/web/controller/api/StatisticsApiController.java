@@ -140,5 +140,4 @@ public class StatisticsApiController {
         return R.ok(teamMemberStudentService.getStudentJoinSecondCountByUserId(userId));
     }
 
-
 }
