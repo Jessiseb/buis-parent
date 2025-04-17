@@ -261,6 +261,11 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
                 .count();
     }
 
+    @Override
+    public Integer getStudentJoinInnovationCountByUserId(Long userId) {
+        return teamMemberStudentMapper.getStudentJoinInnovationCountByUserId(userId);
+    }
+
     /**
      * 抽出判断是否为负责人的方法
      */

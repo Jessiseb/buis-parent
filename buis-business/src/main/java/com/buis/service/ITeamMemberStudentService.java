@@ -129,4 +129,6 @@ public interface ITeamMemberStudentService {
     //查询学生参与的第二课堂活动数量
     int getStudentJoinSecondCountByUserId(Long userId);
 
+    //查询学生参与的大创活动数量
+    Integer getStudentJoinInnovationCountByUserId(Long userId);
 }
