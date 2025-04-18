@@ -66,28 +66,46 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         return raceDetailVos;
     }
 
-
     /**
      * 新增比赛详情
-     *
      * @param raceDetail 比赛详情
+     * @return
+     */
+    @Override
+    public int insertRaceDetail(RaceDetail raceDetail) {
+        return raceDetailMapper.insertRaceDetail(raceDetail);
+    }
+
+
+    /**
+     * 新增第二课堂活动详情
+     *
+     * @param raceDetail 活动详情
      * @return 结果
      */
     @Transactional
     @Override
-    public int insertRaceDetail(RaceDetail raceDetail) {
+    public int insertSecondRaceDetail(RaceDetail raceDetail) {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoVoById(raceDetail.getRace());
 
         if (Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.REFUSE.getCode())){
-            throw new ServiceException("比赛审核未通过");
+            throw new ServiceException("活动审核未通过，不能发布活动！");
         }
-        if (raceInfoVo.getParentTid() == 5 && !Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.PASS.getCode())) {
-            throw new ServiceException("比赛审核中，请耐心等待");
+
+        if (Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.PREPARE.getCode())) {
+            throw new ServiceException("活动审核中，请耐心等待~");
         }
+
+        if (Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.PUBLISH.getCode())) {
+            throw new ServiceException("活动已发布中，请勿重新发布~");
+        }
+
         raceDetail.setCreateTime(DateUtils.getNowDate());
          return raceDetailMapper.insertRaceDetail(raceDetail);
 
     }
+
+
 
     /**
      * 修改比赛详情
@@ -151,6 +169,7 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
 
     @Override
     public List<RaceDetailVo> selectRaceDetailVoList(RaceDetailVo raceDetailVo) {
+
         return raceDetailMapper.selectRaceDetailVoList(raceDetailVo);
     }
 
