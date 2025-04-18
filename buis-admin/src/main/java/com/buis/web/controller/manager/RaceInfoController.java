@@ -3,7 +3,6 @@ package com.buis.web.controller.manager;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
-import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
@@ -17,12 +16,14 @@ import com.buis.service.IUserInfoService;
 import com.buis.vo.RaceInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 比赛信息Controller
@@ -44,22 +45,26 @@ RaceInfoController extends BaseController {
 
 
     /**
-     * 审核第二课堂活动
+     * 审核教师申报的第二课堂活动
      *
      * @param id
      * @return
      */
-    @ApiOperation("审核第二课堂活动")
-    @PutMapping("/updateApproval/{id}")
-//    @PreAuthorize("@ss.hasPermi('buis:raceInfo:updateApproval')")
-    public AjaxResult updateApproval(@PathVariable("id") Long id) {
-        return success(raceInfoService.updateApproval(id));
-    }
+//    @ApiOperation("审核第二课堂活动")
+//    @PutMapping("/updateApproval/{id}")
+////    @PreAuthorize("@ss.hasPermi('buis:raceInfo:updateApproval')")
+//    public AjaxResult updateApproval(@ApiParam(name = "id",value = "第二课堂活动id",required = true)
+//                                     @PathVariable("id") Long id) {
+//        if (id == null){
+//            return error("id不能为空");
+//        }
+//        return success(raceInfoService.updateApproval(id));
+//    }
 
     /**
      * 查询比赛信息列表
      */
-    @ApiOperation("查询比赛信息列表")
+    @ApiOperation("查询活动信息列表")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:list')")
     @GetMapping("/list")
     public TableDataInfo list(RaceInfo raceInfo) {
@@ -69,7 +74,7 @@ RaceInfoController extends BaseController {
     }
 
     /**
-     * 导出比赛信息列表
+     * 导出活动信息列表
      */
     @ApiOperation("导出比赛信息列表")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:export')")
@@ -110,7 +115,7 @@ RaceInfoController extends BaseController {
     @Log(title = "比赛信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody RaceInfo raceInfo) {
-        return toAjax(raceInfoService.updateRaceInfo(raceInfo));
+        return toAjax(raceInfoService.updateBackRaceInfo(raceInfo));
     }
 
     /**

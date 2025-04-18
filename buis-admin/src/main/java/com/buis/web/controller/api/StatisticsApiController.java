@@ -9,6 +9,8 @@ import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
+import com.buis.system.service.ISysDictDataService;
+import com.buis.system.service.ISysDictTypeService;
 import com.buis.vo.HotRaceVo;
 import com.buis.vo.SecondClassCountVo;
 import com.buis.vo.TeamInfoVo;
@@ -35,7 +37,9 @@ public class StatisticsApiController {
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
     @Autowired
-    private IUserInfoService userInfoService;
+    private ISysDictTypeService sysDictTypeService;
+    @Autowired
+    private ISysDictDataService sysDictDataService;
 
 
     /**
@@ -141,9 +145,9 @@ public class StatisticsApiController {
     }
 
     /**
-     * 查询学生参与活动数
+     * 查询学生参与活动总数
      */
-    @ApiOperation("查询学生参与活动数")
+    @ApiOperation("查询学生参与活动总数")
     @GetMapping("/getStudentJoinCount/activity")
     public R<Integer> getStudentInstructCountFromActivity(@RequestParam(value = "userId") Long userId) {
         return R.ok(teamMemberStudentService.getStudentActivityByUserId(userId));
@@ -156,6 +160,26 @@ public class StatisticsApiController {
     @GetMapping("/getStudentJoinCount/innovation")
     public R<Integer> getStudentInstructCountFromInnovation(@RequestParam(value = "userId") Long userId) {
         return R.ok(teamMemberStudentService.getStudentJoinInnovationCountByUserId(userId));
+    }
+
+    /**
+     * 统计第二课堂热门活动类型TOP5
+     */
+    @ApiOperation("统计第二课堂热门活动类型TOP5")
+    @GetMapping("/getSecondHotRaceType")
+    public R<List<String>> getSecondHotRaceType() {
+        //查出热门TOP10活动
+        List<HotRaceVo> hotRace = raceInfoService.getHotRace();
+        List<String> result = new ArrayList<>();
+        //获取热门活动的类型
+        for (HotRaceVo hotRaceVo : hotRace) {
+            String secondType = hotRaceVo.getRaceDetail().getSecondType();
+            //根据value和type从字典获取到对应的活动类型
+            String type = sysDictDataService.selectDictLabel("second_type", secondType);
+            result.add(type);
+        }
+        //返回
+        return R.ok(result);
     }
 
 

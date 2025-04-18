@@ -1,5 +1,6 @@
 package com.buis.vo;
 
+import com.buis.domain.RaceDetail;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,4 +13,10 @@ public class HotRaceVo {
 
     @ApiModelProperty(value = "报名人数")
     private Integer registrationCount;
+
+    /**
+     * 比赛实体
+     */
+    @ApiModelProperty(value = "比赛详情")
+    private RaceDetail raceDetail;
 }
