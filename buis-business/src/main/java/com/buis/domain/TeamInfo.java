@@ -99,7 +99,7 @@ public class TeamInfo extends BaseEntity {
      * 负责人所在学院
      */
     @ApiModelProperty("负责人所在学院")
-    private int college;
+    private String college;
 
     /**
      * 第一指导老师
