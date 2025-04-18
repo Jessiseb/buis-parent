@@ -91,7 +91,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //TODO 要有第三个指导老师
         Long teacher1 = teamInfo.getTeacher1();
         Long teacher2 = teamInfo.getTeacher2();
-        if(teacher1 != null && teacher2 != null){
+        if (teacher1 != null && teacher2 != null) {
             if (teacher1.equals(teacher2)) {
                 throw new ServiceException("同一指导老师不能重复选择");
             }
@@ -105,7 +105,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         TeamMemberStudent teamMember = new TeamMemberStudent();
         teamMember.setDecider(loginUser.getId());
         List<TeamMemberStudentVo> teamMemberStudentVos = teamStudentService.selectTeamMemberStudentList(teamMember);
-        if (teamMemberStudentVos.size()>limit){
+        if (teamMemberStudentVos.size() > limit) {
             throw new ServiceException("当前比赛您已经加入过" + limit + "个队伍,无法再加入!");
         }
 
@@ -127,6 +127,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //更新队伍信息缓存
         if (ok > 0) {
             updateTeamInfoCache(teamInfo);
+            raceInfoService.deleteRacesInfoCache();
         }
         //创建项目成功后,把信息插入队伍用户表
         int sucess = 0;
@@ -137,7 +138,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             teamMemberStudent.setStudent(teamInfo.getLeader()); //队长
             teamMemberStudent.setDecider(teamInfo.getLeader()); //决定者 = 创建该队伍的人
             teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
-            if(teamInfo.getTeacher1()!=null){
+            if (teamInfo.getTeacher1() != null) {
                 TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
                 teamMemberTeacher.setRace(teamInfo.getRace());
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
@@ -146,7 +147,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
-            if (teamInfo.getTeacher2()!=null){
+            if (teamInfo.getTeacher2() != null) {
                 TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
                 teamMemberTeacher.setRace(teamInfo.getRace());
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
@@ -233,6 +234,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
             //删除队伍信息缓存
             deleteTeamInfoCache(id);
+            raceInfoService.deleteRacesInfoCache();
             return i;
         }
 
@@ -325,7 +327,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
             //分布式锁---->只有抢到锁的人才能加入队伍
             //尝试获得锁
-            String key = JOIN_TEAM_LOCK+ teamId;
+            String key = JOIN_TEAM_LOCK + teamId;
             RLock rLock = redissonClient.getLock(key);
             //设置锁过期时间
             try {
@@ -410,7 +412,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         if (teamStudentService.getJoinCountByTeamId(team) == 1) {
             //删除队伍
             //并且吧队伍用户中间表设置为已删除
-            teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team,userId);
+            teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
+            //删除队伍信息缓存
+            deleteTeamInfoCache(userId);
+            raceInfoService.deleteRacesInfoCache();
             return teamInfoMapper.deleteTeamInfoById(team);
         } else {
             //队伍不止一个人
@@ -436,12 +441,18 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 int ok = teamInfoMapper.updateTeamInfo(teamInfo);
                 if (ok > 0) {
                     //删除该成员
+                    //删除队伍信息缓存
+                    deleteTeamInfoCache(userId);
+                    raceInfoService.deleteRacesInfoCache();
                     return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
                 } else {
                     throw new ServiceException("退出队伍失败");
                 }
             } else {
                 //不是负责人退出队伍
+                //删除队伍信息缓存
+                deleteTeamInfoCache(userId);
+                raceInfoService.deleteRacesInfoCache();
                 return teamStudentService.quitTeam(team, userId);
             }
         }
@@ -450,7 +461,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
     @Override
     @Transactional
-    public int agreeJoinTeam(Long userId,Long teamId) {
+    public int agreeJoinTeam(Long userId, Long teamId) {
 
         TeamMemberStudent teamMemberStudent = teamStudentService.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
 
@@ -549,15 +560,18 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
         return myPageVo;
     }
+
     /**
      * 封装成MyPageVo对象
+     *
      * @param TeamsJson
      * @return
      */
     private MyPageVo getMyPageVo(String TeamsJson) {
         Map jsonMap = JSON.parseObject(TeamsJson, Map.class);
         String rowsJson = JSON.toJSONString(jsonMap.get("rows"));
-        List<TeamInfoVo> teamInfoVoList = JSON.parseObject(rowsJson, new TypeReference<List<TeamInfoVo>>() {});
+        List<TeamInfoVo> teamInfoVoList = JSON.parseObject(rowsJson, new TypeReference<List<TeamInfoVo>>() {
+        });
         MyPageVo myPageVo = JSONUtil.toBean(TeamsJson, MyPageVo.class);
         myPageVo.setRows(teamInfoVoList);
         return myPageVo;
@@ -565,6 +579,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
     /**
      * 获取分页缓存key
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -611,6 +626,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
     /**
      * 负责人转让
+     *
      * @param team 团队id
      * @param user 用户id
      * @return
@@ -620,7 +636,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     public int transfer(Long team, Long user) {
         //只有队长或指导老师有权限
         boolean ok = isTeamLeaderOrTeacher(team);
-        if (!ok){
+        if (!ok) {
             throw new ServiceException("您没有操作权限!");
         }
 
@@ -653,7 +669,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             teamMemberStudent.setDecider(user);
             result = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
         }
-        if(result <= 0){
+        if (result <= 0) {
             throw new ServiceException("更新失败");
         }
         return result;
@@ -672,8 +688,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         updateTeamInfoCache(teamInfoVo);
         return i;
     }
+
     /**
      * 根据队伍负责人姓名查出比赛队伍信息
+     *
      * @param name
      * @return
      */
@@ -713,7 +731,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         for (TeamInfo team : teamInfoList) {
             TeamInfoVo teamInfoVo = createTeamInfoVo(team);
             //带指导老师查询
-            if (teamInfo.getTeacher1() != null ||teamInfo.getTeacher2() != null ) {
+            if (teamInfo.getTeacher1() != null || teamInfo.getTeacher2() != null) {
                 //返回该老师指导的队伍id
                 List<Long> teamIds1 = teamTeacherService.selectStudentIdsByTeacherId(teamInfo.getTeacher1());
                 List<Long> teamIds2 = teamTeacherService.selectStudentIdsByTeacherId(teamInfo.getTeacher2());
