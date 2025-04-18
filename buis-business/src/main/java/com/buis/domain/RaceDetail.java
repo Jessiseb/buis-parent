@@ -37,7 +37,7 @@ public class RaceDetail extends BaseEntity {
      * 比赛的一级类型id
      */
     @ApiModelProperty("比赛的一级类型id")
-    private int typeId;
+    private int parentId;
 
     /**
      * 比赛(关联比赛表id)

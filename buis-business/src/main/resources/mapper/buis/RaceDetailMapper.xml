@@ -6,8 +6,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="com.buis.vo.RaceDetailVo" id="RaceDetailResult">
         <result property="id"    column="id"    />
-        <result property="typeId"    column="type_id"    />
         <result property="race"    column="race"    />
+        <result property="parentId"    column="parent_id"    />
         <result property="name"    column="name"    />
         <result property="seniority"    column="seniority"    />
         <result property="phone"    column="phone"    />
@@ -48,8 +48,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="assistant"    column="assistant"    />
         <result property="status"    column="status"    />
         <result property="raceName"    column="race_name"    />
-        <result property="raceModule"    column="race_module"    />
-        <result property="raceType"    column="race_type"    />
     </resultMap>
 
     <resultMap id="RaceDetailWeightResult" type="com.buis.vo.RaceDetailVo" extends="RaceDetailResult">
@@ -69,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectRaceDetailVo">
         select t2.name as race_name,
                t1.id,
-               t1.type_id,
+               t1.parent_id,
                t1.race,
                t1.name,
                t1.review_status,
@@ -101,7 +99,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             t1.is_deleted = 0
             <if test="raceDetail.id != null and raceDetail.id != '' ">and t1.id = #{raceDetail.id}</if>
-            <if test="raceDetail.typeId != null and raceDetail.typeId != ''">and t1.type_id = #{raceDetail.typeId}</if>
+            <if test="raceDetail.parentId != null and raceDetail.parentId != '' ">and t1.parent_id =
+                #{raceDetail.parentId}
+            </if>
             <if test="raceDetail.race != null and raceDetail.race != ''">and t1.race = #{raceDetail.race}</if>
             <if test="raceDetail.name != null  and raceDetail.name != ''">and t1.name like concat('%',
                 #{raceDetail.name}, '%')
@@ -132,7 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectRaceDetailById" parameterType="Long" resultMap="RaceDetailWeightResult">
         select id,
-               type_id,
+               parent_id,
                race,
                count,
                name,
@@ -164,7 +164,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectRaceDetailByRaceId" resultType="com.buis.domain.RaceDetail">
         select id,
-               type_id,
+               parent_id,
                race,
                count,
                name,
@@ -189,7 +189,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and is_deleted = 0
     </select>
     <select id="batchSelectRaceDetailByRaceIds" resultType="com.buis.domain.RaceDetail">
-        select id, type_id,race, name,money,review_status, phone, email,
+        select id,parent_id, race, name,money,review_status, phone, email,
         desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted,
         create_time, update_time
         from race_detail
@@ -205,7 +205,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             t1.is_deleted = 0
             <if test="raceDetailVo.id != null and raceDetailVo.id != '' ">and t1.id = #{raceDetailVo.id}</if>
-            <if test="raceDetailVo.typeId != null and raceDetailVo.typeId != ''">and t1.type_id = #{raceDetailVo.typeId}</if>
+            <!-- 新增递归查询子分类的条件 -->
+            <if test="raceDetailVo.parentId != null and raceDetailVo.parentId != ''">
+                AND t1.parent_id IN (
+                WITH RECURSIVE category_tree AS (
+                SELECT id FROM race_type WHERE id = #{raceDetailVo.parentId}
+                UNION ALL
+                SELECT rt.id FROM race_type rt INNER JOIN category_tree ct ON rt.parent_id = ct.id
+                )
+                SELECT id FROM category_tree
+                )
+            </if>
             <if test="raceDetailVo.race != null and raceDetailVo.race != ''">and t1.race = #{raceDetailVo.race}</if>
             <if test="raceDetailVo.name != null  and raceDetailVo.name != ''">and t1.name like concat('%',
                 #{raceDetailVo.name}, '%')
@@ -251,7 +261,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into race_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
-            <if test="typeId != null">type_id,</if>
+            <if test="parentId != null">parent_id,</if>
             <if test="race != null">race,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="reviewStatus != null">review_status,</if>
@@ -288,7 +298,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
-            <if test="typeId != null">#{typeId},</if>
+            <if test="parentId != null">#{parentId},</if>
             <if test="race != null">#{race},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="reviewStatus != null">#{reviewStatus},</if>
