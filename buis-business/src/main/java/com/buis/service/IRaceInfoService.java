@@ -147,4 +147,6 @@ public interface IRaceInfoService
     String getTeacherInstructCountFromSecond(Long userId);
 
     RaceInfo selectRaceInfoByName(String name);
+
+    void deleteRacesInfoCache();
 }
