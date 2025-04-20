@@ -26,6 +26,7 @@ import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -485,6 +486,23 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             throw new ServiceException("同意失败");
         }
 
+        return ok;
+    }
+
+    @Override
+    public int refuseJoinTeam(Long userId, Long teamId) {
+        TeamMemberStudent teamMemberStudent = teamStudentService.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
+
+        // 获取申请记录
+        if (teamMemberStudent.getIsChoosed() != ChooseStatus.TOBESELECTED.getCode()) { // 0表示待审核
+            throw new ServiceException("申请不存在或已处理");
+        }
+
+        teamMemberStudent.setIsChoosed(ChooseStatus.REFUSE.getCode()); // 2表示已拒绝
+        int ok = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
+        if (ok == 0) {
+            throw new ServiceException("同意失败");
+        }
         return ok;
     }
 

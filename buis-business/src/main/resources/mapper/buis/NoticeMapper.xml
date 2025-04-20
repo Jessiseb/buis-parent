@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.NoticeMapper">
+
+    <resultMap type="Notice" id="NoticeResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="type"    column="type"    />
+        <result property="isUnread"    column="is_unread"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="userId"    column="userId"    />
+        <result property="teamId"    column="teamId"    />
+    </resultMap>
+
+    <sql id="selectNoticeVo">
+        select id, title, content, type, is_unread, create_time, update_time, is_deleted, userId, teamId from notice
+    </sql>
+
+    <select id="selectNoticeList" parameterType="Notice" resultMap="NoticeResult">
+        <include refid="selectNoticeVo"/>
+        <where>
+            is_deleted = 0
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="isUnread != null "> and is_unread = #{isUnread}</if>
+            <if test="userId != null "> and userId = #{userId}</if>
+            <if test="teamId != null "> and teamId = #{teamId}</if>
+        </where>
+    </select>
+
+    <select id="selectNoticeById" parameterType="Long" resultMap="NoticeResult">
+        <include refid="selectNoticeVo"/>
+        where id = #{id}  and is_deleted = 0
+    </select>
+
+    <insert id="insertNotice" parameterType="Notice" useGeneratedKeys="true" keyProperty="id">
+        insert into notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">title,</if>
+            <if test="content != null">content,</if>
+            <if test="type != null">type,</if>
+            <if test="isUnread != null">is_unread,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="userId != null">userId,</if>
+            <if test="teamId != null">teamId,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">#{title},</if>
+            <if test="content != null">#{content},</if>
+            <if test="type != null">#{type},</if>
+            <if test="isUnread != null">#{isUnread},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="teamId != null">#{teamId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateNotice" parameterType="Notice">
+        update notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="isUnread != null">is_unread = #{isUnread},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="userId != null">userId = #{userId},</if>
+            <if test="teamId != null">teamId = #{teamId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNoticeById" parameterType="Long">
+        update notice
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteNoticeByIds" parameterType="String">
+        update notice
+        set is_deleted = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -17,6 +17,7 @@ import com.buis.common.utils.file.FileUtils;
 import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
 import com.buis.enums.ChooseStatus;
+import com.buis.enums.NoticeType;
 import com.buis.enums.RecruitStatus;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
@@ -65,6 +66,8 @@ public class TeamApiController extends BaseController {
     private IEmailService emailService;
     @Autowired
     private IPreSignStudentService preSignStudentService;
+    @Autowired
+    private INoticeService noticeService;
 
     private static final String FILE_DELIMETER = ",";
 
@@ -132,13 +135,13 @@ public class TeamApiController extends BaseController {
         }
 
         // 检查邀请的成员是否已经预报名比赛
-        for (UserInfoVo userInfoVo : userInfoVoList) {
-
-            PreSignStudent preSignStudent = preSignStudentService.selectByUserIdAndRace(userInfoVo.getId(), teamInfo.getRace());
-            if (preSignStudent == null || preSignStudent.getIsDeleted() == 1) {
-                throw new ServiceException("学号为:" + userInfoVo.getNumber() + "的用户尚未预报名该比赛");
-            }
-        }
+//        for (UserInfoVo userInfoVo : userInfoVoList) {
+//
+//            PreSignStudent preSignStudent = preSignStudentService.selectByUserIdAndRace(userInfoVo.getId(), teamInfo.getRace());
+//            if (preSignStudent == null || preSignStudent.getIsDeleted() == 1) {
+//                throw new ServiceException("学号为:" + userInfoVo.getNumber() + "的用户尚未预报名该比赛");
+//            }
+//        }
 
         //只有指导老师和负责人才有权限
         if (!isTeamLeaderOrTeacher(team)) {
@@ -157,9 +160,17 @@ public class TeamApiController extends BaseController {
         }
         //插入
         int ok = teamMemberStudentService.insertTeamMemberStudentByList(teamMemberStudentList);
-        //邀请之后发送邮箱通知
+        //邀请之后发送邮箱通知 + 个人中心通知
         for (TeamMemberStudent teamMemberStudent : teamMemberStudentList) {
             emailService.inviteMember(teamMemberStudent.getTeam(), teamMemberStudent.getStudent());
+
+            Notice notice = new Notice();
+            notice.setUserId(teamMemberStudent.getStudent());
+            notice.setTeamId(teamMemberStudent.getTeam());
+            notice.setType(NoticeType.Team.getCode());
+            notice.setTitle("组队邀请");
+            notice.setContent(teamInfo.getLeaderName() + "邀请你加入" + "'" + teamInfo.getName() + "'" + "项目团队");
+            noticeService.insertNotice(notice);
         }
         if (ok == 0) {
             throw new ServiceException("添加成员失败");
@@ -258,7 +269,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("带条件分页查询学生与队伍互选邀请")
     @PostMapping("/getTeamMemberStudent")
-    public MyPageVo<List<TeamMemberStudentVo>> getTeamMemberStudent(@RequestParam(required = false)TeamMemberStudent teamMemberStudent) {
+    public MyPageVo<List<TeamMemberStudentVo>> getTeamMemberStudent(@RequestBody(required = false)TeamMemberStudent teamMemberStudent) {
         startPage();
         List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return new MyPageVo<>(list);
@@ -271,7 +282,7 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("带条件分页查询老师与队伍互选邀请")
     @PostMapping("/getTeamMemberTeacher")
-    public MyPageVo<List<TeamMemberTeacherVo>> getTeamMemberTeacher(@RequestParam(required = false)TeamMemberTeacher teamMemberTeacher) {
+    public MyPageVo<List<TeamMemberTeacherVo>> getTeamMemberTeacher(@RequestBody(required = false)TeamMemberTeacher teamMemberTeacher) {
         startPage();
         List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
         return new MyPageVo<>(list);
@@ -575,6 +586,19 @@ public class TeamApiController extends BaseController {
     }
 
     /**
+     * 拒绝用户加入队伍
+     */
+    @ApiOperation("拒绝用户加入队伍")
+    @PostMapping("/refuseJoinTeam")
+    public R<String> refuseJoinTeam(@RequestParam("userId") Long userId,@RequestParam("teamId") Long teamId) {
+        int result = teamInfoService.refuseJoinTeam(userId,teamId);
+        if (result != 1) {
+            return R.fail("操作失败");
+        }
+        return R.ok("操作成功");
+    }
+
+    /**
      * 查询自己发布招募的队伍
      */
     @ApiOperation("查询自己发布招募的队伍")
@@ -588,9 +612,6 @@ public class TeamApiController extends BaseController {
         List<TeamInfoVo> list = teamInfoService.selectMyPublishedTeams(userId);
         return new MyPageVo<>(list);
     }
-
-
-
 }
 
 
