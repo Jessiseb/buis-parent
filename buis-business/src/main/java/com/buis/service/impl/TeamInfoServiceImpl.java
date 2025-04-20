@@ -716,6 +716,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return teamInfoMapper.selectMyPublishedTeams(userId);
     }
 
+    @Override
+    public List<TeamInfo> selectAllTeamInfoById(Long userId) {
+        return teamInfoMapper.selectAllTeamInfoById(userId);
+    }
+
     /**
      * 后台查询队伍信息列表 Vo
      *
