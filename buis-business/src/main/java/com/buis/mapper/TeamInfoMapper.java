@@ -107,4 +107,6 @@ public interface TeamInfoMapper
     String getTeacherInstructCountFromInnovation(Long userId);
 
     List<TeamInfoVo> selectMyPublishedTeams(@Param("userId") Long userId);
+
+    List<TeamInfo> selectAllTeamInfoById(@Param("userId") Long userId);
 }
