@@ -97,7 +97,7 @@ public interface TeamMemberStudentMapper {
 
     List<TeamMemberStudentVo> selectTeamMemberStudentListVo(TeamMemberStudentVo teamMemberStudentVo);
 
-    int quitTeam(Long team, Long userId);
+    int quitTeam(@Param("team")Long team, @Param("userId")Long userId);
 
     int deleteTeamMemberStudentByTeam(@Param("team") Long team);
 
