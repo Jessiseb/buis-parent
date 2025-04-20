@@ -320,7 +320,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
 
     /**
-     * 修改比赛信息
+     * 前台修改比赛信息
      *
      * @param raceInfo 比赛信息
      * @return 结果
@@ -334,7 +334,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //获取比赛id
         Long raceId = raceInfo.getId();
         // 判断报名条件
-//        this.checkJoinCondition(userId, raceId);
+        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setUpdateTime(DateUtils.getNowDate());
         raceInfoMapper.deleteRewardByRace(raceInfo.getId());
@@ -345,6 +345,17 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         }
         return i;
     }
+
+    /**
+     * 后台修改比赛信息
+     */
+    @Transactional
+    @Override
+    public int updateBackRaceInfo(RaceInfo raceInfo) {
+        raceInfo.setUpdateTime(DateUtils.getNowDate());
+        return raceInfoMapper.updateRaceInfo(raceInfo);
+    }
+
 
     /**
      * 批量删除比赛信息
@@ -451,56 +462,56 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @param id
      * @return
      */
-    @Override
-    public AjaxResult updateApproval(Long id) {
-        //获取登录用户id
-        Long userId = SecurityUtils.getUserId();
-        //根据用户id获取角色id
-        List<Long> roleIds = sysRoleMapper.selectRoleListByUserId(userId);
-        if (roleIds == null || roleIds.isEmpty()) {
-            return AjaxResult.error("用户没有分配任何角色");
-        }
-        // 获取院级和校级角色id
-        List<Map<String, Object>> roleIdsList = sysRoleMapper.selectSchoolAndCollegeRoleId();
-        if (roleIdsList == null || roleIdsList.isEmpty()) {
-            return AjaxResult.error("无法获取校级或院级角色信息");
-        }
-
-        Map<String, Long> roleIdsMap = new HashMap<>();
-        for (Map<String, Object> map : roleIdsList) {
-            String roleType = (String) map.get("roleType");
-            Long roleId = (Long) map.get("roleId");
-            roleIdsMap.put(roleType, roleId);
-        }
-        //获取院级和校级角色id
-        Long schoolRoleId = roleIdsMap.get("校级id");
-        Long collegeRoleId = roleIdsMap.get("院级id");
-
-        // 判断用户是否是校级或院级用户
-        boolean isSchoolUser = roleIds.contains(schoolRoleId);
-        boolean isCollegeUser = roleIds.contains(collegeRoleId);
-        if (isSchoolUser) {
-            // 用户是校级用户
-            try {
-                raceInfoMapper.updateRaceInfoStatus(id, 1);
-                return AjaxResult.success("校级审核成功");
-            } catch (Exception e) {
-                e.printStackTrace();
-                return AjaxResult.error("校级审核失败: " + e.getMessage());
-            }
-        } else if (isCollegeUser) {
-            // 用户是院级用户
-            try {
-                raceInfoMapper.updateRaceInfoStatus(id, 5);
-                return AjaxResult.success("院级审核成功");
-            } catch (Exception e) {
-                e.printStackTrace();
-                return AjaxResult.error("院级审核失败: " + e.getMessage());
-            }
-        }
-
-        return AjaxResult.error("当前用户不是院级或校级用户");
-    }
+//    @Override
+//    public AjaxResult updateApproval(Long id) {
+//        //获取登录用户id
+//        Long userId = SecurityUtils.getUserId();
+//        //根据用户id获取角色id
+//        List<Long> roleIds = sysRoleMapper.selectRoleListByUserId(userId);
+//        if (roleIds == null || roleIds.isEmpty()) {
+//            return AjaxResult.error("用户没有分配任何角色");
+//        }
+//        // 获取院级和校级角色id
+//        List<Map<String, Object>> roleIdsList = sysRoleMapper.selectSchoolAndCollegeRoleId();
+//        if (roleIdsList == null || roleIdsList.isEmpty()) {
+//            return AjaxResult.error("无法获取校级或院级角色信息");
+//        }
+//
+//        Map<String, Long> roleIdsMap = new HashMap<>();
+//        for (Map<String, Object> map : roleIdsList) {
+//            String roleType = (String) map.get("roleType");
+//            Long roleId = (Long) map.get("roleId");
+//            roleIdsMap.put(roleType, roleId);
+//        }
+//        //获取院级和校级角色id
+//        Long schoolRoleId = roleIdsMap.get("校级id");
+//        Long collegeRoleId = roleIdsMap.get("院级id");
+//
+//        // 判断用户是否是校级或院级用户
+//        boolean isSchoolUser = roleIds.contains(schoolRoleId);
+//        boolean isCollegeUser = roleIds.contains(collegeRoleId);
+//        if (isSchoolUser) {
+//            // 用户是校级用户
+//            try {
+//                raceInfoMapper.updateRaceInfoStatus(id, 1);
+//                return AjaxResult.success("校级审核成功");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                return AjaxResult.error("校级审核失败: " + e.getMessage());
+//            }
+//        } else if (isCollegeUser) {
+//            // 用户是院级用户
+//            try {
+//                raceInfoMapper.updateRaceInfoStatus(id, 5);
+//                return AjaxResult.success("院级审核成功");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                return AjaxResult.error("院级审核失败: " + e.getMessage());
+//            }
+//        }
+//
+//        return AjaxResult.error("当前用户不是院级或校级用户");
+//    }
 
 
     /**
@@ -1113,10 +1124,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             List<HotRaceVo> resultList = new ArrayList<>();
             for (RaceInfo raceInfo : raceInfoList) {
                 Long raceId = raceInfo.getId();
+                //根据raceId查询raceDetail
+                RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
                 Integer count = raceRegistrationCountMap.getOrDefault(raceId, 0);
                 HotRaceVo vo = new HotRaceVo();
                 vo.setRaceName(raceInfo.getName());
                 vo.setRegistrationCount(count);
+                vo.setRaceDetail(raceDetail);
                 resultList.add(vo);
             }
 

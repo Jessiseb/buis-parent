@@ -47,6 +47,7 @@ public class RaceDetailController extends BaseController {
     public TableDataInfo list(RaceDetailVo raceDetailVo) {
         startPage();
         List<RaceDetailVo> list = raceDetailService.selectRaceDetailVoList(raceDetailVo);
+        //根据list里的raceInfo的
         return getDataTable(list);
     }
 

@@ -37,7 +37,7 @@ public class RaceDetail extends BaseEntity {
      * 比赛的一级类型id
      */
     @ApiModelProperty("比赛的一级类型id")
-    private int parentId;
+    private int typeId;
 
     /**
      * 比赛(关联比赛表id)
@@ -235,7 +235,7 @@ public class RaceDetail extends BaseEntity {
      * 活动类型（字典）
      */
     @Excel(name = "活动类型", readConverterExp = "字=典")
-    private Long secondType;
+    private String secondType;
 
     /**
      * 参与方式

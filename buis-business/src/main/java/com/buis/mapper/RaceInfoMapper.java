@@ -92,7 +92,7 @@ public interface RaceInfoMapper
      */
     public int deleteRewardByRace(Long id);
 
-    void updateRaceInfoStatus(@Param("id") Long id,@Param("status") Integer status);
+//    void updateRaceInfoStatus(@Param("id") Long id,@Param("status") Integer status);
 
     //根据状态查询比赛信息
     public List<RaceInfo> selectRaceInfoByStatu(Long i);

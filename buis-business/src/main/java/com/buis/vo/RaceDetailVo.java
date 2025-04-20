@@ -21,8 +21,11 @@ public class RaceDetailVo extends RaceDetail {
     @Excel(name = "项目类别")
     private String raceType;
 
-
-
-
+    /**
+     * 项目模块(根据race查询到子类型的名字(race_type))
+     */
+    @ApiModelProperty("项目模块")
+    @Excel(name = "项目模块")
+    private String raceModule;
 
 }

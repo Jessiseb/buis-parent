@@ -59,12 +59,17 @@ public interface IRaceInfoService
     public int insertRaceInfo(RaceInfo raceInfo);
 
     /**
-     * 修改比赛信息
+     * 前台修改比赛信息
      * 
      * @param raceInfo 比赛信息
      * @return 结果
      */
     public int updateRaceInfo(RaceInfo raceInfo);
+
+    /**
+     * 后台修改比赛信息
+     */
+    public int updateBackRaceInfo(RaceInfo raceInfo);
 
     /**
      * 批量删除比赛信息
@@ -89,7 +94,7 @@ public interface IRaceInfoService
      */
     public boolean checkJoinCondition(Long userId,Long raceId);
 
-    AjaxResult updateApproval(Long id);
+//    AjaxResult updateApproval(Long id);
 
     /**
      * 检查是否超过了比赛的指导老师数量限制
