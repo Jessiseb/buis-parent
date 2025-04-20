@@ -144,4 +144,6 @@ public interface IRaceInfoService
     RaceInfo selectRaceInfoByName(String name);
 
     void deleteRacesInfoCache();
+
+    void deleteJoinInfoCache(Long userId);
 }
