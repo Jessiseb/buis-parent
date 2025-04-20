@@ -284,11 +284,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
-    <update id="updateRaceInfoStatus" >
-        UPDATE race_info
-        SET status = #{status}
-        WHERE id = #{id}
-    </update>
+<!--    <update id="updateRaceInfoStatus" >-->
+<!--        UPDATE race_info-->
+<!--        SET status = #{status}-->
+<!--        WHERE id = #{id}-->
+<!--    </update>-->
 
     <delete id="deleteRaceInfoById" parameterType="Long">
         update race_info
