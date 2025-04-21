@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceInfoMapper">
-    
+
     <resultMap type="com.buis.vo.RaceInfoVo" id="RaceInfoResult">
         <result property="id" column="id"/>
         <result property="parentTid" column="parent_tid"/>
@@ -57,15 +57,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <resultMap type="com.buis.domain.Reward" id="RewardResult">
-        <result property="id"    column="id"    />
-        <result property="race"    column="race"    />
-        <result property="rRank"    column="r_rank"    />
-        <result property="name"    column="name"    />
-        <result property="quantity"    column="quantity"    />
-        <result property="remark"    column="remark"    />
-        <result property="isDeleted"    column="is_deleted"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="race" column="race"/>
+        <result property="rRank" column="r_rank"/>
+        <result property="name" column="name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectRaceInfoVo">
@@ -104,45 +104,103 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  left join race_type t3 on t3.id = t2.parent_id
     </sql>
 
-    <select id="selectRaceInfoList" parameterType="com.buis.vo.RaceInfoVo" resultMap="RaceInfoRewardResult">
+    <select id="selectRaceInfoList" resultMap="RaceInfoRewardResult">
         <include refid="selectRaceInfoVo"/>
         <where>
             t1.is_deleted = 0
-            <if test="id != null ">and t1.id = #{id}</if>
-            <if test="parentTid != null ">and t1.parent_tid = #{parentTid}</if>
-            <if test="sonTid != null ">and t1.son_tid = #{sonTid}</if>
-            <if test="teacherName != null  and teacherName != ''">and t1.teacher_name like concat('%', #{teacherName},
-                '%')
+            <!-- 修改为通过 raceInfo 对象引用 id 属性 -->
+            <if test="raceInfo.id != null ">
+                and t1.id = #{raceInfo.id}
             </if>
-            <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''">and t1.description like concat('%', #{description},
-                '%')
+            <if test="raceInfo.parentTid != null ">
+                and t1.parent_tid = #{raceInfo.parentTid}
             </if>
-            <if test="joinStart != null ">and t1.join_start &gt;= #{joinStart}</if>
-            <if test="joinEnd != null ">and t1.join_end &lt;= #{joinEnd}</if>
-            <if test="raceStart != null ">and t1.race_start &gt;= #{raceStart}</if>
-            <if test="raceEnd != null ">and t1.race_end &lt;= #{raceEnd}</if>
-            <if test="scoreStart != null ">and t1.score_start &gt;= #{scoreStart}</if>
-            <if test="scoreEnd != null ">and t1.score_end &lt;= #{scoreEnd}</if>
-            <if test="status != null ">and t1.status = #{status}</if>
-            <if test="reviewStatus != null ">and t1.review_status = #{reviewStatus}</if>
-            <if test="level != null ">and t1.level = #{level}</if>
-            <if test="seniority != null  and seniority != ''">and t1.seniority like concat('%', #{seniority}, '%')</if>
-            <if test="descUrl != null  and descUrl != ''">and t1.desc_url like concat('%', #{descUrl}, '%')</if>
-            <if test="department != null and department != ''">and t1.department like concat('%', #{department}, '%')
+            <if test="raceInfo.sonTid != null ">
+                and t1.son_tid = #{raceInfo.sonTid}
             </if>
-            <if test="organizers != null  and organizers != ''">and t1.organizers like concat('%', #{organizers}, '%')
+            <if test="raceInfo.teacherName != null  and raceInfo.teacherName != ''">
+                and t1.teacher_name like concat('%', #{raceInfo.teacherName}, '%')
             </if>
-            <if test="course != null  and course != ''">and t1.course like concat('%', #{course}, '%')</if>
-            <if test="place != null  and place != ''">and t1.place like concat('%', #{place}, '%')</if>
-            <if test="fund != null  and fund != ''">and t1.fund like concat('%', #{fund}, '%')</if>
-            <if test="majorCount != null  and majorCount != ''">and t1.major_count like concat('%', #{majorCount},
-                '%')
+            <if test="raceInfo.name != null  and raceInfo.name != ''">
+                and t1.name like concat('%', #{raceInfo.name}, '%')
             </if>
-            <if test="raceType != null ">and t1.race_type = #{raceType}</if>
+            <if test="raceInfo.description != null  and raceInfo.description != ''">
+                and t1.description like concat('%', #{raceInfo.description}, '%')
+            </if>
+            <if test="raceInfo.joinStart != null ">
+                and t1.join_start &gt;= #{raceInfo.joinStart}
+            </if>
+            <if test="raceInfo.joinEnd != null ">
+                and t1.join_end &lt;= #{raceInfo.joinEnd}
+            </if>
+            <if test="raceInfo.raceStart != null ">
+                and t1.race_start &gt;= #{raceInfo.raceStart}
+            </if>
+            <if test="raceInfo.raceEnd != null ">
+                and t1.race_end &lt;= #{raceInfo.raceEnd}
+            </if>
+            <if test="raceInfo.scoreStart != null ">
+                and t1.score_start &gt;= #{raceInfo.scoreStart}
+            </if>
+            <if test="raceInfo.scoreEnd != null ">
+                and t1.score_end &lt;= #{raceInfo.scoreEnd}
+            </if>
+            <if test="raceInfo.status != null ">
+                and t1.status = #{raceInfo.status}
+            </if>
+            <if test="raceInfo.reviewStatus != null ">
+                and t1.review_status = #{raceInfo.reviewStatus}
+            </if>
+            <if test="raceInfo.level != null ">
+                and t1.level = #{raceInfo.level}
+            </if>
+            <if test="raceInfo.seniority != null  and raceInfo.seniority != ''">
+                and t1.seniority like concat('%', #{raceInfo.seniority}, '%')
+            </if>
+            <if test="raceInfo.descUrl != null  and raceInfo.descUrl != ''">
+                and t1.desc_url like concat('%', #{raceInfo.descUrl}, '%')
+            </if>
+            <if test="raceInfo.department != null and raceInfo.department != ''">
+                and t1.department like concat('%', #{raceInfo.department}, '%')
+            </if>
+            <if test="raceInfo.organizers != null  and raceInfo.organizers != ''">
+                and t1.organizers like concat('%', #{raceInfo.organizers}, '%')
+            </if>
+            <if test="raceInfo.course != null  and raceInfo.course != ''">
+                and t1.course like concat('%', #{raceInfo.course}, '%')
+            </if>
+            <if test="raceInfo.place != null  and raceInfo.place != ''">
+                and t1.place like concat('%', #{raceInfo.place}, '%')
+            </if>
+            <if test="raceInfo.fund != null  and raceInfo.fund != ''">
+                and t1.fund like concat('%', #{raceInfo.fund}, '%')
+            </if>
+            <if test="raceInfo.majorCount != null  and raceInfo.majorCount != ''">
+                and t1.major_count like concat('%', #{raceInfo.majorCount}, '%')
+            </if>
+            <if test="raceInfo.raceType != null ">
+                and t1.race_type = #{raceInfo.raceType}
+            </if>
         </where>
+        <choose>
+            <when test="raceIds != null and raceIds.size() > 0">
+                ORDER BY
+                CASE
+                WHEN t1.id IN
+                <foreach item="raceId" collection="raceIds" open="(" separator="," close=")">
+                    #{raceId}
+                </foreach>
+                THEN 0
+                ELSE 1
+                END,
+                t1.id ASC
+            </when>
+            <otherwise>
+                ORDER BY t1.id ASC
+            </otherwise>
+        </choose>
     </select>
-    
+
     <select id="selectRaceInfoById" parameterType="Long" resultMap="RaceInfoRewardResult">
         <include refid="selectRaceInfoVo"/>
         where t1.id = #{id} and t1.is_deleted = 0
@@ -187,8 +245,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </select>
+
+    <select id="selectRaceInfoVoByRaceIds" resultMap="RaceInfoRewardResult">
+        <include refid="selectRaceInfoVo"/>
+        <where>
+            t1.id in
+            <foreach collection="list" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
     <select id="selectRaceTypeBySecondTypeId" resultType="java.lang.Long">
-        select parent_tid from race_type where son_tid = #{id}
+        select parent_tid
+        from race_type
+        where son_tid = #{id}
     </select>
 
 
@@ -221,7 +292,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="parentTid != null">#{parentTid},</if>
             <if test="sonTid != null">#{sonTid},</if>
@@ -249,7 +320,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateRaceInfo" parameterType="com.buis.domain.RaceInfo">
@@ -284,11 +355,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
-<!--    <update id="updateRaceInfoStatus" >-->
-<!--        UPDATE race_info-->
-<!--        SET status = #{status}-->
-<!--        WHERE id = #{id}-->
-<!--    </update>-->
+    <!--    <update id="updateRaceInfoStatus" >-->
+    <!--        UPDATE race_info-->
+    <!--        SET status = #{status}-->
+    <!--        WHERE id = #{id}-->
+    <!--    </update>-->
 
     <delete id="deleteRaceInfoById" parameterType="Long">
         update race_info
@@ -304,7 +375,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    
+
     <delete id="deleteRewardByRaces" parameterType="String">
         update t_reward
         set is_deleted = 1
@@ -323,58 +394,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="batchReward">
         insert into t_reward(race, r_rank, name, quantity, remark, is_deleted, create_time, update_time) values
         <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.race}, #{item.rRank}, #{item.name}, #{item.quantity}, #{item.remark}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
+            ( #{item.race}, #{item.rRank}, #{item.name}, #{item.quantity}, #{item.remark}, #{item.isDeleted},
+            #{item.createTime}, #{item.updateTime})
         </foreach>
     </insert>
 
     <select id="getSecondClassCountByMonth" resultType="com.buis.vo.SecondClassCountVo">
-        SELECT
-            cm.name AS college_name,
-            COUNT(ri.id) AS count
-        FROM
-            race_info ri
-                JOIN
-            (
-                SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
-                FROM
-                    race_detail
-            ) AS rd ON ri.id = rd.race
-                JOIN
-            user_info ui ON rd.name = ui.name
-                JOIN
-            t_college_major cm ON ui.college = cm.id
-        WHERE
-            ri.parent_tid = 5
+        SELECT cm.name      AS college_name,
+               COUNT(ri.id) AS count
+        FROM race_info ri
+                 JOIN
+             (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+              FROM race_detail) AS rd ON ri.id = rd.race
+                 JOIN
+             user_info ui ON rd.name = ui.name
+                 JOIN
+             t_college_major cm ON ui.college = cm.id
+        WHERE ri.parent_tid = 5
           AND YEAR(ri.create_time) = YEAR(CURRENT_DATE)
-          AND MONTH(ri.create_time) = IFNULL(#{month},MONTH(CURRENT_DATE))
-        GROUP BY
-            cm.name
+          AND MONTH(ri.create_time) = IFNULL(#{month}, MONTH(CURRENT_DATE))
+        GROUP BY cm.name
     </select>
 
     <select id="getSecondClassCountByYear" resultType="com.buis.vo.SecondClassCountVo">
-        SELECT
-            cm.name AS college_name,
-            COUNT(ri.id) AS count
-        FROM
-            race_info ri
-                JOIN
-            (
-                SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
-                FROM
-                    race_detail
-            ) AS rd ON ri.id = rd.race
-                JOIN
-            user_info ui ON rd.name = ui.name
-                JOIN
-            t_college_major cm ON ui.college = cm.id
-        WHERE
-            ri.parent_tid = 5
-              AND YEAR(ri.create_time) = IFNULL(#{year},YEAR(CURRENT_DATE))
-        GROUP BY
-            cm.name
+        SELECT cm.name      AS college_name,
+               COUNT(ri.id) AS count
+        FROM race_info ri
+                 JOIN
+             (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+              FROM race_detail) AS rd ON ri.id = rd.race
+                 JOIN
+             user_info ui ON rd.name = ui.name
+                 JOIN
+             t_college_major cm ON ui.college = cm.id
+        WHERE ri.parent_tid = 5
+          AND YEAR(ri.create_time) = IFNULL(#{year}, YEAR(CURRENT_DATE))
+        GROUP BY cm.name
     </select>
     <select id="selectRaceInfoAll" resultType="com.buis.vo.RaceInfoVo">
-        select id,create_time from race_info where is_deleted = 0
+        select id, create_time
+        from race_info
+        where is_deleted = 0
     </select>
     <select id="getRaceInfoList" resultType="com.buis.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
@@ -432,61 +492,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                create_id,
                create_time
         from race_info
-        where is_deleted = 0 and parent_tid = 5
+        where is_deleted = 0
+          and parent_tid = 5
         order by id desc
     </select>
 
     <select id="getStudentGradeCount" resultType="com.buis.dto.GradeStatistic">
-        WITH second_class_user_ids AS (
-            SELECT DISTINCT
-                tms.student AS user_id
-            FROM
-                team_info ti
-                    JOIN
-                race_info ri ON ti.race = ri.id
-                    JOIN
-                team_member_student tms ON ti.id = tms.team
-            WHERE
-                ri.parent_tid = 5
-            UNION
-            SELECT DISTINCT
-                ti.leader AS user_id
-            FROM
-                team_info ti
-                    JOIN
-                race_info ri ON ti.race = ri.id
-            WHERE
-                ri.parent_tid = 5
-        )
-        SELECT
-            LEFT(ui.number, 4) AS grade,
-            COUNT(*) AS count,
-            COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS percentage
-        FROM
-            user_info ui
-                JOIN
-            second_class_user_ids scui ON ui.id = scui.user_id
-        WHERE
-            ui.number IS NOT NULL
+        WITH second_class_user_ids AS (SELECT DISTINCT tms.student AS user_id
+                                       FROM team_info ti
+                                                JOIN
+                                            race_info ri ON ti.race = ri.id
+                                                JOIN
+                                            team_member_student tms ON ti.id = tms.team
+                                       WHERE ri.parent_tid = 5
+                                       UNION
+                                       SELECT DISTINCT ti.leader AS user_id
+                                       FROM team_info ti
+                                                JOIN
+                                            race_info ri ON ti.race = ri.id
+                                       WHERE ri.parent_tid = 5)
+        SELECT LEFT(ui.number, 4)                       AS grade,
+               COUNT(*)                                 AS count,
+               COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS percentage
+        FROM user_info ui
+                 JOIN
+             second_class_user_ids scui ON ui.id = scui.user_id
+        WHERE ui.number IS NOT NULL
           AND LEFT(ui.number, 4) REGEXP '^[0-9]{4}$'
           AND is_teacher = 0
-        GROUP BY
-            LEFT(ui.number, 4)
+        GROUP BY LEFT(ui.number, 4)
     </select>
 
     <select id="getTeacherInstructCountFromSecond" resultType="java.lang.String"
             parameterType="java.lang.Long">
         SELECT COUNT(1)
-        FROM (
-                 SELECT r.*
-                 FROM race_info r
-                 WHERE parent_tid = 5
-             ) sub
+        FROM (SELECT r.*
+              FROM race_info r
+              WHERE parent_tid = 5) sub
         WHERE sub.create_id = #{userId}
     </select>
     <select id="selectRaceInfoByName" resultType="com.buis.domain.RaceInfo">
-        select * from race_info
+        select *
+        from race_info
         where name = #{name}
-        and is_deleted = 0
+          and is_deleted = 0
     </select>
 </mapper>
