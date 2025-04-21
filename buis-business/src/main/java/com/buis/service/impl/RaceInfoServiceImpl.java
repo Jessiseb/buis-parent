@@ -113,12 +113,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 通用查询比赛信息
+     *
      * @param id
      * @return
      */
     @Override
     public RaceInfoVo selectRaceInfoVoById(Long id) {
-       return raceInfoMapper.selectRaceInfoById(id);
+        return raceInfoMapper.selectRaceInfoById(id);
     }
 
     /**
@@ -179,6 +180,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 只能查出已经发布的比赛信息
+     *
      * @param raceInfo
      * @return
      */
@@ -204,8 +206,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         }
         return raceInfoVos;
     }
-
-
 
 
     /**
@@ -399,24 +399,42 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @return
      */
     private int checkJoin(Long userId, Long raceId, Long team) {
+        int res = 0;
         if (userId == null || raceId == null) {
             throw new IllegalArgumentException("userId and raceId cannot be null");
         }
-        int res = 0;
-        // 判断互选表有没有信息
-        res = teamMemberTeacherService.getJoinCount(userId, raceId, team);
-        if (res <= 0) {
-            res = teamMemberStudentService.getJoinCount(userId, raceId, team);
-            if (res <= 0) {
-                // 判断队伍有没有信息
-                res = teamInfoService.getCountJoin(userId, raceId, team);
-            }
+        RaceInfo raceInfo = raceInfoMapper.selectRaceInfoById(raceId);
+        Long parentTid = raceInfo.getParentTid();
+        if (parentTid == null) {
+            return res;
         }
-        if (res > 0) {
-            res = 1;
+        if (parentTid == 1) {
+            // 判断互选表有没有信息
+            res = teamMemberTeacherService.getJoinCount(userId, raceId, team);
+            if (res <= 0) {
+                res = teamMemberStudentService.getJoinCount(userId, raceId, team);
+                if (res <= 0) {
+                    // 判断队伍有没有信息
+                    res = teamInfoService.getCountJoin(userId, raceId, team);
+                }
+            }
+            if (res > 0) {
+                res = 1;
+            }
+            return res;
+        }
+        if (parentTid == 5) {
+            List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByRace(raceId);
+            for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
+                if (preSignStudentVo.getStudent().equals(userId)) {
+                    res = 1;
+                    return res;
+                }
+            }
         }
         return res;
     }
+
 
     /**
      * 判断报名是否符合条件
@@ -787,51 +805,53 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
             Long race = raceDetail.getRace();
             //通过预报名查出学生
-            PreSignStudent preSignStudent = preSignStudentService.selectPreSignStudentByRace(race);
-            Long student = preSignStudent.getStudent();
+            List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByRace(race);
+            for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
+                Long student = preSignStudentVo.getStudent();
 
 
 //            String teacherName = Optional.ofNullable(raceDetail)
 //                    .map(RaceDetail::getName)
 //                    .orElse("");
 //            //根据名字查询到用户信息
-            UserInfo userInfo;
+                UserInfo userInfo;
 //            //如果名字有多个, 按照"、"分割
 //            if (teacherName.contains("、")) {
 //                String[] split = teacherName.split("、");
 //                for (String tName : split) {
-            //根据名字查询到用户信息
-            userInfo = userInfoService.selectUserInfoById(student);
-            //只留下指定学院的
-            if (userInfo == null || userInfo.getCollege() != college) {
-                continue;
-            }
-            if (studentExportMap.containsKey(name)) {
-                Long count = studentExportMap.get(name);
-                count++;
-                studentExportMap.put(name, count);
-            } else {
-                studentExportMap.put(name, 1L);
-            }
+                //根据名字查询到用户信息
+                userInfo = userInfoService.selectUserInfoById(student);
+                //只留下指定学院的
+                if (userInfo == null || userInfo.getCollege() != college) {
+                    continue;
+                }
+                if (studentExportMap.containsKey(name)) {
+                    Long count = studentExportMap.get(name);
+                    count++;
+                    studentExportMap.put(name, count);
+                } else {
+                    studentExportMap.put(name, 1L);
+                }
 
-            UserInfoVo userInfoVo = userInfoService.selectUserInfoById(student);
-            //只留下指定的学院的
-            if (userInfoVo == null || userInfoVo.getCollege() != college) {
-                continue;
-            }
+                UserInfoVo userInfoVo = userInfoService.selectUserInfoById(student);
+                //只留下指定的学院的
+                if (userInfoVo == null || userInfoVo.getCollege() != college) {
+                    continue;
+                }
 
-            String studentName = userInfoVo.getName();
+                String studentName = userInfoVo.getName();
 
-            if (StringUtils.isEmpty(studentName)) {
-                log.warn("比赛ID:{} 无负责人信息", raceDetail.getId());
-                continue;
-            }
-            if (studentExportMap.containsKey(studentName)) {
-                Long count = studentExportMap.get(studentName);
-                count++;
-                studentExportMap.put(studentName, count);
-            } else {
-                studentExportMap.put(studentName, 1L);
+                if (StringUtils.isEmpty(studentName)) {
+                    log.warn("比赛ID:{} 无负责人信息", raceDetail.getId());
+                    continue;
+                }
+                if (studentExportMap.containsKey(studentName)) {
+                    Long count = studentExportMap.get(studentName);
+                    count++;
+                    studentExportMap.put(studentName, count);
+                } else {
+                    studentExportMap.put(studentName, 1L);
+                }
             }
         }
 
@@ -892,6 +912,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 分页查询第二课堂活动申报
+     *
      * @param raceInfo
      * @return
      */
@@ -946,7 +967,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         if (raceDetail != null) {
             Long capacity = raceDetail.getCapacity();
             if (capacity != 0) {
-                return  student >= capacity;
+                return student >= capacity;
             }
         }
         return false;
