@@ -120,4 +120,5 @@ public interface RaceInfoMapper
     String getTeacherInstructCountFromSecond(Long userId);
 
     RaceInfo selectRaceInfoByName(@Param("name") String name);
+
 }
