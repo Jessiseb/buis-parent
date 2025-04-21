@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.buis.common.core.domain.AjaxResult;
@@ -329,8 +330,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public int updateRaceInfo(RaceInfo raceInfo) {
         // 获取用户id
-        LoginUser loginUser = SecurityUtils.getLoginUser();
-        Long userId = loginUser.getUser().getUserId();
+//        LoginUser loginUser = SecurityUtils.getLoginUser();
+//        Long userId = loginUser.getUser().getUserId();
+        Long userId = Long.valueOf(StpUtil.getLoginId().toString());
         //获取比赛id
         Long raceId = raceInfo.getId();
         // 判断报名条件
@@ -423,7 +425,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             }
             return res;
         }
-        if (parentTid == 5) {
+        if (parentTid == 5 || parentTid == 3) {
             List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByRace(raceId);
             for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
                 if (preSignStudentVo.getStudent().equals(userId)) {
