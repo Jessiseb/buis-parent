@@ -1032,8 +1032,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 //            }
 
             //拿到锁，查询数据库
+            //从队伍用户表中查出该用户所在信息
+            List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(SecurityUtils.getFrontLoginUserId());
+            List<Long> raceIds = new ArrayList<>();
+            if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
+                //根据查出的信息获取到raceId<List>
+                for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
+                    Long race = teamMemberStudent.getRace();
+                    raceIds.add(race);
+                }
+            }
             Page<RaceInfoVo> page = PageUtils.startPage(pageNum, pageSize);
-            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
 
             //不存在，返回错误信息
             if (raceInfoVos.isEmpty()) {
