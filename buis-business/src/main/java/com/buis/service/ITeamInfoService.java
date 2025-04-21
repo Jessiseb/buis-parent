@@ -139,4 +139,6 @@ public interface ITeamInfoService {
     List<TeamInfoVo> selectMyPublishedTeams(Long userId);
 
     int refuseJoinTeam(Long userId, Long teamId);
+
+    List<TeamInfo> selectAllTeamInfoById(Long userId);
 }
