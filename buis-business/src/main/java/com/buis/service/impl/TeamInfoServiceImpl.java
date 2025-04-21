@@ -421,7 +421,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             return teamInfoMapper.deleteTeamInfoById(team);
         } else {
             //队伍不止一个人
-            //如果是负责人退出队伍,负责人位置移交给第二个进项目团队的人\
+            //如果是负责人退出队伍,负责人位置移交给第二个进项目团队的人
             if (teamInfo.getLeader().equals(userId)) {
                 //查询队伍成员
                 List<TeamMemberStudent> teamMemberStudents = teamStudentService.selectTeamMemberStudentByTeamId(team);
@@ -491,6 +491,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     }
 
     @Override
+    @Transactional
     public int refuseJoinTeam(Long userId, Long teamId) {
         TeamMemberStudent teamMemberStudent = teamStudentService.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
 
