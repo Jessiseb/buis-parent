@@ -155,25 +155,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo) {
-
         // 根据传入参数获取比赛信息
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
-        for (RaceInfoVo raceInfoVo : raceInfoVos) {
-            if (raceInfoVo != null) {
-                // 设置是否已报名
-                setIsJoin(raceInfoVo);
-                // 设置是否预报名
-                setIsPreJoin(raceInfoVo);
-                // 设置比赛详情
-                RaceDetail raceDetail = new RaceDetail();
-                raceDetail.setRace(raceInfoVo.getId());
-                List<RaceDetailVo> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
-                if (raceDetailVos != null && raceDetailVos.size() > 0) {
-                    raceInfoVo.setRaceDetail(raceDetailVos.get(0));
-                }
-            }
-        }
-        return raceInfoVos;
+        return raceInfoMapper.selectRaceInfoList(raceInfo);
+
     }
 
 

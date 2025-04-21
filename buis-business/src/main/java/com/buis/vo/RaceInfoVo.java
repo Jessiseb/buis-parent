@@ -22,12 +22,14 @@ public class RaceInfoVo extends RaceInfo {
     @Excel(name = "一级类型名称")
     @ApiModelProperty(value = "一级类型名称")
     private String parentName;
+
     /**
      * 类型名称
      */
     @Excel(name = "二级类型名称")
     @ApiModelProperty(value = "二级类型名称")
     private String sonName;
+
     /**
      * 比赛实体
      */

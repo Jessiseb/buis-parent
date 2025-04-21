@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
+import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.*;
 import com.buis.enums.ReviewStatus;
@@ -149,13 +150,26 @@ public class SecondApiController {
                                  @ApiParam(name = "secondId", value = "申报的活动id", required = true)
                                  @RequestParam Long secondId) {
         //发布的时候只有等审核状态为已通过才能发布, 而且只能发布是自己申报的活动
-        //发布过不能再次发布
+
         //判断申报的活动是否审核通过
         RaceInfoVo res = raceInfoService.selectRaceInfoVoById(secondId);
         if (res == null) {
             return R.fail("请先申报活动再填写发布内容~");
         }
+
         Long status = res.getReviewStatus();
+        //发布过不能再次发布
+        if(Objects.equals(status, ReviewStatus.PUBLISH.getCode())){
+            return R.fail("请勿重复发布");
+        }
+
+        //不能发布别人申报的活动
+        Long createId = res.getCreateId();
+        Long userId = Long.valueOf(StpUtil.getLoginId() + "");
+        if (!createId.equals(userId)){
+            throw new ServiceException("温馨提示：不能发布他人的活动~");
+        }
+
         //审核通过才能填写
         if (Objects.equals(status, ReviewStatus.PASS.getCode())) {
             raceDetail.setRace(secondId);
@@ -163,8 +177,16 @@ public class SecondApiController {
             if (i <= 0) {
                 return R.fail("发布失败");
             }
+            //成功发布之后，把race_second表的状态也设置为已发布
+            RaceSecond raceSecond = raceSecondService.selectRaceSecondById(secondId);
+            raceSecond.setReviewStatus(ReviewStatus.PUBLISH.getCode());
+            int ok = raceSecondService.updateRaceSecond(raceSecond);
+            if (ok <= 0) {
+                return R.fail("发布失败,请重试");
+            }
             return R.ok(raceDetail);
         }
+
         return R.fail("请待活动审核通过再填写发布内容~");
     }
 
