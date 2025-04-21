@@ -231,11 +231,12 @@
         </trim>
         where id = #{id}
     </update>
+
     <update id="quitTeam">
         update team_member_student
         set is_deleted = 1
         where team = #{team}
-          and student = #{user}
+          and student = #{userId}
     </update>
 
 

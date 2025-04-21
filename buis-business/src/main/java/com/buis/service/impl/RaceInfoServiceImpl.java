@@ -187,8 +187,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo) {
+        //从队伍用户表中查出该用户所在信息
+        List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(SecurityUtils.getFrontLoginUserId());
+        List<Long> raceIds = new ArrayList<>();
+        if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
+            //根据查出的信息获取到raceId<List>
+            for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
+                Long race = teamMemberStudent.getRace();
+                raceIds.add(race);
+            }
+        }
         // 根据传入参数获取比赛信息
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.getRaceInfoList(raceInfo);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
         //todo  抽取出一下代码
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             if (raceInfoVo != null) {
@@ -1012,12 +1022,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo) {
+        Long userId = SecurityUtils.getFrontLoginUserId();
         //无条件查询
         //获取key
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();
         Integer pageSize = pageDomain.getPageSize();
-        String pageCacheKey = getPageCacheKey(pageNum, pageSize);
+        String pageCacheKey = getPageCacheKey(pageNum, pageSize,userId);
         ObjectMapper objectMapper = new ObjectMapper();
 
         String RacesJson = redisCache.getCacheObject(pageCacheKey);
@@ -1055,8 +1066,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 //            }
 
             //拿到锁，查询数据库
+            //从队伍用户表中查出该用户所在信息
+            List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
+            List<Long> raceIds = new ArrayList<>();
+            if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
+                //根据查出的信息获取到raceId<List>
+                for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
+                    Long race = teamMemberStudent.getRace();
+                    raceIds.add(race);
+                }
+            }
             Page<RaceInfoVo> page = PageUtils.startPage(pageNum, pageSize);
-            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
+            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
 
             //不存在，返回错误信息
             if (raceInfoVos.isEmpty()) {
@@ -1204,8 +1225,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @param pageSize
      * @return
      */
-    private String getPageCacheKey(int pageNum, int pageSize) {
-        return String.format("races:page:%d:size:%d", pageNum, pageSize);
+    private String getPageCacheKey(int pageNum, int pageSize,Long userId) {
+        return String.format("races:page:%d:size:%d:user:%d", pageNum, pageSize,userId);
     }
 
     /**
@@ -1234,7 +1255,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     //删除比赛信息分页缓存
     public void deleteRacesInfoCache() {
         //删除所有比赛信息分页缓存
-        String pattern = "races:page:*:size:*";
+        String pattern = "races:page:*:size:*:user:*";
         Set<String> keys = redisTemplate.keys(pattern);
         if (keys != null && !keys.isEmpty()) {
             // 删除匹配的键
@@ -1251,6 +1272,23 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
         //删除所有是否预报名缓存
         String pattern2 = "isPreJoin:race:*:user:*";
+        Set<String> keys2 = redisTemplate.keys(pattern2);
+        if (keys2 != null && !keys2.isEmpty()) {
+            redisTemplate.delete(keys2);
+        }
+    }
+
+    public void deleteJoinInfoCache(Long userId) {
+        //删除所有是否报名缓存
+        String pattern1 = "isJoin:race:*:user:" + userId;
+        Set<String> keys1 = redisTemplate.keys(pattern1);
+        if (keys1 != null && !keys1.isEmpty()) {
+            // 删除匹配的键
+            redisTemplate.delete(keys1);
+        }
+
+        //删除所有是否预报名缓存
+        String pattern2 = "isPreJoin:race:*:user:" + userId;
         Set<String> keys2 = redisTemplate.keys(pattern2);
         if (keys2 != null && !keys2.isEmpty()) {
             redisTemplate.delete(keys2);
