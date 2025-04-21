@@ -854,7 +854,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         double sum = 0.0;
         UserInfoVo userInfoVo = userInfoService.selectUserInfoById(userId);
         String name = userInfoVo.getName();
-        List<TeamInfo> teamInfos = teamInfoService.selectTeamInfoByName(name);
+        List<TeamInfo> teamInfos = teamInfoService.selectAllTeamInfoById(userId);
         List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoAll();
         for (RaceInfoVo race : raceInfoVos) {
             Date createDate = race.getCreateTime();
