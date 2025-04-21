@@ -188,17 +188,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo) {
         //从队伍用户表中查出该用户所在信息
-        List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(SecurityUtils.getFrontLoginUserId());
-        List<Long> raceIds = new ArrayList<>();
-        if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
-            //根据查出的信息获取到raceId<List>
-            for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
-                Long race = teamMemberStudent.getRace();
-                raceIds.add(race);
-            }
-        }
+//        List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(SecurityUtils.getFrontLoginUserId());
+//        List<Long> raceIds = new ArrayList<>();
+//        if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
+//            //根据查出的信息获取到raceId<List>
+//            for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
+//                Long race = teamMemberStudent.getRace();
+//                raceIds.add(race);
+//            }
+//        }
         // 根据传入参数获取比赛信息
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+//        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.getRaceInfoList(raceInfo);
         //todo  抽取出一下代码
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             if (raceInfoVo != null) {
@@ -579,13 +580,22 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
         //从队伍用户表中查出该用户所在信息
         List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
-        if (teamMemberStudents == null || teamMemberStudents.isEmpty()) {
+        List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByUserId(userId);
+        if (teamMemberStudents == null && preSignStudentVos == null) {
+            return null;
+        }
+        if (teamMemberStudents.isEmpty() && preSignStudentVos.isEmpty()) {
             return null;
         }
         //根据查出的信息获取到raceId<List>
         List<Long> raceIds = new ArrayList<>();
         for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
             Long race = teamMemberStudent.getRace();
+            raceIds.add(race);
+        }
+
+        for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
+            Long race = preSignStudentVo.getRace();
             raceIds.add(race);
         }
         //根据raceId<List>查询到对应的比赛信息并返回
@@ -1028,7 +1038,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();
         Integer pageSize = pageDomain.getPageSize();
-        String pageCacheKey = getPageCacheKey(pageNum, pageSize,userId);
+        String pageCacheKey = getPageCacheKey(pageNum, pageSize, userId);
         ObjectMapper objectMapper = new ObjectMapper();
 
         String RacesJson = redisCache.getCacheObject(pageCacheKey);
@@ -1077,7 +1087,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 }
             }
             Page<RaceInfoVo> page = PageUtils.startPage(pageNum, pageSize);
-            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo, raceIds);
 
             //不存在，返回错误信息
             if (raceInfoVos.isEmpty()) {
@@ -1225,8 +1235,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @param pageSize
      * @return
      */
-    private String getPageCacheKey(int pageNum, int pageSize,Long userId) {
-        return String.format("races:page:%d:size:%d:user:%d", pageNum, pageSize,userId);
+    private String getPageCacheKey(int pageNum, int pageSize, Long userId) {
+        return String.format("races:page:%d:size:%d:user:%d", pageNum, pageSize, userId);
     }
 
     /**
