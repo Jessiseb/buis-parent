@@ -74,5 +74,5 @@ public interface PreSignStudentMapper
 
     PreSignStudent selectByUserIdAndRace(@Param("userId") Long userId,@Param("raceId")  Long raceId);
 
-    PreSignStudent selectPreSignStudentByRace(@Param("race") Long race);
+    List<PreSignStudentVo> selectPreSignStudentByRace(@Param("race") Long race);
 }

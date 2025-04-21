@@ -78,14 +78,17 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     public int insertRaceDetail(RaceDetail raceDetail) {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoVoById(raceDetail.getRace());
 
-        if (Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.REFUSE.getCode())){
+        if (Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.REFUSE.getCode())) {
             throw new ServiceException("比赛审核未通过");
         }
         if (raceInfoVo.getParentTid() == 5 && !Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.PASS.getCode())) {
             throw new ServiceException("比赛审核中，请耐心等待");
         }
         raceDetail.setCreateTime(DateUtils.getNowDate());
-         return raceDetailMapper.insertRaceDetail(raceDetail);
+        raceDetail.setReviewStatus(3);
+        raceInfoVo.setReviewStatus(3L);
+        raceInfoService.updateRaceInfo(raceInfoVo);
+        return raceDetailMapper.insertRaceDetail(raceDetail);
 
     }
 
