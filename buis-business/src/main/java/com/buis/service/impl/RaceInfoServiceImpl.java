@@ -184,8 +184,18 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo) {
+        //从队伍用户表中查出该用户所在信息
+        List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(SecurityUtils.getFrontLoginUserId());
+        List<Long> raceIds = new ArrayList<>();
+        if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
+            //根据查出的信息获取到raceId<List>
+            for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
+                Long race = teamMemberStudent.getRace();
+                raceIds.add(race);
+            }
+        }
         // 根据传入参数获取比赛信息
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.getRaceInfoList(raceInfo);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
         //todo  抽取出一下代码
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             if (raceInfoVo != null) {
@@ -989,12 +999,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo) {
+        Long userId = SecurityUtils.getFrontLoginUserId();
         //无条件查询
         //获取key
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();
         Integer pageSize = pageDomain.getPageSize();
-        String pageCacheKey = getPageCacheKey(pageNum, pageSize);
+        String pageCacheKey = getPageCacheKey(pageNum, pageSize,userId);
         ObjectMapper objectMapper = new ObjectMapper();
 
         String RacesJson = redisCache.getCacheObject(pageCacheKey);
@@ -1033,7 +1044,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
             //拿到锁，查询数据库
             //从队伍用户表中查出该用户所在信息
-            List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(SecurityUtils.getFrontLoginUserId());
+            List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
             List<Long> raceIds = new ArrayList<>();
             if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
                 //根据查出的信息获取到raceId<List>
@@ -1191,8 +1202,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @param pageSize
      * @return
      */
-    private String getPageCacheKey(int pageNum, int pageSize) {
-        return String.format("races:page:%d:size:%d", pageNum, pageSize);
+    private String getPageCacheKey(int pageNum, int pageSize,Long userId) {
+        return String.format("races:page:%d:size:%d:user:%d", pageNum, pageSize,userId);
     }
 
     /**
@@ -1221,7 +1232,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     //删除比赛信息分页缓存
     public void deleteRacesInfoCache() {
         //删除所有比赛信息分页缓存
-        String pattern = "races:page:*:size:*";
+        String pattern = "races:page:*:size:*:user:*";
         Set<String> keys = redisTemplate.keys(pattern);
         if (keys != null && !keys.isEmpty()) {
             // 删除匹配的键
