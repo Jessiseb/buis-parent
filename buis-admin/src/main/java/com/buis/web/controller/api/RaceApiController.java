@@ -56,10 +56,10 @@ public class RaceApiController extends BaseController {
             @ApiParam(name = "raceInfo", value = "比赛信息", required = false) RaceInfo raceInfo) {
         startPage();
         //判断是不是条件查询
-        if(raceInfoService.allFieldsEmpty(raceInfo)) {
-            //获取缓存
-            return raceInfoService.selectRaceInfoListFromRedis(raceInfo);
-        }
+//        if(raceInfoService.allFieldsEmpty(raceInfo)) {
+//            //获取缓存
+//            return raceInfoService.selectRaceInfoListFromRedis(raceInfo);
+//        }
 
         List<RaceInfoVo> list = raceInfoService.getRaceInfoList(raceInfo);
 
