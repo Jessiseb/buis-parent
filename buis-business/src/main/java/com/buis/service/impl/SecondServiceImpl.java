@@ -56,6 +56,7 @@ public class SecondServiceImpl implements ISecondService
     public int insertSecond(Second second)
     {
         second.setCreateTime(DateUtils.getNowDate());
+        second.setIsDeleted(0L);
         return secondMapper.insertSecond(second);
     }
 
