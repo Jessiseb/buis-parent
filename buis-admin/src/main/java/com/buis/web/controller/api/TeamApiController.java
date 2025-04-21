@@ -519,7 +519,6 @@ public class TeamApiController extends BaseController {
      */
     @ApiOperation("退出队伍")
     @PostMapping("/quit/{team}")
-    @Transactional
     public R quit(@ApiParam(name = "team", value = "队伍id", required = true) @PathVariable("team") Long team) {
         //判空
         if (team == null) {

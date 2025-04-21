@@ -48,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="assistant"    column="assistant"    />
         <result property="status"    column="status"    />
         <result property="raceName"    column="race_name"    />
-        <result property="raceModule"    column="race_module"    />
+<!--        <result property="raceModule"    column="race_module"    />-->
         <result property="raceType"    column="race_type"    />
     </resultMap>
 
