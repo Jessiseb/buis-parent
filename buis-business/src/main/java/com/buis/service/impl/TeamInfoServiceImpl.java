@@ -74,7 +74,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private ITeamMemberStudentService teamMemberStudentService;
     @Resource
     private ITeamMemberTeacherService teamMemberTeacherService;
-
+    @Resource
+    private ICollegeMajorService classroomMajorService;
 
     /**
      * 新增队伍信息
@@ -436,7 +437,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 String name = nextLeaderInfo.getName(); //姓名
                 teamInfo.setName(name);
                 teamInfo.setPhone(phone);
-                teamInfo.setCollege(college);
+                teamInfo.setCollege(String.valueOf(college));
                 teamInfo.setLeader(teamMemberStudent.getStudent());
                 //修改队伍负责人信息
                 int ok = teamInfoMapper.updateTeamInfo(teamInfo);
@@ -673,7 +674,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfoVo.setLeaderName(userInfoVo.getName()); //用户名字
         teamInfoVo.setPhone(userInfoVo.getPhone()); //用户联系方式
         teamInfoVo.setSClass(stuGradeMajorClass); //用户年级+专业+班级
-        teamInfoVo.setCollege(userInfoVo.getCollege()); //用户学院
+        teamInfoVo.setCollege(String.valueOf(userInfoVo.getCollege())); //用户学院
 
         int i = teamInfoService.updateTeamInfoWithLeader(teamInfoVo);
         if (i <= 0) {
@@ -731,6 +732,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Override
     public List<TeamInfoVo> selectMyPublishedTeams(Long userId) {
         return teamInfoMapper.selectMyPublishedTeams(userId);
+    }
+
+    @Override
+    public List<TeamInfo> selectAllTeamInfoById(Long userId) {
+        return teamInfoMapper.selectAllTeamInfoById(userId);
     }
 
     /**
@@ -805,6 +811,9 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         List<TeamInfo> teamInfos = teamInfoMapper.selectTeamInfoByIds(ids);
         for (TeamInfo teamInfo : teamInfos) {
             TeamInfoVo teamInfoVo = createTeamInfoVo(teamInfo);
+            String college = teamInfoVo.getCollege();
+            CollegeMajor collegeMajor = classroomMajorService.selectCollegeMajorById(Long.valueOf(college));
+            teamInfoVo.setCollege(collegeMajor.getName());
             teamInfoVos.add(teamInfoVo);
         }
         return teamInfoVos;
