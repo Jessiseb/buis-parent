@@ -36,6 +36,14 @@ public interface RaceInfoMapper
     public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo);
 
     /**
+     * 查询比赛信息列表带已报名
+     *
+     * @param raceInfo 比赛信息
+     * @return 比赛信息集合
+     */
+    public List<RaceInfoVo> selectRaceInfoList(@Param("raceInfo")RaceInfo raceInfo,@Param("raceIds")List<Long> raceIds);
+
+    /**
      * 新增比赛信息
      * 
      * @param raceInfo 比赛信息
@@ -120,5 +128,7 @@ public interface RaceInfoMapper
     String getTeacherInstructCountFromSecond(Long userId);
 
     RaceInfo selectRaceInfoByName(@Param("name") String name);
+
+    List<RaceInfoVo> selectRaceInfoVoByRaceIds(List<Long> raceIds);
 
 }

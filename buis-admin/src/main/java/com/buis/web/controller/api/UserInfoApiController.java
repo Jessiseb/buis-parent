@@ -1,6 +1,5 @@
 package com.buis.web.controller.api;
 
-import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import com.buis.common.constant.RedisConstant;
@@ -10,13 +9,14 @@ import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.alioss.AliOssUtil;
-import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.domain.AwardRecords;
 import com.buis.domain.CollegeMajor;
+import com.buis.domain.Notice;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
+import com.buis.service.INoticeService;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AwardRecordsServiceImpl;
 import com.buis.service.impl.AwardServiceImpl;
@@ -57,6 +57,9 @@ public class UserInfoApiController extends BaseController {
     private AwardRecordsServiceImpl awardRecordsService;
     @Autowired
     private AliOssUtil aliOssUtil;
+    @Resource
+    private INoticeService noticeService;
+
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
@@ -276,5 +279,22 @@ public class UserInfoApiController extends BaseController {
         return R.ok(awardRecordsService.getAwardByUserId(userInfoService.getLoginUser().getId()));
     }
 
+    @ApiOperation("查询通知列表")
+    @GetMapping("/getNotice")
+    public R<List<Notice>> getNoticeList() {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        Notice notice = new Notice();
+        notice.setUserId(userId);
+        notice.setIsUnread(0);
+        return R.ok(noticeService.selectNoticeList(notice));
+    }
 
+    @ApiOperation("已读通知")
+        @PutMapping("/readNotice/{id}")
+    public R readNotice(@PathVariable("id") Long id) {
+        Notice notice = noticeService.selectNoticeById(id);
+        notice.setIsUnread(1);
+        noticeService.updateNotice(notice);
+        return R.ok();
+    }
 }
