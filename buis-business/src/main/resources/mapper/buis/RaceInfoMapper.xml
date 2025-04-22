@@ -478,7 +478,12 @@
         where is_deleted = 0
           and parent_tid = 5
         order by
-            case when review_status = 2 then 0 else 1 end,
+            case
+                when review_status = 2 then 0
+                when review_status = 1 then 1
+                when review_status = 3 then 2
+                else 3
+                end,
             id desc
     </select>
 
