@@ -992,7 +992,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     /**
-     * 从redis中获取比赛信息列表
+     * 查询比赛信息列表并加入缓存
      *
      * @param raceInfo
      * @return
@@ -1042,7 +1042,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 MyRaceInfoVos = raceInfoMapper.selectRaceInfoVoByRaceIds(raceIds);
             } else {
                 page = PageUtils.startPage(pageNum, pageSize);
-                raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+                raceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo,raceIds);
             }
             if (pageNum1 <= 0 && MyRaceInfoVos != null) {
                 page = PageUtils.startPage(pageNum, pageSize);
@@ -1053,10 +1053,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 int num = (size+pageSize-size%10)/10+1;
                 if(pageNum >= num) {
                     page = PageUtils.startPage(pageNum1, pageSize);
-                    raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+                    raceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo,raceIds);
                 } else {
                     page = PageUtils.startPage(pageNum1, pageSize1);
-                    List<RaceInfoVo> OtherRaceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+                    List<RaceInfoVo> OtherRaceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo,raceIds);
                     List<RaceInfoVo> MyRaceInfoVos1 = null;
                     if (size == 1) {
                         MyRaceInfoVos1 = MyRaceInfoVos;

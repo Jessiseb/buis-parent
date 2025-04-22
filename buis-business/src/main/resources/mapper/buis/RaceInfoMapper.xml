@@ -108,84 +108,77 @@
         <include refid="selectRaceInfoVo"/>
         <where>
             t1.is_deleted = 0
-            <if test="raceInfo.id != null ">
-                and t1.id = #{raceInfo.id}
+            <if test="id != null ">
+                and t1.id = #{id}
             </if>
-            <if test="raceInfo.parentTid != null ">
-                and t1.parent_tid = #{raceInfo.parentTid}
+            <if test="parentTid != null ">
+                and t1.parent_tid = #{parentTid}
             </if>
-            <if test="raceInfo.sonTid != null ">
-                and t1.son_tid = #{raceInfo.sonTid}
+            <if test="sonTid != null ">
+                and t1.son_tid = #{sonTid}
             </if>
-            <if test="raceInfo.teacherName != null  and raceInfo.teacherName != ''">
-                and t1.teacher_name like concat('%', #{raceInfo.teacherName}, '%')
+            <if test="teacherName != null  and teacherName != ''">
+                and t1.teacher_name like concat('%', #{teacherName}, '%')
             </if>
-            <if test="raceInfo.name != null  and raceInfo.name != ''">
-                and t1.name like concat('%', #{raceInfo.name}, '%')
+            <if test="name != null  and name != ''">
+                and t1.name like concat('%', #{name}, '%')
             </if>
-            <if test="raceInfo.description != null  and raceInfo.description != ''">
-                and t1.description like concat('%', #{raceInfo.description}, '%')
+            <if test="description != null  and description != ''">
+                and t1.description like concat('%', #{description}, '%')
             </if>
-            <if test="raceInfo.joinStart != null ">
-                and t1.join_start &gt;= #{raceInfo.joinStart}
+            <if test="joinStart != null ">
+                and t1.join_start &gt;= #{joinStart}
             </if>
-            <if test="raceInfo.joinEnd != null ">
-                and t1.join_end &lt;= #{raceInfo.joinEnd}
+            <if test="joinEnd != null ">
+                and t1.join_end &lt;= #{joinEnd}
             </if>
-            <if test="raceInfo.raceStart != null ">
-                and t1.race_start &gt;= #{raceInfo.raceStart}
+            <if test="raceStart != null ">
+                and t1.race_start &gt;= #{raceStart}
             </if>
-            <if test="raceInfo.raceEnd != null ">
-                and t1.race_end &lt;= #{raceInfo.raceEnd}
+            <if test="raceEnd != null ">
+                and t1.race_end &lt;= #{raceEnd}
             </if>
-            <if test="raceInfo.scoreStart != null ">
-                and t1.score_start &gt;= #{raceInfo.scoreStart}
+            <if test="scoreStart != null ">
+                and t1.score_start &gt;= #{scoreStart}
             </if>
-            <if test="raceInfo.scoreEnd != null ">
-                and t1.score_end &lt;= #{raceInfo.scoreEnd}
+            <if test="scoreEnd != null ">
+                and t1.score_end &lt;= #{scoreEnd}
             </if>
-            <if test="raceInfo.status != null ">
-                and t1.status = #{raceInfo.status}
+            <if test="status != null ">
+                and t1.status = #{status}
             </if>
-            <if test="raceInfo.reviewStatus != null ">
-                and t1.review_status = #{raceInfo.reviewStatus}
+            <if test="reviewStatus != null ">
+                and t1.review_status = #{reviewStatus}
             </if>
-            <if test="raceInfo.level != null ">
-                and t1.level = #{raceInfo.level}
+            <if test="level != null ">
+                and t1.level = #{level}
             </if>
-            <if test="raceInfo.seniority != null  and raceInfo.seniority != ''">
-                and t1.seniority like concat('%', #{raceInfo.seniority}, '%')
+            <if test="seniority != null  and seniority != ''">
+                and t1.seniority like concat('%', #{seniority}, '%')
             </if>
-            <if test="raceInfo.descUrl != null  and raceInfo.descUrl != ''">
-                and t1.desc_url like concat('%', #{raceInfo.descUrl}, '%')
+            <if test="descUrl != null  and descUrl != ''">
+                and t1.desc_url like concat('%', #{descUrl}, '%')
             </if>
-            <if test="raceInfo.department != null and raceInfo.department != ''">
-                and t1.department like concat('%', #{raceInfo.department}, '%')
+            <if test="department != null and department != ''">
+                and t1.department like concat('%', #{department}, '%')
             </if>
-            <if test="raceInfo.organizers != null  and raceInfo.organizers != ''">
-                and t1.organizers like concat('%', #{raceInfo.organizers}, '%')
+            <if test="organizers != null  and organizers != ''">
+                and t1.organizers like concat('%', #{organizers}, '%')
             </if>
-            <if test="raceInfo.course != null  and raceInfo.course != ''">
-                and t1.course like concat('%', #{raceInfo.course}, '%')
+            <if test="course != null  and course != ''">
+                and t1.course like concat('%', #{course}, '%')
             </if>
-            <if test="raceInfo.place != null  and raceInfo.place != ''">
-                and t1.place like concat('%', #{raceInfo.place}, '%')
+            <if test="place != null  and place != ''">
+                and t1.place like concat('%', #{place}, '%')
             </if>
-            <if test="raceInfo.fund != null  and raceInfo.fund != ''">
-                and t1.fund like concat('%', #{raceInfo.fund}, '%')
+            <if test="fund != null  and fund != ''">
+                and t1.fund like concat('%', #{fund}, '%')
             </if>
-            <if test="raceInfo.majorCount != null  and raceInfo.majorCount != ''">
-                and t1.major_count like concat('%', #{raceInfo.majorCount}, '%')
+            <if test="majorCount != null  and majorCount != ''">
+                and t1.major_count like concat('%', #{majorCount}, '%')
             </if>
-            <if test="raceInfo.raceType != null ">
-                and t1.race_type = #{raceInfo.raceType}
-            </if>
-            <!-- 新增的过滤条件 -->
-            <if test="raceIds != null and raceIds.size() > 0">
-                and t1.id not in
-                <foreach item="raceId" collection="raceIds" open="(" separator="," close=")">
-                    #{raceId}
-                </foreach>
+            <if test="raceType != null ">
+                and t1.race_type = #{raceType}
             </if>
         </where>
     </select>
@@ -484,7 +477,9 @@
         from race_info
         where is_deleted = 0
           and parent_tid = 5
-        order by id desc
+        order by
+            case when review_status = 2 then 0 else 1 end,
+            id desc
     </select>
 
     <select id="getStudentGradeCount" resultType="com.buis.dto.GradeStatistic">
@@ -526,5 +521,91 @@
         from race_info
         where name = #{name}
           and is_deleted = 0
+    </select>
+
+    <select id="selectRaceInfoNoMyRaceList" resultMap="RaceInfoRewardResult">
+        <include refid="selectRaceInfoVo"/>
+        <where>
+            t1.is_deleted = 0
+            <if test="raceInfo.id != null ">
+                and t1.id = #{raceInfo.id}
+            </if>
+            <if test="raceInfo.parentTid != null ">
+                and t1.parent_tid = #{raceInfo.parentTid}
+            </if>
+            <if test="raceInfo.sonTid != null ">
+                and t1.son_tid = #{raceInfo.sonTid}
+            </if>
+            <if test="raceInfo.teacherName != null  and raceInfo.teacherName != ''">
+                and t1.teacher_name like concat('%', #{raceInfo.teacherName}, '%')
+            </if>
+            <if test="raceInfo.name != null  and raceInfo.name != ''">
+                and t1.name like concat('%', #{raceInfo.name}, '%')
+            </if>
+            <if test="raceInfo.description != null  and raceInfo.description != ''">
+                and t1.description like concat('%', #{raceInfo.description}, '%')
+            </if>
+            <if test="raceInfo.joinStart != null ">
+                and t1.join_start &gt;= #{raceInfo.joinStart}
+            </if>
+            <if test="raceInfo.joinEnd != null ">
+                and t1.join_end &lt;= #{raceInfo.joinEnd}
+            </if>
+            <if test="raceInfo.raceStart != null ">
+                and t1.race_start &gt;= #{raceInfo.raceStart}
+            </if>
+            <if test="raceInfo.raceEnd != null ">
+                and t1.race_end &lt;= #{raceInfo.raceEnd}
+            </if>
+            <if test="raceInfo.scoreStart != null ">
+                and t1.score_start &gt;= #{raceInfo.scoreStart}
+            </if>
+            <if test="raceInfo.scoreEnd != null ">
+                and t1.score_end &lt;= #{raceInfo.scoreEnd}
+            </if>
+            <if test="raceInfo.status != null ">
+                and t1.status = #{raceInfo.status}
+            </if>
+            <if test="raceInfo.reviewStatus != null ">
+                and t1.review_status = #{raceInfo.reviewStatus}
+            </if>
+            <if test="raceInfo.level != null ">
+                and t1.level = #{raceInfo.level}
+            </if>
+            <if test="raceInfo.seniority != null  and raceInfo.seniority != ''">
+                and t1.seniority like concat('%', #{raceInfo.seniority}, '%')
+            </if>
+            <if test="raceInfo.descUrl != null  and raceInfo.descUrl != ''">
+                and t1.desc_url like concat('%', #{raceInfo.descUrl}, '%')
+            </if>
+            <if test="raceInfo.department != null and raceInfo.department != ''">
+                and t1.department like concat('%', #{raceInfo.department}, '%')
+            </if>
+            <if test="raceInfo.organizers != null  and raceInfo.organizers != ''">
+                and t1.organizers like concat('%', #{raceInfo.organizers}, '%')
+            </if>
+            <if test="raceInfo.course != null  and raceInfo.course != ''">
+                and t1.course like concat('%', #{raceInfo.course}, '%')
+            </if>
+            <if test="raceInfo.place != null  and raceInfo.place != ''">
+                and t1.place like concat('%', #{raceInfo.place}, '%')
+            </if>
+            <if test="raceInfo.fund != null  and raceInfo.fund != ''">
+                and t1.fund like concat('%', #{raceInfo.fund}, '%')
+            </if>
+            <if test="raceInfo.majorCount != null  and raceInfo.majorCount != ''">
+                and t1.major_count like concat('%', #{raceInfo.majorCount}, '%')
+            </if>
+            <if test="raceInfo.raceType != null ">
+                and t1.race_type = #{raceInfo.raceType}
+            </if>
+            <!-- 新增的过滤条件 -->
+            <if test="raceIds != null and raceIds.size() > 0">
+                and t1.id not in
+                <foreach item="raceId" collection="raceIds" open="(" separator="," close=")">
+                    #{raceId}
+                </foreach>
+            </if>
+        </where>
     </select>
 </mapper>
