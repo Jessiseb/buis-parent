@@ -249,6 +249,7 @@
         select parent_tid
         from race_type
         where son_tid = #{id}
+        and is_deleted = 0
     </select>
 
 

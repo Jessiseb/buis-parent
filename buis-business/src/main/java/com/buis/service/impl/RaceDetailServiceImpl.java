@@ -9,6 +9,7 @@ import com.buis.dto.UserLoginDto;
 import com.buis.enums.RaceStatus;
 import com.buis.enums.ReviewStatus;
 import com.buis.mapper.RaceDetailMapper;
+import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.IRaceDetailService;
 import com.buis.service.IRaceInfoService;
 import com.buis.system.service.ISysDictDataService;
@@ -36,6 +37,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     private IRaceInfoService raceInfoService;
     @Resource
     private ISysDictDataService sysDictDataService;
+    @Resource
+    private RaceInfoMapper raceInfoMapper;
 
 
     /**
@@ -78,14 +81,17 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     public int insertRaceDetail(RaceDetail raceDetail) {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoVoById(raceDetail.getRace());
 
-        if (Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.REFUSE.getCode())){
+        if (Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.REFUSE.getCode())) {
             throw new ServiceException("比赛审核未通过");
         }
         if (raceInfoVo.getParentTid() == 5 && !Objects.equals(raceInfoVo.getReviewStatus(), ReviewStatus.PASS.getCode())) {
             throw new ServiceException("比赛审核中，请耐心等待");
         }
         raceDetail.setCreateTime(DateUtils.getNowDate());
-         return raceDetailMapper.insertRaceDetail(raceDetail);
+        raceDetail.setReviewStatus(3);
+        raceInfoVo.setReviewStatus(3L);
+        raceInfoMapper.updateRaceInfo(raceInfoVo);
+        return raceDetailMapper.insertRaceDetail(raceDetail);
 
     }
 

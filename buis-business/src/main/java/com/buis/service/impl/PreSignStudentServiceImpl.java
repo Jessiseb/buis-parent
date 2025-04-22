@@ -5,15 +5,12 @@ import com.buis.common.utils.DateUtils;
 import com.buis.domain.PreSignStudent;
 import com.buis.enums.ReviewStatus;
 import com.buis.mapper.PreSignStudentMapper;
-import com.buis.mapper.RaceInfoMapper;
-import com.buis.mapper.UserInfoMapper;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.RaceInfoVo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,6 +84,7 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     @Override
     public int insertPreSignStudent(PreSignStudent preSignStudent) {
         preSignStudent.setCreateTime(DateUtils.getNowDate());
+//        preSignStudent.setRace();
         return preSignStudentMapper.insertPreSignStudent(preSignStudent);
     }
 
@@ -142,8 +140,13 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     }
 
     @Override
-    public PreSignStudent selectPreSignStudentByRace(Long race) {
+    public List<PreSignStudentVo> selectPreSignStudentByRace(Long race) {
         return preSignStudentMapper.selectPreSignStudentByRace(race);
+    }
+
+    @Override
+    public List<PreSignStudentVo> selectPreSignStudentByUserId(Long userId) {
+        return preSignStudentMapper.selectPreSignStudentByUserId(userId);
     }
 
     @Override
@@ -174,6 +177,7 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
             throw new ServiceException("活动未发布");
         }
 
+        preSignStudent.setRace(id);
         int ok = this.insertPreSignStudent(preSignStudent);
         if (ok > 0) {
             return ok;
