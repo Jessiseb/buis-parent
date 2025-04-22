@@ -13,9 +13,10 @@ import java.util.Map;
 @AllArgsConstructor
 public enum ReviewStatus {
     PREPARE(0L, "待审核"),
-    PASS(1L, "审核通过"),
-    REFUSE(2L, "未通过"),
-    PUBLISH(3L, " 已发布");
+    REFUSE(1L, "未通过"),
+    PASS(2L, "审核通过"),
+    PUBLISH(3L, " 已发布"),
+    ESTABLISHED(4L, " 已立项");
 
     private final Long code;
     private final String value;

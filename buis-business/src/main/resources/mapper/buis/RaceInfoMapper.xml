@@ -422,9 +422,9 @@
     <select id="getRaceInfoList" resultType="com.buis.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
         <where>
-            t1.is_deleted = 0
+            t1.is_deleted = 0 and t1.review_status in (3,4)
             <if test="id != null ">and t1.id = #{id}</if>
-            <if test="parentTid != null ">and t1.parent_tid = #{parentTid}</if>
+            <if test="parentTid != null and parentTid != ''">and t1.parent_tid = #{parentTid}</if>
             <if test="sonTid != null ">and t1.son_tid = #{sonTid}</if>
             <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
             <if test="description != null  and description != ''">and t1.description like concat('%', #{description},
@@ -453,7 +453,8 @@
             <if test="level != null ">and t1.level = #{level}</if>
             <if test="raceType != null ">and t1.race_type = #{raceType}</if>
         </where>
-    </select>
+
+         </select>
     <select id="selectSecondActivities" resultType="com.buis.domain.RaceInfo">
         select id,
                teacher_name,
@@ -531,7 +532,7 @@
     <select id="selectRaceInfoNoMyRaceList" resultMap="RaceInfoRewardResult">
         <include refid="selectRaceInfoVo"/>
         <where>
-            t1.is_deleted = 0
+            t1.is_deleted = 0 and t1.review_status in (3,4)
             <if test="raceInfo.id != null ">
                 and t1.id = #{raceInfo.id}
             </if>

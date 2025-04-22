@@ -101,4 +101,11 @@ public class RaceSecondServiceImpl implements IRaceSecondService
     {
         return raceSecondMapper.deleteRaceSecondById(id);
     }
+
+    @Override
+    public RaceSecond selectRaceSecondByRace(Long raceId) {
+        return raceSecondMapper.selectRaceSecondByRace(raceId);
+    }
+
+
 }

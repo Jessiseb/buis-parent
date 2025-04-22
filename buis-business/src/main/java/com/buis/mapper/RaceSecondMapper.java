@@ -59,4 +59,6 @@ public interface RaceSecondMapper
      * @return 结果
      */
     public int deleteRaceSecondByIds(Long[] ids);
+
+    RaceSecond selectRaceSecondByRace(Long raceId);
 }
