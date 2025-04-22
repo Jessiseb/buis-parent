@@ -184,18 +184,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo) {
-        //从队伍用户表中查出该用户所在信息
-        List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(SecurityUtils.getFrontLoginUserId());
-        List<Long> raceIds = new ArrayList<>();
-        if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
-            //根据查出的信息获取到raceId<List>
-            for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
-                Long race = teamMemberStudent.getRace();
-                raceIds.add(race);
-            }
-        }
         // 根据传入参数获取比赛信息
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.getRaceInfoList(raceInfo);
         //todo  抽取出一下代码
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             if (raceInfoVo != null) {
@@ -1000,6 +990,17 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo) {
         Long userId = SecurityUtils.getFrontLoginUserId();
+        //查出该用户所在信息
+        List<RaceInfo> userRaceList = raceInfoService.getUserRaceList(userId);
+        List<Long> raceIds = new ArrayList<>();
+        if (userRaceList != null) {
+            //根据查出的信息获取到raceId<List>
+            for (RaceInfo raceInfo1 : userRaceList) {
+                Long race = raceInfo1.getId();
+                raceIds.add(race);
+            }
+        }
+        int size = raceIds.size();
         //无条件查询
         //获取key
         PageDomain pageDomain = TableSupport.buildPageRequest();
@@ -1007,6 +1008,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         Integer pageSize = pageDomain.getPageSize();
         String pageCacheKey = getPageCacheKey(pageNum, pageSize,userId);
         ObjectMapper objectMapper = new ObjectMapper();
+
+        int pageNum1 = pageNum-size/10;
+        int pageSize1 = pageSize-size%10;
 
         String RacesJson = redisCache.getCacheObject(pageCacheKey);
         if (StringUtils.isNotEmpty(RacesJson)) {
@@ -1018,44 +1022,41 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             return null;
         }
 
-//        String lockKey = QUERY_RACE_LOCK + getPageCacheKey(pageNum, pageSize);
-//        RLock rLock = redissonClient.getLock(lockKey);
         MyPageVo myPageVo = null;
-
         try {
-//            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
-
-            //再次检查缓存
-            RacesJson = redisCache.getCacheObject(pageCacheKey);
-            //判断是否存在
-            if (StringUtils.isNotEmpty(RacesJson)) {
-                //存在直接返回
-                return addFieldToJson(RacesJson);
+            //查询数据库
+            List<RaceInfoVo> raceInfoVos = null;
+            Page<RaceInfoVo> page = null;
+            List<RaceInfoVo> MyRaceInfoVos = null;
+            if (!raceIds.isEmpty()) {
+                MyRaceInfoVos = raceInfoMapper.selectRaceInfoVoByRaceIds(raceIds);
+            } else {
+                page = PageUtils.startPage(pageNum, pageSize);
+                raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
             }
-            //判断空值
-            if (RacesJson != null) {
-                return null;
-            }
-
-//            if (!isLock) {
-//                Thread.sleep(50);
-//                return selectRaceInfoListFromRedis(raceInfo);
-//            }
-
-            //拿到锁，查询数据库
-            //从队伍用户表中查出该用户所在信息
-            List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
-            List<Long> raceIds = new ArrayList<>();
-            if (teamMemberStudents != null || !teamMemberStudents.isEmpty()) {
-                //根据查出的信息获取到raceId<List>
-                for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
-                    Long race = teamMemberStudent.getRace();
-                    raceIds.add(race);
+            if (pageNum1 <= 0 && MyRaceInfoVos != null) {
+                page = PageUtils.startPage(pageNum, pageSize);
+                if (MyRaceInfoVos != null && !MyRaceInfoVos.isEmpty()) {
+                    raceInfoVos = MyRaceInfoVos.subList(0, Math.min(pageSize, MyRaceInfoVos.size()));
+                }
+            } else if (MyRaceInfoVos != null){
+                int num = (size+pageSize-size%10)/10+1;
+                if(pageNum >= num) {
+                    page = PageUtils.startPage(pageNum1, pageSize);
+                    raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+                } else {
+                    page = PageUtils.startPage(pageNum1, pageSize1);
+                    List<RaceInfoVo> OtherRaceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+                    List<RaceInfoVo> MyRaceInfoVos1 = null;
+                    if (size == 1) {
+                        MyRaceInfoVos1 = MyRaceInfoVos;
+                    } else {
+                        MyRaceInfoVos1 = MyRaceInfoVos.subList(size - size % 10, size-1);
+                    }
+                    raceInfoVos = new ArrayList<>(MyRaceInfoVos1);
+                    raceInfoVos.addAll(OtherRaceInfoVos);
                 }
             }
-            Page<RaceInfoVo> page = PageUtils.startPage(pageNum, pageSize);
-            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
-
             //不存在，返回错误信息
             if (raceInfoVos.isEmpty()) {
                 log.info("将空值写入redis");
@@ -1069,11 +1070,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             myPageVo = addFieldToJson(json);
         } catch (Exception e) {
             throw new ServiceException("查询失败: " + e.getMessage());
-        } finally {
-//            //释放锁
-//            if (rLock.isHeldByCurrentThread()) {
-//                rLock.unlock();
-//            }
         }
         return myPageVo;
     }
