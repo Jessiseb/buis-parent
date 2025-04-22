@@ -129,7 +129,10 @@ public class UserInfoApiController extends BaseController {
         Long userId = SecurityUtils.getFrontLoginUserId();
         userInfo.setId(userId);
         String password = userInfo.getPassword();
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
+        String encryptPassword = null;
+        if (!StringUtils.isEmpty(password)){
+            encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
+        }
         userInfo.setPassword(encryptPassword);
         return R.ok(userInfoService.updateUserInfo(userInfo));
     }
