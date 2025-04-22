@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.buis.common.core.domain.AjaxResult;
@@ -313,8 +314,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public int updateRaceInfo(RaceInfo raceInfo) {
         // 获取用户id
-        LoginUser loginUser = SecurityUtils.getLoginUser();
-        Long userId = loginUser.getUser().getUserId();
+//        LoginUser loginUser = SecurityUtils.getLoginUser();
+//        Long userId = loginUser.getUser().getUserId();
+        Long userId = Long.valueOf(StpUtil.getLoginId().toString());
         //获取比赛id
         Long raceId = raceInfo.getId();
         // 判断报名条件
@@ -407,7 +409,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             }
             return res;
         }
-        if (parentTid == 5) {
+        if (parentTid == 5 || parentTid == 3) {
             List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByRace(raceId);
             for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
                 if (preSignStudentVo.getStudent().equals(userId)) {
@@ -551,13 +553,22 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
         //从队伍用户表中查出该用户所在信息
         List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
-        if (teamMemberStudents == null || teamMemberStudents.isEmpty()) {
+        List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByUserId(userId);
+        if (teamMemberStudents == null && preSignStudentVos == null) {
+            return null;
+        }
+        if (teamMemberStudents.isEmpty() && preSignStudentVos.isEmpty()) {
             return null;
         }
         //根据查出的信息获取到raceId<List>
         List<Long> raceIds = new ArrayList<>();
         for (TeamMemberStudent teamMemberStudent : teamMemberStudents) {
             Long race = teamMemberStudent.getRace();
+            raceIds.add(race);
+        }
+
+        for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
+            Long race = preSignStudentVo.getRace();
             raceIds.add(race);
         }
         //根据raceId<List>查询到对应的比赛信息并返回
@@ -994,13 +1005,28 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo) {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        //查出该用户所在信息
+        List<RaceInfo> userRaceList = raceInfoService.getUserRaceList(userId);
+        List<Long> raceIds = new ArrayList<>();
+        if (userRaceList != null) {
+            //根据查出的信息获取到raceId<List>
+            for (RaceInfo raceInfo1 : userRaceList) {
+                Long race = raceInfo1.getId();
+                raceIds.add(race);
+            }
+        }
+        int size = raceIds.size();
         //无条件查询
         //获取key
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();
         Integer pageSize = pageDomain.getPageSize();
-        String pageCacheKey = getPageCacheKey(pageNum, pageSize);
+        String pageCacheKey = getPageCacheKey(pageNum, pageSize,userId);
         ObjectMapper objectMapper = new ObjectMapper();
+
+        int pageNum1 = pageNum-size/10;
+        int pageSize1 = pageSize-size%10;
 
         String RacesJson = redisCache.getCacheObject(pageCacheKey);
         if (StringUtils.isNotEmpty(RacesJson)) {
@@ -1012,34 +1038,41 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             return null;
         }
 
-//        String lockKey = QUERY_RACE_LOCK + getPageCacheKey(pageNum, pageSize);
-//        RLock rLock = redissonClient.getLock(lockKey);
         MyPageVo myPageVo = null;
-
         try {
-//            boolean isLock = rLock.tryLock(3, 60 * 3, TimeUnit.SECONDS);
-
-            //再次检查缓存
-            RacesJson = redisCache.getCacheObject(pageCacheKey);
-            //判断是否存在
-            if (StringUtils.isNotEmpty(RacesJson)) {
-                //存在直接返回
-                return addFieldToJson(RacesJson);
+            //查询数据库
+            List<RaceInfoVo> raceInfoVos = null;
+            Page<RaceInfoVo> page = null;
+            List<RaceInfoVo> MyRaceInfoVos = null;
+            if (!raceIds.isEmpty()) {
+                MyRaceInfoVos = raceInfoMapper.selectRaceInfoVoByRaceIds(raceIds);
+            } else {
+                page = PageUtils.startPage(pageNum, pageSize);
+                raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
             }
-            //判断空值
-            if (RacesJson != null) {
-                return null;
+            if (pageNum1 <= 0 && MyRaceInfoVos != null) {
+                page = PageUtils.startPage(pageNum, pageSize);
+                if (MyRaceInfoVos != null && !MyRaceInfoVos.isEmpty()) {
+                    raceInfoVos = MyRaceInfoVos.subList(0, Math.min(pageSize, MyRaceInfoVos.size()));
+                }
+            } else if (MyRaceInfoVos != null){
+                int num = (size+pageSize-size%10)/10+1;
+                if(pageNum >= num) {
+                    page = PageUtils.startPage(pageNum1, pageSize);
+                    raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+                } else {
+                    page = PageUtils.startPage(pageNum1, pageSize1);
+                    List<RaceInfoVo> OtherRaceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo,raceIds);
+                    List<RaceInfoVo> MyRaceInfoVos1 = null;
+                    if (size == 1) {
+                        MyRaceInfoVos1 = MyRaceInfoVos;
+                    } else {
+                        MyRaceInfoVos1 = MyRaceInfoVos.subList(size - size % 10, size);
+                    }
+                    raceInfoVos = new ArrayList<>(MyRaceInfoVos1);
+                    raceInfoVos.addAll(OtherRaceInfoVos);
+                }
             }
-
-//            if (!isLock) {
-//                Thread.sleep(50);
-//                return selectRaceInfoListFromRedis(raceInfo);
-//            }
-
-            //拿到锁，查询数据库
-            Page<RaceInfoVo> page = PageUtils.startPage(pageNum, pageSize);
-            List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoList(raceInfo);
-
             //不存在，返回错误信息
             if (raceInfoVos.isEmpty()) {
                 log.info("将空值写入redis");
@@ -1053,11 +1086,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             myPageVo = addFieldToJson(json);
         } catch (Exception e) {
             throw new ServiceException("查询失败: " + e.getMessage());
-        } finally {
-//            //释放锁
-//            if (rLock.isHeldByCurrentThread()) {
-//                rLock.unlock();
-//            }
         }
         return myPageVo;
     }
@@ -1186,8 +1214,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @param pageSize
      * @return
      */
-    private String getPageCacheKey(int pageNum, int pageSize) {
-        return String.format("races:page:%d:size:%d", pageNum, pageSize);
+    private String getPageCacheKey(int pageNum, int pageSize, Long userId) {
+        return String.format("races:page:%d:size:%d:user:%d", pageNum, pageSize, userId);
     }
 
     /**
@@ -1216,7 +1244,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     //删除比赛信息分页缓存
     public void deleteRacesInfoCache() {
         //删除所有比赛信息分页缓存
-        String pattern = "races:page:*:size:*";
+        String pattern = "races:page:*:size:*:user:*";
         Set<String> keys = redisTemplate.keys(pattern);
         if (keys != null && !keys.isEmpty()) {
             // 删除匹配的键

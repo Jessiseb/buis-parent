@@ -145,6 +145,11 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     }
 
     @Override
+    public List<PreSignStudentVo> selectPreSignStudentByUserId(Long userId) {
+        return preSignStudentMapper.selectPreSignStudentByUserId(userId);
+    }
+
+    @Override
     @Transactional
     public int studentSign(Long id, Long userId,PreSignStudent preSignStudent) {
         //参数校验
