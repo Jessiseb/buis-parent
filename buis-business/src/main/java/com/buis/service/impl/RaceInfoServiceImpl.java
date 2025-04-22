@@ -992,7 +992,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     /**
-     * 查询比赛信息列表并加入缓存
+     * 从redis中获取比赛信息列表
      *
      * @param raceInfo
      * @return

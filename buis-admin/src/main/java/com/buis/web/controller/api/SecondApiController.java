@@ -147,12 +147,12 @@ public class SecondApiController {
     @Transactional
     public R<RaceDetail> publish(@ApiParam(name = "raceDetail", value = "发布信息", required = true)
                                  @RequestBody RaceDetail raceDetail,
-                                 @ApiParam(name = "secondId", value = "申报的活动id", required = true)
-                                 @RequestParam Long secondId) {
+                                 @ApiParam(name = "raceId", value = "申报的活动id", required = true)
+                                 @RequestParam Long raceId) {
         //发布的时候只有等审核状态为已通过才能发布, 而且只能发布是自己申报的活动
 
         //判断申报的活动是否审核通过
-        RaceInfoVo res = raceInfoService.selectRaceInfoVoById(secondId);
+        RaceInfoVo res = raceInfoService.selectRaceInfoVoById(raceId);
         if (res == null) {
             return R.fail("请先申报活动再填写发布内容~");
         }
@@ -172,13 +172,13 @@ public class SecondApiController {
 
         //审核通过才能填写
         if (Objects.equals(status, ReviewStatus.PASS.getCode())) {
-            raceDetail.setRace(secondId);
+            raceDetail.setRace(raceId);
             int i = raceDetailService.insertRaceDetail(raceDetail);
             if (i <= 0) {
                 return R.fail("发布失败");
             }
             //成功发布之后，把race_second表的状态也设置为已发布
-            RaceSecond raceSecond = raceSecondService.selectRaceSecondById(secondId);
+            RaceSecond raceSecond = raceSecondService.selectRaceSecondByRace(raceId);
             raceSecond.setReviewStatus(ReviewStatus.PUBLISH.getCode());
             int ok = raceSecondService.updateRaceSecond(raceSecond);
             if (ok <= 0) {

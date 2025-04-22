@@ -44,9 +44,9 @@ public class AiController {
     @Value("${coze}")
     String cozeToken;
 
-    private static final String API_KEY = "h9bKT9qFwv91Q2jXbhkEpyJyUieYAIpq";
-    private static final String SECRET_KEY = "jVFagF3PmOueZXfs3U3VUCAABK8s8j1H";
-    private static final String API_URL = "你的智能体API地址";
+//    private static final String API_KEY = "h9bKT9qFwv91Q2jXbhkEpyJyUieYAIpq";
+//    private static final String SECRET_KEY = "jVFagF3PmOueZXfs3U3VUCAABK8s8j1H";
+//    private static final String API_URL = "你的智能体API地址";
 
 
     /**

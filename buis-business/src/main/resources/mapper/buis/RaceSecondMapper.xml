@@ -48,6 +48,10 @@
         <include refid="selectRaceSecondVo"/>
         where t1.id = #{id} and t1.is_deleted = 0
     </select>
+    <select id="selectRaceSecondByRace" resultType="com.buis.domain.RaceSecond">
+        <include refid="selectRaceSecondVo"/>
+        where t1.race = #{raceId} and t1.is_deleted = 0
+    </select>
 
     <insert id="insertRaceSecond" parameterType="com.buis.vo.RaceSecondVo" useGeneratedKeys="true" keyProperty="id">
         insert into race_second

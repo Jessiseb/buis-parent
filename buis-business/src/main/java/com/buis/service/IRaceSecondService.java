@@ -59,4 +59,7 @@ public interface IRaceSecondService
      * @return 结果
      */
     public int deleteRaceSecondById(Long id);
+
+    RaceSecond selectRaceSecondByRace(Long raceId);
+
 }
