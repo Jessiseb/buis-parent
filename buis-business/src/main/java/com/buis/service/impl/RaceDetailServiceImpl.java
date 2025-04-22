@@ -9,6 +9,7 @@ import com.buis.dto.UserLoginDto;
 import com.buis.enums.RaceStatus;
 import com.buis.enums.ReviewStatus;
 import com.buis.mapper.RaceDetailMapper;
+import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.IRaceDetailService;
 import com.buis.service.IRaceInfoService;
 import com.buis.system.service.ISysDictDataService;
@@ -36,6 +37,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
     private IRaceInfoService raceInfoService;
     @Resource
     private ISysDictDataService sysDictDataService;
+    @Resource
+    private RaceInfoMapper raceInfoMapper;
 
 
     /**
@@ -87,7 +90,7 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         raceDetail.setCreateTime(DateUtils.getNowDate());
         raceDetail.setReviewStatus(3);
         raceInfoVo.setReviewStatus(3L);
-        raceInfoService.updateRaceInfo(raceInfoVo);
+        raceInfoMapper.updateRaceInfo(raceInfoVo);
         return raceDetailMapper.insertRaceDetail(raceDetail);
 
     }
