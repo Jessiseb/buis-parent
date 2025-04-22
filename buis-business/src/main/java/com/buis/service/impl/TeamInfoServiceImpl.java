@@ -105,7 +105,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //TODO 默認兩,后面根据数据库获取
         int limit = 2;
         TeamMemberStudent teamMember = new TeamMemberStudent();
-        teamMember.setDecider(loginUser.getId());
+        teamMember.setStudent(loginUser.getId());
+        teamMember.setIsChoosed(ChooseStatus.CHOOSE.getCode());
         List<TeamMemberStudentVo> teamMemberStudentVos = teamStudentService.selectTeamMemberStudentList(teamMember);
         if (teamMemberStudentVos.size() > limit) {
             throw new ServiceException("当前比赛您已经加入过" + limit + "个队伍,无法再加入!");
@@ -118,6 +119,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfo.setLeader(loginUser.getId()); //leader
         teamInfo.setLeaderName(loginUser.getName()); //leader_name
         teamInfo.setPhone(loginUser.getPhone()); //phone
+        teamInfo.setIsPublish("N");
 
         //班级
 //        String stuGrade = userInfoVo.getStuGrade();
@@ -152,7 +154,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             if (teamInfo.getTeacher2() != null) {
                 TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
                 teamMemberTeacher.setRace(teamInfo.getRace());
-                teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
+                teamMemberTeacher.setTeacher(teamInfo.getTeacher2());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
                 teamMemberTeacher.setTeam(teamInfo.getId());
                 teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
@@ -413,10 +415,12 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //如果队伍只有一个人就直接解散
         if (teamStudentService.getJoinCountByTeamId(team) == 1) {
             //删除队伍
-            //并且吧队伍用户中间表设置为已删除
+            //并且把队伍用户中间表设置为已删除
             teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
+            //删除队伍老师中间表
+            teamTeacherService.deleteTeamMemberTeacherByTeam(team);
             //删除队伍信息缓存
-            deleteTeamInfoCache(userId);
+            deleteTeamInfoCache(team);
             raceInfoService.deleteRacesInfoCache();
             return teamInfoMapper.deleteTeamInfoById(team);
         } else {
@@ -435,16 +439,29 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 String phone = nextLeaderInfo.getPhone(); //手机号
                 int college = nextLeaderInfo.getCollege(); //学院
                 String name = nextLeaderInfo.getName(); //姓名
-                teamInfo.setName(name);
+                teamInfo.setLeaderName(name);
                 teamInfo.setPhone(phone);
                 teamInfo.setCollege(college);
                 teamInfo.setLeader(teamMemberStudent.getStudent());
+
+                //修改队伍学生中间表的负责人id
+                Long nextLeaderId = nextLeaderInfo.getId();
+                for (TeamMemberStudent memberStudent : teamMemberStudents) {
+                    memberStudent.setDecider(nextLeaderId);
+                    teamStudentService.updateTeamMemberStudent(memberStudent);
+                }
+                //修改队伍老师中间表的负责人id
+                List<TeamMemberTeacher> teamMemberTeachers = teamTeacherService.selectTeamMemberTeacherByTeamId(team);
+                for (TeamMemberTeacher memberTeacher : teamMemberTeachers) {
+                    memberTeacher.setDecider(nextLeaderId);
+                    teamTeacherService.updateTeamMemberTeacher(memberTeacher);
+                }
                 //修改队伍负责人信息
                 int ok = teamInfoMapper.updateTeamInfo(teamInfo);
                 if (ok > 0) {
                     //删除该成员
                     //删除队伍信息缓存
-                    deleteTeamInfoCache(userId);
+                    deleteTeamInfoCache(team);
                     raceInfoService.deleteRacesInfoCache();
                     return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
                 } else {
@@ -453,7 +470,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             } else {
                 //不是负责人退出队伍
                 //删除队伍信息缓存
-                deleteTeamInfoCache(userId);
+                deleteTeamInfoCache(team);
                 raceInfoService.deleteRacesInfoCache();
                 return teamStudentService.quitTeam(team, userId);
             }
