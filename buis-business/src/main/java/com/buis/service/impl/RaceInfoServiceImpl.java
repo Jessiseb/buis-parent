@@ -1083,7 +1083,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                     if (size == 1) {
                         MyRaceInfoVos1 = MyRaceInfoVos;
                     } else {
-                        MyRaceInfoVos1 = MyRaceInfoVos.subList(size - size % 10, size-1);
+                        MyRaceInfoVos1 = MyRaceInfoVos.subList(size - size % 10, size);
                     }
                     raceInfoVos = new ArrayList<>(MyRaceInfoVos1);
                     raceInfoVos.addAll(OtherRaceInfoVos);
