@@ -3,8 +3,6 @@ package com.buis.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
-import com.buis.common.core.domain.AjaxResult;
-import com.buis.common.core.domain.model.LoginUser;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.PageDomain;
 import com.buis.common.core.page.TableSupport;
@@ -25,10 +23,6 @@ import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
 import com.buis.vo.*;
-import com.buis.vo.RaceDetailVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.UserInfoVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +36,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
 
-import static com.buis.common.constant.CacheConstants.QUERY_HOT_RACE_LOCK;
 import static com.buis.common.constant.CacheConstants.QUERY_RACE_LOCK;
 
 /**
@@ -159,7 +152,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     public List<RaceInfoVo> selectRaceInfoList(RaceInfo raceInfo) {
         // 根据传入参数获取比赛信息
         return raceInfoMapper.selectRaceInfoList(raceInfo);
-
     }
 
 
@@ -173,7 +165,6 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     public List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo) {
         // 根据传入参数获取比赛信息
         List<RaceInfoVo> raceInfoVos = raceInfoMapper.getRaceInfoList(raceInfo);
-        //todo  抽取出一下代码
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             if (raceInfoVo != null) {
                 // 设置是否已报名
@@ -389,11 +380,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         if (userId == null || raceId == null) {
             throw new IllegalArgumentException("userId and raceId cannot be null");
         }
+
         RaceInfo raceInfo = raceInfoMapper.selectRaceInfoById(raceId);
         Long parentTid = raceInfo.getParentTid();
         if (parentTid == null) {
             return res;
         }
+        //大创立项
         if (parentTid == 1) {
             // 判断互选表有没有信息
             res = teamMemberTeacherService.getJoinCount(userId, raceId, team);
@@ -409,6 +402,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             }
             return res;
         }
+        //学科竞赛或者第二课堂
         if (parentTid == 5 || parentTid == 3) {
             List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByRace(raceId);
             for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
