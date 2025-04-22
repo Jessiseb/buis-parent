@@ -130,4 +130,5 @@ public interface RaceInfoMapper
     RaceInfo selectRaceInfoByName(@Param("name") String name);
 
     List<RaceInfoVo> selectRaceInfoVoByRaceIds(List<Long> raceIds);
+
 }

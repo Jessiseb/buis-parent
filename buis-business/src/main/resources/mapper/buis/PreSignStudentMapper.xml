@@ -52,8 +52,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select race from pre_sign_student where student = #{id} and is_deleted = 0
     </select>
 
-    <select id="selectPreSignStudentByRace" resultType="com.buis.domain.PreSignStudent">
+    <select id="selectPreSignStudentByRace" resultType="com.buis.vo.PreSignStudentVo">
         select * from pre_sign_student where race = #{race} and is_deleted = 0
+    </select>
+    <select id="selectPreSignStudentByUserId" resultType="com.buis.vo.PreSignStudentVo">
+        select * from pre_sign_student where student = #{userId} and is_deleted = 0
     </select>
 
     <insert id="insertPreSignStudent" parameterType="com.buis.domain.PreSignStudent" useGeneratedKeys="true" keyProperty="id">
