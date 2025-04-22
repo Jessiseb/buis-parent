@@ -108,7 +108,6 @@
         <include refid="selectRaceInfoVo"/>
         <where>
             t1.is_deleted = 0
-            <!-- 修改为通过 raceInfo 对象引用 id 属性 -->
             <if test="raceInfo.id != null ">
                 and t1.id = #{raceInfo.id}
             </if>
@@ -181,24 +180,14 @@
             <if test="raceInfo.raceType != null ">
                 and t1.race_type = #{raceInfo.raceType}
             </if>
-        </where>
-        <choose>
-            <when test="raceIds != null and raceIds.size() > 0">
-                ORDER BY
-                CASE
-                WHEN t1.id IN
+            <!-- 新增的过滤条件 -->
+            <if test="raceIds != null and raceIds.size() > 0">
+                and t1.id not in
                 <foreach item="raceId" collection="raceIds" open="(" separator="," close=")">
                     #{raceId}
                 </foreach>
-                THEN 0
-                ELSE 1
-                END,
-                t1.id ASC
-            </when>
-            <otherwise>
-                ORDER BY t1.id ASC
-            </otherwise>
-        </choose>
+            </if>
+        </where>
     </select>
 
     <select id="selectRaceInfoById" parameterType="Long" resultMap="RaceInfoRewardResult">
