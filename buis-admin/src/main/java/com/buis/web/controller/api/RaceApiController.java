@@ -90,5 +90,16 @@ public class RaceApiController extends BaseController {
         return R.ok(result);
     }
 
+    /**
+     * 根据比赛id查询详细信息
+     */
+    @ApiOperation("根据比赛id查询详细信息")
+    @GetMapping("/getRaceInfoByRace")
+    public R<RaceInfo> getRaceInfoByRace(@ApiParam(name = "raceId", value = "比赛id", required = true)
+                                         @RequestParam Long raceId) {
+        //根据比赛查询详细信息
+        RaceInfo result = raceInfoService.selectRaceInfoById(raceId);
+        return R.ok(result);
+    }
 
 }
