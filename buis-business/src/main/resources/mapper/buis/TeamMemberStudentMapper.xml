@@ -109,7 +109,7 @@
         from team_member_student
 
         <where>
-            is_deleted = 0
+            is_deleted = 0 and is_choosed = 0
             <if test="team   != null and team != ''">and team = #{team}</if>
             <if test="user != null and user != ''">and student = #{user}</if>
         </where>
@@ -120,7 +120,7 @@
         from team_member_student
 
         <where>
-            is_deleted = 0
+            is_deleted = 0 and is_choosed in (0, 1)
             <if test="raceId != null">and race = #{raceId}</if>
             <if test="team   != null">and team = #{team}</if>
             <if test="userId != null">and student = #{userId}</if>
