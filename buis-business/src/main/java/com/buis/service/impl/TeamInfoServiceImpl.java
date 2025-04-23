@@ -439,6 +439,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamInfo.setPhone(phone);
                 teamInfo.setCollege(college);
                 teamInfo.setLeader(teamMemberStudent.getStudent());
+                //修改队伍学生中间表的负责人id
+                Long nextLeaderId = nextLeaderInfo.getId();
+                for (TeamMemberStudent memberStudent : teamMemberStudents) {
+                    memberStudent.setDecider(nextLeaderId);
+                }
                 //修改队伍负责人信息
                 int ok = teamInfoMapper.updateTeamInfo(teamInfo);
                 if (ok > 0) {

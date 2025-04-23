@@ -11,6 +11,7 @@ import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.exception.UploadFileException;
+import com.alibaba.dashscope.utils.JsonUtils;
 import com.buis.common.core.domain.R;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AiServiceImpl;
@@ -53,10 +54,11 @@ public class AiController {
      * 接入通易模型,识别图像信息
      *
      * @param image 图像路径
+     * @return
      */
     @PostMapping("/imageAnalysis")
     @ApiOperation("图像识别文字")
-    public R<MultiModalConversationResult> imageAnalysis(@RequestParam("image") String image)
+    public R<String> imageAnalysis(@RequestParam("image") String image)
             throws ApiException, NoApiKeyException, UploadFileException {
 //        System.out.println(apiKey);
         MultiModalConversation conv = new MultiModalConversation();
@@ -64,8 +66,7 @@ public class AiController {
                 .content(Arrays.asList(
                         Collections.singletonMap("image", image),
                         Collections.singletonMap("text", "请帮忙分类图片的:活动名字、 获奖级别、全部获奖成员、全部指导老师、获奖时间,其余不需要,返回的信息必须要完全,返回的结果要以" +
-                                "活动名字：内容；获奖级别：内容；获奖成员：内容；指导老师：内容；获奖时间：xxxx年-xx月-xx日，这种样子的,如果成员和老师是多个的话,用顿号隔开"),
-                        Collections.singletonMap("stream", "true"))).build();
+                                "活动名字：内容；获奖级别：内容；获奖成员：内容；指导老师：内容；获奖时间：xxxx年-xx月-xx日，这种样子的,如果成员和老师是多个的话,用顿号隔开"))).build();
         MultiModalConversationParam param = MultiModalConversationParam.builder()
                 // 若没有配置环境变量，请用百炼API Key将下行替换为：.apiKey("sk-xxx")
                 .apiKey(apiKey)
@@ -74,14 +75,10 @@ public class AiController {
                 .message(userMessage)
                 .build();
         MultiModalConversationResult result = conv.call(param);
-        result.getOutput().getChoices().get(0).getMessage().getContent().forEach(System.out::println);
-        return R.ok(result);
+//        result.getOutput().getChoices().get(0).getMessage().getContent().forEach(System.out::println);
+        return R.ok(JsonUtils.toJson(result));
+//        return R.ok(result);
     }
-
-    /**
-     * 接收前端识别出的
-     */
-
 
 
     /**
