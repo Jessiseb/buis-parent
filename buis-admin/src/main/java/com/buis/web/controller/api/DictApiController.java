@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.buis.common.utils.PageUtils.startPage;
+
 @Api(tags = "字典信息管理Api")
 @RestController
 @RequestMapping("/api/dict")
@@ -144,6 +146,7 @@ public class DictApiController {
      * @return MyPageVo<List<SysDictDataVo>> 返回字典信息的分页数据
      */
     public MyPageVo<List<SysDictDataVo>> getDictDataByType(String dictType) {
+        startPage();
         SysDictData dictData = new SysDictData();
         dictData.setDictType(dictType);  // 设置字典类型
         dictData.setStatus("0");  // 只查询有效的字典数据
