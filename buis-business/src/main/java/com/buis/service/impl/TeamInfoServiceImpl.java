@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.buis.common.constant.TeamQueryConstants;
+import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.PageDomain;
 import com.buis.common.core.page.TableSupport;
@@ -32,11 +33,14 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.buis.common.constant.CacheConstants.JOIN_TEAM_LOCK;
 import static com.buis.common.constant.CacheConstants.QUERY_TEAM_LOCK;
@@ -76,6 +80,8 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private ITeamMemberTeacherService teamMemberTeacherService;
     @Resource
     private ICollegeMajorService classroomMajorService;
+    @Resource
+    private IEmailService emailService;
 
     /**
      * 新增队伍信息
@@ -510,9 +516,13 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     @Transactional
     public int refuseJoinTeam(Long userId, Long teamId) {
         TeamMemberStudent teamMemberStudent = teamStudentService.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
-
+        Long student = teamMemberStudent.getStudent();
+        Long decider = teamMemberStudent.getDecider();
+        String email;
+        String teamName = teamInfoService.selectTeamInfoById(teamId).getName();
+        String studentName = userInfoService.selectUserInfoById(userId).getName();
         // 获取申请记录
-        if (teamMemberStudent.getIsChoosed() != ChooseStatus.TOBESELECTED.getCode()) { // 0表示待审核
+        if (!teamMemberStudent.getIsChoosed().equals(ChooseStatus.TOBESELECTED.getCode())) { // 0表示待审核
             throw new ServiceException("申请不存在或已处理");
         }
 
@@ -521,6 +531,44 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         if (ok == 0) {
             throw new ServiceException("同意失败");
         }
+        if (student.equals(userId)) {
+            email = userInfoService.selectUserInfoById(decider).getEmail();
+            //校验账户
+            //邮箱的正则表达式
+            String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+            Matcher matcher = Pattern.compile(emailRegex).matcher(email);
+            if (!matcher.find()) {
+                throw new ServiceException("邮箱格式有误,请重新输入!");
+            }
+            //构建信息
+            String massage = "您好，您邀请" + studentName + "同学加入《" + teamName + "》团队的请求已被拒绝。";
+            try {
+                //发送邮件
+                emailService.sendEmail(email, "广东白云学院大数据与计算机学院创新创业中心", massage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (decider.equals(userId)) {
+            email = userInfoService.selectUserInfoById(student).getEmail();
+            //校验账户
+            //邮箱的正则表达式
+            String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+            Matcher matcher = Pattern.compile(emailRegex).matcher(email);
+            if (!matcher.find()) {
+                throw new ServiceException("邮箱格式有误,请重新输入!");
+            }
+            //构建信息
+            String massage = "您好，您申请加入《" + teamName + "》团队的请求已被拒绝。";
+            try {
+                //发送邮件
+                emailService.sendEmail(email, "广东白云学院大数据与计算机学院创新创业中心", massage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return ok;
     }
 
