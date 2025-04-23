@@ -11,9 +11,7 @@ import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.exception.UploadFileException;
-import com.alibaba.dashscope.utils.JsonUtils;
 import com.buis.common.core.domain.R;
-import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AiServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,8 +34,6 @@ public class AiController {
 
     @Autowired
     private AiServiceImpl aiService;
-    @Autowired
-    private IUserInfoService uservice;
 
     @Value("${aliyun.ai.api-key}")
     String apiKey; //阿里云api
@@ -58,7 +54,7 @@ public class AiController {
      */
     @PostMapping("/imageAnalysis")
     @ApiOperation("图像识别文字")
-    public R<String> imageAnalysis(@RequestParam("image") String image)
+    public R<MultiModalConversationResult> imageAnalysis(@RequestParam("image") String image)
             throws ApiException, NoApiKeyException, UploadFileException {
 //        System.out.println(apiKey);
         MultiModalConversation conv = new MultiModalConversation();
@@ -76,8 +72,8 @@ public class AiController {
                 .build();
         MultiModalConversationResult result = conv.call(param);
 //        result.getOutput().getChoices().get(0).getMessage().getContent().forEach(System.out::println);
-        return R.ok(JsonUtils.toJson(result));
-//        return R.ok(result);
+//        return R.ok(JsonUtils.toJson(result));
+        return R.ok(result);
     }
 
 
@@ -117,5 +113,6 @@ public class AiController {
         return aiService.agentCallWithMessage(message, threadId);
 
     }
+
 
 }
