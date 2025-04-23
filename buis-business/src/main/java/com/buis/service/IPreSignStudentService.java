@@ -68,8 +68,7 @@ public interface IPreSignStudentService
 
     List<PreSignStudentVo> selectPreSignStudentByRace(Long race);
 
-    List<PreSignStudentVo> selectPreSignStudentByUserId(Long race);
+    List<PreSignStudentVo> selectPreSignStudentByUserId(Long UserId);
 
     int studentSign(Long id, Long userId,PreSignStudent preSignStudent);
-
 }

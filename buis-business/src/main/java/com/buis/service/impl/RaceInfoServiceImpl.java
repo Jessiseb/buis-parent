@@ -71,7 +71,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private RedisTemplate redisTemplate;
     @Autowired
     private RedissonClient redissonClient;
-    @Autowired
+    @Resource
     private IPreSignStudentService preSignStudentService;
     @Resource
     private IRaceInfoService raceInfoService;
@@ -865,6 +865,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         String name = userInfoVo.getName();
         List<TeamInfo> teamInfos = teamInfoService.selectAllTeamInfoById(userId);
         List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoAll();
+        List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByUserId(userId);
+
         for (RaceInfoVo race : raceInfoVos) {
             Date createDate = race.getCreateTime();
             LocalDate localDate = createDate.toInstant()
@@ -891,6 +893,17 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                         .toLocalDate();
                 int year = localDate.getYear();
                 if (teamInfo.getRace() != null && year == grade) {
+                    count++;
+                }
+            }
+
+            for (PreSignStudentVo preSignStudentVo : preSignStudentVos) {
+                Date createDate = preSignStudentVo.getCreateTime();
+                LocalDate localDate = createDate.toInstant()
+                        .atZone(ZoneId.systemDefault()) // 指定时区（如系统默认时区）
+                        .toLocalDate();
+                int year = localDate.getYear();
+                if (preSignStudentVo.getRace() != null && year == grade) {
                     count++;
                 }
             }
