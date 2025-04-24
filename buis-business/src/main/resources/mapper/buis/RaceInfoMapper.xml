@@ -459,16 +459,16 @@
          </select>
     <select id="selectSecondActivities" resultType="com.buis.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
-        where is_deleted = 0
-          and parent_tid = 5
+        where t1.is_deleted = 0
+          and t1.parent_tid = 5
         order by
             case
-                when review_status = 2 then 0
-                when review_status = 1 then 1
-                when review_status = 3 then 2
+                when t1.review_status = 2 then 0
+                when t1.review_status = 1 then 1
+                when t1.review_status = 3 then 2
                 else 3
                 end,
-            id desc
+        t1.id desc
     </select>
 
     <select id="getStudentGradeCount" resultType="com.buis.dto.GradeStatistic">
