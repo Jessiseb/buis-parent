@@ -30,19 +30,17 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/buis/records")
-public class AwardRecordsController extends BaseController
-{
+public class AwardRecordsController extends BaseController {
     @Autowired
     private IAwardRecordsService awardRecordsService;
 
-/**
- * 查询奖状汇总列表
- */
-@ApiOperation("查询奖状汇总列表")
-@PreAuthorize("@ss.hasPermi('buis:records:list')")
-@GetMapping("/list")
-    public TableDataInfo list(AwardRecords awardRecords)
-    {
+    /**
+     * 查询奖状汇总列表
+     */
+    @ApiOperation("查询奖状汇总列表")
+    @PreAuthorize("@ss.hasPermi('buis:records:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(AwardRecords awardRecords) {
         startPage();
         List<AwardRecords> list = awardRecordsService.selectAwardRecordsList(awardRecords);
         return getDataTable(list);
