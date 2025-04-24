@@ -149,8 +149,8 @@ public class JoinApiController extends BaseController {
     public R<PreSignStudent> getPreStudentsByRaceId(
             @ApiParam(name = "RaceId", value = "比赛id", required = true)
             @RequestParam("raceId") Long raceId) {
-        //返回结果
-        return R.ok(preStudentService.getPreStudentsByRaceId(raceId));
+        Long loginId = (Long)StpUtil.getLoginId();
+        return R.ok(preStudentService.selectByUserIdAndRace(loginId,raceId));
     }
 
 
