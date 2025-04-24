@@ -74,7 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="student != null">#{student},</if>
             <if test="race != null">#{race},</if>
             <if test="number != null">#{number},</if>
-            <if test="s_class != null">#{s_class},</if>
+            <if test="s_class != null">#{sClass},</if>
             <if test="phone != null">#{phone},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
