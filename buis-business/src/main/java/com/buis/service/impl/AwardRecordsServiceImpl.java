@@ -2,11 +2,13 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.AwardRecordsMapper;
 import com.buis.domain.AwardRecords;
 import com.buis.service.IAwardRecordsService;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -17,6 +19,7 @@ import javax.annotation.Resource;
  * @date 2025-03-17
  */
 @Service
+@Slf4j
 public class AwardRecordsServiceImpl implements IAwardRecordsService 
 {
     @Resource
@@ -66,10 +69,16 @@ public class AwardRecordsServiceImpl implements IAwardRecordsService
      * @return 结果
      */
     @Override
+    @Transactional
     public int updateAwardRecords(AwardRecords awardRecords)
     {
         awardRecords.setUpdateTime(DateUtils.getNowDate());
-        return awardRecordsMapper.updateAwardRecords(awardRecords);
+        int ok = awardRecordsMapper.updateAwardRecords(awardRecords);
+        if (ok <= 0){
+            log.error("更新失败", awardRecords);
+            throw new RuntimeException("更新失败");
+        }
+        return ok;
     }
 
     /**
