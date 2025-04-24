@@ -72,5 +72,5 @@ public interface IPreSignStudentService
 
     int studentSign(Long id, Long userId,PreSignStudent preSignStudent);
 
-    PreSignStudentVo getPreStudentsByRaceId(Long raceId);
+    PreSignStudent getPreStudentsByRaceId(Long raceId);
 }
