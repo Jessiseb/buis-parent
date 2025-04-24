@@ -275,7 +275,7 @@
             <if test="isDeleted != null">is_deleted,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
-            <if test="createId != null">createId,</if>
+            <if test="createId != null">create_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="parentTid != null">#{parentTid},</if>
