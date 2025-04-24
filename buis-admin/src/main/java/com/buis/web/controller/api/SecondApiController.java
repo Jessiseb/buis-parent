@@ -49,9 +49,9 @@ public class SecondApiController {
      */
     @ApiOperation("分页查询第二课堂活动申报信息")
     @PostMapping("/list")
-    public MyPageVo<List<RaceInfo>> list(@RequestBody RaceInfo raceInfo) {
+    public MyPageVo<List<RaceInfoVo>> list(@RequestBody RaceInfo raceInfo) {
         startPage();
-        List<RaceInfo> raceInfoList = raceInfoService.selectSecondActivities(raceInfo);
+        List<RaceInfoVo> raceInfoList = raceInfoService.selectSecondActivities(raceInfo);
         return new MyPageVo(raceInfoList);
     }
 
@@ -235,9 +235,9 @@ public class SecondApiController {
      */
     @ApiOperation("根据活动id查询活动申报信息")
     @PostMapping("/info/getRaceDetailByRaceId")
-    public R<RaceDetail> getRaceDetailByRaceId(@ApiParam(name = "id", value = "第二课堂活动id", required = true)
-                              @RequestParam(value = "raceId")Long raceId) {
-        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+    public R<RaceDetail> getRaceDetailByRaceId(@ApiParam(name = "id", value = "申报活动id", required = true)
+                              @RequestParam(value = "id")Long id) {
+        RaceDetail raceDetail = raceDetailService.selectRaceDetailById(id);
         return R.ok(raceDetail);
     }
 

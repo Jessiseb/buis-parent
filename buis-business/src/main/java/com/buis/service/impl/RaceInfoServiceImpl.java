@@ -919,7 +919,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      * @return
      */
     @Override
-    public List<RaceInfo> selectSecondActivities(RaceInfo raceInfo) {
+    public List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo) {
         return raceInfoMapper.selectSecondActivities(raceInfo);
     }
 
