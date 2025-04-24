@@ -71,4 +71,6 @@ public interface IPreSignStudentService
     List<PreSignStudentVo> selectPreSignStudentByUserId(Long UserId);
 
     int studentSign(Long id, Long userId,PreSignStudent preSignStudent);
+
+    PreSignStudent getPreStudentsByRaceId(Long raceId);
 }

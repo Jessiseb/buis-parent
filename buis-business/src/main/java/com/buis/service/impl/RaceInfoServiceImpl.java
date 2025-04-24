@@ -882,7 +882,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             throw new RuntimeException("该年份没有比赛");
         }
 
-        if (teamInfos.isEmpty()) {
+        if (teamInfos.isEmpty() && preSignStudentVos.isEmpty()) {
             return 0 + "%";
         } else {
 
@@ -1029,11 +1029,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();
         Integer pageSize = pageDomain.getPageSize();
-        String pageCacheKey = getPageCacheKey(pageNum, pageSize,userId);
+        String pageCacheKey = getPageCacheKey(pageNum, pageSize, userId);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        int pageNum1 = pageNum-size/10;
-        int pageSize1 = pageSize-size%10;
+        int pageNum1 = pageNum - size / 10;
+        int pageSize1 = pageSize - size % 10;
 
         String RacesJson = redisCache.getCacheObject(pageCacheKey);
         if (StringUtils.isNotEmpty(RacesJson)) {
@@ -1055,21 +1055,21 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 MyRaceInfoVos = raceInfoMapper.selectRaceInfoVoByRaceIds(raceIds);
             } else {
                 page = PageUtils.startPage(pageNum, pageSize);
-                raceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo,raceIds);
+                raceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo, raceIds);
             }
             if (pageNum1 <= 0 && MyRaceInfoVos != null) {
                 page = PageUtils.startPage(pageNum, pageSize);
                 if (MyRaceInfoVos != null && !MyRaceInfoVos.isEmpty()) {
                     raceInfoVos = MyRaceInfoVos.subList(0, Math.min(pageSize, MyRaceInfoVos.size()));
                 }
-            } else if (MyRaceInfoVos != null){
-                int num = (size+pageSize-size%10)/10+1;
-                if(pageNum >= num) {
+            } else if (MyRaceInfoVos != null) {
+                int num = (size + pageSize - size % 10) / 10 + 1;
+                if (pageNum >= num) {
                     page = PageUtils.startPage(pageNum1, pageSize);
-                    raceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo,raceIds);
+                    raceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo, raceIds);
                 } else {
                     page = PageUtils.startPage(pageNum1, pageSize1);
-                    List<RaceInfoVo> OtherRaceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo,raceIds);
+                    List<RaceInfoVo> OtherRaceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo, raceIds);
                     List<RaceInfoVo> MyRaceInfoVos1 = null;
                     if (size == 1) {
                         MyRaceInfoVos1 = MyRaceInfoVos;

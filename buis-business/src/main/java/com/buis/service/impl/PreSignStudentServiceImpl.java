@@ -1,5 +1,6 @@
 package com.buis.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.PreSignStudent;
@@ -10,7 +11,9 @@ import com.buis.service.IRaceInfoService;
 import com.buis.service.IUserInfoService;
 import com.buis.vo.PreSignStudentVo;
 import com.buis.vo.RaceInfoVo;
+import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -184,6 +187,25 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
         } else {
             throw new ServiceException("报名失败");
         }
+    }
+
+    @Override
+    public PreSignStudent getPreStudentsByRaceId(Long raceId) {
+        //获取当前用户id
+        Long userId = Long.valueOf(StpUtil.getLoginId().toString());
+        //查询当前用户报名
+        PreSignStudent preSignStudent = this.selectByUserIdAndRace(userId,raceId);
+        PreSignStudentVo preSignStudentVo = new PreSignStudentVo();
+        //查出用户信息
+        UserInfoVo userInfoVo = userInfoService.selectUserInfoById(userId);
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(raceId);
+        //插入
+        BeanUtils.copyProperties(preSignStudent, preSignStudentVo);
+//        preSignStudentVo.setStudentInfo(userInfoVo);
+//        preSignStudentVo.setRaceName(raceInfoVo.getName());
+
+//        return preSignStudentVo;
+        return preSignStudent;
     }
 
     @Override
