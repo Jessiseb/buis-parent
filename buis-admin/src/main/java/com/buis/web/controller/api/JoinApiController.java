@@ -1,5 +1,6 @@
 package com.buis.web.controller.api;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
@@ -60,7 +61,7 @@ public class JoinApiController extends BaseController {
     @ApiOperation("新增预报名")
     @PostMapping("/addPre/{isTeacher}/{race}")
     public R addPre(@ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true)
-                        @PathVariable Integer isTeacher, @ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
+                    @PathVariable Integer isTeacher, @ApiParam(name = "race", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         if (isTeacher == 1) {
             PreSignTeacher preSignTeacher = new PreSignTeacher();
@@ -80,6 +81,7 @@ public class JoinApiController extends BaseController {
         return R.ok();
 
     }
+
     /**
      * 删除预报名
      */
@@ -88,9 +90,9 @@ public class JoinApiController extends BaseController {
     public R removePre(@ApiParam(name = "isTeacher", value = "标识（0-学生，1-老师）", required = true) @PathVariable Integer isTeacher, @ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable Long race) {
         Long userId = SecurityUtils.getFrontLoginUserId();
         if (isTeacher == 1) {
-            preTeacherService.deletePreSignTeacherByRaceIdAndUserId(race,userId);
+            preTeacherService.deletePreSignTeacherByRaceIdAndUserId(race, userId);
         } else if (isTeacher == 0) {
-            preStudentService.deletePreSignStudentByRaceIdAndUserId(race,userId);
+            preStudentService.deletePreSignStudentByRaceIdAndUserId(race, userId);
         }
         return R.ok();
     }
@@ -136,6 +138,23 @@ public class JoinApiController extends BaseController {
         return new MyPageVo(preSignStudentVos);
     }
 
+    /**
+     * 根据比赛id查询预报名学生信息
+     *
+     * @param raceId
+     * @return
+     */
+    @ApiOperation("根据比赛id查询预报名学生信息")
+    @PostMapping("/preStudentByRace")
+    public R<PreSignStudent> getPreStudentsByRaceId(
+            @ApiParam(name = "RaceId", value = "比赛id", required = true)
+            @RequestParam("raceId") Long raceId) {
+
+        Long userId = Long.valueOf(StpUtil.getLoginId().toString());
+        PreSignStudent preSignStudent = preStudentService.selectByUserIdAndRace(userId,raceId);
+        //返回结果
+        return R.ok(preSignStudent);
+    }
 
 
 }
