@@ -74,7 +74,7 @@ public class JoinApiController extends BaseController {
             preSignStudent.setStudent(userId);
             preSignStudent.setRace(race);
             preSignStudent.setNumber(user.getNumber());
-            preSignStudent.setS_class(user.getStuGrade() + user.getMajorName() + user.getStuClass());
+            preSignStudent.setSClass(user.getStuGrade() + user.getMajorName() + user.getStuClass());
             preSignStudent.setPhone(user.getPhone());
             preStudentService.insertPreSignStudent(preSignStudent);
         }

@@ -90,7 +90,7 @@ public class RaceLanqiaoStudentServiceImpl implements IRaceLanqiaoStudentService
         preSignStudent.setRace(raceLanqiaoStudent.getRaceId());
         preSignStudent.setStudent(raceLanqiaoStudent.getUserId());
         preSignStudent.setNumber(raceLanqiaoStudent.getNumber());
-        preSignStudent.setS_class(raceLanqiaoStudent.getSClass());
+        preSignStudent.setSClass(raceLanqiaoStudent.getSClass());
         preSignStudent.setPhone(raceLanqiaoStudent.getPhone());
         preSignStudentService.insertPreSignStudent(preSignStudent);
         return 1;

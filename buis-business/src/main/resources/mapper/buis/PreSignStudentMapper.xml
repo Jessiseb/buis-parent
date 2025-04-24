@@ -44,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     <select id="selectByUserIdAndRace" resultType="com.buis.domain.PreSignStudent">
-        select * from pre_sign_student
+        select id,race,number,s_class,phone from pre_sign_student
         where student = #{userId} and race = #{raceId} and is_deleted = 0
     </select>
 
