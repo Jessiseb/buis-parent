@@ -146,14 +146,11 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("根据比赛id查询预报名学生信息")
     @PostMapping("/preStudentByRace")
-    public R<PreSignStudent> getPreStudentsByRaceId(
+    public R<PreSignStudentVo> getPreStudentsByRaceId(
             @ApiParam(name = "RaceId", value = "比赛id", required = true)
             @RequestParam("raceId") Long raceId) {
-
-        Long userId = Long.valueOf(StpUtil.getLoginId().toString());
-        PreSignStudent preSignStudent = preStudentService.selectByUserIdAndRace(userId,raceId);
         //返回结果
-        return R.ok(preSignStudent);
+        return R.ok(preStudentService.getPreStudentsByRaceId(raceId));
     }
 
 
