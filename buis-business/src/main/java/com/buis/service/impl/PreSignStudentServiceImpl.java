@@ -190,7 +190,7 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     }
 
     @Override
-    public PreSignStudentVo getPreStudentsByRaceId(Long raceId) {
+    public PreSignStudent getPreStudentsByRaceId(Long raceId) {
         //获取当前用户id
         Long userId = Long.valueOf(StpUtil.getLoginId().toString());
         //查询当前用户报名
@@ -201,10 +201,11 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(raceId);
         //插入
         BeanUtils.copyProperties(preSignStudent, preSignStudentVo);
-        preSignStudentVo.setStudentInfo(userInfoVo);
-        preSignStudentVo.setRaceName(raceInfoVo.getName());
+//        preSignStudentVo.setStudentInfo(userInfoVo);
+//        preSignStudentVo.setRaceName(raceInfoVo.getName());
 
-        return preSignStudentVo;
+//        return preSignStudentVo;
+        return preSignStudent;
     }
 
     @Override
