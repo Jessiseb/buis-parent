@@ -10,6 +10,7 @@ import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
 import com.buis.vo.HotRaceVo;
+import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.SecondClassCountVo;
 
@@ -138,7 +139,7 @@ public interface IRaceInfoService
     String userAnnualParticipationRate(Long userId, int grade);
 
     //分页查询第二课堂活动申报
-    List<RaceInfo> selectSecondActivities(RaceInfo raceInfo);
+    List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo);
 
     //统计各年级学生的参与第二课堂的活动占比
     List<GradeStatistic> getStudentGradeCount();

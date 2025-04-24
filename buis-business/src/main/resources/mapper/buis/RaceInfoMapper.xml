@@ -457,27 +457,8 @@
         </where>
 
          </select>
-    <select id="selectSecondActivities" resultType="com.buis.domain.RaceInfo">
-        select id,
-               teacher_name,
-               name,
-               description,
-               join_start,
-               join_end,
-               race_start,
-               race_end,
-               review_status,
-               seniority,
-               desc_url,
-               department,
-               organizers,
-               course,
-               place,
-               fund,
-               major_count,
-               create_id,
-               create_time
-        from race_info
+    <select id="selectSecondActivities" resultType="com.buis.vo.RaceInfoVo">
+        <include refid="selectRaceInfoVo"/>
         where is_deleted = 0
           and parent_tid = 5
         order by
