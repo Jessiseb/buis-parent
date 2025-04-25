@@ -151,5 +151,5 @@ public interface IRaceInfoService
 
     void deleteRacesInfoCache();
 
-    void deleteJoinInfoCache(Long userId);
+    void deleteRaceInfoCacheByUserId(Long userId);
 }

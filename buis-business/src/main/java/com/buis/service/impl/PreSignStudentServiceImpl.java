@@ -183,6 +183,7 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
         preSignStudent.setRace(id);
         int ok = this.insertPreSignStudent(preSignStudent);
         if (ok > 0) {
+            raceInfoService.deleteRaceInfoCacheByUserId(userId);
             return ok;
         } else {
             throw new ServiceException("报名失败");
