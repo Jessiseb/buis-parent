@@ -8,6 +8,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="student"    column="student"    />
         <result property="race"    column="race"    />
+        <result property="number"    column="number"    />
+        <result property="sClass"    column="s_class"    />
+        <result property="phone"    column="phone"    />
         <result property="raceName"    column="race_name"    />
         <result property="isDeleted"    column="is_deleted"    />
         <result property="createTime"    column="create_time"    />
@@ -15,7 +18,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectPreSignStudentVo">
-        select t1.id, t1.student, t1.race,t2.name as race_name, t1.is_deleted, t1.create_time, t1.update_time
+        select t1.id,
+               t1.student,
+               t1.race,
+               t1.number,
+               t1.s_class,
+               t1.phone,
+               t2.name as race_name,
+               t1.is_deleted,
+               t1.create_time,
+               t1.update_time
         from pre_sign_student t1
                  left join race_info t2 on t1.race = t2.id
     </sql>
@@ -27,6 +39,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="id != null "> and t1.id = #{id}</if>
             <if test="student != null "> and t1.student = #{student}</if>
             <if test="race != null "> and t1.race = #{race}</if>
+             <if test="number != null "> and t1.number = #{number}</if>
+              <if test="sClass != null "> and t1.s_class = #{sClass}</if>
             <if test="updateTime != null "> and t1.update_time = #{updateTime}</if>
         </where>
     </select>
