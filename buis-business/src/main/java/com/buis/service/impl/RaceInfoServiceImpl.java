@@ -1275,7 +1275,15 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     public void deleteJoinInfoCache(Long userId) {
-        //删除所有是否报名缓存
+        //删除用户比赛信息分页缓存
+        String pattern = "races:page:*:size:*:user:" + userId;
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (keys != null && !keys.isEmpty()) {
+            // 删除匹配的键
+            redisTemplate.delete(keys);
+        }
+
+        //删除用户是否报名缓存
         String pattern1 = "isJoin:race:*:user:" + userId;
         Set<String> keys1 = redisTemplate.keys(pattern1);
         if (keys1 != null && !keys1.isEmpty()) {
@@ -1283,7 +1291,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             redisTemplate.delete(keys1);
         }
 
-        //删除所有是否预报名缓存
+        //删除用户是否预报名缓存
         String pattern2 = "isPreJoin:race:*:user:" + userId;
         Set<String> keys2 = redisTemplate.keys(pattern2);
         if (keys2 != null && !keys2.isEmpty()) {
