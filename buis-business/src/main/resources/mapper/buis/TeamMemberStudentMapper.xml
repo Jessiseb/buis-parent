@@ -41,6 +41,7 @@
         <include refid="selectTeamMemberStudentVo"/>
         <where>
             t1.is_deleted = 0
+            and t1.is_choosed = 1
             <if test="id != null ">and t1.id = #{id}</if>
             <if test="race != null ">and t1.race = #{race}</if>
             <if test="team != null ">and t1.team = #{team}</if>
