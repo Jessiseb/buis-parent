@@ -920,7 +920,17 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo) {
-        return raceInfoMapper.selectSecondActivities(raceInfo);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectSecondActivities(raceInfo);
+        for (RaceInfoVo raceInfoVo : raceInfoVos) {
+            //设置比赛详情
+            RaceDetail raceDetail = new RaceDetail();
+            raceDetail.setRace(raceInfoVo.getId());
+            List<RaceDetailVo> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+            if (raceDetailVos != null && raceDetailVos.size() > 0) {
+                raceInfoVo.setRaceDetail(raceDetailVos.get(0));
+            }
+        }
+        return raceInfoVos;
     }
 
     @Override
