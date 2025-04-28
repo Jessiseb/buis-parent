@@ -231,14 +231,25 @@ public class SecondApiController {
 
 
     /**
-     * 根据活动id查询活动申报信息
+     * 根据活动id查询活动发布信息
      */
-    @ApiOperation("根据活动id查询活动申报信息")
+    @ApiOperation("根据活动id查询活动发布信息")
     @PostMapping("/info/getRaceDetailByRaceId")
     public R<RaceDetail> getRaceDetailByRaceId(@ApiParam(name = "RaceId", value = "申报活动id", required = true)
                               @RequestParam(value = "RaceId")Long RaceId) {
         RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(RaceId);
         return R.ok(raceDetail);
+    }
+
+    /**
+     * 根据id查询活动申报信息
+     */
+    @ApiOperation("根据id查询活动申报信息")
+    @GetMapping("/info/getRaceInfoById")
+    public R<RaceInfoVo> getRaceInfoById(@ApiParam(name = "id", value = "活动id", required = true)
+                                         @RequestParam(value = "id")Long id) {
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(id);
+        return R.ok(raceInfoVo);
     }
 
 }
