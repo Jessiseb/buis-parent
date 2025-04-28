@@ -245,7 +245,7 @@ public class SecondApiController {
      * 根据id查询活动申报信息
      */
     @ApiOperation("根据id查询活动申报信息")
-    @GetMapping("/info/getRaceInfoById")
+    @PostMapping("/info/getRaceInfoById")
     public R<RaceInfoVo> getRaceInfoById(@ApiParam(name = "id", value = "活动id", required = true)
                                          @RequestParam(value = "id")Long id) {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(id);
