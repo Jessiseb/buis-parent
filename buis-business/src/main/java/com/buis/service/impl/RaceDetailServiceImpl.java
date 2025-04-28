@@ -49,8 +49,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
      */
     @Override
     public RaceDetail selectRaceDetailById(Long id) {
-        RaceDetail raceDetailVo = raceDetailMapper.selectRaceDetailById(id);
-        return raceDetailVo;
+        return raceDetailMapper.selectRaceDetailById(id);
+
     }
 
     /**
@@ -143,11 +143,13 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         return raceDetailMapper.deleteRaceDetailById(id);
     }
 
-    //    查询比赛信息
+    /**
+     * 根据活动id查询活动申报信息(比赛信息)
+     */
     @Override
     public RaceDetail selectRaceDetailByRaceId(Long raceId) {
-        RaceDetail raceDetail = raceDetailMapper.selectRaceDetailByRaceId(raceId);
-        return raceDetail;
+        return raceDetailMapper.selectRaceDetailByRaceId(raceId);
+
     }
 
     @Override
