@@ -6,7 +6,9 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
+import com.buis.common.utils.bean.BeanUtils;
 import com.buis.domain.*;
+import com.buis.enums.RaceLevel;
 import com.buis.enums.ReviewStatus;
 import com.buis.service.*;
 import com.buis.vo.*;
@@ -92,6 +94,8 @@ public class SecondApiController {
         //申报第二课堂活动
         raceInfo.setParentTid(5L);
         raceInfo.setCreateId(Long.valueOf(user));
+        //默认比赛级别为校级
+        raceInfo.setLevel(RaceLevel.UNIVERSITY_LEVEL.getCode());
         int ok = raceInfoService.insertRaceInfo(raceInfo);
         if (ok <= 0) {
             return R.fail("申报失败");
@@ -184,6 +188,12 @@ public class SecondApiController {
             if (ok <= 0) {
                 return R.fail("发布失败,请重试");
             }
+            //并且同步race_info一样的报名之间
+            res.setJoinStart(raceDetail.getJoinStart());
+            res.setJoinEnd(raceDetail.getJoinEnd());
+            RaceInfo raceInfo = new RaceInfo();
+            BeanUtils.copyBeanProp(res,raceInfo);
+            raceInfoService.updateRaceInfo(raceInfo);
             return R.ok(raceDetail);
         }
 
