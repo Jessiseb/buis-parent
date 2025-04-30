@@ -136,7 +136,7 @@ public class RaceDetail extends BaseEntity {
      * 审核状态
      */
     @ApiModelProperty("审核状态")
-    private int reviewStatus;
+    private Long reviewStatus;
 
     /**
      * 标识是否被删除，0表示未删除
