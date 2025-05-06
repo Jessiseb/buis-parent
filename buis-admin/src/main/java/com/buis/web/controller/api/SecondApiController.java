@@ -3,8 +3,6 @@ package com.buis.web.controller.api;
 import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
-import com.buis.common.core.page.TableDataInfo;
-import com.buis.common.core.redis.RedisCache;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.bean.BeanUtils;
@@ -12,17 +10,16 @@ import com.buis.domain.*;
 import com.buis.enums.RaceLevel;
 import com.buis.enums.ReviewStatus;
 import com.buis.service.*;
-import com.buis.vo.*;
+import com.buis.vo.RaceDetailVo;
+import com.buis.vo.RaceInfoVo;
+import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -106,37 +103,64 @@ public class SecondApiController {
      */
     @ApiOperation("教师申报第二课堂活动")
     @PostMapping("/declare")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R<RaceInfoVo> declare(@ApiParam(name = "raceInfo", value = "申报信息", required = true)
                                   @RequestBody RaceInfo raceInfo,
                                   @ApiParam(name = "id", value = "关联第二课堂表id", required = true)
                                   @RequestParam Long id) {
-        String user = StpUtil.getLoginId()+"";
+        if (raceInfo == null || id == null) {
+            return R.fail("参数不能为空");
+        }
+        String user = StpUtil.getLoginId() + "";
         //申报第二课堂活动
         raceInfo.setParentTid(5L);
         raceInfo.setCreateId(Long.valueOf(user));
+        raceInfo.setReviewStatus(ReviewStatus.PREPARE.getCode());
         //默认比赛级别为校级
         raceInfo.setLevel(RaceLevel.UNIVERSITY_LEVEL.getCode());
-        int ok = raceInfoService.insertRaceInfo(raceInfo);
+        //插入前判断该数据是否存在  存在则为更新操作
+        RaceInfoVo raceInfoVo1 = raceInfoService.selectRaceInfoById(raceInfo.getId());
+        int ok;
+        boolean isUpdate;
+        isUpdate = raceInfoVo1 != null;
+
+        //判断是更新还是插入操作
+        if (isUpdate) {
+            //更新
+            ok = raceInfoService.updateRaceInfo(raceInfo);
+        } else {
+            //插入
+            ok = raceInfoService.insertRaceInfo(raceInfo);
+        }
         if (ok <= 0) {
             return R.fail("申报失败");
         }
-
-        //成功插入之后,race_second表对应的活动id
-        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoList(raceInfo).get(0);
-        Long race = raceInfoVo.getId();
-
-        //关联比赛id和secondID
-        RaceSecond raceSecond = new RaceSecond();
-        raceSecond.setRace(race);
-        raceSecond.setSecond(id);
-        raceSecond.setReviewStatus(ReviewStatus.PREPARE.getCode()); //待审核
-        int i = raceSecondService.insertRaceSecond(raceSecond);
-        if (i <= 0) {
+        Long raceId = raceInfo.getId();
+        int  ok1;
+        if (isUpdate) {
+            //查出对应的RaceSecond
+            RaceSecond result =  raceSecondService.selectRaceSecondByRace(raceId);
+            result.setReviewStatus(ReviewStatus.PREPARE.getCode());
+            ok1 = raceSecondService.updateRaceSecond(result);
+        } else {
+            // 构造关联对象
+            RaceSecond raceSecond = new RaceSecond();
+            raceSecond.setRace(raceId);
+            raceSecond.setSecond(id);
+            ok1 = raceSecondService.insertRaceSecond(raceSecond);
+        }
+        if (ok1 <= 0) {
             return R.fail("申报失败");
         }
+
+        RaceInfoVo raceInfoVo = new RaceInfoVo();
+        BeanUtils.copyProperties(raceInfoVo, raceInfo);
+        raceInfoVo.setId(raceId);
+
         return R.ok(raceInfoVo);
+
     }
+
 
     /**
      * 教师发布第二课堂活动

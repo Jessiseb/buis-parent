@@ -142,6 +142,13 @@ public class RaceInfo extends BaseEntity {
     private String seniority;
 
     /**
+     * 指导老师累计指导第二课堂活动次数
+     */
+    @Excel(name = "累计指导第二课堂活动次数")
+    @ApiModelProperty("累计指导第二课堂活动次数")
+    private String totalGuide;
+
+    /**
      * 活动说明材料
      */
     @Excel(name = "活动说明材料")

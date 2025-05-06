@@ -310,8 +310,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         Long userId = Long.valueOf(StpUtil.getLoginId().toString());
         //获取比赛id
         Long raceId = raceInfo.getId();
-        // 判断报名条件
-        this.checkJoinCondition(userId, raceId);
+//        // 判断报名条件
+//        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setUpdateTime(DateUtils.getNowDate());
         raceInfoMapper.deleteRewardByRace(raceInfo.getId());
