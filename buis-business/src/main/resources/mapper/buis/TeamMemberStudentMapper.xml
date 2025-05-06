@@ -163,6 +163,7 @@
     </select>
 
 
+
     <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true"
             keyProperty="id">
         insert into team_member_student

@@ -102,4 +102,16 @@ public class RaceApiController extends BaseController {
         return R.ok(result);
     }
 
+    /**
+     * 根据活动id查询该活动已有多少人参加
+     */
+    @ApiOperation("根据活动id查询该活动已有多少人参加")
+    @PostMapping("/getUserJoinCount")
+    public R<Integer> getUserJoinCount(@ApiParam(name = "raceId", value = "活动id", required = true)
+                                             @RequestParam Long raceId) {
+        //根据活动id查询该活动已有多少人参加
+        Integer result = raceInfoService.getUserJoinCount(raceId);
+        return R.ok(result);
+    }
+
 }

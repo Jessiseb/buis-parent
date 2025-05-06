@@ -152,4 +152,8 @@ public interface IRaceInfoService
     void deleteRacesInfoCache();
 
     void deleteRaceInfoCacheByUserId(Long userId);
+
+
+    //根据活动id查询有多少人参与的该活动
+    Integer getUserJoinCount(Long raceId);
 }
