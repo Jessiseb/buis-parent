@@ -589,12 +589,12 @@
                 and t1.race_type = #{raceInfo.raceType}
             </if>
             <!-- 新增的过滤条件 -->
-            <if test="raceIds != null and raceIds.size() > 0">
-                and t1.id not in
-                <foreach item="raceId" collection="raceIds" open="(" separator="," close=")">
-                    #{raceId}
-                </foreach>
-            </if>
+<!--            <if test="raceIds != null and raceIds.size() > 0">-->
+<!--                and t1.id not in-->
+<!--                <foreach item="raceId" collection="raceIds" open="(" separator="," close=")">-->
+<!--                    #{raceId}-->
+<!--                </foreach>-->
+<!--            </if>-->
         </where>
         ORDER BY t1.create_time ASC;
     </select>
