@@ -1308,5 +1308,13 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             redisTemplate.delete(keys2);
         }
     }
+
+    @Override
+    public Integer getUserJoinCount(Long raceId) {
+        //从预报名表中 根据raceId 查询到记录数
+        List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByRace(raceId);
+        return preSignStudentVos.size();
+    }
+
 }
 
