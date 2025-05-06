@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.TableDataInfo;
+import com.buis.common.core.redis.RedisCache;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.bean.BeanUtils;
@@ -16,10 +17,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -194,6 +197,8 @@ public class SecondApiController {
             RaceInfo raceInfo = new RaceInfo();
             BeanUtils.copyBeanProp(res,raceInfo);
             raceInfoService.updateRaceInfo(raceInfo);
+            //删除缓存
+            raceInfoService.deleteRacesInfoCache();
             return R.ok(raceDetail);
         }
 
