@@ -598,4 +598,18 @@
         </where>
         ORDER BY t1.create_time ASC
     </select>
+    <select id="selectMyDeclare" resultType="com.buis.vo.RaceInfoVo">
+        select *
+        from race_info t1
+        where t1.is_deleted = 0
+          and t1.create_id = #{loginUserId}
+          and t1.parent_tid = 5
+        order by case
+                     when t1.review_status = 2 then 0
+                     when t1.review_status = 1 then 1
+                     when t1.review_status = 3 then 2
+                     else 3
+                     end,
+                 t1.id desc
+    </select>
 </mapper>

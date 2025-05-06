@@ -48,6 +48,10 @@ public class SecondApiController {
     private IPreSignStudentService preSignStudentService;
     @Autowired
     private IAssistantService assistantService;
+    @Autowired
+    private IUserInfoService userInfoService;
+
+
 
     /**
      * 分页查询第二课堂活动申报
@@ -59,6 +63,20 @@ public class SecondApiController {
         List<RaceInfoVo> raceInfoList = raceInfoService.selectSecondActivities(raceInfo);
         return new MyPageVo(raceInfoList);
     }
+
+    /**
+     * 分页查询我申报的第二课堂活动
+     */
+    @ApiOperation("分页查询我申报的活动(教师端)")
+    @PostMapping("/getMyDeclare")
+    public MyPageVo<List<RaceInfoVo>> getMyDeclare() {
+        startPage();
+        //获取登录用户
+        UserInfo loginUser = userInfoService.getLoginUser();
+        List<RaceInfoVo> raceInfoList = raceInfoService.selectMyDeclare(loginUser.getId());
+        return new MyPageVo(raceInfoList);
+    }
+
 
     /**
      * 分页查询第二课堂发布信息(原)
@@ -266,5 +284,7 @@ public class SecondApiController {
         RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(id);
         return R.ok(raceInfoVo);
     }
+
+
 
 }

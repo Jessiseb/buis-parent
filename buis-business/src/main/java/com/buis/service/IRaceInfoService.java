@@ -156,4 +156,7 @@ public interface IRaceInfoService
 
     //根据活动id查询有多少人参与的该活动
     Integer getUserJoinCount(Long raceId);
+
+    //分页查询我申报的第二课堂活动
+    List<RaceInfoVo> selectMyDeclare(Long id);
 }

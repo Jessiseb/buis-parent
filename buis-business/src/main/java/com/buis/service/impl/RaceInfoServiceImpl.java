@@ -1323,5 +1323,15 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         return preSignStudentVos.size();
     }
 
+    /**
+     * 分页查询我申报的第二课堂活动
+     * @param LoginUserId 用户id
+     * @return 返回结果
+     */
+    @Override
+    public List<RaceInfoVo> selectMyDeclare(Long LoginUserId) {
+       return raceInfoMapper.selectMyDeclare(LoginUserId);
+    }
+
 }
 
