@@ -52,10 +52,14 @@ public class SecondApiController {
 
     /**
      * 分页查询第二课堂活动申报
+     *
+     * @return
      */
     @ApiOperation("分页查询第二课堂活动申报信息")
     @PostMapping("/list")
-    public MyPageVo<List<RaceInfoVo>> list(@RequestBody RaceInfo raceInfo) {
+    public MyPageVo list(@RequestBody RaceInfo raceInfo,
+                         @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                         @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize) {
         startPage();
         List<RaceInfoVo> raceInfoList = raceInfoService.selectSecondActivities(raceInfo);
         return new MyPageVo(raceInfoList);
@@ -66,7 +70,8 @@ public class SecondApiController {
      */
     @ApiOperation("分页查询我申报的活动(教师端)")
     @PostMapping("/getMyDeclare")
-    public MyPageVo<List<RaceInfoVo>> getMyDeclare() {
+    public MyPageVo<List<RaceInfoVo>> getMyDeclare(@ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                                                   @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize) {
         startPage();
         //获取登录用户
         UserInfo loginUser = userInfoService.getLoginUser();
@@ -80,7 +85,9 @@ public class SecondApiController {
      */
     @ApiOperation("分页查询第二课堂发布信息")
     @PostMapping("/info/list")
-    public MyPageVo<List<RaceDetailVo>> publishList(@RequestBody RaceDetailVo raceDetailVo) {
+    public MyPageVo<List<RaceDetailVo>> publishList(@RequestBody RaceDetailVo raceDetailVo,
+                                                    @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                                                    @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize) {
         startPage();
         List<RaceDetailVo> racePublishes = raceDetailService.selectRaceDetailVoList(raceDetailVo);
         return new MyPageVo(racePublishes);
@@ -91,7 +98,9 @@ public class SecondApiController {
      */
     @ApiOperation("分页查询第二课堂发布信息")
     @PostMapping("/info/list2")
-    public MyPageVo<List<RacePublish>> publishList2(@RequestBody RacePublish racePublish) {
+    public MyPageVo<List<RacePublish>> publishList2(@RequestBody RacePublish racePublish,
+                                                    @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                                                    @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize) {
         startPage();
         List<RacePublish> racePublishes = racePublishService.selectRacePublishList(racePublish);
         return new MyPageVo(racePublishes);
@@ -252,7 +261,9 @@ public class SecondApiController {
      */
     @ApiOperation("分页查询xx年第二课堂信息(教师端)")
     @PostMapping("/second/list")
-    public MyPageVo<List<Second>> list(@RequestBody Second second) {
+    public MyPageVo<List<Second>> list(@RequestBody Second second,
+                                       @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                                       @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize) {
         startPage();
         List<Second> list = secondService.selectSecondList(second);
         if (list.isEmpty()) {
