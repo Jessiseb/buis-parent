@@ -18,11 +18,10 @@ import org.apache.ibatis.annotations.Param;
  * @author kaven
  * @date 2024-10-23
  */
-public interface RaceInfoMapper
-{
+public interface RaceInfoMapper {
     /**
      * 查询比赛信息
-     * 
+     *
      * @param id 比赛信息主键
      * @return 比赛信息
      */
@@ -30,7 +29,7 @@ public interface RaceInfoMapper
 
     /**
      * 查询比赛信息列表
-     * 
+     *
      * @param raceInfo 比赛信息
      * @return 比赛信息集合
      */
@@ -42,11 +41,11 @@ public interface RaceInfoMapper
      * @param raceInfo 比赛信息
      * @return 比赛信息集合
      */
-    public List<RaceInfoVo> selectRaceInfoNoMyRaceList(@Param("raceInfo")RaceInfo raceInfo,@Param("raceIds")List<Long> raceIds);
+    public List<RaceInfoVo> selectRaceInfoNoMyRaceList(@Param("raceInfo") RaceInfo raceInfo, @Param("raceIds") List<Long> raceIds);
 
     /**
      * 新增比赛信息
-     * 
+     *
      * @param raceInfo 比赛信息
      * @return 结果
      */
@@ -54,7 +53,7 @@ public interface RaceInfoMapper
 
     /**
      * 修改比赛信息
-     * 
+     *
      * @param raceInfo 比赛信息
      * @return 结果
      */
@@ -62,7 +61,7 @@ public interface RaceInfoMapper
 
     /**
      * 删除比赛信息
-     * 
+     *
      * @param id 比赛信息主键
      * @return 结果
      */
@@ -70,7 +69,7 @@ public interface RaceInfoMapper
 
     /**
      * 批量删除比赛信息
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
@@ -78,24 +77,24 @@ public interface RaceInfoMapper
 
     /**
      * 批量删除奖项
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteRewardByRaces(Long[] ids);
-    
+
     /**
      * 批量新增奖项
-     * 
+     *
      * @param rewardList 奖项列表
      * @return 结果
      */
     public int batchReward(List<Reward> rewardList);
-    
+
 
     /**
      * 通过比赛信息主键删除奖项信息
-     * 
+     *
      * @param id 比赛信息ID
      * @return 结果
      */
@@ -114,7 +113,7 @@ public interface RaceInfoMapper
     List<SecondClassCountVo> getSecondClassCountByYear(Integer year);
 
     //根据二级类型id查询一级类型id
-    Long selectRaceTypeBySecondTypeId(@Param("id")Long id);
+    Long selectRaceTypeBySecondTypeId(@Param("id") Long id);
 
     //查询所有比赛
     List<RaceInfoVo> selectRaceInfoAll();
@@ -131,5 +130,9 @@ public interface RaceInfoMapper
     RaceInfo selectRaceInfoByName(@Param("name") String name);
 
     List<RaceInfoVo> selectRaceInfoVoByRaceIds(List<Long> raceIds);
+    //查询所有标签比赛数量
+    int selectRaceCountBysonTid(@Param("sonTid")Long sonTid);
 
+    //查询所有第二课堂活动
+    RaceInfo selectSecondClassByRace(@Param("raceId")Long raceId);
 }
