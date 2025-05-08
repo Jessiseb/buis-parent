@@ -7,7 +7,6 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.domain.PreSignStudent;
 import com.buis.domain.PreSignTeacher;
-import com.buis.domain.UserInfo;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IPreSignTeacherService;
 import com.buis.service.IUserInfoService;
@@ -45,7 +44,9 @@ public class JoinApiController extends BaseController {
      */
     @ApiOperation("根据比赛id分页查询预报名老师列表")
     @PostMapping("/preTeacher/{RaceId}")
-    public MyPageVo<List<PreSignTeacherVo>> getPreTeachersByRaceId(@ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId) {
+    public MyPageVo<List<PreSignTeacherVo>> getPreTeachersByRaceId(@ApiParam(name = "RaceId", value = "比赛id", required = true) @PathVariable("RaceId") Long RaceId,
+                                                                   @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                                                                   @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize) {
         //开始分页
         startPage();
         PreSignTeacher prevTeacher = new PreSignTeacher();

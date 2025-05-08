@@ -159,8 +159,9 @@
         FROM team_member_student tms
                  JOIN race_info ri ON tms.race = ri.id
         WHERE tms.student = #{userId}
-          AND ri.parent_tid = 1 AND tms.is_choosed = 1 AND tms.is_deleted = 0;
+          AND ri.parent_tid = 1 AND tms.is_choosed = 1 AND tms.is_deleted = 0
     </select>
+
 
 
     <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true"

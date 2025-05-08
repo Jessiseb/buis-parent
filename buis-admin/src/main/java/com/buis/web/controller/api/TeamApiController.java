@@ -18,7 +18,6 @@ import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
 import com.buis.enums.ChooseStatus;
 import com.buis.enums.NoticeType;
-import com.buis.enums.RecruitStatus;
 import com.buis.framework.config.ServerConfig;
 import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
@@ -264,12 +263,15 @@ public class TeamApiController extends BaseController {
 
     /**
      * 带条件分页查询学生与队伍互选邀请
+     *
      * @param teamMemberStudent
      * @return
      */
     @ApiOperation("带条件分页查询学生与队伍互选邀请")
     @PostMapping("/getTeamMemberStudent")
-    public MyPageVo<List<TeamMemberStudentVo>> getTeamMemberStudent(@RequestBody(required = false)TeamMemberStudent teamMemberStudent) {
+    public MyPageVo<List<TeamMemberStudentVo>> getTeamMemberStudent(@RequestBody(required = false) TeamMemberStudent teamMemberStudent,
+                                                                    @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                                                                    @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize) {
         startPage();
         List<TeamMemberStudentVo> list = teamMemberStudentService.selectTeamMemberStudentList(teamMemberStudent);
         return new MyPageVo<>(list);
@@ -277,12 +279,15 @@ public class TeamApiController extends BaseController {
 
     /**
      * 带条件分页查询老师与队伍互选邀请
+     *
      * @param teamMemberTeacher
      * @return
      */
     @ApiOperation("带条件分页查询老师与队伍互选邀请")
     @PostMapping("/getTeamMemberTeacher")
-    public MyPageVo<List<TeamMemberTeacherVo>> getTeamMemberTeacher(@RequestBody(required = false)TeamMemberTeacher teamMemberTeacher) {
+    public MyPageVo<List<TeamMemberTeacherVo>> getTeamMemberTeacher(@RequestBody(required = false) TeamMemberTeacher teamMemberTeacher,
+                                                                    @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
+                                                                    @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize) {
         startPage();
         List<TeamMemberTeacherVo> list = teamMemberTeacherService.selectTeamMemberTeacherList(teamMemberTeacher);
         return new MyPageVo<>(list);
@@ -413,7 +418,7 @@ public class TeamApiController extends BaseController {
     public MyPageVo<List<TeamInfoVo>> guide(@ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
                                             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
                                             @ApiParam(name = "race", value = "比赛id", required = false) @RequestParam(required = false) Long race,
-                                                                                        @ApiParam(name = "name", value = "比赛名字", required = false) @RequestParam(required = false) Long name
+                                            @ApiParam(name = "name", value = "比赛名字", required = false) @RequestParam(required = false) Long name
                                             ) {
         startPage();
         Long userId = SecurityUtils.getFrontLoginUserId();

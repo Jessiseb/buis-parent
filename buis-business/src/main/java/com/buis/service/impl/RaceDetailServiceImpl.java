@@ -49,8 +49,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
      */
     @Override
     public RaceDetail selectRaceDetailById(Long id) {
-        RaceDetail raceDetailVo = raceDetailMapper.selectRaceDetailById(id);
-        return raceDetailVo;
+        return raceDetailMapper.selectRaceDetailById(id);
+
     }
 
     /**
@@ -88,8 +88,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
             throw new ServiceException("比赛审核中，请耐心等待");
         }
         raceDetail.setCreateTime(DateUtils.getNowDate());
-        raceDetail.setReviewStatus(3);
-        raceInfoVo.setReviewStatus(3L);
+        raceDetail.setReviewStatus(ReviewStatus.PUBLISH.getCode());
+        raceInfoVo.setReviewStatus(ReviewStatus.PUBLISH.getCode());
         raceInfoMapper.updateRaceInfo(raceInfoVo);
         return raceDetailMapper.insertRaceDetail(raceDetail);
 
@@ -107,9 +107,9 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         raceDetail.setUpdateTime(DateUtils.getNowDate());
 //        raceDetailMapper.deleteWeightByRaceD(raceDetail.getId());
         Long race = raceDetail.getRace();
-        int reviewStatus = raceDetail.getReviewStatus();
+        long reviewStatus = raceDetail.getReviewStatus();
         //审核通过之后把对应的比赛信息状态设置为报名中
-        if (reviewStatus == 1) {
+        if (reviewStatus == ReviewStatus.PUBLISH.getCode()) {
             RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(race);
             raceInfoVo.setStatus(RaceStatus.JOIN.getCode()); //报名中
             raceInfoService.updateRaceInfo(raceInfoVo);
@@ -143,11 +143,13 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
         return raceDetailMapper.deleteRaceDetailById(id);
     }
 
-    //    查询比赛信息
+    /**
+     * 根据活动id查询活动申报信息(比赛信息)
+     */
     @Override
     public RaceDetail selectRaceDetailByRaceId(Long raceId) {
-        RaceDetail raceDetail = raceDetailMapper.selectRaceDetailByRaceId(raceId);
-        return raceDetail;
+        return raceDetailMapper.selectRaceDetailByRaceId(raceId);
+
     }
 
     @Override

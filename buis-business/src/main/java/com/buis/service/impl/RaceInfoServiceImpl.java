@@ -312,8 +312,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         Long userId = Long.valueOf(StpUtil.getLoginId().toString());
         //获取比赛id
         Long raceId = raceInfo.getId();
-        // 判断报名条件
-        this.checkJoinCondition(userId, raceId);
+//        // 判断报名条件
+//        this.checkJoinCondition(userId, raceId);
 
         raceInfo.setUpdateTime(DateUtils.getNowDate());
         raceInfoMapper.deleteRewardByRace(raceInfo.getId());
@@ -922,7 +922,17 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo) {
-        return raceInfoMapper.selectSecondActivities(raceInfo);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectSecondActivities(raceInfo);
+        for (RaceInfoVo raceInfoVo : raceInfoVos) {
+            //设置比赛详情
+            RaceDetail raceDetail = new RaceDetail();
+            raceDetail.setRace(raceInfoVo.getId());
+            List<RaceDetailVo> raceDetailVos = raceDetailService.selectRaceDetailList(raceDetail);
+            if (raceDetailVos != null && raceDetailVos.size() > 0) {
+                raceInfoVo.setRaceDetail(raceDetailVos.get(0));
+            }
+        }
+        return raceInfoVos;
     }
 
     @Override
@@ -1015,28 +1025,30 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public MyPageVo<List<RaceInfoVo>> selectRaceInfoListFromRedis(RaceInfo raceInfo) {
         Long userId = SecurityUtils.getFrontLoginUserId();
-        //查出该用户所在信息
+        //查出该用户所报名的比赛
         List<RaceInfo> userRaceList = raceInfoService.getUserRaceList(userId);
         List<Long> raceIds = new ArrayList<>();
         if (userRaceList != null) {
-            //根据查出的信息获取到raceId<List>
+            //根据查出的比赛信息获取到raceId<List>
             for (RaceInfo raceInfo1 : userRaceList) {
                 Long race = raceInfo1.getId();
                 raceIds.add(race);
             }
         }
+        //用户报名比赛数量
         int size = raceIds.size();
-        //无条件查询
-        //获取key
+        //分页数据
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();
         Integer pageSize = pageDomain.getPageSize();
+        //获取key
         String pageCacheKey = getPageCacheKey(pageNum, pageSize, userId);
         ObjectMapper objectMapper = new ObjectMapper();
 
         int pageNum1 = pageNum - size / 10;
         int pageSize1 = pageSize - size % 10;
 
+        //查询缓存
         String RacesJson = redisCache.getCacheObject(pageCacheKey);
         if (StringUtils.isNotEmpty(RacesJson)) {
             //存在直接返回
@@ -1049,21 +1061,25 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
         MyPageVo myPageVo = null;
         try {
-            //查询数据库
             List<RaceInfoVo> raceInfoVos = null;
             Page<RaceInfoVo> page = null;
             List<RaceInfoVo> MyRaceInfoVos = null;
+            //如果raceIds不为空，则查询用户报名比赛信息，否则查询所有比赛信息
             if (!raceIds.isEmpty()) {
+                //查询用户报名比赛信息
                 MyRaceInfoVos = raceInfoMapper.selectRaceInfoVoByRaceIds(raceIds);
             } else {
+                //查询所有比赛信息
                 page = PageUtils.startPage(pageNum, pageSize);
                 raceInfoVos = raceInfoMapper.selectRaceInfoNoMyRaceList(raceInfo, raceIds);
             }
+            //如果pageNum1小于等于0，则只返回用户报名比赛信息
             if (pageNum1 <= 0 && MyRaceInfoVos != null) {
                 page = PageUtils.startPage(pageNum, pageSize);
                 if (MyRaceInfoVos != null && !MyRaceInfoVos.isEmpty()) {
                     raceInfoVos = MyRaceInfoVos.subList(0, Math.min(pageSize, MyRaceInfoVos.size()));
                 }
+            //如果pageNum1大于0，则返回用户报名比赛信息+其他比赛信息
             } else if (MyRaceInfoVos != null) {
                 int num = (size + pageSize - size % 10) / 10 + 1;
                 if (pageNum >= num) {
@@ -1080,6 +1096,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                     }
                     raceInfoVos = new ArrayList<>(MyRaceInfoVos1);
                     raceInfoVos.addAll(OtherRaceInfoVos);
+                    page.setTotal(page.getTotal() + MyRaceInfoVos1.size());
                 }
             }
             //不存在，返回错误信息
@@ -1386,6 +1403,24 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             throw new ServiceException("查询失败: " + e.getMessage());
         }
     }
+
+    @Override
+    public Integer getUserJoinCount(Long raceId) {
+        //从预报名表中 根据raceId 查询到记录数
+        List<PreSignStudentVo> preSignStudentVos = preSignStudentService.selectPreSignStudentByRace(raceId);
+        return preSignStudentVos.size();
+    }
+
+    /**
+     * 分页查询我申报的第二课堂活动
+     * @param LoginUserId 用户id
+     * @return 返回结果
+     */
+    @Override
+    public List<RaceInfoVo> selectMyDeclare(Long LoginUserId) {
+       return raceInfoMapper.selectMyDeclare(LoginUserId);
+    }
+
 }
 
 

@@ -11,7 +11,8 @@ import java.util.Map;
 public enum NoticeType {
     Team(0L, "组队通知"),
     SYSTEM(1L, "系统通知"),
-    RACE(2L, "比赛通知");
+    RACE(2L, "比赛通知"),
+    APPLICATION(3L,"申请通知");
 
     private final Long code;
     private final String value;
