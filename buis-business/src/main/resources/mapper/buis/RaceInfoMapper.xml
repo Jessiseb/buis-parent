@@ -597,4 +597,17 @@
             </if>
         </where>
     </select>
+    <select id="selectRaceCountBysonTid" resultType="java.lang.Integer">
+        select count(*)
+        from race_info
+        where son_tid = #{sonTid}
+        and is_deleted = 0
+    </select>
+    <select id="selectSecondClassByRace" resultType="com.buis.domain.RaceInfo">
+        select *
+        from race_info
+        where id = #{raceId}
+        and parent_tid = 5
+        and is_deleted = 0
+    </select>
 </mapper>
