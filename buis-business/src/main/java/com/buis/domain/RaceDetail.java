@@ -136,7 +136,7 @@ public class RaceDetail extends BaseEntity {
      * 审核状态
      */
     @ApiModelProperty("审核状态")
-    private int reviewStatus;
+    private Long reviewStatus;
 
     /**
      * 标识是否被删除，0表示未删除
@@ -165,6 +165,7 @@ public class RaceDetail extends BaseEntity {
      * 承办单位
      */
     @Excel(name = "承办单位")
+    @ApiModelProperty("承办单位")
     private String organizers;
 
     /**
@@ -195,6 +196,7 @@ public class RaceDetail extends BaseEntity {
      * 活动介绍
      */
     @Excel(name = "活动介绍")
+    @ApiModelProperty("活动介绍")
     private String description;
 
     /**
@@ -202,6 +204,7 @@ public class RaceDetail extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "活动开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty("活动开始时间")
     private Date startTime;
 
     /**
@@ -209,6 +212,7 @@ public class RaceDetail extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "活动结束时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty("活动结束时间")
     private Date endTime;
 
     /**
@@ -216,6 +220,7 @@ public class RaceDetail extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "活动报名开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty("活动报名开始时间")
     private Date joinStart;
 
     /**
@@ -223,24 +228,28 @@ public class RaceDetail extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "活动报名截止时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ApiModelProperty("活动报名结束时间")
     private Date joinEnd;
 
     /**
      * 活动标签（字典）
      */
     @Excel(name = "活动标签", readConverterExp = "字=典")
+    @ApiModelProperty("活动标签")
     private Long raceTab;
 
     /**
      * 活动类型（字典）
      */
     @Excel(name = "活动类型", readConverterExp = "字=典")
+    @ApiModelProperty("活动类型")
     private String secondType;
 
     /**
      * 参与方式
      */
     @Excel(name = "参与方式")
+    @ApiModelProperty("参与方式")
     private String particpationWay;
 
     /**
@@ -253,41 +262,48 @@ public class RaceDetail extends BaseEntity {
      * 负责老师信息
      */
     @Excel(name = "负责老师信息")
+    @ApiModelProperty("负责老师信息")
     private String teacherInfo;
 
     /**
      * 活动举办学期
      */
     @Excel(name = "活动举办学期")
+    @ApiModelProperty("活动那个举办学期")
     private String raceTerm;
 
     /**
      * 学生助理
      */
     @Excel(name = "学生助理")
+    @ApiModelProperty("学生助理")
     private String assistant;
 
     /**
      * 活动状态
      */
     @Excel(name = "活动状态")
+    @ApiModelProperty("活动状态")
     private Long status;
 
     /**
      * 活动名称
      */
     @Excel(name = "活动名称")
+    @ApiModelProperty("活动名称")
     private String raceName;
 
     /**
      * 对应比赛模块
      */
     @Excel(name = "对应比赛模块")
+    @ApiModelProperty("对应比赛模块")
     private String typeId;
 
     /**
      * 对应比赛模块
      */
     @Excel(name = "对应比赛模块")
+    @ApiModelProperty("对应比赛模块")
     private String raceModule;
 }

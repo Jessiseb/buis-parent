@@ -60,6 +60,9 @@ public interface IRaceDetailService
      */
     public int deleteRaceDetailById(Long id);
 
+    /**
+     * 根据活动id查询活动申报信息
+     */
     RaceDetail selectRaceDetailByRaceId(Long raceId);
 
     List<RaceDetail> batchSelectRaceDetailByRaceIds(List<Long> raceIds);

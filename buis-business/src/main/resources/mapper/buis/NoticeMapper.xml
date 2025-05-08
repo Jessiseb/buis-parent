@@ -15,10 +15,11 @@
         <result property="isDeleted"    column="is_deleted"    />
         <result property="userId"    column="userId"    />
         <result property="teamId"    column="teamId"    />
+        <result property="SenderId"    column="SenderId"    />
     </resultMap>
 
     <sql id="selectNoticeVo">
-        select id, title, content, type, is_unread, create_time, update_time, is_deleted, userId, teamId from notice
+        select id, title, content, type, is_unread, create_time, update_time, is_deleted, userId, teamId , SenderId from notice
     </sql>
 
     <select id="selectNoticeList" parameterType="Notice" resultMap="NoticeResult">
@@ -31,6 +32,7 @@
             <if test="isUnread != null "> and is_unread = #{isUnread}</if>
             <if test="userId != null "> and userId = #{userId}</if>
             <if test="teamId != null "> and teamId = #{teamId}</if>
+            <if test="SenderId != null "> and SenderId = #{SenderId}</if>
         </where>
     </select>
 
@@ -51,6 +53,7 @@
             <if test="isDeleted != null">is_deleted,</if>
             <if test="userId != null">userId,</if>
             <if test="teamId != null">teamId,</if>
+            <if test="SenderId != null">SenderId,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="title != null">#{title},</if>
@@ -62,6 +65,7 @@
             <if test="isDeleted != null">#{isDeleted},</if>
             <if test="userId != null">#{userId},</if>
             <if test="teamId != null">#{teamId},</if>
+            <if test="SenderId != null">#{SenderId},</if>
         </trim>
     </insert>
 
@@ -77,6 +81,7 @@
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
             <if test="userId != null">userId = #{userId},</if>
             <if test="teamId != null">teamId = #{teamId},</if>
+            <if test="SenderId != null">SenderId = #{SenderId},</if>
         </trim>
         where id = #{id}
     </update>

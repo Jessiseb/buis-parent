@@ -135,4 +135,7 @@ public interface RaceInfoMapper {
 
     //查询所有第二课堂活动
     RaceInfo selectSecondClassByRace(@Param("raceId")Long raceId);
+    //分页查询我申报的第二课堂活动
+    List<RaceInfoVo> selectMyDeclare(Long loginUserId);
+
 }

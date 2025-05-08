@@ -23,6 +23,7 @@
         <result property="status" column="status"/>
         <result property="level" column="level"/>
         <result property="seniority" column="seniority"/>
+        <result property="totalGuide" column="total_guide"/>
         <result property="descUrl" column="desc_url"/>
         <result property="department" column="department"/>
         <result property="organizers" column="organizers"/>
@@ -88,6 +89,7 @@
                t1.review_status,
                t1.level,
                t1.seniority,
+               t1.total_guide,
                t1.desc_url,
                t1.department,
                t1.organizers,
@@ -265,6 +267,7 @@
             <if test="reviewStatus != null">review_status,</if>
             <if test="level != null">level,</if>
             <if test="seniority != null and seniority != ''">seniority,</if>
+            <if test="totalGuide != null and totalGuide != ''">total_guide,</if>
             <if test="descUrl != null and descUrl != ''">desc_url,</if>
             <if test="department != null and department != ''">department,</if>
             <if test="organizers != null and organizers != ''">organizers,</if>
@@ -294,6 +297,7 @@
             <if test="reviewStatus != null">#{reviewStatus},</if>
             <if test="level != null">#{level},</if>
             <if test="seniority != null and seniority != ''">#{seniority},</if>
+            <if test="totalGuide != null and totalGuide != ''">#{totalGuide},</if>
             <if test="descUrl != null and descUrl != ''">#{descUrl},</if>
             <if test="department != null and department != ''">#{department},</if>
             <if test="organizers != null and organizers != ''">#{organizers},</if>
@@ -327,6 +331,7 @@
             <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
             <if test="level != null">level = #{level},</if>
             <if test="seniority != null and seniority != ''">seniority = #{seniority},</if>
+            <if test="totalGuide != null and totalGuide != ''">total_guide = #{totalGuide},</if>
             <if test="descUrl != null and descUrl != ''">desc_url = #{descUrl},</if>
             <if test="department != null and department != ''">department = #{department},</if>
             <if test="organizers != null and organizers != ''">organizers = #{organizers},</if>
@@ -416,11 +421,13 @@
           AND YEAR(ri.create_time) = IFNULL(#{year}, YEAR(CURRENT_DATE))
         GROUP BY cm.name
     </select>
+
     <select id="selectRaceInfoAll" resultType="com.buis.vo.RaceInfoVo">
         select id, create_time
         from race_info
         where is_deleted = 0
     </select>
+
     <select id="getRaceInfoList" resultType="com.buis.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
         <where>
@@ -564,6 +571,9 @@
             <if test="raceInfo.seniority != null  and raceInfo.seniority != ''">
                 and t1.seniority like concat('%', #{raceInfo.seniority}, '%')
             </if>
+            <if test="raceInfo.totalGuide != null  and raceInfo.totalGuide != ''">
+                and t1.total_guide like concat('%', #{raceInfo.totalGuide}, '%')
+            </if>
             <if test="raceInfo.descUrl != null  and raceInfo.descUrl != ''">
                 and t1.desc_url like concat('%', #{raceInfo.descUrl}, '%')
             </if>
@@ -588,7 +598,7 @@
             <if test="raceInfo.raceType != null ">
                 and t1.race_type = #{raceInfo.raceType}
             </if>
-            <!-- 新增的过滤条件 -->
+            -- 新增的过滤条件
             <if test="raceIds != null and raceIds.size() > 0">
                 and t1.id not in
                 <foreach item="raceId" collection="raceIds" open="(" separator="," close=")">
@@ -596,6 +606,21 @@
                 </foreach>
             </if>
         </where>
+        ORDER BY t1.create_time ASC
+    </select>
+    <select id="selectMyDeclare" resultType="com.buis.vo.RaceInfoVo">
+        select *
+        from race_info t1
+        where t1.is_deleted = 0
+          and t1.create_id = #{loginUserId}
+          and t1.parent_tid = 5
+        order by case
+                     when t1.review_status = 2 then 0
+                     when t1.review_status = 1 then 1
+                     when t1.review_status = 3 then 2
+                     else 3
+                     end,
+                 t1.id desc
     </select>
     <select id="selectRaceCountBysonTid" resultType="java.lang.Integer">
         select count(*)

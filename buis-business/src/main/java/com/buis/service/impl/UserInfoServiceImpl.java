@@ -45,7 +45,6 @@ public class UserInfoServiceImpl implements IUserInfoService {
     private ISysDictDataService sysDictDataService;
     @Resource
     private ITeamMemberTeacherService teamMemberTeacherService;
-
     @Resource
     private RedisTemplate redisTemplate;
 

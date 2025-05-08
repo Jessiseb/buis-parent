@@ -102,4 +102,5 @@ public interface TeamMemberStudentMapper {
     int deleteTeamMemberStudentByTeam(@Param("team") Long team);
 
     Integer getStudentJoinInnovationCountByUserId(Long userId);
+
 }

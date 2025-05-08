@@ -18,7 +18,9 @@ import com.buis.common.utils.StringUtils;
 import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
 import com.buis.enums.ChooseStatus;
+import com.buis.enums.NoticeType;
 import com.buis.mapper.TeamInfoMapper;
+import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.service.*;
 import com.buis.system.service.ISysDictDataService;
 import com.buis.system.service.ISysDictTypeService;
@@ -82,6 +84,10 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private ICollegeMajorService classroomMajorService;
     @Resource
     private IEmailService emailService;
+    @Resource
+    private TeamMemberStudentMapper teamMemberStudentMapper;
+    @Resource
+    private INoticeService noticeService;
 
     /**
      * 新增队伍信息
@@ -348,6 +354,12 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 //根据id查询项目队伍信息
                 teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
 
+                //不能重复申请加入
+                TeamMemberStudent teamMemberStudent1 = teamMemberStudentMapper.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
+                if (teamMemberStudent1 != null) {
+                    throw new ServiceException("您已经申请加入该队伍");
+                }
+
                 //不能加入不存在的队伍
                 if (teamInfo == null) {
                     throw new ServiceException("该队伍不存在");
@@ -389,6 +401,17 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         } else if (isTeacher == 1) {
             //老师
             throw new ServiceException("您不是学生,不能加入队伍");
+        }
+        Notice notice = new Notice();
+        notice.setTitle("申请加入队伍");
+        notice.setContent(loginUser.getName() + "申请加入" + "'" + teamInfo.getName() + "'" + "项目团队");
+        notice.setType(NoticeType.APPLICATION.getCode());
+        notice.setTeamId(teamId);
+        notice.setUserId(teamInfo.getLeader());
+        notice.setSenderId(userId);
+        int i = noticeService.insertNotice(notice);
+        if (i == 0) {
+            throw new ServiceException("加入队伍失败");
         }
         return teamStudentService.insertTeamMemberStudent(teamMemberStudent);
     }

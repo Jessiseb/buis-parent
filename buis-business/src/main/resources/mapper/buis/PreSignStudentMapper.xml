@@ -69,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectPreSignStudentByRace" resultType="com.buis.vo.PreSignStudentVo">
         select * from pre_sign_student where race = #{race} and is_deleted = 0
     </select>
+
     <select id="selectPreSignStudentByUserId" resultType="com.buis.vo.PreSignStudentVo">
         select * from pre_sign_student where student = #{userId} and is_deleted = 0
     </select>
