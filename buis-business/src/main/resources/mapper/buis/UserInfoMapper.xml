@@ -128,6 +128,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from user_info
         where is_teacher = #{isTeacher} and is_deleted = 0
     </select>
+
+    <select id="selectUserInfoByIds2" resultType="com.buis.vo.UserInfoVo">
+        <include refid="selectUserInfoVo"/>
+        where t1.id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND t1.is_deleted = 0
+    </select>
+
     <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info
         <trim prefix="(" suffix=")" suffixOverrides=",">

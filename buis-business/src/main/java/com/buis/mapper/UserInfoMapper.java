@@ -85,4 +85,6 @@ public interface UserInfoMapper
     UserInfoVo selectUserInfoByName(String name);
 
     List<UserInfoVo> selectTeachers(Integer isTeacher);
+
+    List<UserInfoVo> selectUserInfoByIds2(List<Long> ids);
 }

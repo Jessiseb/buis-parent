@@ -6,11 +6,18 @@ import lombok.Data;
 @Data
 public class TeacherInfoBO {
     private Long id;
+    //姓名
     private String name;
-    private String college;
+    //学院
+    private String collegeName;
+    //手机话
     private String phone;
+    //工号
     private String number;
-    private String sex;
+    //性别
+    private int sex;
     //职称
-    private String title;
+    private int title;
+    //邮箱
+    private String email;
 }
