@@ -147,7 +147,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
         List<UserInfoVo> userInfoVos = null;
         if (ids != null && ids.size() > 0) {
             //根据ids查询学生信息
-            userInfoVos = userInfoService.selectUserInfoByIds(ids);
+            userInfoVos = userInfoService.selectUserInfoVoByIds(ids);
         }
         return userInfoVos;
     }

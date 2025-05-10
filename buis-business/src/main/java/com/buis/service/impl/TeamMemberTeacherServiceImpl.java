@@ -193,8 +193,7 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
     @Override
     public List<UserInfoVo> getMemberTeachersByTeamId(Long team) {
         List<Long> ids = teamMemberTeacherMapper.getMemberTeachersByTeamId(team);
-        List<UserInfoVo> userInfoVos = userInfoService.selectUserInfoByIds(ids);
-        return userInfoVos;
+        return userInfoService.selectUserInfoVoByIds(ids);
     }
 
     @Override
@@ -324,7 +323,7 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
         List<Long> ids = teamMemberTeacherMapper.getTeachersByRaceId(raceId);// 老师ids
         List<UserInfoVo> userInfoVos = new ArrayList<>();
         if (ids != null && ids.size() > 0) {
-            userInfoVos = userInfoService.selectUserInfoByIds(ids);
+            userInfoVos = userInfoService.selectUserInfoVoByIds(ids);
         }
         return userInfoVos;
     }

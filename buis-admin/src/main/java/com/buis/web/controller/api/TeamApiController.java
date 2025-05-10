@@ -294,7 +294,7 @@ public class TeamApiController extends BaseController {
     }
 
     /**
-     * 根据队伍id查询队伍成员列表
+     * 根据队伍id查询队伍成员列表(作废)
      * @param pageNum
      * @param pageSize
      * @param team
@@ -376,13 +376,13 @@ public class TeamApiController extends BaseController {
         //根据团队id获取到团队成员信息
         List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByTeamId(id);
         //获取到对应的用户信息
-        List<UserInfoVo> students = userInfoService.selectUserInfoByIds(teamMemberStudents.stream()
+        List<UserInfoVo> students = userInfoService.selectUserInfoVoByIds(teamMemberStudents.stream()
                 .map(TeamMemberStudent::getStudent)
                 .collect(Collectors.toList()));
         //获取到指导老师信息
         List<TeamMemberTeacher> teamMemberTeachers = teamMemberTeacherService.selectTeamMemberTeacherByTeamId(id);
         //获取到对应的用户信息
-        List<UserInfoVo> teachers = userInfoService.selectUserInfoByIds(teamMemberTeachers.stream()
+        List<UserInfoVo> teachers = userInfoService.selectUserInfoVoByIds(teamMemberTeachers.stream()
                 .map(TeamMemberTeacher::getTeacher)
                 .collect(Collectors.toList()));
         //students转换成BO

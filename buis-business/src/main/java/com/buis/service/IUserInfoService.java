@@ -22,13 +22,24 @@ public interface IUserInfoService {
      * @return 用户信息
      */
     public UserInfoVo selectUserInfoById(Long id);
+
+
     /**
      * 根据用户ID列表查询用户信息
      *
      * @param ids 用户信息主键列表
      * @return 用户信息列表
      */
-    List<UserInfoVo> selectUserInfoByIds(List<Long> ids);
+    List<UserInfo> selectUserInfoByIds(List<Long> ids);
+
+    /**
+     * 根据用户ID列表查询用户信息2
+     *
+     * @param ids 用户信息主键列表
+     * @return 用户信息列表
+     */
+    List<UserInfoVo> selectUserInfoVoByIds(List<Long> ids);
+
 
     /**
      * 查询用户信息列表

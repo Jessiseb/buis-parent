@@ -1,8 +1,6 @@
 package com.buis.service.impl;
 
-import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
-import com.alibaba.dashscope.utils.EncryptionUtils;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
@@ -26,9 +24,8 @@ import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 用户信息Service业务层处理
@@ -69,19 +66,24 @@ public class UserInfoServiceImpl implements IUserInfoService {
      * @return 用户信息列表
      */
     @Override
-    public List<UserInfoVo> selectUserInfoByIds(List<Long> ids) {
-        List<UserInfoVo> userInfoVos = new ArrayList<>();
+    public List<UserInfo> selectUserInfoByIds(List<Long> ids) {
+//        List<UserInfoVo> userInfoVos = new ArrayList<>();
         if (ids == null || ids.isEmpty()) {
-            return userInfoVos;
+            return Collections.emptyList();
         }
-        List<UserInfo> userInfos = userInfoMapper.selectUserInfoByIds(ids);
-        for (UserInfo user : userInfos) {
-            if (user != null) {
-                UserInfoVo vo = convertToUserInfoVo(user);
-                userInfoVos.add(vo);
-            }
-        }
-        return userInfoVos;
+        return userInfoMapper.selectUserInfoByIds(ids);
+//        for (UserInfo user : userInfos) {
+//            if (user != null) {
+//                UserInfoVo vo = convertToUserInfoVo(user);
+//                userInfoVos.add(vo);
+//            }
+//        }
+
+    }
+
+    @Override
+    public List<UserInfoVo> selectUserInfoVoByIds(List<Long> ids) {
+        return userInfoMapper.selectUserInfoByIds2(ids);
     }
 
     /**
@@ -214,15 +216,19 @@ public class UserInfoServiceImpl implements IUserInfoService {
             throw new ServiceException("验证码错误,请重新输入!");
         }
 
-        //查询数据库中是否存在相同的邮箱号码
+        //查询数据库中是否存在相同的邮箱号码 和 相同的学号
         //有的话说明该用户已存在
-        UserInfo userInfo = userInfoMapper.getLoginInfoByEmail(email);
-        if (userInfo != null) {
-            throw new ServiceException("用户已存在!");
+        UserInfo userInfoByEmail = userInfoMapper.getLoginInfoByEmail(email);
+        UserInfo userInfoByNumber = userInfoMapper.getLoginInfoByNumber(number);
+        if (userInfoByNumber != null) {
+            throw new ServiceException("学号为:" + number + "的用户已存在!");
+        }
+        if (userInfoByEmail != null) {
+            throw new ServiceException("邮箱为:" + email + "的用户已存在!");
         }
 
         //密码加密
-        String encryptPassword =  DigestUtils.md5DigestAsHex((SALT + password).getBytes());
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
 
         //添加注册信息到数据库
         UserInfo member = new UserInfo();
@@ -338,6 +344,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
             FormatUtils.checkEmailFormat(email);
         }
 
+        assert userInfo != null;
         StpUtil.login(userInfo.getId());
         return StpUtil.getTokenValue();
 

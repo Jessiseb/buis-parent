@@ -11,9 +11,10 @@ public class MemberInfoBO {
     private Long id;
     private String name;
     private String sClass;
-    private String college;
+    private String collegeName;
     private String phone;
     private String number;
+    private String email;
 
 
 }
