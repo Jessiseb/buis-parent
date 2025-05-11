@@ -8,6 +8,7 @@ import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.bean.BeanUtils;
 import com.buis.domain.*;
 import com.buis.enums.RaceLevel;
+import com.buis.enums.RaceStatus;
 import com.buis.enums.ReviewStatus;
 import com.buis.service.*;
 import com.buis.vo.RaceDetailVo;
@@ -242,11 +243,15 @@ public class SecondApiController {
             if (ok <= 0) {
                 return R.fail("发布失败,请重试");
             }
+            //成功发布之后，设置状态为报名中
             //并且同步race_info一样的报名之间
             res.setJoinStart(raceDetail.getJoinStart());
             res.setJoinEnd(raceDetail.getJoinEnd());
             RaceInfo raceInfo = new RaceInfo();
             BeanUtils.copyBeanProp(res,raceInfo);
+            raceInfo.setStatus(RaceStatus.JOIN.getCode());
+            raceInfo.setJoinStart(raceDetail.getJoinStart());
+            raceInfo.setJoinEnd(raceDetail.getJoinEnd());
             raceInfoService.updateRaceInfo(raceInfo);
             //删除缓存
             raceInfoService.deleteRacesInfoCache();
