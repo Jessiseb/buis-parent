@@ -17,6 +17,7 @@ import com.buis.dto.GradeStatistic;
 import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
+import com.buis.enums.RaceLabel;
 import com.buis.enums.RaceStatus;
 import com.buis.enums.ReviewStatus;
 import com.buis.mapper.RaceInfoMapper;
@@ -37,6 +38,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -1185,9 +1187,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
                 Integer count = raceRegistrationCountMap.getOrDefault(raceId, 0);
                 HotRaceVo vo = new HotRaceVo();
-                vo.setRaceName(raceInfo.getName());
+                vo.setLabelName(raceInfo.getName());
                 vo.setRegistrationCount(count);
-                vo.setRaceDetail(raceDetail);
                 resultList.add(vo);
             }
 
@@ -1314,6 +1315,93 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         if (keys2 != null && !keys2.isEmpty()) {
             redisTemplate.delete(keys2);
         }
+
+
+    }
+
+    @Override
+    public List<HotRaceVo> getHot() {
+        try {
+            //检查缓存
+            String hotRaceJson = redisCache.getCacheObject("Hot");
+            if (StringUtils.isNotEmpty(hotRaceJson)) {
+                return JSON.parseArray(hotRaceJson, HotRaceVo.class);
+            }
+            //判断空值
+            if (hotRaceJson != null) {
+                return null;
+            }
+
+            //获取当年年份
+            int year = LocalDateTime.now().getYear();
+
+            // 用于存储每个比赛的报名人数
+            Map<Long, Integer> raceRegistrationCountMap = new HashMap<>();
+
+            // 查询未删除的报名记录
+            PreSignStudent p = new PreSignStudent();
+            List<PreSignStudentVo> preSignStudentList = preSignStudentService.selectPreSignStudentList(p);
+
+            // 统计每个比赛的报名人数
+            for (PreSignStudent preSignStudent : preSignStudentList) {
+                int time = preSignStudent.getCreateTime().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .getYear();
+                //年份相同的比赛才会加入
+                if (time == year) {
+                    Long raceId = preSignStudent.getRace();
+                    raceRegistrationCountMap.put(raceId, raceRegistrationCountMap.getOrDefault(raceId, 0) + 1);
+                }
+            }
+
+            //根据人数排序，热门
+            Map<Long, Integer> sortedMap = raceRegistrationCountMap.entrySet().stream()
+                    .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            // 如果 key 冲突，保留旧值
+                            (oldValue, newValue) -> oldValue,
+                            // 使用 LinkedHashMap 保持排序结果
+                            LinkedHashMap::new
+                    ));
+            //获取热门的race
+            List<Long> raceIds = new ArrayList<>(sortedMap.keySet());
+            // set集合自动去重
+            Set<Long> sonTidSet = new LinkedHashSet<>();
+            for (Long raceId : raceIds) {
+                // 获取所有热门比赛的信息
+                RaceInfo raceInfo = raceInfoMapper.selectSecondClassByRace(raceId);
+                if (raceInfo != null && raceInfo.getSonTid() != null) {
+                    // 自动去重，同一个比赛标签只需要一种类型
+                    sonTidSet.add(raceInfo.getSonTid());
+                }
+            }
+            //转换成list集合
+            List<Long> sonTidList = new ArrayList<>(sonTidSet);
+            //前五的热门标签
+            List<Long> sonTidList5 = sonTidList.subList(0, Math.min(5, sonTidList.size()));
+
+            List<HotRaceVo> resultList = new ArrayList<>();
+
+            for (Long sonTid : sonTidList5) {
+                HotRaceVo hotRaceVo = new HotRaceVo();
+                //获取对应字典
+                String label = RaceLabel.getValueByCode(sonTid);
+                //获取活动数量
+                int count = raceInfoMapper.selectRaceCountBysonTid(sonTid);
+                //插入
+                hotRaceVo.setLabelName(label);
+                hotRaceVo.setRegistrationCount(count);
+
+                resultList.add(hotRaceVo);
+            }
+            redisCache.setCacheObject("Hot", JSON.toJSONString(resultList), 30, TimeUnit.SECONDS);
+            return resultList;
+        } catch (Exception e) {
+            throw new ServiceException("查询失败: " + e.getMessage());
+        }
     }
 
     @Override
@@ -1334,4 +1422,5 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
 }
+
 

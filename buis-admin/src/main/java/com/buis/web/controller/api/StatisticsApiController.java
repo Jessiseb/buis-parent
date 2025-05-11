@@ -11,18 +11,17 @@ import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
 import com.buis.system.service.ISysDictDataService;
 import com.buis.system.service.ISysDictTypeService;
-import com.buis.vo.HotRaceVo;
-import com.buis.vo.SecondClassCountVo;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -162,25 +161,34 @@ public class StatisticsApiController {
         return R.ok(teamMemberStudentService.getStudentJoinInnovationCountByUserId(userId));
     }
 
-    /**
-     * 统计第二课堂热门活动类型TOP5
-     */
-    @ApiOperation("统计第二课堂热门活动类型TOP5")
-    @GetMapping("/getSecondHotRaceType")
-    public R<List<String>> getSecondHotRaceType() {
+//    /**
+//     * 统计第二课堂热门活动类型TOP5
+//     */
+//    @ApiOperation("统计第二课堂热门活动类型TOP5")
+//    @GetMapping("/getSecondHotRaceType")
+//    public R<List<String>> getSecondHotRaceType() {
+//        //查出热门TOP10活动
+//        List<HotRaceVo> hotRace = raceInfoService.getHotRace();
+//        List<String> result = new ArrayList<>();
+//        //获取热门活动的类型
+//        for (HotRaceVo hotRaceVo : hotRace) {
+//            String secondType = hotRaceVo.getRaceDetail().getSecondType();
+//            //根据value和type从字典获取到对应的活动类型
+//            String type = sysDictDataService.selectDictLabel("second_type", secondType);
+//            result.add(type);
+//        }
+//        //返回
+//        return R.ok(result);
+//    }
+
+
+    @ApiOperation("统计第二课堂热门活动类型数量")
+    @GetMapping("/getSecondHotRace")
+    public R<List<HotRaceVo>> getSecondHotRace() {
         //查出热门TOP10活动
-        List<HotRaceVo> hotRace = raceInfoService.getHotRace();
-        List<String> result = new ArrayList<>();
-        //获取热门活动的类型
-        for (HotRaceVo hotRaceVo : hotRace) {
-            String secondType = hotRaceVo.getRaceDetail().getSecondType();
-            //根据value和type从字典获取到对应的活动类型
-            String type = sysDictDataService.selectDictLabel("second_type", secondType);
-            result.add(type);
-        }
+        List<HotRaceVo> result = raceInfoService.getHot();
         //返回
         return R.ok(result);
     }
-
 
 }

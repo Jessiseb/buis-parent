@@ -2,7 +2,6 @@ package com.buis.service;
 
 import java.util.List;
 
-import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.domain.RaceInfo;
 import com.buis.dto.GradeStatistic;
@@ -10,7 +9,6 @@ import com.buis.dto.StudentExportToDiDto;
 import com.buis.dto.TeacherExportToDaDto;
 import com.buis.dto.TeacherExportToDiDto;
 import com.buis.vo.HotRaceVo;
-import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.SecondClassCountVo;
 
@@ -152,6 +150,8 @@ public interface IRaceInfoService
     void deleteRacesInfoCache();
 
     void deleteRaceInfoCacheByUserId(Long userId);
+
+    List<HotRaceVo> getHot();
 
 
     //根据活动id查询有多少人参与的该活动

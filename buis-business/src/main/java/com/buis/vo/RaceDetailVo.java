@@ -21,8 +21,12 @@ public class RaceDetailVo extends RaceDetail {
     @Excel(name = "项目类别")
     private String raceType;
 
-
-
+    /**
+     * 类型数量(第二课堂中这个类型活动的数量)
+     */
+    @ApiModelProperty("类型数量")
+    @Excel(name = "类型数量")
+    private int number;
 
 
 }
