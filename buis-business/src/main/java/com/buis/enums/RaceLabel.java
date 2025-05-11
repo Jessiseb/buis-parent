@@ -9,18 +9,16 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum RaceLabel {
-    CONTEST(1L, "竞赛训练"),
-    SPECIAL(2L, "专项训练"),
-    PERFORMANCES(3L, "展演训练"),
-    LECTURE(4L, "讲座培训"),
-    THOUGHT(5L, "思想提升"),
-    GROW(6L, "成长履历"),
-    SPECIALTY(7L, "技能特长"),
-    CULTURE(8L, "文化艺术"),
-    SPORTS(9L, "体育活动"),
-    INNOVATION(10L, "创新创业"),
-    PRACTICE(11L, "实践实习"),
-    VOLUNTEER(12L, "志愿公益");
+    CONTEST(7L, "竞赛训练"),
+    SPECIAL(8L, "专项训练"),
+    TRAINING(9L, "创新训练"),
+    ENTREPRENEURSHIP(11L, "创业实践"),
+    SPECIALIZED(12L, "专业活动"),
+    THOUGHT(13L, "思想提升"),
+    CULTURE(14L, "文化艺术"),
+    SPORTS(15L, "体育活动"),
+    INNOVATION(16L, "创新创业"),
+    PRACTICE(17L, "实践实习");
 
 
     private final Long code;
