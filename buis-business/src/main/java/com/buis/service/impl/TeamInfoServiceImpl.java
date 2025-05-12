@@ -928,7 +928,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     }
 
     //更新队伍信息缓存 + 删除队伍信息分页缓存
-    private void updateTeamInfoCache(TeamInfo teamInfo) {
+    public void updateTeamInfoCache(TeamInfo teamInfo) {
         String teamInfoCacheKey = "team:" + teamInfo.getId();
         TeamInfoVo teamInfoVo = createTeamInfoVo(teamInfo);
         redisCache.setCacheObject(teamInfoCacheKey, JSON.toJSONString(teamInfoVo), 10, TimeUnit.MINUTES);
@@ -943,7 +943,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     }
 
     //删除队伍信息缓存 + 删除队伍信息分页缓存
-    private void deleteTeamInfoCache(Long id) {
+    public void deleteTeamInfoCache(Long id) {
         String teamInfoCacheKey = "team:" + id;
         redisCache.deleteObject(teamInfoCacheKey);
 

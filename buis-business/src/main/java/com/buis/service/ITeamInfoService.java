@@ -141,4 +141,10 @@ public interface ITeamInfoService {
     int refuseJoinTeam(Long userId, Long teamId);
 
     List<TeamInfo> selectAllTeamInfoById(Long userId);
+
+    /**
+     * 更新队伍信息缓存
+     * @param teamInfo
+     */
+    void updateTeamInfoCache(TeamInfo teamInfo);
 }
