@@ -67,6 +67,9 @@ public class TeamApiController extends BaseController {
     private IPreSignStudentService preSignStudentService;
     @Autowired
     private INoticeService noticeService;
+    @Autowired
+    private IExchangeCodeService codeService;
+
 
     private static final String FILE_DELIMETER = ",";
 
@@ -435,10 +438,18 @@ public class TeamApiController extends BaseController {
     @ApiOperation("新增队伍信息(创建项目)")
     @PostMapping("/createTeam")
     public R<TeamInfo> addTeamInfo(@RequestBody TeamInfo teamInfo) {
-        //获取当前创建队伍的用户idapi/teamapi/team
-        Long userId = SecurityUtils.getFrontLoginUserId();
+        //获取当前创建队伍的用户id api/team/api/team
+        Long userId = userInfoService.getLoginUser().getId();
         teamInfo.setLeader(userId);
         TeamInfo result =  teamInfoService.insertTeamInfo(teamInfo);
+        //生成唯一且随机的项目编码
+        Long teamId =  result.getId();
+        if (teamId == null){
+            throw new ServiceException("参数错误:teamId为空!");
+        }
+        String code = codeService.generateCode(teamId);
+        result.setProjectCode(code);
+        teamInfoService.updateTeamInfo(result);
 
         return R.ok(result, "操作成功");
     }
