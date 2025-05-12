@@ -98,16 +98,17 @@ public class CodeUtil {
     }
 
     private static long calcCheckCode(long payload, int fresh) {
-        // 1.获取码表
-        int[] table = PRIME_TABLE[fresh];
-        // 2.生成校验码，payload每4位乘加权数，求和，取最后8位结果
+        // 1. 安全获取质数表（防止fresh越界）
+        int[] table = PRIME_TABLE[fresh % PRIME_TABLE.length]; // 使用取模保证不越界
+
+        // 2. 生成校验码
         long sum = 0;
         int index = 0;
-        while (payload > 0) {
-            sum += (payload & 0xf) * table[index++];
+        while (payload > 0 && index < table.length) { // 双重保护：payload和table边界
+            sum += (payload & 0xF) * table[index++];
             payload >>>= 4;
         }
-        return sum & CHECK_CODE_MASK;
+        return sum & CHECK_CODE_MASK; // 取最后8位
     }
 
     public static long parseCode(String code) {

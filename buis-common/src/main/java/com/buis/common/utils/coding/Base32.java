@@ -6,7 +6,7 @@ package com.buis.common.utils.coding;
  */
 public class Base32 {
     // 大写Base32字符集（共32个字符，排除0/1/O/I）
-    private static final String BASE32_CHARS = "6CSB7H8DAKXZF3N95RTMVUQG2YE4JWPL";
+    private static final String BASE32_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
     /**
      * 将long值编码为Base32字符串（固定长度8位）
