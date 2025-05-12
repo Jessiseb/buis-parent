@@ -183,6 +183,7 @@
                 and t1.race_type = #{raceType}
             </if>
         </where>
+        order by t1.create_time desc
     </select>
 
     <select id="selectRaceInfoById" parameterType="Long" resultMap="RaceInfoRewardResult">
