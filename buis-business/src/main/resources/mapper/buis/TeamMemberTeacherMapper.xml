@@ -192,10 +192,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT team
         FROM team_member_teacher
         WHERE teacher = #{userId}
-          AND is_deleted = 0
-          AND is_choosed = 1
-        <if test="race != null "> and race = #{race}</if>
-        <if test="name != null "> and name = #{name}</if>
+        AND is_deleted = 0
+        AND is_choosed = 1
+        <if test="race != null and race != ''">and race = #{race}</if>
+        <if test="name != null and name != ''">and name = #{name}</if>
     </select>
     <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamMemberTeacherVo"/>

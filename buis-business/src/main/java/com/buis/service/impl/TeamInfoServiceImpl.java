@@ -159,7 +159,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
                 teamMemberTeacher.setTeam(teamInfo.getId());
-                teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
+                teamMemberTeacher.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
             if (teamInfo.getTeacher2() != null) {
@@ -168,7 +168,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 teamMemberTeacher.setTeacher(teamInfo.getTeacher1());
                 teamMemberTeacher.setDecider(teamInfo.getLeader());
                 teamMemberTeacher.setTeam(teamInfo.getId());
-                teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
+                teamMemberTeacher.setIsChoosed(ChooseStatus.CHOOSE.getCode()); //选定状态
                 teamTeacherService.insertTeamMemberTeacher(teamMemberTeacher);
             }
             sucess = teamStudentService.insertTeamMemberStudent(teamMemberStudent);

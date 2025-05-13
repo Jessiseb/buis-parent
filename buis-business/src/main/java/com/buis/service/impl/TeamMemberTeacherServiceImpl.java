@@ -178,10 +178,15 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
     @Override
     public List<TeamInfoVo> selectJoinTeamByTeacherId(Long userId, Long race, Long name) {
         Long[] teamIds = teamMemberTeacherMapper.selectJoinTeamByTeacherId(userId,race,name);
+        for (Long teamId : teamIds) {
+            System.out.println(teamId);
+        }
         List<TeamInfoVo> teamInfoVos = new ArrayList<>();
+
         if (teamIds != null && teamIds.length > 0) {
             teamInfoVos = teamInfoService.selectTeamInfoByIds(teamIds);
         }
+
         return teamInfoVos;
 
     }
