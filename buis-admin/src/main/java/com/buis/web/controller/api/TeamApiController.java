@@ -427,7 +427,7 @@ public class TeamApiController extends BaseController {
                                             @ApiParam(name = "name", value = "比赛名字", required = false) @RequestParam(required = false) Long name
                                             ) {
         startPage();
-        Long userId = SecurityUtils.getFrontLoginUserId();
+        Long userId = userInfoService.getLoginUser().getId();
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId,race,name);
         return new MyPageVo(teamInfoVos);
     }
