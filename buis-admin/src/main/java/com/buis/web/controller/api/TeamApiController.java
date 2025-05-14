@@ -19,6 +19,7 @@ import com.buis.dto.TeamMemberDto;
 import com.buis.enums.ChooseStatus;
 import com.buis.enums.NoticeType;
 import com.buis.framework.config.ServerConfig;
+import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberStudentVo;
@@ -69,6 +70,8 @@ public class TeamApiController extends BaseController {
     private INoticeService noticeService;
     @Autowired
     private IExchangeCodeService codeService;
+    @Autowired
+    private TeamInfoMapper teamInfoMapper;
 
 
     private static final String FILE_DELIMETER = ",";
@@ -424,7 +427,7 @@ public class TeamApiController extends BaseController {
                                             @ApiParam(name = "name", value = "比赛名字", required = false) @RequestParam(required = false) Long name
                                             ) {
         startPage();
-        Long userId = SecurityUtils.getFrontLoginUserId();
+        Long userId = userInfoService.getLoginUser().getId();
         List<TeamInfoVo> teamInfoVos = teamMemberTeacherService.selectJoinTeamByTeacherId(userId,race,name);
         return new MyPageVo(teamInfoVos);
     }
@@ -449,7 +452,10 @@ public class TeamApiController extends BaseController {
         }
         String code = codeService.generateCode(teamId);
         result.setProjectCode(code);
-        teamInfoService.updateTeamInfo(result);
+        int i = teamInfoMapper.updateTeamInfo(result);
+        if (i > 0) {
+            teamInfoService.updateTeamInfoCache(result);
+        }
 
         return R.ok(result, "操作成功");
     }

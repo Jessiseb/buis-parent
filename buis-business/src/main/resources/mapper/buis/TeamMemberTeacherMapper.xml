@@ -19,7 +19,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTeamMemberTeacherVo">
-        select t1.id, t1.race, t1.team,t3.name as race_name, t1.teacher, t1.decider, t1.is_choosed, t1.reason, t1.is_deleted, t1.create_time, t1.update_time
+        select t1.id,
+               t1.race,
+               t1.team,
+               t3.name as race_name,
+               t1.teacher,
+               t1.decider,
+               t1.is_choosed,
+               t1.reason,
+               t1.is_deleted,
+               t1.create_time,
+               t1.update_time
         from team_member_teacher t1
                  left join race_info t3 on t1.race = t3.id
     </sql>
@@ -192,10 +202,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT team
         FROM team_member_teacher
         WHERE teacher = #{userId}
-          AND is_deleted = 0
-          AND is_choosed = 1
-        <if test="race != null "> and race = #{race}</if>
-        <if test="name != null "> and name = #{name}</if>
+        AND is_deleted = 0
+        AND is_choosed = 1
+        <if test="race != null and race != ''">and race = #{race}</if>
+        <if test="name != null and name != ''">and name = #{name}</if>
     </select>
     <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
         <include refid="selectTeamMemberTeacherVo"/>

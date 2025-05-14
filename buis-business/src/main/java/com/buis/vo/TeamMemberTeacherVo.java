@@ -27,6 +27,7 @@ public class TeamMemberTeacherVo extends TeamMemberTeacher {
      */
     @ApiModelProperty(value = "老师信息")
     private UserInfoVo teacherInfo;
+
     /**
      * 队伍信息
      */
@@ -38,4 +39,10 @@ public class TeamMemberTeacherVo extends TeamMemberTeacher {
      */
     @ApiModelProperty(value = "所属比赛的名称")
     private String raceName;
+
+    /**
+     * 决定者名称
+     */
+
+
 }
