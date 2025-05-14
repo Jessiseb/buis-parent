@@ -156,7 +156,6 @@ public class AiServiceImpl implements IAiService {
         RedisLimiterManager redisLimiterManager = new RedisLimiterManager();
         redisLimiterManager.doRateLimit("chatWithAgent_" + loginId);
         RestTemplate restTemplate = new RestTemplate();
-
         // 1. 获取 access_token（增强错误处理）
         String authUrl = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
                 agentApiUrl, appId, secretKey);
