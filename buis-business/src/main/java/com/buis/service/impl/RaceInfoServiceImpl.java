@@ -76,6 +76,8 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Resource
     private IPreSignStudentService preSignStudentService;
     @Resource
+    private IPreSignTeacherService preSignTeacherService;
+    @Resource
     private IRaceInfoService raceInfoService;
     @Resource
     private SysRoleMapper sysRoleMapper;
@@ -345,6 +347,27 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Transactional
     @Override
     public int deleteRaceInfoByIds(Long[] ids) {
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectRaceInfoVoByRaceIds(Arrays.asList(ids));
+        for (RaceInfoVo raceInfoVo : raceInfoVos) {
+            if (raceInfoVo.getParentTid() == 5) {
+                //第二课堂
+                //删除已报名学生和老师信息
+                preSignStudentService.selectPreSignStudentByRace(raceInfoVo.getId()).forEach(preSignStudent -> {
+                    preSignStudentService.deletePreSignStudentById(preSignStudent.getId());
+                });
+                PreSignTeacher preSignTeacher = new PreSignTeacher();
+                preSignTeacher.setRace(raceInfoVo.getId());
+                List<PreSignTeacherVo> preSignTeacherVos = preSignTeacherService.selectPreSignTeacherList(preSignTeacher);
+                preSignTeacherVos.forEach(preSignTeacherVo -> {
+                    preSignTeacherService.deletePreSignTeacherById(preSignTeacherVo.getId());
+                });
+            } else if (raceInfoVo.getParentTid() == 1) {
+                //大创立项
+
+            } else {
+                //学科竞赛
+            }
+        }
         raceInfoMapper.deleteRewardByRaces(ids);
         int i = raceInfoMapper.deleteRaceInfoByIds(ids);
         if (i > 0) {
