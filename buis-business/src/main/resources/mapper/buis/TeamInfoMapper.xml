@@ -103,6 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sClass != null  and sClass != ''">and t1.s_class like concat('%', #{sClass}, '%')</if>
             <if test="college != null and college != ''">and t1.college = #{college}</if>
         </where>
+        order by t1.create_time desc
     </select>
 
     <select id="selectTeamInfoById" parameterType="Long" resultMap="TeamInfoResult">

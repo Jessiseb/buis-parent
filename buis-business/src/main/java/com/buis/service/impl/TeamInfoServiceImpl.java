@@ -19,6 +19,7 @@ import com.buis.domain.*;
 import com.buis.dto.TeamMemberDto;
 import com.buis.enums.ChooseStatus;
 import com.buis.enums.NoticeType;
+import com.buis.enums.ReviewStatus;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.service.*;
@@ -131,6 +132,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfo.setLeader(loginUser.getId()); //leader
         teamInfo.setLeaderName(loginUser.getName()); //leader_name
         teamInfo.setPhone(loginUser.getPhone()); //phone
+        teamInfo.setStatus(ReviewStatus.PREPARE.getCode());//材料审核状态: 待审核
 
         //班级
 //        String stuGrade = userInfoVo.getStuGrade();
@@ -178,7 +180,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     }
 
     /**
-     * 修改队伍信息
+     * 修改队伍信息(前台)
      *
      * @param teamInfo 队伍信息
      * @return 结果
@@ -199,6 +201,25 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         updateTeamInfoCache(teamInfoNewest);
         return i;
     }
+
+    /**
+     * 修改队伍信息(后台台)
+     *
+     * @param teamInfo 队伍信息
+     * @return 结果
+     */
+    @Override
+    @Transactional
+    public int updateTeamInfoBackend(TeamInfo teamInfo) {
+        int i = teamInfoMapper.updateTeamInfo(teamInfo);
+        TeamInfo teamInfoNewest = teamInfoMapper.selectTeamInfoById(teamInfo.getId());
+        //更新队伍信息缓存
+        updateTeamInfoCache(teamInfoNewest);
+        return i;
+    }
+
+
+
 
     /**
      * 批量删除队伍信息

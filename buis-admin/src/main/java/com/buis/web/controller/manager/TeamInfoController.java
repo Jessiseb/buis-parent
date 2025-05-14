@@ -144,7 +144,7 @@ public class TeamInfoController extends BaseController {
     @Log(title = "队伍信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody TeamInfo teamInfo) {
-        return toAjax(teamInfoService.updateTeamInfo(teamInfo));
+        return toAjax(teamInfoService.updateTeamInfoBackend(teamInfo));
     }
 
     /**
