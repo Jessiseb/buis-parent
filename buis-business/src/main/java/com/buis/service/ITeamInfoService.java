@@ -48,12 +48,22 @@ public interface ITeamInfoService {
     public TeamInfo insertTeamInfo(TeamInfo teamInfo);
 
     /**
-     * 修改队伍信息
+     * 修改队伍信息(前台)
      *
      * @param teamInfo 队伍信息
      * @return 结果
      */
     public int updateTeamInfo(TeamInfo teamInfo);
+
+    /**
+     * 修改队伍信息(后台)
+     *
+     * @param teamInfo 队伍信息
+     * @return 结果
+     */
+    public int updateTeamInfoBackend(TeamInfo teamInfo);
+
+
 
     /**
      * 批量删除队伍信息
@@ -141,4 +151,10 @@ public interface ITeamInfoService {
     int refuseJoinTeam(Long userId, Long teamId);
 
     List<TeamInfo> selectAllTeamInfoById(Long userId);
+
+    /**
+     * 更新队伍信息缓存
+     * @param teamInfo
+     */
+    void updateTeamInfoCache(TeamInfo teamInfo);
 }

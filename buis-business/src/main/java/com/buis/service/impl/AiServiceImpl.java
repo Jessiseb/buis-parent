@@ -9,12 +9,12 @@ import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.buis.common.exception.ServiceException;
+import com.buis.common.manager.RedisLimiterManager;
 import com.buis.common.utils.StringUtils;
 import com.buis.reponse.AuthResponse;
 import com.buis.service.IAiService;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,6 @@ import javax.annotation.Resource;
 import java.rmi.ServerException;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -147,31 +146,21 @@ public class AiServiceImpl implements IAiService {
     public Flux<String> agentCallWithMessage(String message, String threadId) {
         //获取登录用户id
         String loginIdStr = StpUtil.getLoginId().toString();
-        Long loginId;
+        long loginId;
         try {
             loginId = Long.parseLong(loginIdStr);
         } catch (NumberFormatException e) {
             throw new ServiceException("无效的用户ID格式");
         }
+        // 限流判断，每个用户一个限流器
+        RedisLimiterManager redisLimiterManager = new RedisLimiterManager();
+        redisLimiterManager.doRateLimit("chatWithAgent_" + loginId);
         RestTemplate restTemplate = new RestTemplate();
-        //分布式锁控制Token获取
-        String key = "token_lock:" + loginId;
-        RLock rLock = redissonClient.getLock(key);
-        String authUrl = null;
-        try {
-            if (rLock.tryLock(0, 100, TimeUnit.MILLISECONDS)) {
-                // 1. 获取 access_token（增强错误处理）
-                authUrl = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
-                        agentApiUrl, appId, secretKey);
-                // 打印调试信息
-                log.info("请求Token URL: {}", authUrl);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            rLock.unlock();
-        }
-
+        // 1. 获取 access_token（增强错误处理）
+        String authUrl = String.format("%s?grant_type=client_credentials&client_id=%s&client_secret=%s",
+                agentApiUrl, appId, secretKey);
+        // 打印调试信息
+        log.info("请求Token URL: {}", authUrl);
 
         try {
             assert authUrl != null;
@@ -194,7 +183,7 @@ public class AiServiceImpl implements IAiService {
             requestBody.put("message", Collections.singletonMap("content", messageContent));
             requestBody.put("source", appId); // 根据文档填写固定值
             requestBody.put("from", "openapi");
-            requestBody.put("openId", loginId.toString()); //用户id
+            requestBody.put("openId", Long.toString(loginId)); //用户id
 //            requestBody.put("stream", true);
 
             // 3. 使用正确API地址和鉴权方式

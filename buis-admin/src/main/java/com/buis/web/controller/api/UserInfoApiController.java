@@ -2,6 +2,7 @@ package com.buis.web.controller.api;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.io.FileUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
@@ -36,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.buis.service.impl.UserInfoServiceImpl.SALT;
@@ -250,6 +252,13 @@ public class UserInfoApiController extends BaseController {
                 throw new ServiceException("请输入获奖所参与的项目~");
             }
 
+            //奖状后缀校验
+            String originalFilename = file.getOriginalFilename();
+            String suffix = FileUtil.getSuffix(originalFilename);
+            final List<String> validSuffxesList = Arrays.asList(".jpg", ".jpeg", ".png");
+            if (!validSuffxesList.contains(suffix)){
+                throw new ServiceException("请上传正确的图片格式");
+            }
 
             // 使用若依的工具类上传文件
             //String filePath = FileUploadUtils.upload(file);
@@ -300,4 +309,6 @@ public class UserInfoApiController extends BaseController {
         noticeService.updateNotice(notice);
         return R.ok();
     }
+
+
 }

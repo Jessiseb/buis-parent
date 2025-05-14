@@ -70,6 +70,7 @@
             <if test="teachers != null  and teachers != ''">and t1.teachers = #{teachers}</if>
             <if test="awardDate != null ">and award_date = #{awardDate}</if>
         </where>
+        order by t1.create_time desc
     </select>
 
 
