@@ -28,12 +28,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectAwardRecordsVo"/>
         <where>
             is_deleted = 0
-            <if test="members != null  and members != ''"> and members = #{members}</if>
-            <if test="project != null  and project != ''"> and project = #{project}</if>
+            <if test="members != null  and members != ''"> and members like concat('%', #{members}, '%')</if>
+            <if test="project != null  and project != ''"> and project  like concat('%', #{project}, '%')</if>
             <if test="competitionName != null  and competitionName != ''"> and competition_name like concat('%', #{competitionName}, '%')</if>
-            <if test="teacher != null  and teacher != ''"> and teacher = #{teacher}</if>
+            <if test="teacher != null  and teacher != ''"> and teacher like concat('%', #{teacher}, '%')</if>
             <if test="awardDate != null "> and award_date = #{awardDate}</if>
-            <if test="awardLevel != null  and awardLevel != ''"> and award_level = #{awardLevel}</if>
+            <if test="awardLevel != null  and awardLevel != ''"> and award_level like concat('%', #{awardLevel}, '%')</if>
             <if test="school != null  and school != ''"> and school = #{school}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
