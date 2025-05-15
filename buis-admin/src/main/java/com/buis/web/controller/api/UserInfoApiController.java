@@ -255,8 +255,8 @@ public class UserInfoApiController extends BaseController {
             //奖状后缀校验
             String originalFilename = file.getOriginalFilename();
             String suffix = FileUtil.getSuffix(originalFilename);
-            final List<String> validSuffxesList = Arrays.asList(".jpg", ".jpeg", ".png");
-            if (!validSuffxesList.contains(suffix)){
+            final List<String> validSuffxisList = Arrays.asList("jpg", "jpeg", "png");
+            if (!validSuffxisList.contains(suffix)){
                 throw new ServiceException("请上传正确的图片格式");
             }
 

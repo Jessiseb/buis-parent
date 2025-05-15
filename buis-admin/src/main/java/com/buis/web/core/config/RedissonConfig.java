@@ -31,7 +31,7 @@ public class RedissonConfig {
         config.useSingleServer()
                 .setAddress(redisAddress)
                 .setPassword(password)
-                .setDatabase(0);
+                .setDatabase(2);
 
         // 2.创建实例
         // Sync and Async API
