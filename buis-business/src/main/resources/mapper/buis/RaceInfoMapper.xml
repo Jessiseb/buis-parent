@@ -229,6 +229,7 @@
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
+        and is_deleted = 0 and review_status in (3,4)
     </select>
 
     <select id="selectRaceInfoVoByRaceIds" resultMap="RaceInfoRewardResult">
