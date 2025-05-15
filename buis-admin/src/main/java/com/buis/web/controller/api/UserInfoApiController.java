@@ -255,7 +255,7 @@ public class UserInfoApiController extends BaseController {
             //奖状后缀校验
             String originalFilename = file.getOriginalFilename();
             String suffix = FileUtil.getSuffix(originalFilename);
-            final List<String> validSuffxisList = Arrays.asList("jpg", "jpeg", "png");
+            final List<String> validSuffxisList = Arrays.asList("jpg", "jpeg", "png","JPG","JPEG","PNG");
             if (!validSuffxisList.contains(suffix)){
                 throw new ServiceException("请上传正确的图片格式");
             }
@@ -278,7 +278,7 @@ public class UserInfoApiController extends BaseController {
                 throw new ServiceException("上传文件失败");
             }
         } catch (Exception e) {
-            throw new ServiceException("上传奖状失败");
+            throw new ServiceException("上传失败:"+e.getMessage());
         }
     }
 
