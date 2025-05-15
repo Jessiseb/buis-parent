@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,7 +65,9 @@ public class RaceApiController extends BaseController {
         }
 
         List<RaceInfoVo> list = raceInfoService.getRaceInfoList(raceInfo);
-
+        if (list == null || list.isEmpty()){
+            return new MyPageVo(Collections.emptyList());
+        }
         return new MyPageVo(list);
     }
 

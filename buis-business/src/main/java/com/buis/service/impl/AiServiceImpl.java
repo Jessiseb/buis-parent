@@ -42,8 +42,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @ConfigurationProperties(prefix = "aliyun.ai")
 @Slf4j
 public class AiServiceImpl implements IAiService {
+
     @Resource
-    private RedissonClient redissonClient;
+    private RedisLimiterManager redisLimiterManager;
 
 
     private final Logger logger = LoggerFactory.getLogger(AiServiceImpl.class);
@@ -153,7 +154,6 @@ public class AiServiceImpl implements IAiService {
             throw new ServiceException("无效的用户ID格式");
         }
         // 限流判断，每个用户一个限流器
-        RedisLimiterManager redisLimiterManager = new RedisLimiterManager();
         redisLimiterManager.doRateLimit("chatWithAgent_" + loginId);
         RestTemplate restTemplate = new RestTemplate();
         // 1. 获取 access_token（增强错误处理）
