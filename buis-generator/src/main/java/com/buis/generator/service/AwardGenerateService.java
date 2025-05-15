@@ -48,10 +48,10 @@ public class AwardGenerateService {
 
         //转换成汉字
         Map<String, String> levelMapping = new HashMap<>();
-        levelMapping.put("1", "一等");
-        levelMapping.put("2", "二等");
-        levelMapping.put("3", "三等");
-        levelMapping.put("4", "优秀");
+        levelMapping.put("1", "一等奖");
+        levelMapping.put("2", "二等奖");
+        levelMapping.put("3", "三等奖");
+        levelMapping.put("4", "优秀奖");
 
         String level = levelMapping.getOrDefault(awards.getAwardLevel(), " ");
 
@@ -62,7 +62,7 @@ public class AwardGenerateService {
         templateParam.put("race", race);
         templateParam.put("level", level);
         if (awards.getTeachers() != null) {
-            templateParam.put("teacher", awards.getTeachers()); // 允许空值
+            templateParam.put("teacher", "指导老师："+awards.getTeachers()); // 允许空值
         } else {
             templateParam.put("teacher", " ");
         }
@@ -99,10 +99,10 @@ public class AwardGenerateService {
 
             //转换成汉字
             Map<String, String> levelMapping = new HashMap<>();
-            levelMapping.put("1", "一等");
-            levelMapping.put("2", "二等");
-            levelMapping.put("3", "三等");
-            levelMapping.put("4", "优秀");
+            levelMapping.put("1", "一等奖");
+            levelMapping.put("2", "二等奖");
+            levelMapping.put("3", "三等奖");
+            levelMapping.put("4", "优秀奖");
 
             String level = levelMapping.getOrDefault(awards.getAwardLevel(), " ");
 
@@ -113,7 +113,7 @@ public class AwardGenerateService {
             templateParam.put("race", race);
             templateParam.put("level", level);
             if (awards.getTeachers() != null) {
-                templateParam.put("teacher", awards.getTeachers()); // 允许空值
+                templateParam.put("teacher", "指导老师："+awards.getTeachers()); // 允许空值
             } else {
                 templateParam.put("teacher", " ");
             }
