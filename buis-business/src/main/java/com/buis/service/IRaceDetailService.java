@@ -63,7 +63,7 @@ public interface IRaceDetailService
     /**
      * 根据活动id查询活动申报信息
      */
-    RaceDetail selectRaceDetailByRaceId(Long raceId);
+    RaceDetailVo selectRaceDetailVoByRaceId(Long raceId);
 
     List<RaceDetail> batchSelectRaceDetailByRaceIds(List<Long> raceIds);
 
