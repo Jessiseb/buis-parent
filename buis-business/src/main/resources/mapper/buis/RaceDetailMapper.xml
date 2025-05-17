@@ -184,40 +184,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from t_weight
         where race_d = #{race_d} and is_deleted = 0
     </select>
-    <select id="selectRaceDetailByRaceId" resultType="com.buis.domain.RaceDetail">
-        select id,
-               type_id,
-               race,
-               count,
-               name,
-               start_time,
-               end_time,
-               join_start,
-               join_end,
-               race_term,
-               description,
-               review_status,
-               second_type,
-               particpation_way,
-               phone,
-               teacher_info,
-               assistant,
-               desc_url,
-               group_url,
-               rule,
-               capacity,
-               team_min,
-               team_max,
-               teacher_min,
-               teacher_max,
-               r_rank,
-               t_limit,
-               is_deleted,
-               create_time,
-               update_time
-        from race_detail
-        where race = #{raceId}
-          and is_deleted = 0
+    <select id="selectRaceDetailVoByRaceId" resultType="com.buis.vo.RaceDetailVo">
+        <include refid="selectRaceDetailVo"/>
+        where t1.race = #{raceId}
+          and t1.is_deleted = 0
     </select>
     <select id="batchSelectRaceDetailByRaceIds" resultType="com.buis.domain.RaceDetail">
         select id, type_id,race, name,money,review_status, phone, email,

@@ -147,8 +147,8 @@ public class RaceDetailServiceImpl implements IRaceDetailService {
      * 根据活动id查询活动申报信息(比赛信息)
      */
     @Override
-    public RaceDetail selectRaceDetailByRaceId(Long raceId) {
-        return raceDetailMapper.selectRaceDetailByRaceId(raceId);
+    public RaceDetailVo selectRaceDetailVoByRaceId(Long raceId) {
+        return raceDetailMapper.selectRaceDetailVoByRaceId(raceId);
 
     }
 

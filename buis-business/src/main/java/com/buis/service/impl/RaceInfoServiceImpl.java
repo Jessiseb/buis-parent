@@ -169,6 +169,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     public List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo) {
         // 根据传入参数获取比赛信息
         List<RaceInfoVo> raceInfoVos = raceInfoMapper.getRaceInfoList(raceInfo);
+
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             if (raceInfoVo != null) {
                 // 设置是否已报名
@@ -470,7 +471,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //老师现在指导数量
         Long nLimit = teamMemberTeacherService.getGuideCount(teacherId);
         //限制老师最大指导人数数量
-        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+        RaceDetailVo raceDetail = raceDetailService.selectRaceDetailVoByRaceId(raceId);
         int tLimit = raceDetail.getTLimit();
         // 检查老师加入的队伍数量是否超过比赛的指导老师数量限制
         if (tLimit != 0 && nLimit >= tLimit) {
@@ -643,7 +644,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //第二课堂的比赛详情
         List<RaceDetail> list = new ArrayList<>();
         for (RaceInfoVo raceInfoVo : collect) {
-            Optional.ofNullable(raceDetailService.selectRaceDetailByRaceId(raceInfoVo.getId()))
+            Optional.ofNullable(raceDetailService.selectRaceDetailVoByRaceId(raceInfoVo.getId()))
                     .ifPresent(list::add);
         }
         log.debug("获取到比赛详情数量:{}", list.size());
@@ -809,7 +810,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
         //第二课堂的比赛详情
         List<RaceDetail> list = new ArrayList<>();
         for (RaceInfoVo raceInfoVo : collect) {
-            Optional.ofNullable(raceDetailService.selectRaceDetailByRaceId(raceInfoVo.getId()))
+            Optional.ofNullable(raceDetailService.selectRaceDetailVoByRaceId(raceInfoVo.getId()))
                     .ifPresent(list::add);
         }
         log.debug("获取到比赛详情数量:{}", list.size());
@@ -1000,7 +1001,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 //        int teacher = teamMemberTeacherService.getJoinCount(null, raceId, null);
         int student = teamMemberStudentService.getJoinCount(null, raceId, null);
         // 查询比赛信息
-        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+        RaceDetailVo raceDetail = raceDetailService.selectRaceDetailVoByRaceId(raceId);
         if (raceDetail != null) {
             Long capacity = raceDetail.getCapacity();
             if (capacity != 0) {
@@ -1207,7 +1208,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
             for (RaceInfo raceInfo : raceInfoList) {
                 Long raceId = raceInfo.getId();
                 //根据raceId查询raceDetail
-                RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+                RaceDetailVo raceDetail = raceDetailService.selectRaceDetailVoByRaceId(raceId);
                 Integer count = raceRegistrationCountMap.getOrDefault(raceId, 0);
                 HotRaceVo vo = new HotRaceVo();
                 vo.setLabelName(raceInfo.getName());

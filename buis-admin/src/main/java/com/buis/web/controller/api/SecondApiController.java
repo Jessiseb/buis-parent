@@ -308,10 +308,11 @@ public class SecondApiController {
      */
     @ApiOperation("根据活动id查询活动发布信息")
     @PostMapping("/info/getRaceDetailByRaceId")
-    public R<RaceDetail> getRaceDetailByRaceId(@ApiParam(name = "RaceId", value = "申报活动id", required = true)
+    public R<RaceDetailVo> getRaceDetailByRaceId(@ApiParam(name = "RaceId", value = "申报活动id", required = true)
                               @RequestParam(value = "RaceId")Long RaceId) {
-        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(RaceId);
-        return R.ok(raceDetail);
+        RaceDetailVo raceDetailVo = raceDetailService.selectRaceDetailVoByRaceId(RaceId);
+
+        return R.ok(raceDetailVo);
     }
 
     /**

@@ -25,6 +25,7 @@ import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.service.*;
 import com.buis.system.service.ISysDictDataService;
 import com.buis.system.service.ISysDictTypeService;
+import com.buis.vo.RaceDetailVo;
 import com.buis.vo.TeamInfoVo;
 import com.buis.vo.TeamMemberStudentVo;
 import com.buis.vo.UserInfoVo;
@@ -126,7 +127,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
 
         //根据比赛信息设置队伍最大人数
-        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(teamInfo.getRace());
+        RaceDetailVo raceDetail = raceDetailService.selectRaceDetailVoByRaceId(teamInfo.getRace());
         int teamMax = raceDetail.getTeamMax();//最大人数
         teamInfo.setNumber(teamMax);
         teamInfo.setLeader(loginUser.getId()); //leader
@@ -333,7 +334,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         if (raceId == null) {
             throw new ServiceException("参数错误,id为空");
         }
-        RaceDetail raceDetail = raceDetailService.selectRaceDetailByRaceId(raceId);
+        RaceDetailVo raceDetail = raceDetailService.selectRaceDetailVoByRaceId(raceId);
         if (raceDetail == null) {
             throw new ServiceException("无详细比赛规则");
         }
