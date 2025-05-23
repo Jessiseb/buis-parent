@@ -62,7 +62,7 @@ public class AiController {
                 .content(Arrays.asList(
                         Collections.singletonMap("image", image),
                         Collections.singletonMap("text", "请帮忙分类图片的:活动名字、 比赛全称、获奖级别、全部获奖成员、全部指导老师、获奖时间,其余不需要,返回的信息必须要完全,返回的结果要以" +
-                                "活动名字：内容；比赛全称：内容；获奖级别：内容；获奖成员：内容；指导老师：内容；获奖时间：xxxx年xx月xx日，这种样子的,如果成员和老师是多个的话,用顿号隔开"))).build();
+                                "活动名字：内容；比赛全称：内容 获奖级别：内容 获奖成员：内容 指导老师：内容；获奖时间：xxxx年xx月xx日，这种样子的,如果成员和老师是多个的话,用顿号隔开；如果识别出来的时间只有年月，默认当月的第一天"))).build();
         MultiModalConversationParam param = MultiModalConversationParam.builder()
                 // 若没有配置环境变量，请用百炼API Key将下行替换为：.apiKey("sk-xxx")
                 .apiKey(apiKey)
