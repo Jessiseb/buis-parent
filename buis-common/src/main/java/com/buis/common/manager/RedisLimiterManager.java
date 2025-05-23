@@ -30,15 +30,6 @@ public class RedisLimiterManager {
         if (key == null || key.isEmpty()) {
             throw new ServiceException("限流 key 不可为空");
         }
-//        // 创建一个名称为user_limiter的限流器，每秒最多访问 2 次
-//        RRateLimiter rateLimiter = redissonClient.getRateLimiter(key);
-//
-//        rateLimiter.trySetRate(RateType.OVERALL, 2, 1, RateIntervalUnit.SECONDS);
-//        // 每当一个操作来了后，请求一个令牌
-//        boolean canOp = rateLimiter.tryAcquire(1);
-//        if (!canOp) {
-//           throw new ServiceException("操作过于频繁，请稍后再试");
-//        }
         try {
             RRateLimiter rateLimiter = redissonClient.getRateLimiter(key);
             rateLimiter.trySetRate(RateType.OVERALL, 2, 1, RateIntervalUnit.SECONDS);
