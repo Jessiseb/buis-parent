@@ -58,6 +58,12 @@ public class Award extends BaseEntity {
     private String teachers;
 
     /**
+     * 获奖项目
+     */
+    @Excel(name = "获奖项目")
+    private String awardProject;
+
+    /**
      * 名字
      */
     @Excel(name = "名字")

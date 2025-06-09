@@ -13,6 +13,7 @@
         <result property="name" column="name"/>
         <result property="awardLevel" column="award_level"/>
         <result property="teachers" column="teachers"/>
+        <result property="awardProject" column="award_project"/>
         <result property="awardDate" column="award_date"/>
         <result property="updateTime" column="update_time"/>
         <result property="createTime" column="create_time"/>
@@ -33,6 +34,7 @@
                t1.year,
                t1.award_level,
                t1.teachers,
+               t1.award_project,
                t1.award_date,
                t1.update_time,
                t1.create_time,
@@ -68,6 +70,7 @@
             <if test="year != null  and year != ''">and t1.year like concat('%', #{year}, '%')</if>
             <if test="awardLevel != null  and awardLevel != ''">and t1.award_level = #{awardLevel}</if>
             <if test="teachers != null  and teachers != ''">and t1.teachers = #{teachers}</if>
+            <if test="awardProject != null  and awardProject != ''">and t1.award_project = #{awardProject}</if>
             <if test="awardDate != null ">and award_date = #{awardDate}</if>
         </where>
         order by t1.create_time desc
@@ -75,13 +78,13 @@
 
 
     <select id="selectAwardByTeam" resultMap="AwardResult">
-        select a.race_id,a.team_id,a.year,a.award_level,a.teachers,a.award_date,a.name
+        select a.race_id,a.team_id,a.year,a.award_level,a.teachers,a.award_project,a.award_date,a.name
         from award as a
         where team_id = #{teamId} and is_deleted = 0
     </select>
 
     <select id="selectAwardByNameAndRace" resultType="com.buis.domain.Award">
-        select a.race_id, a.name, a.year, a.award_level, a.teachers, a.award_date
+        select a.race_id, a.name, a.year, a.award_level, a.teachers,a.award_project a.award_date
         from award as a
         where name = #{name}
           and race_id = #{raceId}
@@ -98,6 +101,7 @@
             <if test="year != null">year,</if>
             <if test="awardLevel != null">award_level,</if>
             <if test="teachers != null">teachers,</if>
+            <if test="awardProject != null">award_project,</if>
             <if test="awardDate != null">award_date,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="createTime != null">create_time,</if>
@@ -112,6 +116,7 @@
             <if test="year != null">#{year},</if>
             <if test="awardLevel != null">#{awardLevel},</if>
             <if test="teachers != null">#{teachers},</if>
+            <if test="awardProject != null">#{awardProject},</if>
             <if test="awardDate != null">#{awardDate},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -129,6 +134,7 @@
             <if test="name != null">name = #{name},</if>
             <if test="awardLevel != null">award_level = #{awardLevel},</if>
             <if test="teachers != null">teachers = #{teachers},</if>
+            <if test="awardProject != null">award_project = #{awardProject},</if>
             <if test="awardDate != null">award_date = #{awardDate},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

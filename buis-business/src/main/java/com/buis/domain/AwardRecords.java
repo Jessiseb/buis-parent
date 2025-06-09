@@ -83,13 +83,11 @@ public class AwardRecords extends BaseEntity {
     /**
      * 状态(0-待审核 1-审核通过 2-审核未通过)
      */
-    @Excel(name = "状态")
     private int status;
 
     /**
      * 是否删除
      */
     private Integer isDeleted;
-
 
 }

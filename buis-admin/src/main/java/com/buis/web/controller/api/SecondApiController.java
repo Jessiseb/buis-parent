@@ -326,6 +326,10 @@ public class SecondApiController {
         return R.ok(raceInfoVo);
     }
 
+    /**
+     * 带条件分页查询第二课堂活动申报
+     */
+
 
 
 }
