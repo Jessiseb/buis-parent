@@ -519,6 +519,7 @@
         from race_info
         where name = #{name}
           and is_deleted = 0
+        LIMIT 1
     </select>
 
     <select id="selectRaceInfoNoMyRaceList" resultMap="RaceInfoRewardResult">
