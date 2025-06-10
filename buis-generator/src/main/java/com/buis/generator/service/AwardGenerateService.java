@@ -61,7 +61,7 @@ public class AwardGenerateService {
         templateParam.put("year", awards.getYear());
         templateParam.put("race", race);
         templateParam.put("level", level);
-        if (awards.getTeachers() != null) {
+        if (awards.getAwardProject() != null) {
             templateParam.put("project", "作品《"+awards.getAwardProject()+"》");
         } else {
             templateParam.put("project", "");
@@ -117,7 +117,7 @@ public class AwardGenerateService {
             templateParam.put("year", awards.getYear());
             templateParam.put("race", race);
             templateParam.put("level", level);
-            if (awards.getTeachers() != null) {
+            if (awards.getAwardProject() != null) {
                 templateParam.put("project", "作品《"+awards.getAwardProject()+"》");
             } else {
                 templateParam.put("project", "");
