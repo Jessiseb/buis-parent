@@ -13,12 +13,18 @@ import com.buis.vo.AwardVo;
 public interface IAwardService 
 {
     /**
-     * 查询奖状信息
+     * 根据用户id返回用户所获得的奖项
      * 
      * @param id 奖状信息主键
      * @return 奖状信息
      */
-    public  List<AwardVo> selectAwardById(Long id);
+    public  List<AwardVo> selectAwardByUserId(Long id);
+
+
+    public  AwardVo selectAwardById(Long id);
+
+
+
 
     /**
      * 查询奖状信息列表

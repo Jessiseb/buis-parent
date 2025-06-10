@@ -6,9 +6,7 @@ import com.buis.domain.Award;
 import com.buis.generator.util.AwardUtil;
 import com.buis.mapper.AwardMapper;
 import com.buis.service.*;
-import com.buis.vo.UserInfoVo;
 
-import freemarker.template.TemplateException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +40,7 @@ public class AwardGenerateService {
 //        }
 //        String studentNames = String.join("、", names);
 //
-        Award awards = awardMapper.selectAwardById(awardId);
+        Award awards = awardMapper.selectAwardByawardId(awardId);
         //比赛名字
 //        String race = raceInfoService.selectRaceInfoById(raceId).getName();
 //        if (awards == null) {
@@ -88,7 +86,7 @@ public class AwardGenerateService {
 //        }
         for (Long awardId : awardIds) {
 //            String name = names.get(i);
-            Award awards = awardMapper.selectAwardById(awardId);
+            Award awards = awardMapper.selectAwardByawardId(awardId);
 //            //比赛名字
 //            String race = raceInfoService.selectRaceInfoById(raceId).getName();
 //            if (awards == null) {
