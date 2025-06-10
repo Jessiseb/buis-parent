@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.buis.common.core.domain.R;
 import com.buis.domain.Award;
 import com.buis.generator.util.AwardUtil;
+import com.buis.mapper.AwardMapper;
 import com.buis.service.*;
 import com.buis.vo.UserInfoVo;
 
@@ -26,8 +27,10 @@ public class AwardGenerateService {
     private ITeamMemberStudentService teamMemberStudentService;
     @Resource
     private IRaceInfoService raceInfoService;
+    @Resource
+    private AwardMapper awardMapper;
 
-    public R<String> generateAwardContent(String name, Long raceId, HttpServletResponse response) {
+    public R<String> generateAwardContent(Long awardId, HttpServletResponse response) {
 
         AwardUtil awardUtil = new AwardUtil();
 
@@ -39,12 +42,12 @@ public class AwardGenerateService {
 //        }
 //        String studentNames = String.join("、", names);
 //
-        Award awards = awardService.selectAwardByNameAndRace(name, raceId);
+        Award awards = awardMapper.selectAwardById(awardId);
         //比赛名字
-        String race = raceInfoService.selectRaceInfoById(raceId).getName();
-        if (awards == null) {
-            return R.fail("在" + race + "中未找到" + name + "对应的奖项");
-        }
+//        String race = raceInfoService.selectRaceInfoById(raceId).getName();
+//        if (awards == null) {
+//            return R.fail("在" + race + "中未找到" + name + "对应的奖项");
+//        }
 
         //转换成汉字
         Map<String, String> levelMapping = new HashMap<>();
@@ -59,15 +62,15 @@ public class AwardGenerateService {
         Map<String, String> templateParam = new HashMap<>();
         templateParam.put("name", awards.getName());
         templateParam.put("year", awards.getYear());
-        templateParam.put("race", race);
+        templateParam.put("race", awards.getRaceName());
         templateParam.put("level", level);
         if (awards.getAwardProject() != null) {
-            templateParam.put("project", "作品《"+awards.getAwardProject()+"》");
+            templateParam.put("project", "作品《" + awards.getAwardProject() + "》");
         } else {
             templateParam.put("project", "");
         }
         if (awards.getTeachers() != null) {
-            templateParam.put("teacher", "指导老师："+awards.getTeachers()); // 允许空值
+            templateParam.put("teacher", "指导老师：" + awards.getTeachers()); // 允许空值
         } else {
             templateParam.put("teacher", " ");
         }
@@ -76,23 +79,21 @@ public class AwardGenerateService {
         return awardUtil.generate(response, "/templates", "award.xml", templateParam, "奖状");
     }
 
-    public R<String> generateAwardContents(List<String> names, List<Long> raceIds, HttpServletResponse response) throws IOException {
+    public R<String> generateAwardContents(List<Long> awardIds, HttpServletResponse response) throws IOException {
         AwardUtil awardUtil = new AwardUtil();
         List<Map<String, String>> templateParams = new ArrayList<>();
 
-        if (names.size() != raceIds.size()) {
-            throw new RuntimeException("传入的姓名和比赛不一致");
-        }
-        for (int i = 0; i < names.size(); i++) {
-            String name = names.get(i);
-            Long raceId = raceIds.get(i);
-
-            Award awards = awardService.selectAwardByNameAndRace(name, raceId);
-            //比赛名字
-            String race = raceInfoService.selectRaceInfoById(raceId).getName();
-            if (awards == null) {
-                return R.fail("在" + race + "中未找到" + name + "对应的奖项");
-            }
+//        if (names.size() != raceIds.size()) {
+//            throw new RuntimeException("传入的姓名和比赛不一致");
+//        }
+        for (Long awardId : awardIds) {
+//            String name = names.get(i);
+            Award awards = awardMapper.selectAwardById(awardId);
+//            //比赛名字
+//            String race = raceInfoService.selectRaceInfoById(raceId).getName();
+//            if (awards == null) {
+//                return R.fail("在" + race + "中未找到" + name + "对应的奖项");
+//            }
 
 //            //通过teamId查出队伍全部学生的名字
 //            List<String> names = new ArrayList<>();
@@ -115,15 +116,15 @@ public class AwardGenerateService {
             Map<String, String> templateParam = new HashMap<>();
             templateParam.put("name", awards.getName());
             templateParam.put("year", awards.getYear());
-            templateParam.put("race", race);
+            templateParam.put("race", awards.getRaceName());
             templateParam.put("level", level);
             if (awards.getAwardProject() != null) {
-                templateParam.put("project", "作品《"+awards.getAwardProject()+"》");
+                templateParam.put("project", "作品《" + awards.getAwardProject() + "》");
             } else {
                 templateParam.put("project", "");
             }
             if (awards.getTeachers() != null) {
-                templateParam.put("teacher", "指导老师："+awards.getTeachers()); // 允许空值
+                templateParam.put("teacher", "指导老师：" + awards.getTeachers()); // 允许空值
             } else {
                 templateParam.put("teacher", " ");
             }

@@ -84,10 +84,17 @@
     </select>
 
     <select id="selectAwardByNameAndRace" resultType="com.buis.domain.Award">
-        select a.race_id, a.name, a.year, a.award_level, a.teachers,a.award_project,a.award_date
+        select a.race_id, a.name, a.year, a.award_level, a.teachers,a.award_project,a.award_date,a.race_name
         from award as a
         where name = #{name}
           and race_id = #{raceId}
+          and is_deleted = 0
+        LIMIT 1
+    </select>
+    <select id="selectAwardById" resultType="com.buis.domain.Award">
+        select a.name, a.year, a.award_level, a.teachers, a.award_project, a.award_date, a.race_name
+        from award as a
+        where id = #{awardId}
           and is_deleted = 0
     </select>
 
