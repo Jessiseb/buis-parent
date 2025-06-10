@@ -65,4 +65,6 @@ public interface AwardMapper
 
     Award selectAwardByNameAndRace(@Param("name") String name,@Param("raceId") Long raceId);
 
+    Award selectAwardById(@Param("awardId") Long awardId);
+
 }
