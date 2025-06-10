@@ -122,6 +122,24 @@ public class UserInfoApiController extends BaseController {
     }
 
     /**
+     * 根据奖状id删除对应的奖状信息
+     *
+     */
+    @ApiOperation("根据奖状id删除对应的奖状信息")
+    @PostMapping("/deletedAwardById/{id}")
+    public R<Integer> deletedAwardById(@PathVariable("id") Long id){
+       //根据id查询到对应的奖状
+        AwardVo awardVo = awardService.selectAwardById(id);
+        if (awardVo == null){
+            throw new ServiceException("对应奖状不存在!");
+        }
+        return R.ok(awardService.deleteAwardById(id));
+    }
+
+
+
+
+    /**
      * 编辑用户信息
      * @return
      */
@@ -195,9 +213,11 @@ public class UserInfoApiController extends BaseController {
     public R<List<AwardVo>> getawardbyId(
             @ApiParam(value = "用户id", required = true)
             @RequestParam("userId") Long userId){
-        List<AwardVo> awards = awardService.selectAwardById(userId);
+        List<AwardVo> awards = awardService.selectAwardByUserId(userId);
         return R.ok(awards);
     }
+
+
 
     /**
      * 查询老师或学生信息
@@ -290,6 +310,10 @@ public class UserInfoApiController extends BaseController {
     public R<List<AwardRecords>> getAward() {
         return R.ok(awardRecordsService.getAwardByUserId(userInfoService.getLoginUser().getId()));
     }
+
+
+
+
 
     @ApiOperation("查询通知列表")
     @GetMapping("/getNotice")

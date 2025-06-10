@@ -44,7 +44,7 @@
     </sql>
 
     <sql id="selectAwardrace">
-        SELECT racename,
+        SELECT race_name,
                teachers,
                winners,
                race_id,
@@ -89,6 +89,10 @@
         where name = #{name}
           and race_id = #{raceId}
           and is_deleted = 0
+    </select>
+    <select id="selectAwardById" resultType="com.buis.vo.AwardVo">
+        <include refid="selectAwardVo"/>
+        where t1.id = #{id}
     </select>
 
     <insert id="insertAward" parameterType="com.buis.vo.AwardVo">

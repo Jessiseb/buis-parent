@@ -5,20 +5,14 @@ import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.domain.Award;
 import com.buis.domain.RaceInfo;
-import com.buis.domain.Score;
-import com.buis.domain.TeamInfo;
 import com.buis.mapper.AwardMapper;
 import com.buis.service.*;
 import com.buis.vo.AwardVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.TeamInfoVo;
 import com.buis.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,13 +39,13 @@ public class AwardServiceImpl implements IAwardService {
     private IUserInfoService userInfoService;
 
     /**
-     * 查询奖状信息
+     * 根据用户id查询奖状信息
      *
      * @param id 奖状信息主键
-     * @return 奖状信息
+     * @return
      */
     @Override
-    public List<AwardVo> selectAwardById(Long id) {
+    public List<AwardVo> selectAwardByUserId(Long id) {
         //获取登录用户id
         String loginIdStr = StpUtil.getLoginId().toString();
         Long loginId;
@@ -72,6 +66,17 @@ public class AwardServiceImpl implements IAwardService {
         AwardVo award = new AwardVo();
         award.setName(name);
         return awardMapper.selectAwardList(award);
+    }
+
+    /**
+     * 查询奖状信息
+     *
+     * @param id 奖状信息主键
+     * @return 奖状信息
+     */
+    @Override
+    public AwardVo selectAwardById(Long id) {
+        return awardMapper.selectAwardById(id);
     }
 
 
@@ -153,6 +158,7 @@ public class AwardServiceImpl implements IAwardService {
      * @return 结果
      */
     @Override
+    @Transactional
     public int deleteAwardById(Long id) {
         return awardMapper.deleteAwardById(id);
     }
