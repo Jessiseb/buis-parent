@@ -62,11 +62,16 @@ public class AwardGenerateService {
         templateParam.put("race", race);
         templateParam.put("level", level);
         if (awards.getTeachers() != null) {
+            templateParam.put("project", "作品《"+awards.getAwardProject()+"》");
+        } else {
+            templateParam.put("project", "");
+        }
+        if (awards.getTeachers() != null) {
             templateParam.put("teacher", "指导老师："+awards.getTeachers()); // 允许空值
         } else {
             templateParam.put("teacher", " ");
         }
-        templateParam.put("date", DateUtil.format(awards.getAwardDate(), "yyyy年MM月dd日")); // 格式化日期
+        templateParam.put("date", DateUtil.format(awards.getAwardDate(), "yyyy 年 MM 月 dd 日")); // 格式化日期
 
         return awardUtil.generate(response, "/templates", "award.xml", templateParam, "奖状");
     }
@@ -113,11 +118,16 @@ public class AwardGenerateService {
             templateParam.put("race", race);
             templateParam.put("level", level);
             if (awards.getTeachers() != null) {
+                templateParam.put("project", "作品《"+awards.getAwardProject()+"》");
+            } else {
+                templateParam.put("project", "");
+            }
+            if (awards.getTeachers() != null) {
                 templateParam.put("teacher", "指导老师："+awards.getTeachers()); // 允许空值
             } else {
                 templateParam.put("teacher", " ");
             }
-            templateParam.put("date", DateUtil.format(awards.getAwardDate(), "yyyy年MM月dd日"));
+            templateParam.put("date", DateUtil.format(awards.getAwardDate(), "yyyy 年 MM 月 dd日"));
 
             // 将数据添加到列表
             templateParams.add(templateParam);
