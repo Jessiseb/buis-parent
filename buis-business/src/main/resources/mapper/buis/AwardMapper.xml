@@ -84,15 +84,24 @@
     </select>
 
     <select id="selectAwardByNameAndRace" resultType="com.buis.domain.Award">
-        select a.race_id, a.name, a.year, a.award_level, a.teachers,a.award_project,a.award_date
+        select a.race_id, a.name, a.year, a.award_level, a.teachers,a.award_project,a.award_date,a.race_name
         from award as a
         where name = #{name}
           and race_id = #{raceId}
           and is_deleted = 0
+        LIMIT 1
+    </select>
+    <select id="selectAwardByawardId" resultType="com.buis.domain.Award">
+        select a.name, a.year, a.award_level, a.teachers, a.award_project, a.award_date, a.race_name
+        from award as a
+        where id = #{awardId}
+          and is_deleted = 0
     </select>
     <select id="selectAwardById" resultType="com.buis.vo.AwardVo">
-        <include refid="selectAwardVo"/>
-        where t1.id = #{id}
+        select a.id, a.race_id, a.name, a.year, a.award_level, a.teachers, a.award_project, a.award_date, a.update_time, a.create_time, a.is_deleted, a.race_name
+        from award as a
+        where id = #{id}
+          and is_deleted = 0
     </select>
 
     <insert id="insertAward" parameterType="com.buis.vo.AwardVo">
