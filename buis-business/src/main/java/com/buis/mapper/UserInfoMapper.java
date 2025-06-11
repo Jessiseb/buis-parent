@@ -59,7 +59,7 @@ public interface UserInfoMapper
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteUserInfoByIds(Long[] ids);
+    public int deleteUserInfoByIds(@Param("ids") Long[] ids);
 
     /**
      * 根据用户ID获取登录信息,只有邮箱和密码
