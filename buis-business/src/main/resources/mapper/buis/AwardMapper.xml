@@ -29,7 +29,7 @@
         select t1.id,
                t1.race_id,
                t1.name,
-               t2.name as race_name,
+               t1.race_name,
                t1.team_id,
                t1.year,
                t1.award_level,
@@ -40,7 +40,6 @@
                t1.create_time,
                t1.is_deleted
         from award t1
-                 left join race_info t2 on t1.race_id = t2.id
     </sql>
 
     <sql id="selectAwardrace">
@@ -65,12 +64,12 @@
             t1.is_deleted = 0
             <if test="raceId != null ">and t1.race_id = #{raceId}</if>
             <if test="teamId != null ">and t1.team_id = #{teamId}</if>
-            <if test="raceName != null  and raceName != ''">and t2.name = #{raceName}</if>
+            <if test="raceName != null  and raceName != ''">and t1.race_name like concat('%', #{raceName}, '%')</if>
             <if test="name != null  and name != ''">and t1.name like concat('%', #{name}, '%')</if>
             <if test="year != null  and year != ''">and t1.year like concat('%', #{year}, '%')</if>
             <if test="awardLevel != null  and awardLevel != ''">and t1.award_level = #{awardLevel}</if>
             <if test="teachers != null  and teachers != ''">and t1.teachers = #{teachers}</if>
-            <if test="awardProject != null  and awardProject != ''">and t1.award_project = #{awardProject}</if>
+            <if test="awardProject != null  and awardProject != ''">and t1.award_project like concat('%', #{awardProject}, '%')</if>
             <if test="awardDate != null ">and award_date = #{awardDate}</if>
         </where>
         order by t1.create_time desc
