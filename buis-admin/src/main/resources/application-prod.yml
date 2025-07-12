@@ -6,9 +6,9 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://10.16.92.54:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:mysql://43.136.119.58:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
-        password: .172110159zk
+        password: 123456
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -62,7 +62,7 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: 10.16.92.54
+    host: 43.136.119.58
     # 端口，默认为6379
     port: 6338
     # 数据库索引
