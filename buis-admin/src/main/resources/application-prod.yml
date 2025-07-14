@@ -66,9 +66,9 @@ spring:
     # 端口，默认为6379
     port: 6338
     # 数据库索引
-    database: 2
+    database: 5
     # 密码
-    password:
+    password: .172110159zk
     # 连接超时时间
     timeout: 10s
     lettuce:
