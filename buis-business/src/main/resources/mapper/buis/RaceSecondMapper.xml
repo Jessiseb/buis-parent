@@ -27,9 +27,8 @@
                t2.name as race_name,
                t3.name as second_name
         from race_second t1
-                 left join race_info t2
-                           on t1.race = t2.id
-                 left join second t3 on t1.second = t3.id
+        left join race_info t2 on t1.race = t2.id
+        left join second t3 on t1.second = t3.id
     </sql>
 
     <select id="selectRaceSecondList" parameterType="com.buis.vo.RaceSecondVo" resultMap="RaceSecondResult">
