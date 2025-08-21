@@ -12,7 +12,7 @@ spring:
       master:
         url: jdbc:mysql://43.136.119.58:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
-        password: 123456
+        password: a2417317219A@
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
