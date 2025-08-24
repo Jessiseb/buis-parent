@@ -19,7 +19,7 @@ public interface UserInfoMapper
      * @param id 用户信息主键
      * @return 用户信息
      */
-    public UserInfo selectUserInfoById(Long id);
+    public UserInfo selectUserInfoById(@Param("id") Long id);
 
     /**
      * 查询用户信息列表

@@ -11,6 +11,10 @@
         <result property="sonName" column="son_name"/>
         <result property="parentName" column="parent_name"/>
         <result property="teacherName" column="teacher_name"/>
+        <result property="teacherName2" column="teacher_name2"/>
+        <result property="teacherName3" column="teacher_name3"/>
+        <result property="teacherName4" column="teacher_name4"/>
+        <result property="teacherName5" column="teacher_name5"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
         <result property="joinStart" column="join_start"/>
@@ -23,7 +27,15 @@
         <result property="status" column="status"/>
         <result property="level" column="level"/>
         <result property="seniority" column="seniority"/>
+        <result property="seniority2" column="seniority2"/>
+        <result property="seniority3" column="seniority3"/>
+        <result property="seniority4" column="seniority4"/>
+        <result property="seniority5" column="seniority5"/>
         <result property="totalGuide" column="total_guide"/>
+        <result property="totalGuide2" column="total_guide2"/>
+        <result property="totalGuide3" column="total_guide3"/>
+        <result property="totalGuide4" column="total_guide4"/>
+        <result property="totalGuide5" column="total_guide5"/>
         <result property="descUrl" column="desc_url"/>
         <result property="department" column="department"/>
         <result property="organizers" column="organizers"/>
@@ -100,7 +112,19 @@
                t1.is_deleted,
                t1.create_time,
                t1.create_id,
-               t1.update_time
+               t1.update_time,
+               t1.seniority2,
+               t1.seniority3,
+               t1.seniority4,
+               t1.seniority5,
+               t1.teacher_name2,
+               t1.teacher_name3,
+               t1.teacher_name4,
+               t1.teacher_name5,
+               t1.total_guide2,
+               t1.total_guide3,
+               t1.total_guide4,
+               t1.total_guide5
         from race_info t1
                  left join race_type t2 on t2.id = t1.son_tid
                  left join race_type t3 on t3.id = t2.parent_id

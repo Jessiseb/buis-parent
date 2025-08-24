@@ -53,6 +53,34 @@ public class RaceInfo extends BaseEntity {
     private String teacherName;
 
     /**
+     * 负责老师2名称
+     */
+    @Excel(name = "负责老师名称")
+    @ApiModelProperty("负责老师名称")
+    private String teacherName2;
+
+    /**
+     * 负责老师3名称
+     */
+    @Excel(name = "负责老师名称")
+    @ApiModelProperty("负责老师名称")
+    private String teacherName3;
+
+    /**
+     * 负责老师4名称
+     */
+    @Excel(name = "负责老师名称")
+    @ApiModelProperty("负责老师名称")
+    private String teacherName4;
+
+    /**
+     * 负责老师5名称
+     */
+    @Excel(name = "负责老师名称")
+    @ApiModelProperty("负责老师名称")
+    private String teacherName5;
+
+    /**
      * 比赛名称
      */
     @Excel(name = "比赛名称")
@@ -142,11 +170,67 @@ public class RaceInfo extends BaseEntity {
     private String seniority;
 
     /**
+     * 指导老师2资历
+     */
+    @Excel(name = "指导老师2资历")
+    @ApiModelProperty("指导老师2资历")
+    private String seniority2;
+
+    /**
+     * 指导老师3资历
+     */
+    @Excel(name = "指导老师3资历")
+    @ApiModelProperty("指导老师3资历")
+    private String seniority3;
+
+    /**
+     * 指导老师4资历
+     */
+    @Excel(name = "指导老师4资历")
+    @ApiModelProperty("指导老师4资历")
+    private String seniority4;
+
+    /**
+     * 指导老师5资历
+     */
+    @Excel(name = "指导老师5资历")
+    @ApiModelProperty("指导老师5资历")
+    private String seniority5;
+
+    /**
      * 指导老师累计指导第二课堂活动次数
      */
     @Excel(name = "累计指导第二课堂活动次数")
     @ApiModelProperty("累计指导第二课堂活动次数")
     private String totalGuide;
+
+    /**
+     * 指导老师2累计指导第二课堂活动次数
+     */
+    @Excel(name = "累计指导第二课堂活动次数")
+    @ApiModelProperty("累计指导第二课堂活动次数")
+    private String totalGuide2;
+
+    /**
+     * 指导老师3累计指导第二课堂活动次数
+     */
+    @Excel(name = "累计指导第二课堂活动次数")
+    @ApiModelProperty("累计指导第二课堂活动次数")
+    private String totalGuide3;
+
+    /**
+     * 指导老师4累计指导第二课堂活动次数
+     */
+    @Excel(name = "累计指导第二课堂活动次数")
+    @ApiModelProperty("累计指导第二课堂活动次数")
+    private String totalGuide4;
+
+    /**
+     * 指导老师5累计指导第二课堂活动次数
+     */
+    @Excel(name = "累计指导第二课堂活动次数")
+    @ApiModelProperty("累计指导第二课堂活动次数")
+    private String totalGuide5;
 
     /**
      * 活动说明材料
