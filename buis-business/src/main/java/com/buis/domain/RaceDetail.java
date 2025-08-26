@@ -67,7 +67,8 @@ public class RaceDetail extends BaseEntity {
     /**
      * 比赛说明材料
      */
-    @ApiModelProperty("比赛说明材料url")
+    @Excel(name = "比赛说明材料")
+    @ApiModelProperty("比赛说明材料")
     private String descUrl;
 
     /**
