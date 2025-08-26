@@ -71,7 +71,7 @@ public class SecondController extends BaseController {
     /**
      * 新增关联第二课堂表
      */
-    @ApiOperation("新增关联第二课堂表")
+    @ApiOperation("新增关联第二课堂表")  // swagger相关注解
     @PreAuthorize("@ss.hasPermi('buis:second:add')")
     @Log(title = "关联第二课堂表", businessType = BusinessType.INSERT)
     @PostMapping
