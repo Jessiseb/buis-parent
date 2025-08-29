@@ -280,6 +280,10 @@
             <if test="parentTid != null">parent_tid,</if>
             <if test="sonTid != null">son_tid,</if>
             <if test="teacherName != null and teacherName != ''">teacher_name,</if>
+            <if test="teacherName2 != null and teacherName2 != ''">teacher_name2,</if>
+            <if test="teacherName3 != null and teacherName3 != ''">teacher_name3,</if>
+            <if test="teacherName4 != null and teacherName4 != ''">teacher_name4,</if>
+            <if test="teacherName5 != null and teacherName5 != ''">teacher_name5,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="description != null and description != ''">description,</if>
             <if test="joinStart != null">join_start,</if>
@@ -293,7 +297,15 @@
             <if test="reviewStatus != null">review_status,</if>
             <if test="level != null">level,</if>
             <if test="seniority != null and seniority != ''">seniority,</if>
+            <if test="seniority2 != null and seniority2 != ''">seniority2,</if>
+            <if test="seniority3 != null and seniority3 != ''">seniority3,</if>
+            <if test="seniority4 != null and seniority4 != ''">seniority4,</if>
+            <if test="seniority5 != null and seniority5 != ''">seniority5,</if>
             <if test="totalGuide != null and totalGuide != ''">total_guide,</if>
+            <if test="totalGuide2 != null and totalGuide2 != ''">total_guide2,</if>
+            <if test="totalGuide3 != null and totalGuide3 != ''">total_guide3,</if>
+            <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4,</if>
+            <if test="totalGuide5 != null and totalGuide5 != ''">total_guide5,</if>
             <if test="descUrl != null and descUrl != ''">desc_url,</if>
             <if test="department != null and department != ''">department,</if>
             <if test="organizers != null and organizers != ''">organizers,</if>
@@ -309,7 +321,11 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="parentTid != null">#{parentTid},</if>
             <if test="sonTid != null">#{sonTid},</if>
-            <if test="teacherName != null and teacherName != ''">#{teacherName},</if>
+            <if test="teacherName != null and teacherName != ''">teacher_name,</if>
+            <if test="teacherName2 != null and teacherName2 != ''">teacher_name2,</if>
+            <if test="teacherName3 != null and teacherName3 != ''">teacher_name3,</if>
+            <if test="teacherName4 != null and teacherName4 != ''">teacher_name4,</if>
+            <if test="teacherName5 != null and teacherName5 != ''">teacher_name5,</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="description != null and description != ''">#{description},</if>
             <if test="joinStart != null">#{joinStart},</if>
@@ -322,8 +338,16 @@
             <if test="status != null">#{status},</if>
             <if test="reviewStatus != null">#{reviewStatus},</if>
             <if test="level != null">#{level},</if>
-            <if test="seniority != null and seniority != ''">#{seniority},</if>
-            <if test="totalGuide != null and totalGuide != ''">#{totalGuide},</if>
+            <if test="seniority != null and seniority != ''">seniority,</if>
+            <if test="seniority2 != null and seniority2 != ''">seniority2,</if>
+            <if test="seniority3 != null and seniority3 != ''">seniority3,</if>
+            <if test="seniority4 != null and seniority4 != ''">seniority4,</if>
+            <if test="seniority5 != null and seniority5 != ''">seniority5,</if>
+            <if test="totalGuide != null and totalGuide != ''">total_guide,</if>
+            <if test="totalGuide2 != null and totalGuide2 != ''">total_guide2,</if>
+            <if test="totalGuide3 != null and totalGuide3 != ''">total_guide3,</if>
+            <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4,</if>
+            <if test="totalGuide5 != null and totalGuide5 != ''">total_guide5,</if>
             <if test="descUrl != null and descUrl != ''">#{descUrl},</if>
             <if test="department != null and department != ''">#{department},</if>
             <if test="organizers != null and organizers != ''">#{organizers},</if>
@@ -343,7 +367,11 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="parentTid != null">parent_tid = #{parentTid},</if>
             <if test="sonTid != null">son_tid = #{sonTid},</if>
-            <if test="teacherName != null and teacherName != ''">teacher_name = #{teacherName},</if>
+            <if test="teacherName != null and teacherName != ''">teacher_name,</if>
+            <if test="teacherName2 != null and teacherName2 != ''">teacher_name2,</if>
+            <if test="teacherName3 != null and teacherName3 != ''">teacher_name3,</if>
+            <if test="teacherName4 != null and teacherName4 != ''">teacher_name4,</if>
+            <if test="teacherName5 != null and teacherName5 != ''">teacher_name5,</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="description != null and description != ''">description = #{description},</if>
             <if test="joinStart != null">join_start = #{joinStart},</if>
@@ -356,8 +384,16 @@
             <if test="status != null">status = #{status},</if>
             <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
             <if test="level != null">level = #{level},</if>
-            <if test="seniority != null and seniority != ''">seniority = #{seniority},</if>
-            <if test="totalGuide != null and totalGuide != ''">total_guide = #{totalGuide},</if>
+            <if test="seniority != null and seniority != ''">seniority,</if>
+            <if test="seniority2 != null and seniority2 != ''">seniority2,</if>
+            <if test="seniority3 != null and seniority3 != ''">seniority3,</if>
+            <if test="seniority4 != null and seniority4 != ''">seniority4,</if>
+            <if test="seniority5 != null and seniority5 != ''">seniority5,</if>
+            <if test="totalGuide != null and totalGuide != ''">total_guide,</if>
+            <if test="totalGuide2 != null and totalGuide2 != ''">total_guide2,</if>
+            <if test="totalGuide3 != null and totalGuide3 != ''">total_guide3,</if>
+            <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4,</if>
+            <if test="totalGuide5 != null and totalGuide5 != ''">total_guide5,</if>
             <if test="descUrl != null and descUrl != ''">desc_url = #{descUrl},</if>
             <if test="department != null and department != ''">department = #{department},</if>
             <if test="organizers != null and organizers != ''">organizers = #{organizers},</if>
