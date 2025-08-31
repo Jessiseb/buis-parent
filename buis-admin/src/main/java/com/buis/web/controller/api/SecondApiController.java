@@ -229,10 +229,10 @@ public class SecondApiController {
             throw new ServiceException("温馨提示：不能发布他人的活动~");
         }
 
-        //审核通过才能填写
+        //审核通过才能填写发布信息
         if (Objects.equals(status, ReviewStatus.PASS.getCode())) {
             raceDetail.setRace(raceId);
-            int i = raceDetailService.insertRaceDetail(raceDetail);
+            int i = raceDetailService.insertRaceDetail(raceDetail); // 先赋值比赛id并尝试发布
             if (i <= 0) {
                 return R.fail("发布失败");
             }
@@ -249,10 +249,12 @@ public class SecondApiController {
             res.setJoinEnd(raceDetail.getJoinEnd());
             RaceInfo raceInfo = new RaceInfo();
             BeanUtils.copyBeanProp(res,raceInfo);
+            raceInfo.setId(raceId);
             raceInfo.setStatus(RaceStatus.JOIN.getCode());
             raceInfo.setJoinStart(raceDetail.getJoinStart());
             raceInfo.setJoinEnd(raceDetail.getJoinEnd());
-            raceInfoService.updateRaceInfo(raceInfo);
+            raceInfo.setDeclareUrl(raceDetail.getDeclareUrl());
+            raceInfoService.updateRaceInfo(raceInfo); // 最后更新比赛信息
             //删除缓存
             raceInfoService.deleteRacesInfoCache();
             return R.ok(raceDetail);
