@@ -1,5 +1,6 @@
 # 数据源配置
 spring:
+  url: http://43.136.119.58:3306
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver

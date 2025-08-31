@@ -24,6 +24,15 @@ import java.util.List;
 @ApiModel("比赛信息对象")
 public class RaceInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
+
+    public String getDeclareUrl() {
+        return declareUrl;
+    }
+
+    public void setDeclareUrl(String declareUrl) {
+        this.declareUrl = declareUrl;
+    }
+
     /**
      * id
      */
@@ -154,6 +163,13 @@ public class RaceInfo extends BaseEntity {
     @Excel(name = "活动说明材料")
     @ApiModelProperty("活动说明材料")
     private String descUrl;
+
+    /**
+     * 申报材料
+     */
+    @Excel(name = "申报材料")
+    @ApiModelProperty("申报材料")
+    private String declareUrl;
 
     /**
      * 所在部门

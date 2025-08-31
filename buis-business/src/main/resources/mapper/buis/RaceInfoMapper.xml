@@ -91,6 +91,7 @@
                t1.seniority,
                t1.total_guide,
                t1.desc_url,
+               t1.declare_url,
                t1.department,
                t1.organizers,
                t1.course,
@@ -335,6 +336,7 @@
             <if test="seniority != null and seniority != ''">seniority = #{seniority},</if>
             <if test="totalGuide != null and totalGuide != ''">total_guide = #{totalGuide},</if>
             <if test="descUrl != null and descUrl != ''">desc_url = #{descUrl},</if>
+            <if test="declareUrl != null and declareUrl !=''">declare_url = #{declareUrl},</if>
             <if test="department != null and department != ''">department = #{department},</if>
             <if test="organizers != null and organizers != ''">organizers = #{organizers},</if>
             <if test="course != null and course != ''">course = #{course},</if>

@@ -72,6 +72,12 @@ public class RaceDetail extends BaseEntity {
     private String descUrl;
 
     /**
+     * 申报材料
+     */
+    @ApiModelProperty("申报材料")
+    private String declareUrl;
+
+    /**
      * 比赛群二维码
      */
     @ApiModelProperty("比赛群二维码url")
