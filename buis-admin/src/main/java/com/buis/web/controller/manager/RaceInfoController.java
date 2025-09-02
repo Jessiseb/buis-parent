@@ -31,7 +31,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,15 +94,22 @@ RaceInfoController extends BaseController {
      */
     @ApiOperation("导出活动申报材料")
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:exportDeclare')")
-    @GetMapping("/exportDeclare")
-    public void zipDownload(RaceInfo raceInfo, HttpServletResponse response) throws IOException {
-        List<RaceInfoVo> raceInfoList = raceInfoService.selectRaceInfoList(raceInfo);
+    @PostMapping("/exportDeclare")
+    public void declarationDownload(@RequestBody Long[] raceIdList, HttpServletResponse response) throws IOException {
+        // 接收比赛id列表
+        List<RaceInfoVo> raceInfoList = new ArrayList<>();
+        for (Long raceId : raceIdList){
+            RaceInfo raceInfo = new RaceInfo();
+            raceInfo.setId(raceId);
+            raceInfoList.add(raceInfoService.selectRaceInfoById(raceId)); // 获得活动信息
+        }
+
         if (CollectionUtil.isEmpty(raceInfoList)) {
             throw new ServiceException("请选择要导出申报书的活动~");
         }
 
         List<String> declareUrlList = raceInfoList.stream()
-                .map(RaceInfo::getDeclareUrl)
+                .map(RaceInfo::getDeclareUrl)// 获得活动申报材料url
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
 
@@ -113,6 +123,7 @@ RaceInfoController extends BaseController {
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName);
 
+        // 生成活动申报材料压缩包
         try (ZipOutputStream zos = new ZipOutputStream(response.getOutputStream())) {
             for (String relativePath : declareUrlList) {
                 // 将相对路径转换为完整URL
