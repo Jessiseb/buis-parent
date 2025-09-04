@@ -67,6 +67,21 @@ public class SwaggerConfig {
                 .securityContexts(securityContexts());
     }
 
+    @Bean
+    public Docket createCommonApi() {
+        return new Docket(DocumentationType.OAS_30)
+                .enable(enabled)
+                .groupName("3. 通用API") // Group name for frontend APIs
+                .apiInfo(apiInfo())
+                .select()
+                // Frontend APIs, excluding '/buis' prefix
+                .apis(RequestHandlerSelectors.basePackage("com.buis.web.controller.common"))
+                .paths(PathSelectors.any()) // Adjusted for management paths
+                .build()
+                .securitySchemes(securitySchemes())
+                .securityContexts(securityContexts());
+    }
+
     /**
      * 安全模式，这里指定token通过Authorization头请求头传递
      */
