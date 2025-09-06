@@ -28,7 +28,7 @@ public class BaseEntity implements Serializable
 
     /** 创建时间 */
     @Excel(name = "创建时间",sort = 14)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
 
     /** 更新者 */
@@ -36,7 +36,7 @@ public class BaseEntity implements Serializable
 
     /** 更新时间 */
     @Excel(name = "更新时间",sort = 15)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date updateTime;
 
     /** 备注 */
