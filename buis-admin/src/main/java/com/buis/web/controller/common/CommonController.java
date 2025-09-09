@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.buis.common.config.RuoYiConfig;
 import com.buis.common.constant.Constants;
@@ -79,7 +76,7 @@ public class CommonController
      */
     @ApiOperation("单文件上传")
     @PostMapping("/upload")
-    public AjaxResult uploadFile(MultipartFile file) throws Exception
+    public AjaxResult uploadFile(@RequestPart("file") MultipartFile file) throws Exception
     {
         try
         {
