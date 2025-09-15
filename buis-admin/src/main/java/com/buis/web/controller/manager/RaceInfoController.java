@@ -93,7 +93,7 @@ RaceInfoController extends BaseController {
      * 导出活动申报材料
      */
     @ApiOperation("导出活动申报材料")
-    @PreAuthorize("@ss.hasPermi('buis:raceInfo:exportDeclare')")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:declarationDownload')")
     @PostMapping("/exportDeclare")
     public void declarationDownload(@RequestBody Long[] raceIdList, HttpServletResponse response) throws IOException {
         // 接收比赛id列表
