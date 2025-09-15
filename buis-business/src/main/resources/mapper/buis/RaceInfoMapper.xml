@@ -368,11 +368,11 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="parentTid != null">parent_tid = #{parentTid},</if>
             <if test="sonTid != null">son_tid = #{sonTid},</if>
-            <if test="teacherName != null and teacherName != ''">#{teacherName},</if>
-            <if test="teacherName2 != null and teacherName2 != ''">#{teacherName2},</if>
-            <if test="teacherName3 != null and teacherName3 != ''">#{teacherName3},</if>
-            <if test="teacherName4 != null and teacherName4 != ''">#{teacherName4},</if>
-            <if test="teacherName5 != null and teacherName5 != ''">#{teacherName5},</if>
+            <if test="teacherName != null and teacherName != ''">teacher_name = #{teacherName},</if>
+            <if test="teacherName2 != null and teacherName2 != ''">teacher_name2 = #{teacherName2},</if>
+            <if test="teacherName3 != null and teacherName3 != ''">teacher_name3 = #{teacherName3},</if>
+            <if test="teacherName4 != null and teacherName4 != ''">teacher_name4 = #{teacherName4},</if>
+            <if test="teacherName5 != null and teacherName5 != ''">teacher_name5 = #{teacherName5},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="description != null and description != ''">description = #{description},</if>
             <if test="joinStart != null">join_start = #{joinStart},</if>
