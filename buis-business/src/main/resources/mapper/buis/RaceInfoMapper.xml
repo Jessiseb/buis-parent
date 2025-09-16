@@ -390,7 +390,7 @@
             <if test="seniority3 != null and seniority3 != ''">seniority3 = #{seniority3},</if>
             <if test="seniority4 != null and seniority4 != ''">seniority4 = #{seniority4},</if>
             <if test="seniority5 != null and seniority5 != ''">seniority5 = #{seniority5},</if>
-            <if test="totalGuide != null and totalGuide != ''">totalGuide = #{totalGuide},</if>
+            <if test="totalGuide != null and totalGuide != ''">total_guide = #{totalGuide},</if>
             <if test="totalGuide2 != null and totalGuide2 != ''">total_guide2 = #{totalGuide2},</if>
             <if test="totalGuide3 != null and totalGuide3 != ''">total_guide3 = #{totalGuide3},</if>
             <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4 = #{totalGuide4},</if>
