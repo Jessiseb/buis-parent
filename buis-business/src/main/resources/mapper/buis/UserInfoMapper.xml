@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="isTeacher"    column="is_teacher"    />
+        <result property="avatarUrl"    column="avatar_url"/>
     </resultMap>
 
     <sql id="selectUserInfoVo">
@@ -45,7 +46,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.is_disabled,
                t1.is_deleted,
                t1.create_time,
-               t1.update_time
+               t1.update_time,
+               t1.avartar_url
         from user_info t1
         LEFT JOIN
         t_college_major t2 ON t1.major = t2.id
@@ -196,6 +198,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="avatarUrl != null and avatarUrl != ''">avatar_url = #{avatarUrl},</if>
         </trim>
         where id = #{id}
 
