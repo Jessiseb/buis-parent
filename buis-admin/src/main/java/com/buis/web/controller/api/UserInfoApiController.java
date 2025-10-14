@@ -7,6 +7,7 @@ import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
+import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.alioss.AliOssUtil;
@@ -37,6 +38,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.rmi.ServerException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -301,6 +304,67 @@ public class UserInfoApiController extends BaseController {
             throw new ServiceException("上传失败:"+e.getMessage());
         }
     }
+    /**
+     * 上传/更新用户头像
+     */
+    @ApiOperation("上传/更新用户头像")
+    @PostMapping("/uploadAvatar")
+    @Transactional
+    public R<String> uploadAvatar(
+            @ApiParam(name = "file",value = "头像图片文件",required = true)
+            @RequestParam("file") MultipartFile file) throws IOException {
+        try {
+            // 校验文件是否为空
+            if (file.isEmpty()) {
+                throw new ServiceException("上传奖状不能为空");
+            }
+
+            //校验头像文件格式
+            String originalFilename = file.getOriginalFilename();
+            String suffix = FileUtil.getSuffix(originalFilename);
+            final List<String> validSuffixList = Arrays.asList("jpg", "jpeg", "png","JPG","JPEG","PNG");
+            if (!validSuffixList.contains(suffix)){
+                throw new ServiceException("请上传正确的图片格式");
+            }
+
+            //校验文件大小(最大不超过2MB）
+            long maxFileSize = 2*1024*1024;
+            if (file.getSize()>maxFileSize){
+                throw new ServiceException("头像文件不能超过2MB，请重新上传");
+            }
+
+            //获取用户ID
+            Long loginUserId=SecurityUtils.getFrontLoginUserId();
+
+            //生成唯一文件名
+            String uniqueFileName="user-avatars/"+loginUserId+"-"+System.currentTimeMillis()+"."+suffix;
+
+            // 使用阿里云的工具类上传文件
+            String avatarOssUrl =aliOssUtil.upload(file.getBytes(), uniqueFileName);
+            if (StringUtils.isEmpty(avatarOssUrl)){
+                throw new ServerException("头像上传到oss失败，请重试");
+            }
+
+            //更新数据库中的用户头像URL
+            // 创建UserInfo对象，设置需更新的字段
+            UserInfo userInfoToUpdate = new UserInfo();
+            userInfoToUpdate.setId(loginUserId);//主键
+            userInfoToUpdate.setAvatarUrl(avatarOssUrl);//头像URL
+            userInfoToUpdate.setUpdateTime(DateUtils.getNowDate());//更新时间
+
+            //调用service，完成更新
+            int updateResult = userInfoService.updateUserInfo(userInfoToUpdate);
+            if (updateResult>0){
+                throw new ServerException("头像URL更新失败");
+            }
+            //返回头像的URL地址
+            return R.ok(avatarOssUrl);
+        }
+        catch (Exception e){
+            throw new ServiceException("上传失败:"+e.getMessage());
+        }
+
+    }
 
     /**
      * 查询用户上传的奖状
@@ -333,6 +397,7 @@ public class UserInfoApiController extends BaseController {
         noticeService.updateNotice(notice);
         return R.ok();
     }
+
 
 
 }
