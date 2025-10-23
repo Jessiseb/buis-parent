@@ -335,10 +335,7 @@ public class SecondApiController {
     @DeleteMapping("/removeDeclareFile")
     public void removeDeclareFile(@ApiParam(name = "id", value = "活动id", required = true)
                                   @RequestParam(value = "id")Long id) {
-        RaceInfo raceInfo = new RaceInfo();
-        raceInfo.setId(id);
-        raceInfo.setDeclareUrl(null);
-        raceInfoService.updateRaceInfo(raceInfo);
+        raceInfoService.deleteRaceDeclareUrl(id);
     }
 
 }
