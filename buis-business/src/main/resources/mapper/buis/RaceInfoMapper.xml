@@ -451,6 +451,12 @@
         where race = #{race}
     </delete>
 
+    <update id="deleteRaceDeclareUrl">
+        update race_info
+        set declare_url = NULL
+        where id = #{id}
+    </update>
+
     <insert id="batchReward">
         insert into t_reward(race, r_rank, name, quantity, remark, is_deleted, create_time, update_time) values
         <foreach item="item" index="index" collection="list" separator=",">

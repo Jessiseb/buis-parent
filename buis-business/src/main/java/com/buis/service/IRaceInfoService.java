@@ -2,6 +2,7 @@ package com.buis.service;
 
 import java.util.List;
 
+import com.buis.common.annotation.Log;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.domain.RaceInfo;
 import com.buis.dto.GradeStatistic;
@@ -85,6 +86,12 @@ public interface IRaceInfoService
      * @return 结果
      */
     public int deleteRaceInfoById(Long id);
+
+    /**
+     * 删除比赛申报材料
+     * @param id
+     */
+    public void deleteRaceDeclareUrl(Long id);
 
     /**
      * 判断比赛是否已结束
