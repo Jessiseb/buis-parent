@@ -332,6 +332,14 @@ public class SecondApiController {
      * 带条件分页查询第二课堂活动申报
      */
 
-
+    @ApiOperation(("根据id删除活动申报材料url及文件"))
+    @DeleteMapping("/removeDeclareFile")
+    public void removeDeclareFile(@ApiParam(name = "id", value = "活动id", required = true)
+                                  @RequestParam(value = "id")Long id) {
+        RaceInfo raceInfo = new RaceInfo();
+        raceInfo.setId(id);
+        raceInfo.setDeclareUrl(null);
+        raceInfoService.updateRaceInfo(raceInfo);
+    }
 
 }

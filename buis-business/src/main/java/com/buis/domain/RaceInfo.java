@@ -25,13 +25,6 @@ import java.util.List;
 public class RaceInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    public String getDeclareUrl() {
-        return declareUrl;
-    }
-
-    public void setDeclareUrl(String declareUrl) {
-        this.declareUrl = declareUrl;
-    }
 
     /**
      * id
