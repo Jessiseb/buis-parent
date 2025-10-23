@@ -37,6 +37,7 @@
         <result property="totalGuide4" column="total_guide4"/>
         <result property="totalGuide5" column="total_guide5"/>
         <result property="descUrl" column="desc_url"/>
+        <result property="declareUrl" column="declare_url"/>
         <result property="department" column="department"/>
         <result property="organizers" column="organizers"/>
         <result property="course" column="course"/>
@@ -207,6 +208,9 @@
             <if test="raceType != null ">
                 and t1.race_type = #{raceType}
             </if>
+            <if test="declareUrl != null  and declareUrl != ''">
+                and t1.declare_url like concat('%', #{declareUrl}, '%')
+            </if>
         </where>
         order by t1.create_time desc
     </select>
@@ -308,6 +312,7 @@
             <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4,</if>
             <if test="totalGuide5 != null and totalGuide5 != ''">total_guide5,</if>
             <if test="descUrl != null and descUrl != ''">desc_url,</if>
+            <if test="declareUrl != null and declareUrl != ''">declare_url,</if>
             <if test="department != null and department != ''">department,</if>
             <if test="organizers != null and organizers != ''">organizers,</if>
             <if test="course != null and course != ''">course,</if>
@@ -350,6 +355,7 @@
             <if test="totalGuide4 != null and totalGuide4 != ''">#{totalGuide4},</if>
             <if test="totalGuide5 != null and totalGuide5 != ''">#{totalGuide5},</if>
             <if test="descUrl != null and descUrl != ''">#{descUrl},</if>
+            <if test="declareUrl != null and declareUrl != ''">#{declareUrl},</if>
             <if test="department != null and department != ''">#{department},</if>
             <if test="organizers != null and organizers != ''">#{organizers},</if>
             <if test="course != null and course != ''">#{course},</if>
