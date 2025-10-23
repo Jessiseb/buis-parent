@@ -138,4 +138,5 @@ public interface RaceInfoMapper {
     //分页查询我申报的第二课堂活动
     List<RaceInfoVo> selectMyDeclare(Long loginUserId);
 
+    void deleteRaceDeclareUrl(Long id);
 }
