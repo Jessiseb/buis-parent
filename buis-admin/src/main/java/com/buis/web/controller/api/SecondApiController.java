@@ -328,9 +328,8 @@ public class SecondApiController {
         return R.ok(raceInfoVo);
     }
 
-    /**
-     * 带条件分页查询第二课堂活动申报
-     */
+
+
 
     @ApiOperation(("根据id删除活动申报材料url及文件"))
     @DeleteMapping("/removeDeclareFile")
