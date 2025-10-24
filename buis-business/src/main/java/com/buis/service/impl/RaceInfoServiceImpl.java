@@ -395,6 +395,16 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     }
 
     /**
+     * 删除比赛申报材料
+     * @param id
+     */
+    @Transactional
+    @Override
+    public void deleteRaceDeclareUrl(Long id) {
+        raceInfoMapper.deleteRaceDeclareUrl(id);
+    }
+
+    /**
      * 判断用户是否已报名
      *
      * @param userId

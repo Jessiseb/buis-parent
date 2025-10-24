@@ -37,6 +37,7 @@
         <result property="totalGuide4" column="total_guide4"/>
         <result property="totalGuide5" column="total_guide5"/>
         <result property="descUrl" column="desc_url"/>
+        <result property="declareUrl" column="declare_url"/>
         <result property="department" column="department"/>
         <result property="organizers" column="organizers"/>
         <result property="course" column="course"/>
@@ -207,6 +208,9 @@
             <if test="raceType != null ">
                 and t1.race_type = #{raceType}
             </if>
+            <if test="declareUrl != null  and declareUrl != ''">
+                and t1.declare_url like concat('%', #{declareUrl}, '%')
+            </if>
         </where>
         order by t1.create_time desc
     </select>
@@ -308,6 +312,7 @@
             <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4,</if>
             <if test="totalGuide5 != null and totalGuide5 != ''">total_guide5,</if>
             <if test="descUrl != null and descUrl != ''">desc_url,</if>
+            <if test="declareUrl != null and declareUrl != ''">declare_url,</if>
             <if test="department != null and department != ''">department,</if>
             <if test="organizers != null and organizers != ''">organizers,</if>
             <if test="course != null and course != ''">course,</if>
@@ -350,6 +355,7 @@
             <if test="totalGuide4 != null and totalGuide4 != ''">#{totalGuide4},</if>
             <if test="totalGuide5 != null and totalGuide5 != ''">#{totalGuide5},</if>
             <if test="descUrl != null and descUrl != ''">#{descUrl},</if>
+            <if test="declareUrl != null and declareUrl != ''">#{declareUrl},</if>
             <if test="department != null and department != ''">#{department},</if>
             <if test="organizers != null and organizers != ''">#{organizers},</if>
             <if test="course != null and course != ''">#{course},</if>
@@ -368,11 +374,11 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="parentTid != null">parent_tid = #{parentTid},</if>
             <if test="sonTid != null">son_tid = #{sonTid},</if>
-            <if test="teacherName != null and teacherName != ''">#{teacherName},</if>
-            <if test="teacherName2 != null and teacherName2 != ''">#{teacherName2},</if>
-            <if test="teacherName3 != null and teacherName3 != ''">#{teacherName3},</if>
-            <if test="teacherName4 != null and teacherName4 != ''">#{teacherName4},</if>
-            <if test="teacherName5 != null and teacherName5 != ''">#{teacherName5},</if>
+            <if test="teacherName != null and teacherName != ''">teacher_name = #{teacherName},</if>
+            <if test="teacherName2 != null and teacherName2 != ''">teacher_name2 = #{teacherName2},</if>
+            <if test="teacherName3 != null and teacherName3 != ''">teacher_name3 = #{teacherName3},</if>
+            <if test="teacherName4 != null and teacherName4 != ''">teacher_name4 = #{teacherName4},</if>
+            <if test="teacherName5 != null and teacherName5 != ''">teacher_name5 = #{teacherName5},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="description != null and description != ''">description = #{description},</if>
             <if test="joinStart != null">join_start = #{joinStart},</if>
@@ -385,16 +391,16 @@
             <if test="status != null">status = #{status},</if>
             <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
             <if test="level != null">level = #{level},</if>
-            <if test="seniority != null and seniority != ''">#{seniority},</if>
-            <if test="seniority2 != null and seniority2 != ''">#{seniority2},</if>
-            <if test="seniority3 != null and seniority3 != ''">#{seniority3},</if>
-            <if test="seniority4 != null and seniority4 != ''">#{seniority4},</if>
-            <if test="seniority5 != null and seniority5 != ''">#{seniority5},</if>
-            <if test="totalGuide != null and totalGuide != ''">#{totalGuide},</if>
-            <if test="totalGuide2 != null and totalGuide2 != ''">#{totalGuide2},</if>
-            <if test="totalGuide3 != null and totalGuide3 != ''">#{totalGuide3},</if>
-            <if test="totalGuide4 != null and totalGuide4 != ''">#{totalGuide4},</if>
-            <if test="totalGuide5 != null and totalGuide5 != ''">#{totalGuide5},</if>
+            <if test="seniority != null and seniority != ''">seniority = #{seniority},</if>
+            <if test="seniority2 != null and seniority2 != ''">seniority2 = #{seniority2},</if>
+            <if test="seniority3 != null and seniority3 != ''">seniority3 = #{seniority3},</if>
+            <if test="seniority4 != null and seniority4 != ''">seniority4 = #{seniority4},</if>
+            <if test="seniority5 != null and seniority5 != ''">seniority5 = #{seniority5},</if>
+            <if test="totalGuide != null and totalGuide != ''">total_guide = #{totalGuide},</if>
+            <if test="totalGuide2 != null and totalGuide2 != ''">total_guide2 = #{totalGuide2},</if>
+            <if test="totalGuide3 != null and totalGuide3 != ''">total_guide3 = #{totalGuide3},</if>
+            <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4 = #{totalGuide4},</if>
+            <if test="totalGuide5 != null and totalGuide5 != ''">total_guide5 = #{totalGuide5},</if>
             <if test="descUrl != null and descUrl != ''">desc_url = #{descUrl},</if>
             <if test="declareUrl != null and declareUrl !=''">declare_url = #{declareUrl},</if>
             <if test="department != null and department != ''">department = #{department},</if>
@@ -444,6 +450,12 @@
         set is_deleted = 1
         where race = #{race}
     </delete>
+
+    <update id="deleteRaceDeclareUrl">
+        update race_info
+        set declare_url = NULL
+        where id = #{id}
+    </update>
 
     <insert id="batchReward">
         insert into t_reward(race, r_rank, name, quantity, remark, is_deleted, create_time, update_time) values
@@ -530,17 +542,26 @@
          </select>
     <select id="selectSecondActivities" resultType="com.buis.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
-        where t1.is_deleted = 0
-          and t1.parent_tid = 5
+        <where>
+            t1.is_deleted = 0
+            and t1.parent_tid = 5
+            <if test="name != null and name != ''">
+                and t1.name like concat('%', #{name}, '%')
+            </if>
+            <if test="reviewStatus != null">
+                and t1.review_status = #{reviewStatus}
+            </if>
+        </where>
         order by
-            case
-                when t1.review_status = 2 then 0
-                when t1.review_status = 1 then 1
-                when t1.review_status = 3 then 2
-                else 3
-                end,
+        case
+        when t1.review_status = 2 then 0
+        when t1.review_status = 1 then 1
+        when t1.review_status = 3 then 2
+        else 3
+        end,
         t1.id desc
     </select>
+
 
     <select id="getStudentGradeCount" resultType="com.buis.dto.GradeStatistic">
         WITH second_class_user_ids AS (SELECT DISTINCT tms.student AS user_id
