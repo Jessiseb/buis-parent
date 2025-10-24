@@ -116,6 +116,13 @@ public class UserInfo extends BaseEntity {
     private int title;
 
     /**
+     * 用户头像URL
+     */
+    @ApiModelProperty("用户头像URL")
+    @Excel(name = "用户头像URL")
+    private String avatarUrl;
+
+    /**
      * 禁用状态
      */
     @ApiModelProperty("禁用状态")
