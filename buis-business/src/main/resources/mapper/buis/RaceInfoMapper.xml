@@ -548,7 +548,7 @@
             <if test="name != null and name != ''">
                 and t1.name like concat('%', #{name}, '%')
             </if>
-            <if test="review_status != null">
+            <if test="reviewStatus != null">
                 and t1.review_status = #{reviewStatus}
             </if>
         </where>
