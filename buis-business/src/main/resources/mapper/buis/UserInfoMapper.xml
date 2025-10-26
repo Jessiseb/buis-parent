@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.is_deleted,
                t1.create_time,
                t1.update_time,
-               t1.avartar_url
+               t1.avatar_url
         from user_info t1
         LEFT JOIN
         t_college_major t2 ON t1.major = t2.id

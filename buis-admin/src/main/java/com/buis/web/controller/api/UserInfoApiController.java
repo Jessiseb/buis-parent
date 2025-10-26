@@ -336,6 +336,18 @@ public class UserInfoApiController extends BaseController {
             //获取用户ID
             Long loginUserId=SecurityUtils.getFrontLoginUserId();
 
+            //查询用户原有头像url
+            UserInfo loginUser = userInfoService.getLoginUser();
+            String AvatarUrl=loginUser.getAvatarUrl();
+
+            if (AvatarUrl!=null){
+                //如果不为空，从旧头像url中解析出来oss的文件路径
+                String ossFilePath=AvatarUrl.substring(AvatarUrl.indexOf("user-avatars/"));
+                boolean deleteSuccess=aliOssUtil.delete(ossFilePath);
+
+            }
+
+
             //生成唯一文件名
             String uniqueFileName="user-avatars/"+loginUserId+"-"+System.currentTimeMillis()+"."+suffix;
 
@@ -354,7 +366,7 @@ public class UserInfoApiController extends BaseController {
 
             //调用service，完成更新
             int updateResult = userInfoService.updateUserInfo(userInfoToUpdate);
-            if (updateResult>0){
+            if (updateResult<=0){
                 throw new ServerException("头像URL更新失败");
             }
             //返回头像的URL地址
