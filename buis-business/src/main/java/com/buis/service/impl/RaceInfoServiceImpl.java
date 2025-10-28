@@ -956,7 +956,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo) {
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectSecondActivities(raceInfo);
+        //获取登录用户id
+        Long loginUserId=SecurityUtils.getFrontLoginUserId();
+
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectSecondActivities(raceInfo,loginUserId);
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             //设置比赛详情
             RaceDetail raceDetail = new RaceDetail();

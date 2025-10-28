@@ -545,11 +545,17 @@
         <where>
             t1.is_deleted = 0
             and t1.parent_tid = 5
-            <if test="name != null and name != ''">
-                and t1.name like concat('%', #{name}, '%')
+            <if test="raceInfo.name != null and raceInfo.name != ''">
+                and t1.name like concat('%', #{raceInfo.name}, '%')
             </if>
-            <if test="reviewStatus != null">
-                and t1.review_status = #{reviewStatus}
+            <if test="raceInfo.reviewStatus != null">
+                and t1.review_status = #{raceInfo.reviewStatus}
+            </if>
+            <if test="loginUserId != null">
+                and(
+                t1.create_id=#{loginUserId}
+                or t1.review_status = 2
+                )
             </if>
         </where>
         order by

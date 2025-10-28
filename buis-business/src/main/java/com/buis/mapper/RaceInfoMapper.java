@@ -3,11 +3,9 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.RaceDetail;
 import com.buis.domain.RaceInfo;
 import com.buis.domain.Reward;
 import com.buis.dto.GradeStatistic;
-import com.buis.vo.RaceDetailVo;
 import com.buis.vo.RaceInfoVo;
 import com.buis.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
@@ -121,7 +119,7 @@ public interface RaceInfoMapper {
 
     List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo);
 
-    List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo);
+    List<RaceInfoVo> selectSecondActivities(@Param("raceInfo")RaceInfo raceInfo, @Param("loginUserId")Long loginUserId);
 
     List<GradeStatistic> getStudentGradeCount();
 
