@@ -141,4 +141,9 @@ public class UserInfo extends BaseEntity {
     @ApiModelProperty("是否为老师标识 0 - 学生 1 - 老师")
     private Integer isTeacher;
 
+    /**
+     * 是否为学生助理标识 0-否 1-是
+     */
+    @ApiModelProperty("是否为学生助理标识 0-否 1-是")
+    private Integer isAssistant ;
 }

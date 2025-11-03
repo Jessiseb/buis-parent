@@ -1,5 +1,6 @@
 package com.buis.service;
 
+import com.buis.common.core.domain.R;
 import com.buis.domain.UserInfo;
 import com.buis.dto.RegisterDto;
 import com.buis.dto.UserLoginDto;
@@ -122,4 +123,18 @@ public interface IUserInfoService {
 
     List<UserInfoVo> selectAllTeachers(Integer isTeacher);
 
+    /**
+     * 分页查询学生助理
+     * @param pageNum 页码
+     * @param pageSize 每页条数
+     * @return 当前页学生助理列表
+     */
+    List<UserInfoVo> queryAssistantsByPage(Integer pageNum, Integer pageSize);
+
+    /**
+     * 更新学生助理状态
+     * @param userId  用户id
+     * @param isAssistant 目标状态（0-否 1-是）
+     */
+    R updateAssistantStatus(Long userId, Integer isAssistant);
 }
