@@ -112,4 +112,20 @@ public interface UserInfoMapper
      * @return
      */
     List<UserInfoVo> selectUserInfoByIds2(List<Long> ids);
+
+    /**
+     * 分页查询学生助理（is_assistant=1）
+     * @param pageSize 每页条数
+     * @param offset 跳过的条数
+     * @return 当前页学生助理列表
+     */
+    List<UserInfoVo> selectAssistants(@Param("pageSize") Integer pageSize, @Param("offset") int offset);
+
+    /**
+     * 更新用户的学生助理状态
+     * @param userId 用户ID
+     * @param isAssistant 目标状态（0-否 1-是）
+     * @return 影响行数
+     */
+    int updateAssistantStatus(@Param("userId") Long userId, @Param("isAssistant") Integer isAssistant);
 }

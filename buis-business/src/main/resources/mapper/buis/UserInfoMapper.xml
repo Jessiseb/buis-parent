@@ -130,6 +130,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from user_info
         where is_teacher = #{isTeacher} and is_deleted = 0
     </select>
+    <select id="selectAssistants" resultType="com.buis.domain.UserInfo">
+        SELECT *
+        FROM user_info
+        WHERE is_assistant=1
+          AND is_deleted=0
+        ORDER BY create_time DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+
+    </select>
+    <update id="updateAssistantStatus" >
+        UPDATE user_info
+        SET is_assistant=#{isAssistant}
+        WHERE id=#{userId}
+          AND is_deleted=0
+    </update>
 
     <select id="selectUserInfoByIds2" resultType="com.buis.vo.UserInfoVo">
         <include refid="selectUserInfoVo"/>

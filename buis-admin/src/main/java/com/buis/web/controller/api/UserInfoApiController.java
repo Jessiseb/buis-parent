@@ -410,6 +410,35 @@ public class UserInfoApiController extends BaseController {
         return R.ok();
     }
 
+    /**
+     * 分页查询学生助理列表
+     * @param pageNum 页码（从1开始）
+     * @param pageSize 每页条数
+     * @return 当前页学生助理列表
+     */
+    @ApiOperation("分页查询所有学生助理")
+    @GetMapping("/GetAssistants")
+    public R<List<UserInfoVo>> getAssistants(
+            @ApiParam(value = "页码", required = true, example = "1") @RequestParam Integer pageNum,
+            @ApiParam(value = "每页条数", required = true, example = "10") @RequestParam Integer pageSize){
+        List<UserInfoVo> assistants=userInfoService.queryAssistantsByPage(pageNum,pageSize);
+        return R.ok(assistants);
+    }
+
+    /**
+
+     * @param userId 用户ID
+     * @param isAssistant 目标状态（0-否 1-是）
+     * @return 操作结果
+     */
+    @PostMapping("设置学生助理")
+    public R setAssistantStatus(
+            @ApiParam(value = "User_id", required = true) @RequestParam Long userId,
+            @ApiParam(value = "是否为助理（0-否 1-是）", required = true, example = "1") @RequestParam Integer isAssistant){
+
+        return userInfoService.updateAssistantStatus(userId,isAssistant);
+
+    }
 
 
 }

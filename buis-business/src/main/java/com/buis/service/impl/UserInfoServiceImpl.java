@@ -2,6 +2,7 @@ package com.buis.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.constant.RedisConstant;
+import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.FormatUtils;
@@ -386,6 +387,36 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public List<UserInfoVo> selectAllTeachers(Integer isTeacher) {
         return userInfoMapper.selectTeachers(isTeacher);
+    }
+
+    @Override
+    public List<UserInfoVo> queryAssistantsByPage(Integer pageNum, Integer pageSize) {
+        //跳过前面(pageNum-1)*pageSize数据
+        int offset =(pageNum-1)*pageSize;
+        //查询当前页学生助理
+        List<UserInfoVo> assistants =userInfoMapper.selectAssistants(pageSize,offset);
+        return assistants;
+    }
+
+    @Override
+    public R updateAssistantStatus(Long userId, Integer isAssistant) {
+        UserInfo user=userInfoMapper.selectUserInfoById(userId);
+        if (user==null){
+            return R.fail("用户不存在");
+        }
+
+        //判断是否为老师
+        if (user.getIsTeacher()==1){
+           return R.fail("用户不是学生");
+        }
+
+        int rows =userInfoMapper.updateAssistantStatus(userId,isAssistant);
+        if (rows!=1){
+           return R.fail("设置失败");
+        }
+
+        return R.ok("设置成功");
+
     }
 
 
