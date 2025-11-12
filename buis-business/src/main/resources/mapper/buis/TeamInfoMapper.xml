@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.TeamInfoMapper">
 
-    <resultMap type="com.buis.vo.TeamInfoVo" id="TeamInfoResult">
+    <resultMap type="com.buis.model.vo.TeamInfoVo" id="TeamInfoResult">
         <result property="id" column="id"/>
         <result property="race" column="race"/>
         <result property="name" column="name"/>
@@ -82,7 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  left join user_info u2 on t1.teacher2 = u2.id
     </sql>
 
-    <select id="selectTeamInfoList" parameterType="com.buis.domain.TeamInfo" resultMap="TeamInfoResult">
+    <select id="selectTeamInfoList" parameterType="com.buis.model.domain.TeamInfo" resultMap="TeamInfoResult">
         <include refid="selectTeamInfoVo"/>
         <where>
             t1.is_deleted = 0
@@ -122,12 +122,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectTeamInfoByUserId" resultType="com.buis.domain.TeamInfo">
+    <select id="selectTeamInfoByUserId" resultType="com.buis.model.domain.TeamInfo">
         <include refid="selectTeamInfoVo"/>
         where t1.leader = #{userId} and t1.is_deleted = 0
     </select>
 
-    <insert id="insertTeamInfo" parameterType="com.buis.domain.TeamInfo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertTeamInfo" parameterType="com.buis.model.domain.TeamInfo" useGeneratedKeys="true" keyProperty="id">
         insert into team_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null and race != ''">race,</if>
@@ -191,7 +191,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
     </insert>
 
-    <update id="updateTeamInfo" parameterType="com.buis.domain.TeamInfo">
+    <update id="updateTeamInfo" parameterType="com.buis.model.domain.TeamInfo">
         update team_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null and race != ''">race = #{race},</if>
@@ -239,14 +239,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
+    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.model.domain.TeamInfo">
         <include refid="selectTeamInfoVo"/>
         where t1.id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
     </select>
-    <select id="getTeamInfoList" resultType="com.buis.domain.TeamInfo">
+    <select id="getTeamInfoList" resultType="com.buis.model.domain.TeamInfo">
         <include refid="selectTeamInfoVo"/>
         <where>
             t1.is_deleted = 0 and t1.is_publish = 'Y'
@@ -267,11 +267,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="college != null and college != ''">and t1.college = #{college}</if>
         </where>
     </select>
-    <select id="selectTeamInfoListByTeacherIds" resultType="com.buis.vo.TeamInfoVo">
+    <select id="selectTeamInfoListByTeacherIds" resultType="com.buis.model.vo.TeamInfoVo">
 
     </select>
 
-    <select id="selectTeamInfoByRaceIdAndUserId" resultType="com.buis.domain.TeamInfo">
+    <select id="selectTeamInfoByRaceIdAndUserId" resultType="com.buis.model.domain.TeamInfo">
         select *
         from team_info
         where leader = #{userId}
@@ -279,7 +279,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and is_deleted = 0
     </select>
 
-    <select id="selectTeamInfoByName" resultType="com.buis.domain.TeamInfo">
+    <select id="selectTeamInfoByName" resultType="com.buis.model.domain.TeamInfo">
         select *
         from team_info
         where leader_name = #{name} or name = #{name} and is_deleted = 0
@@ -313,14 +313,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
              ) sub
         WHERE sub.teacher1 = #{userId} OR sub.teacher2 = #{userId}
     </select>
-    <select id="selectMyPublishedTeams" resultType="com.buis.vo.TeamInfoVo">
+    <select id="selectMyPublishedTeams" resultType="com.buis.model.vo.TeamInfoVo">
         select *
         from team_info
         where leader = #{userId}
           and is_publish = 0
           and is_deleted = 0
     </select>
-    <select id="selectAllTeamInfoById" resultType="com.buis.domain.TeamInfo">
+    <select id="selectAllTeamInfoById" resultType="com.buis.model.domain.TeamInfo">
         select *
         from team_info
         where leader = #{userId}

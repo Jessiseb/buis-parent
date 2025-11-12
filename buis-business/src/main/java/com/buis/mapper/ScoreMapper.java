@@ -3,10 +3,8 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.RaceType;
-import com.buis.domain.Score;
-import com.buis.vo.ScoreVo;
-import org.apache.ibatis.annotations.Param;
+import com.buis.model.domain.Score;
+import com.buis.model.vo.ScoreVo;
 
 /**
  * 评分管理Mapper接口

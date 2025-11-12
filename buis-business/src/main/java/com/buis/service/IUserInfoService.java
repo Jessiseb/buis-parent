@@ -1,10 +1,11 @@
 package com.buis.service;
 
 import com.buis.common.core.domain.R;
-import com.buis.domain.UserInfo;
-import com.buis.dto.RegisterDto;
-import com.buis.dto.UserLoginDto;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.domain.UserInfo;
+import com.buis.model.dto.RegisterDto;
+import com.buis.model.dto.UserLoginDto;
+import com.buis.model.dto.UserSearchRequest;
+import com.buis.model.vo.UserInfoVo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -125,16 +126,16 @@ public interface IUserInfoService {
 
     /**
      * 分页查询学生助理
-     * @param pageNum 页码
-     * @param pageSize 每页条数
-     * @return 当前页学生助理列表
+     * @param userSearchRequest
+     * @return
      */
-    List<UserInfoVo> queryAssistantsByPage(Integer pageNum, Integer pageSize);
+    List<UserInfoVo> queryAssistantsList(UserSearchRequest userSearchRequest);
 
     /**
      * 更新学生助理状态
      * @param userId  用户id
      * @param isAssistant 目标状态（0-否 1-是）
+     * @return
      */
-    R updateAssistantStatus(Long userId, Integer isAssistant);
+    R<Boolean> updateAssistantStatus(Long userId, Integer isAssistant);
 }

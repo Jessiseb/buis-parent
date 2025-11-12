@@ -1,8 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
-import com.buis.domain.UserInfo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.domain.UserInfo;
+import com.buis.model.dto.UserSearchRequest;
+import com.buis.model.vo.UserInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -114,12 +115,9 @@ public interface UserInfoMapper
     List<UserInfoVo> selectUserInfoByIds2(List<Long> ids);
 
     /**
-     * 分页查询学生助理（is_assistant=1）
-     * @param pageSize 每页条数
-     * @param offset 跳过的条数
-     * @return 当前页学生助理列表
+     * 分页查询学生助理
      */
-    List<UserInfoVo> selectAssistants(@Param("pageSize") Integer pageSize, @Param("offset") int offset);
+    List<UserInfoVo> queryAssistantsList(UserSearchRequest userSearchRequest);
 
     /**
      * 更新用户的学生助理状态

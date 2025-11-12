@@ -3,12 +3,12 @@ package com.buis.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.Award;
-import com.buis.domain.RaceInfo;
+import com.buis.model.domain.Award;
+import com.buis.model.domain.RaceInfo;
 import com.buis.mapper.AwardMapper;
 import com.buis.service.*;
-import com.buis.vo.AwardVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.vo.AwardVo;
+import com.buis.model.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

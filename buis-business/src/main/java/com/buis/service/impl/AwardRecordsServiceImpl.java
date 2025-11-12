@@ -3,10 +3,9 @@ package com.buis.service.impl;
 import java.util.List;
 import com.buis.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.AwardRecordsMapper;
-import com.buis.domain.AwardRecords;
+import com.buis.model.domain.AwardRecords;
 import com.buis.service.IAwardRecordsService;
 import org.springframework.transaction.annotation.Transactional;
 

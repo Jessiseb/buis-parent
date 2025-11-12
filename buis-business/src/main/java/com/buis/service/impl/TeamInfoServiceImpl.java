@@ -6,7 +6,6 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.buis.common.constant.TeamQueryConstants;
-import com.buis.common.core.domain.R;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.PageDomain;
 import com.buis.common.core.page.TableSupport;
@@ -15,29 +14,25 @@ import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.PageUtils;
 import com.buis.common.utils.StringUtils;
-import com.buis.domain.*;
-import com.buis.dto.TeamMemberDto;
-import com.buis.enums.ChooseStatus;
-import com.buis.enums.NoticeType;
-import com.buis.enums.ReviewStatus;
+import com.buis.model.domain.*;
+import com.buis.model.dto.TeamMemberDto;
+import com.buis.model.enums.ChooseStatus;
+import com.buis.model.enums.NoticeType;
+import com.buis.model.enums.ReviewStatus;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.service.*;
-import com.buis.system.service.ISysDictDataService;
-import com.buis.system.service.ISysDictTypeService;
-import com.buis.vo.RaceDetailVo;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.TeamMemberStudentVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.vo.RaceDetailVo;
+import com.buis.model.vo.TeamInfoVo;
+import com.buis.model.vo.TeamMemberStudentVo;
+import com.buis.model.vo.UserInfoVo;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
@@ -47,7 +42,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.buis.common.constant.CacheConstants.JOIN_TEAM_LOCK;
-import static com.buis.common.constant.CacheConstants.QUERY_TEAM_LOCK;
 
 /**
  * 队伍信息Service业务层处理
@@ -910,6 +904,9 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamInfoVo.setStudentCount(studentCount);
         // 获取老师人数
         teamInfoVo.setTeacherCount(teacherCount);
+        //设置学院信息
+
+
 
 
         return teamInfoVo;

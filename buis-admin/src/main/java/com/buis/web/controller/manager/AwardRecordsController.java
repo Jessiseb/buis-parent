@@ -7,7 +7,7 @@ import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.AwardRecords;
+import com.buis.model.domain.AwardRecords;
 import com.buis.service.IAwardRecordsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

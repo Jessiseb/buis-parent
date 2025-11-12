@@ -3,11 +3,11 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.RaceInfo;
-import com.buis.domain.Reward;
-import com.buis.dto.GradeStatistic;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.SecondClassCountVo;
+import com.buis.model.domain.RaceInfo;
+import com.buis.model.domain.Reward;
+import com.buis.model.dto.GradeStatistic;
+import com.buis.model.vo.RaceInfoVo;
+import com.buis.model.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
 
 /**

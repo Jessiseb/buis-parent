@@ -3,8 +3,8 @@ package com.buis.service;
 import java.util.List;
 
 import com.buis.common.core.domain.R;
-import com.buis.domain.Score;
-import com.buis.vo.ScoreVo;
+import com.buis.model.domain.Score;
+import com.buis.model.vo.ScoreVo;
 
 /**
  * 评分管理Service接口

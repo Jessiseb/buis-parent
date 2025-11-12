@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceTypeMapper">
     
-    <resultMap type="com.buis.domain.RaceType" id="RaceTypeResult">
+    <resultMap type="com.buis.model.domain.RaceType" id="RaceTypeResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
         <result property="parentId"    column="parent_id"    />
@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, name, parent_id, sort, is_deleted, create_time, update_time from race_type
     </sql>
 
-    <select id="selectRaceTypeList" parameterType="com.buis.domain.RaceType" resultMap="RaceTypeResult">
+    <select id="selectRaceTypeList" parameterType="com.buis.model.domain.RaceType" resultMap="RaceTypeResult">
         <include refid="selectRaceTypeVo"/>
         <where>
             is_deleted = 0
@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertRaceType" parameterType="com.buis.domain.RaceType" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceType" parameterType="com.buis.model.domain.RaceType" useGeneratedKeys="true" keyProperty="id">
         insert into race_type
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">name,</if>
@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceType" parameterType="com.buis.domain.RaceType">
+    <update id="updateRaceType" parameterType="com.buis.model.domain.RaceType">
         update race_type
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>

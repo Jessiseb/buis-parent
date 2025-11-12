@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.buis.dto.TeamMemberTeacherDto;
-import com.buis.vo.TeamMemberTeacherVo;
+import com.buis.model.dto.TeamMemberTeacherDto;
+import com.buis.model.vo.TeamMemberTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,17 +24,9 @@ import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.TeamMemberTeacher;
+import com.buis.model.domain.TeamMemberTeacher;
 import com.buis.service.ITeamMemberTeacherService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 队伍老师管理Controller

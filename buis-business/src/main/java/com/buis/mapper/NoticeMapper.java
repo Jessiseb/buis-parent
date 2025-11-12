@@ -1,6 +1,6 @@
 package com.buis.mapper;
 
-import com.buis.domain.Notice;
+import com.buis.model.domain.Notice;
 
 import java.util.List;
 

@@ -1,6 +1,7 @@
 package com.buis.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.buis.common.constant.HttpStatus;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
@@ -8,14 +9,15 @@ import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.FormatUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.bean.BeanUtils;
-import com.buis.domain.UserInfo;
-import com.buis.dto.RegisterDto;
-import com.buis.dto.UserLoginDto;
 import com.buis.mapper.UserInfoMapper;
+import com.buis.model.domain.UserInfo;
+import com.buis.model.dto.RegisterDto;
+import com.buis.model.dto.UserLoginDto;
+import com.buis.model.dto.UserSearchRequest;
+import com.buis.model.vo.UserInfoVo;
 import com.buis.service.ITeamMemberTeacherService;
 import com.buis.service.IUserInfoService;
 import com.buis.system.service.ISysDictDataService;
-import com.buis.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -204,17 +206,17 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
         //校验参数
         if (StringUtils.isAnyEmpty(code, password, name, email)) {
-            throw new ServiceException("请完善注册内容~");
+            throw new ServiceException("请完善注册内容~",HttpStatus.BAD_REQUEST);
         }
 
         //校验校验验证码
         //从redis获取发送的验证码
         String rCode = (String) redisTemplate.opsForValue().get(RedisConstant.EMAIL + email);
         if (rCode == null) {
-            throw new ServiceException("验证码已过期,请重新获取!");
+            throw new ServiceException("验证码已过期,请重新获取!",HttpStatus.BAD_REQUEST);
         }
         if (!rCode.equals(code)) {
-            throw new ServiceException("验证码错误,请重新输入!");
+            throw new ServiceException("验证码错误,请重新输入!",HttpStatus.BAD_REQUEST);
         }
 
         //查询数据库中是否存在相同的邮箱号码 和 相同的学号
@@ -222,10 +224,10 @@ public class UserInfoServiceImpl implements IUserInfoService {
         UserInfo userInfoByEmail = userInfoMapper.getLoginInfoByEmail(email);
         UserInfo userInfoByNumber = userInfoMapper.getLoginInfoByNumber(number);
         if (userInfoByNumber != null) {
-            throw new ServiceException("学号为:" + number + "的用户已存在!");
+            throw new ServiceException("学号为:" + number + "的用户已存在!",HttpStatus.CONFLICT);
         }
         if (userInfoByEmail != null) {
-            throw new ServiceException("邮箱为:" + email + "的用户已存在!");
+            throw new ServiceException("邮箱为:" + email + "的用户已存在!",HttpStatus.CONFLICT);
         }
 
         //密码加密
@@ -283,7 +285,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         Integer isTeacher = userLoginDTO.getIsTeacher();
         //1.对参数做校验
         if (StringUtils.isEmpty(email) && StringUtils.isEmpty(number)) {
-            throw new ServiceException("账号不能为空!");
+            throw new ServiceException("账号不能为空!",HttpStatus.BAD_REQUEST);
         }
         UserInfo userInfo = null;
         if (StringUtils.isNotEmpty(email)) {
@@ -294,7 +296,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
             //用户不存在
             if (userInfo == null) {
                 log.info("user login fail,userAccount cannot match userPassword");
-                throw new ServiceException("用户不存在,请先注册!");
+                throw new ServiceException("用户不存在,请先注册!",HttpStatus.BAD_REQUEST);
             }
         } else if (StringUtils.isNotEmpty(number)) {
             //学号登录
@@ -304,7 +306,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
             //用户不存在
             if (userInfo == null) {
                 log.info("user login fail,userAccount cannot match userPassword");
-                throw new ServiceException("用户不存在,请先注册!");
+                throw new ServiceException("用户不存在,请先注册!",HttpStatus.BAD_REQUEST);
             }
         }
         Integer isTeacher1 = null;
@@ -315,9 +317,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
         //判断isTeacher是否对应
         if (isTeacher != null && !isTeacher.equals(isTeacher1)) {
             if(isTeacher==0){
-            throw new ServiceException("您还未注册比赛成员~");
+            throw new ServiceException("您还未注册比赛成员~", HttpStatus.NO_CONTENT);
             }else if (isTeacher==1){
-                throw new ServiceException("您还未注册比赛指导老师~");
+                throw new ServiceException("您还未注册比赛指导老师~", HttpStatus.NO_CONTENT);
             }
         }
 
@@ -327,16 +329,16 @@ public class UserInfoServiceImpl implements IUserInfoService {
             //把输入的密码加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + passWord).getBytes());
             if (!encryptPassword.equals(userInfo.getPassword())) {
-                throw new ServiceException("用户密码错误,请重新输入~");
+                throw new ServiceException("用户密码错误,请重新输入~",HttpStatus.BAD_REQUEST);
             }
         } else if (!StringUtils.isEmpty(code)) {
             //从缓存中取到code
             String rcode = (String) redisTemplate.opsForValue().get(RedisConstant.EMAIL + email);
             if (!rcode.equals(code)) {
-                throw new ServiceException("验证码错误~");
+                throw new ServiceException("验证码错误~",HttpStatus.BAD_REQUEST);
             }
         } else {
-            throw new ServiceException("账号或密码不能为空!");
+            throw new ServiceException("账号或密码不能为空!", HttpStatus.BAD_REQUEST);
         }
 
         //3.校验账户
@@ -359,11 +361,11 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public UserInfo selectUserInfoByEmail(String email) {
         if (StringUtils.isEmpty(email)){
-            throw new ServiceException("邮箱不能为空!");
+            throw new ServiceException("邮箱不能为空!", HttpStatus.BAD_REQUEST);
         }
         UserInfo userInfo = userInfoMapper.getLoginInfoByEmail(email);
         if (userInfo==null){
-            throw new ServiceException("用户不存在!");
+            throw new ServiceException("用户不存在!", HttpStatus.NO_CONTENT);
         }
         return userInfo;
     }
@@ -371,7 +373,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public UserInfo selectUserInfoBynumber(String number) {
         if (StringUtils.isEmpty(number)){
-            throw new ServiceException("学号不能为空!");
+            throw new ServiceException("学号不能为空!", HttpStatus.BAD_REQUEST);
         }
         return userInfoMapper.selectUserInfoBynumber(number);
     }
@@ -379,7 +381,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public UserInfoVo selectUserInfoByName(String name) {
         if (StringUtils.isEmpty(name)){
-            throw new ServiceException("用户名不能为空!");
+            throw new ServiceException("用户名不能为空!", HttpStatus.BAD_REQUEST);
         }
         return userInfoMapper.selectUserInfoByName(name);
     }
@@ -390,32 +392,35 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
     @Override
-    public List<UserInfoVo> queryAssistantsByPage(Integer pageNum, Integer pageSize) {
-        //跳过前面(pageNum-1)*pageSize数据
-        int offset =(pageNum-1)*pageSize;
-        //查询当前页学生助理
-        List<UserInfoVo> assistants =userInfoMapper.selectAssistants(pageSize,offset);
-        return assistants;
+    public List<UserInfoVo> queryAssistantsList(UserSearchRequest userSearchRequest) {
+        return userInfoMapper.queryAssistantsList(userSearchRequest);
     }
 
     @Override
-    public R updateAssistantStatus(Long userId, Integer isAssistant) {
+    @Transactional(rollbackFor = Exception.class)
+    public R<Boolean> updateAssistantStatus(Long userId, Integer isAssistant) {
+        // 参数校验
+        if (userId == null) {
+            throw new ServiceException("用户ID不能为空", HttpStatus.BAD_REQUEST);
+        }
+        if (isAssistant == null || (isAssistant != 0 && isAssistant != 1)) {
+            throw new ServiceException("助理状态参数无效", HttpStatus.BAD_REQUEST);
+        }
+        //是否存在
         UserInfo user=userInfoMapper.selectUserInfoById(userId);
-        if (user==null){
-            return R.fail("用户不存在");
+        if (user == null) {
+            throw new ServiceException("用户不存在", HttpStatus.NOT_FOUND);
         }
-
         //判断是否为老师
-        if (user.getIsTeacher()==1){
-           return R.fail("用户不是学生");
+        if (user.getIsTeacher() == 1) {
+            throw new ServiceException("用户不是学生,不能设置为学生助理", HttpStatus.UNSUPPORTED_TYPE);
         }
-
-        int rows =userInfoMapper.updateAssistantStatus(userId,isAssistant);
-        if (rows!=1){
-           return R.fail("设置失败");
+        //数据库操作
+        int rows = userInfoMapper.updateAssistantStatus(userId, isAssistant);
+        if (rows <= 0) {
+            throw new ServiceException("数据库操作失败",HttpStatus.ERROR);
         }
-
-        return R.ok("设置成功");
+        return R.ok(true);
 
     }
 

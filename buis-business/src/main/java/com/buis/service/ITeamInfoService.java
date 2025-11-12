@@ -3,10 +3,10 @@ package com.buis.service;
 import java.util.List;
 
 import com.buis.common.core.page.MyPageVo;
-import com.buis.domain.TeamInfo;
-import com.buis.domain.UserInfo;
-import com.buis.dto.TeamMemberDto;
-import com.buis.vo.TeamInfoVo;
+import com.buis.model.domain.TeamInfo;
+import com.buis.model.domain.UserInfo;
+import com.buis.model.dto.TeamMemberDto;
+import com.buis.model.vo.TeamInfoVo;
 
 /**
  * 队伍信息Service接口

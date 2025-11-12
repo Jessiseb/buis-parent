@@ -1,29 +1,22 @@
 package com.buis.web.controller.manager;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
-import com.buis.common.exception.ServiceException;
-import com.buis.common.utils.file.zipUtils;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.RaceDetail;
+import com.buis.model.domain.RaceDetail;
 import com.buis.service.IRaceDetailService;
-import com.buis.vo.RaceDetailVo;
+import com.buis.model.vo.RaceDetailVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import jodd.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileOutputStream;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.zip.ZipOutputStream;
 
 /**
  * 比赛详情Controller

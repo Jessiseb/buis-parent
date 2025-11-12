@@ -1,7 +1,7 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.RacePublish;
+import com.buis.model.domain.RacePublish;
 
 /**
  * 第二课堂活动发布表Service接口
