@@ -1,15 +1,13 @@
 package com.buis.service.impl;
 
 
-import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
-import com.buis.domain.UserInfo;
+import com.buis.model.domain.UserInfo;
 import com.buis.service.IEmailService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.TeamInfoVo;
+import com.buis.model.vo.TeamInfoVo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

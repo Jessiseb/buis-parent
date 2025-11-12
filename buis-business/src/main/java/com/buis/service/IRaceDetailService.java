@@ -1,8 +1,8 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.RaceDetail;
-import com.buis.vo.RaceDetailVo;
+import com.buis.model.domain.RaceDetail;
+import com.buis.model.vo.RaceDetailVo;
 
 /**
  * 比赛详情Service接口

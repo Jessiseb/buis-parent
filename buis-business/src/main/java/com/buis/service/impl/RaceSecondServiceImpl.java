@@ -3,11 +3,10 @@ package com.buis.service.impl;
 import java.util.Collections;
 import java.util.List;
 import com.buis.common.utils.DateUtils;
-import com.buis.vo.RaceSecondVo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.buis.model.vo.RaceSecondVo;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceSecondMapper;
-import com.buis.domain.RaceSecond;
+import com.buis.model.domain.RaceSecond;
 import com.buis.service.IRaceSecondService;
 
 import javax.annotation.Resource;

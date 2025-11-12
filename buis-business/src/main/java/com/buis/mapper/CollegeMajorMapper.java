@@ -3,8 +3,7 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.Assistant;
-import com.buis.domain.CollegeMajor;
+import com.buis.model.domain.CollegeMajor;
 
 /**
  * 专业信息Mapper接口

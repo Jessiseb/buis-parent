@@ -2,10 +2,9 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
-import com.buis.vo.RaceSecondVo;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.SecondMapper;
-import com.buis.domain.Second;
+import com.buis.model.domain.Second;
 import com.buis.service.ISecondService;
 
 import javax.annotation.Resource;

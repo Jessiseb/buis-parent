@@ -1,7 +1,7 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.CollegeMajor;
+import com.buis.model.domain.CollegeMajor;
 
 /**
  * 专业信息Service接口

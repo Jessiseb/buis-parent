@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceDeclareMapper">
     
-    <resultMap type="com.buis.domain.RaceDeclare" id="RaceDeclareResult">
+    <resultMap type="com.buis.model.domain.RaceDeclare" id="RaceDeclareResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
         <result property="name"    column="name"    />
@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, race, name, department, organizers, course, major_count, race_type, teacher, seniority, count, start_time, end_time, place, fund, review_status, update_time, create_time, id_deleted from race_declare
     </sql>
 
-    <select id="selectRaceDeclareList" parameterType="com.buis.domain.RaceDeclare" resultMap="RaceDeclareResult">
+    <select id="selectRaceDeclareList" parameterType="com.buis.model.domain.RaceDeclare" resultMap="RaceDeclareResult">
         <include refid="selectRaceDeclareVo"/>
         <where>
             is_deleted = 0
@@ -57,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <insert id="insertRaceDeclare" parameterType="com.buis.domain.RaceDeclare" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceDeclare" parameterType="com.buis.model.domain.RaceDeclare" useGeneratedKeys="true" keyProperty="id">
         insert into race_declare
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
@@ -101,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceDeclare" parameterType="com.buis.domain.RaceDeclare">
+    <update id="updateRaceDeclare" parameterType="com.buis.model.domain.RaceDeclare">
         update race_declare
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>

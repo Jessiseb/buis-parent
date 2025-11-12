@@ -1,7 +1,7 @@
 package com.buis.mapper;
 
-import com.buis.domain.TeamMemberStudent;
-import com.buis.vo.TeamMemberStudentVo;
+import com.buis.model.domain.TeamMemberStudent;
+import com.buis.model.vo.TeamMemberStudentVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

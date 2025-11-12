@@ -6,25 +6,26 @@ import cn.hutool.core.io.FileUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.alioss.AliOssUtil;
-import com.buis.domain.AwardRecords;
-import com.buis.domain.CollegeMajor;
-import com.buis.domain.Notice;
-import com.buis.domain.UserInfo;
-import com.buis.dto.RegisterDto;
-import com.buis.dto.UserLoginDto;
+import com.buis.model.domain.AwardRecords;
+import com.buis.model.domain.CollegeMajor;
+import com.buis.model.domain.Notice;
+import com.buis.model.domain.UserInfo;
+import com.buis.model.dto.RegisterDto;
+import com.buis.model.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.INoticeService;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AwardRecordsServiceImpl;
 import com.buis.service.impl.AwardServiceImpl;
-import com.buis.vo.AwardVo;
-import com.buis.vo.FindUserVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.vo.AwardVo;
+import com.buis.model.vo.FindUserVo;
+import com.buis.model.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.rmi.ServerException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.buis.service.impl.UserInfoServiceImpl.SALT;
@@ -410,35 +412,7 @@ public class UserInfoApiController extends BaseController {
         return R.ok();
     }
 
-    /**
-     * 分页查询学生助理列表
-     * @param pageNum 页码（从1开始）
-     * @param pageSize 每页条数
-     * @return 当前页学生助理列表
-     */
-    @ApiOperation("分页查询所有学生助理")
-    @GetMapping("/GetAssistants")
-    public R<List<UserInfoVo>> getAssistants(
-            @ApiParam(value = "页码", required = true, example = "1") @RequestParam Integer pageNum,
-            @ApiParam(value = "每页条数", required = true, example = "10") @RequestParam Integer pageSize){
-        List<UserInfoVo> assistants=userInfoService.queryAssistantsByPage(pageNum,pageSize);
-        return R.ok(assistants);
-    }
 
-    /**
-
-     * @param userId 用户ID
-     * @param isAssistant 目标状态（0-否 1-是）
-     * @return 操作结果
-     */
-    @PostMapping("设置学生助理")
-    public R setAssistantStatus(
-            @ApiParam(value = "User_id", required = true) @RequestParam Long userId,
-            @ApiParam(value = "是否为助理（0-否 1-是）", required = true, example = "1") @RequestParam Integer isAssistant){
-
-        return userInfoService.updateAssistantStatus(userId,isAssistant);
-
-    }
 
 
 }

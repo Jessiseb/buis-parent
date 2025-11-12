@@ -1,8 +1,8 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.RaceLanqiaoStudent;
-import com.buis.vo.RaceLanqiaoStudentVo;
+import com.buis.model.domain.RaceLanqiaoStudent;
+import com.buis.model.vo.RaceLanqiaoStudentVo;
 
 /**
  * 蓝桥杯学生报名信息Service接口
