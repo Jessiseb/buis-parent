@@ -97,4 +97,7 @@ public class TeamInfoVo extends TeamInfo {
      */
     @ApiModelProperty(value = "该指导老师是否已经指导该队伍")
     private Integer isInstruct = 0;
+
+    @ApiModelProperty(value = "互选状态")
+    private Integer isChoosed = null;
 }
