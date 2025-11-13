@@ -133,4 +133,9 @@ public interface ITeamMemberStudentService {
 
     //查询学生参与的大创活动数量
     Integer getStudentJoinInnovationCountByUserId(Long userId);
+
+    /**
+     * 查询当前用户是否已在队伍中
+     */
+    Integer getTeamByTeamIdAndUserId(Long teamId, Long userId);
 }

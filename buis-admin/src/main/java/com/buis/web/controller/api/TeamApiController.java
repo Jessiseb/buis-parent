@@ -336,10 +336,8 @@ public class TeamApiController extends BaseController {
             @ApiParam(name = "pageNum", value = "查询页数", required = true) @RequestParam Integer pageNum,
             @ApiParam(name = "pageSize", value = "查询数量", required = true) @RequestParam Integer pageSize,
             @RequestBody(required = false) TeamInfo teamInfo,
-            @ApiParam(name = "userId", value = "用户id", required = false)
-            @RequestParam(required = false) Long userId,
-            @ApiParam(name = "isPublish", value = "是否发布招募",required = false)
-            @RequestParam(required = false) String isPublish){
+            @ApiParam(name = "userId", value = "用户id", required = false) @RequestParam(required = false) Long userId,
+            @ApiParam(name = "isPublish", value = "是否发布招募",required = false) @RequestParam(required = false) String isPublish){
         startPage();
         //如果userId不为空,则查询这个用户所参与的队伍
         if (userId != null) {

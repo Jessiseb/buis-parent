@@ -109,4 +109,6 @@ public interface TeamInfoMapper
     List<TeamInfoVo> selectMyPublishedTeams(@Param("userId") Long userId);
 
     List<TeamInfo> selectAllTeamInfoById(@Param("userId") Long userId);
+
+    Integer selectByTeamIdAndUserId(Long teamId, Long userId);
 }

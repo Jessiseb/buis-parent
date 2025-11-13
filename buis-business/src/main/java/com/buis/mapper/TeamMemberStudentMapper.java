@@ -103,4 +103,5 @@ public interface TeamMemberStudentMapper {
 
     Integer getStudentJoinInnovationCountByUserId(Long userId);
 
+    Integer selectByTeamIdAndUserId(Long teamId, Long userId);
 }
