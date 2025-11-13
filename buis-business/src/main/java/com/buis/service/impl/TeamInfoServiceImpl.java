@@ -857,6 +857,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
      */
     @Override
     public List<TeamInfoVo> selectTeamInfoList(TeamInfo teamInfo) {
+
         List<TeamInfo> teamInfoList = teamInfoMapper.selectTeamInfoList(teamInfo);
         if (teamInfoList == null || teamInfoList.isEmpty()) {
             return Collections.emptyList(); // 返回空列表
@@ -864,6 +865,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         List<TeamInfoVo> results = new ArrayList<>();
         for (TeamInfo team : teamInfoList) {
             TeamInfoVo teamInfoVo = createTeamInfoVo(team);
+            // 检查互选状态
+            UserInfo loginUser = userInfoService.getLoginUser(); // 查询当前用户id
+            Long userId = loginUser.getId();
+            Integer isChoosed = teamMemberStudentService.getTeamByTeamIdAndUserId(team.getId(), userId);
+            teamInfoVo.setIsChoosed(isChoosed);
             //带指导老师查询
             if (teamInfo.getTeacher1() != null || teamInfo.getTeacher2() != null) {
                 //返回该老师指导的队伍id

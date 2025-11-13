@@ -307,4 +307,15 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
             return false;
         }
     }
+
+    /**
+     * 查询当前用户是否已在队伍中
+     * @param teamId
+     * @param userId
+     * @return isChoosed
+     */
+    @Override
+    public Integer getTeamByTeamIdAndUserId(Long teamId, Long userId) {
+        return teamMemberStudentMapper.selectByTeamIdAndUserId(teamId, userId);
+    }
 }
