@@ -137,5 +137,5 @@ public interface ITeamMemberStudentService {
     /**
      * 查询当前用户是否已在队伍中
      */
-    Integer getTeamByTeamIdAndUserId(Long teamId, Long userId);
+    Integer getIsChoosedByTeamIdAndUserId(Long teamId, Long userId);
 }

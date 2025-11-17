@@ -354,6 +354,10 @@ public class TeamApiController extends BaseController {
             }
 
         }
+        // 设置发布状态筛选条件
+        if (teamInfo == null) {
+            teamInfo = new TeamInfo();
+        }
         teamInfo.setIsPublish(isPublish);//查出已发布招募的队伍信息
         List<TeamInfoVo> list = null;
         //如果teamInfo有值,则查询带条件的队伍信息

@@ -740,13 +740,13 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                     return true;
                 }
             }
-            for (String fieldName : TeamQueryConstants.CONDITION_FIELDS3) {
-                Field field = TeamInfo.class.getDeclaredField(fieldName);
-                field.setAccessible(true);
-                if (!field.get(queryTeam).equals("Y")) {
-                    return true;
-                }
-            }
+//            for (String fieldName : TeamQueryConstants.CONDITION_FIELDS3) {
+//                Field field = TeamInfo.class.getDeclaredField(fieldName);
+//                field.setAccessible(true);
+//                if (!field.get(queryTeam).equals("Y")) {
+//                    return true;
+//                }
+//            }
             return false;
         } catch (Exception e) {
             throw new RuntimeException("条件检测异常", e);
@@ -868,7 +868,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             // 检查互选状态
             UserInfo loginUser = userInfoService.getLoginUser(); // 查询当前用户id
             Long userId = loginUser.getId();
-            Integer isChoosed = teamMemberStudentService.getTeamByTeamIdAndUserId(team.getId(), userId);
+            Integer isChoosed = teamMemberStudentService.getIsChoosedByTeamIdAndUserId(team.getId(), userId);
             teamInfoVo.setIsChoosed(isChoosed);
             //带指导老师查询
             if (teamInfo.getTeacher1() != null || teamInfo.getTeacher2() != null) {
