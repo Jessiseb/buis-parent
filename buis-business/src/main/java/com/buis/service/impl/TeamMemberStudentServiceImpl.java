@@ -315,7 +315,7 @@ public class TeamMemberStudentServiceImpl implements ITeamMemberStudentService {
      * @return isChoosed
      */
     @Override
-    public Integer getTeamByTeamIdAndUserId(Long teamId, Long userId) {
+    public Integer getIsChoosedByTeamIdAndUserId(Long teamId, Long userId) {
         return teamMemberStudentMapper.selectByTeamIdAndUserId(teamId, userId);
     }
 }
