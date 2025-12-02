@@ -1,14 +1,14 @@
 package com.buis.web.controller.api;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
+import com.buis.common.constant.HttpStatus;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
-import com.buis.domain.UserInfo;
 import com.buis.service.IEmailService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,11 +50,14 @@ public class EmailApiController {
     @PostMapping("/sendEmail/{email}")
     public R<String> sendEmail(@PathVariable("email") String email) {
         //校验账户
+        if (email == null || StrUtil.isEmpty(email)){
+            throw new ServiceException("邮箱不能为空!", HttpStatus.BAD_REQUEST);
+        }
         //邮箱的正则表达式
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         Matcher matcher = Pattern.compile(emailRegex).matcher(email);
         if (!matcher.find()) {
-            throw new ServiceException("邮箱格式有误,请重新输入!");
+            throw new ServiceException("邮箱格式有误,请重新输入!",HttpStatus.BAD_REQUEST);
         }
 //        //验证是否有对应账号
 //        UserInfo user = userInfoService.selectUserInfoByEmail(email);
@@ -94,7 +97,7 @@ public class EmailApiController {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         Matcher matcher = Pattern.compile(emailRegex).matcher(email);
         if (!matcher.find()) {
-            throw new ServiceException("邮箱格式有误,请重新输入!");
+            throw new ServiceException("邮箱格式有误,请重新输入!",HttpStatus.BAD_REQUEST);
         }
 
         //构建信息

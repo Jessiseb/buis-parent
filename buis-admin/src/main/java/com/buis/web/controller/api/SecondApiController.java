@@ -6,14 +6,14 @@ import com.buis.common.core.page.MyPageVo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.bean.BeanUtils;
-import com.buis.domain.*;
-import com.buis.enums.RaceLevel;
-import com.buis.enums.RaceStatus;
-import com.buis.enums.ReviewStatus;
+import com.buis.model.domain.*;
+import com.buis.model.enums.RaceLevel;
+import com.buis.model.enums.RaceStatus;
+import com.buis.model.enums.ReviewStatus;
 import com.buis.service.*;
-import com.buis.vo.RaceDetailVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.vo.RaceDetailVo;
+import com.buis.model.vo.RaceInfoVo;
+import com.buis.model.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -229,10 +229,10 @@ public class SecondApiController {
             throw new ServiceException("温馨提示：不能发布他人的活动~");
         }
 
-        //审核通过才能填写
+        //审核通过才能填写发布信息
         if (Objects.equals(status, ReviewStatus.PASS.getCode())) {
             raceDetail.setRace(raceId);
-            int i = raceDetailService.insertRaceDetail(raceDetail);
+            int i = raceDetailService.insertRaceDetail(raceDetail); // 先赋值比赛id并尝试发布
             if (i <= 0) {
                 return R.fail("发布失败");
             }
@@ -249,10 +249,12 @@ public class SecondApiController {
             res.setJoinEnd(raceDetail.getJoinEnd());
             RaceInfo raceInfo = new RaceInfo();
             BeanUtils.copyBeanProp(res,raceInfo);
+            raceInfo.setId(raceId);
             raceInfo.setStatus(RaceStatus.JOIN.getCode());
             raceInfo.setJoinStart(raceDetail.getJoinStart());
             raceInfo.setJoinEnd(raceDetail.getJoinEnd());
-            raceInfoService.updateRaceInfo(raceInfo);
+            raceInfo.setDeclareUrl(raceDetail.getDeclareUrl());
+            raceInfoService.updateRaceInfo(raceInfo); // 最后更新比赛信息
             //删除缓存
             raceInfoService.deleteRacesInfoCache();
             return R.ok(raceDetail);
@@ -326,10 +328,14 @@ public class SecondApiController {
         return R.ok(raceInfoVo);
     }
 
-    /**
-     * 带条件分页查询第二课堂活动申报
-     */
 
 
+
+    @ApiOperation(("根据id删除活动申报材料url及文件"))
+    @DeleteMapping("/removeDeclareFile")
+    public void removeDeclareFile(@ApiParam(name = "id", value = "活动id", required = true)
+                                  @RequestParam(value = "id")Long id) {
+        raceInfoService.deleteRaceDeclareUrl(id);
+    }
 
 }

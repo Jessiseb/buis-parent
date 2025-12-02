@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.TeamMemberTeacherMapper">
     
-    <resultMap type="com.buis.vo.TeamMemberTeacherVo" id="TeamMemberTeacherResult">
+    <resultMap type="com.buis.model.vo.TeamMemberTeacherVo" id="TeamMemberTeacherResult">
         <result property="id"    column="id"    />
         <result property="race"    column="race"    />
         <result property="raceName"    column="race_name"    />
@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  left join race_info t3 on t1.race = t3.id
     </sql>
 
-    <select id="selectTeamMemberTeacherList" parameterType="com.buis.domain.TeamMemberTeacher" resultMap="TeamMemberTeacherResult">
+    <select id="selectTeamMemberTeacherList" parameterType="com.buis.model.domain.TeamMemberTeacher" resultMap="TeamMemberTeacherResult">
         <include refid="selectTeamMemberTeacherVo"/>
         <where>
             t1.is_deleted = 0
@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             team_info.id = #{id} AND team_member_teacher.is_deleted = 0
     </select>
 
-    <select id="selectTeamMyInstruct" resultType="com.buis.domain.TeamMemberTeacher">
+    <select id="selectTeamMyInstruct" resultType="com.buis.model.domain.TeamMemberTeacher">
         <include refid="selectTeamMemberTeacherVo"/>
         where t1.teacher = #{id}  and t1.is_deleted = 0
     </select>
@@ -76,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select distinct teacher from team_member_teacher where race = #{id} and is_deleted = 0
     </select>
 
-    <insert id="insertTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertTeamMemberTeacher" parameterType="com.buis.model.domain.TeamMemberTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into team_member_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="race != null">race,</if>
@@ -145,7 +145,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
 
-    <update id="updateTeamMemberTeacher" parameterType="com.buis.domain.TeamMemberTeacher">
+    <update id="updateTeamMemberTeacher" parameterType="com.buis.model.domain.TeamMemberTeacher">
         update team_member_teacher
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>
@@ -207,7 +207,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="race != null and race != ''">and race = #{race}</if>
         <if test="name != null and name != ''">and name = #{name}</if>
     </select>
-    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.domain.TeamInfo">
+    <select id="selectTeamInfoByIds" parameterType="java.lang.Long" resultType="com.buis.model.domain.TeamInfo">
         <include refid="selectTeamMemberTeacherVo"/>
         FROM team_info
         WHERE t1.id IN
@@ -230,7 +230,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getMemberTeachersByTeamId" resultType="java.lang.Long">
         select teacher from team_member_teacher where team = #{id} and is_deleted = 0
     </select>
-    <select id="selectTeamMemberTeacherByTeamId" resultType="com.buis.domain.TeamMemberTeacher">
+    <select id="selectTeamMemberTeacherByTeamId" resultType="com.buis.model.domain.TeamMemberTeacher">
         select * from team_member_teacher where team = #{id} and is_deleted = 0
     </select>
 

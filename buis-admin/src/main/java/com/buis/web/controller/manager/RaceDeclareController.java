@@ -6,7 +6,7 @@ import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.RaceDeclare;
+import com.buis.model.domain.RaceDeclare;
 import com.buis.service.IRaceDeclareService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

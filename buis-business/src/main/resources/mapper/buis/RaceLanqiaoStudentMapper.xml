@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceLanqiaoStudentMapper">
     
-    <resultMap type="com.buis.vo.RaceLanqiaoStudentVo" id="RaceLanqiaoStudentResult">
+    <resultMap type="com.buis.model.vo.RaceLanqiaoStudentVo" id="RaceLanqiaoStudentResult">
         <result property="id"    column="id"    />
         <result property="raceId"    column="race_id"    />
         <result property="userId"    column="user_id"    />
@@ -38,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     </sql>
 
-    <select id="selectRaceLanqiaoStudentList" parameterType="com.buis.domain.RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResult">
+    <select id="selectRaceLanqiaoStudentList" parameterType="com.buis.model.domain.RaceLanqiaoStudent" resultMap="RaceLanqiaoStudentResult">
         <include refid="selectRaceLanqiaoStudentVo"/>
         <where>
             t1.is_deleted = 0
@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where t1.id = #{id}  and t1.is_deleted = 0
     </select>
 
-    <select id="selectRaceLanqiaoStudentByUserId" resultType="com.buis.domain.RaceLanqiaoStudent">
+    <select id="selectRaceLanqiaoStudentByUserId" resultType="com.buis.model.domain.RaceLanqiaoStudent">
         select id, user_id, name, number, s_class, phone, email,
             identity, parent_tid, son_tid, teacher1, teacher2, teacher3, bank_number, bank_name, remark, is_deleted, create_time, update_time
         from race_lanqiao_student
@@ -75,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and is_deleted = 0
     </select>
 
-    <insert id="insertRaceLanqiaoStudent" parameterType="com.buis.domain.RaceLanqiaoStudent" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceLanqiaoStudent" parameterType="com.buis.model.domain.RaceLanqiaoStudent" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="raceId != null">race_id,</if>
@@ -121,7 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceLanqiaoStudent" parameterType="com.buis.domain.RaceLanqiaoStudent">
+    <update id="updateRaceLanqiaoStudent" parameterType="com.buis.model.domain.RaceLanqiaoStudent">
         update race_lanqiao_student
         <trim prefix="SET" suffixOverrides=",">
             <if test="raceId != null">race_id = #{raceId},</if>

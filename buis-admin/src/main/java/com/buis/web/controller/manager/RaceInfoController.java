@@ -1,29 +1,40 @@
 package com.buis.web.controller.manager;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
+import com.buis.common.exception.ServiceException;
+import com.buis.common.utils.file.zipUtils;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.RaceInfo;
-import com.buis.dto.StudentExportToDiDto;
-import com.buis.dto.TeacherExportToDaDto;
-import com.buis.dto.TeacherExportToDiDto;
+import com.buis.model.domain.RaceInfo;
+import com.buis.model.dto.StudentExportToDiDto;
+import com.buis.model.dto.TeacherExportToDaDto;
+import com.buis.model.dto.TeacherExportToDiDto;
+import com.buis.model.vo.RaceInfoVo;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.RaceInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 比赛信息Controller
@@ -36,13 +47,14 @@ import java.util.List;
 @RequestMapping("/buis/raceInfo")
 public class
 RaceInfoController extends BaseController {
+    @Value("${spring.url}")
+    private String serviceUrl;
     @Autowired
     private IRaceInfoService raceInfoService;
     @Autowired
     private ITeamInfoService teamInfoService;
     @Autowired
     private IUserInfoService userInfoService;
-
 
     /**
      * 审核教师申报的第二课堂活动
@@ -71,6 +83,52 @@ RaceInfoController extends BaseController {
         startPage();
         List<RaceInfoVo> list = raceInfoService.selectRaceInfoList(raceInfo);
         return getDataTable(list);
+    }
+
+    /**
+     * 导出活动申报材料
+     */
+    @ApiOperation("导出活动申报材料")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:declarationDownload')")
+    @PostMapping("/exportDeclare")
+    public void declarationDownload(@RequestBody Long[] raceIdList, HttpServletResponse response) throws IOException {
+        // 接收比赛id列表
+        List<RaceInfoVo> raceInfoList = new ArrayList<>();
+        for (Long raceId : raceIdList){
+            RaceInfo raceInfo = new RaceInfo();
+            raceInfo.setId(raceId);
+            raceInfoList.add(raceInfoService.selectRaceInfoById(raceId)); // 获得活动信息
+        }
+
+        if (CollectionUtil.isEmpty(raceInfoList)) {
+            throw new ServiceException("请选择要导出申报书的活动~");
+        }
+
+        List<String> declareUrlList = raceInfoList.stream()
+                .map(RaceInfo::getDeclareUrl)// 获得活动申报材料url
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+
+        if (declareUrlList.isEmpty()) {
+            throw new ServiceException("未找到可下载文件!");
+        }
+
+        // 设置响应头（解决中文编码问题）
+        String fileName = "申报书_" + System.currentTimeMillis() + ".zip";
+        String encodedFileName = URLEncoder.encode(fileName, "UTF-8").replace("+", "%20");
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName);
+
+        // 生成活动申报材料压缩包
+        try (ZipOutputStream zos = new ZipOutputStream(response.getOutputStream())) {
+            for (String relativePath : declareUrlList) {
+                // 将相对路径转换为完整URL
+                String fullUrl = serviceUrl + relativePath.replace("\\", "/");
+                zipUtils.addToZipFileFromUrl(fullUrl, zos);
+            }
+        } catch (Exception e) {
+            throw new ServiceException("压缩文件创建失败: " + e.getMessage());
+        }
     }
 
     /**
@@ -171,12 +229,9 @@ RaceInfoController extends BaseController {
                                  @RequestParam(value = "grade", required = true) int grade,
                                  HttpServletResponse response) {
         List<StudentExportToDiDto> studentExportToDiDtoList = new LinkedList<>(); //要导出的类型
-        List<StudentExportToDiDto> list = raceInfoService.exportStudentDiProjectCount(college,grade,studentExportToDiDtoList, "第二课堂", response);
+        List<StudentExportToDiDto> list = raceInfoService.exportStudentDiProjectCount(college, grade, studentExportToDiDtoList, "第二课堂", response);
         ExcelUtil<StudentExportToDiDto> util = new ExcelUtil<StudentExportToDiDto>(StudentExportToDiDto.class);
         util.exportExcel(response, list, "导出学生参与的第二课堂比赛数量");
     }
-
-
-
 
 }

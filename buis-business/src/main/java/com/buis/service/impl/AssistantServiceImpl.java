@@ -4,13 +4,11 @@ import java.util.List;
 import com.buis.common.utils.DateUtils;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.AssistantVo;
-import com.buis.vo.TeamMemberTeacherVo;
-import com.buis.vo.UserInfoVo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.buis.model.vo.AssistantVo;
+import com.buis.model.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.AssistantMapper;
-import com.buis.domain.Assistant;
+import com.buis.model.domain.Assistant;
 import com.buis.service.IAssistantService;
 
 import javax.annotation.Resource;

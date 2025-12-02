@@ -1,8 +1,8 @@
 package com.buis.mapper;
 
 import java.util.List;
-import com.buis.domain.Award;
-import com.buis.vo.AwardVo;
+import com.buis.model.domain.Award;
+import com.buis.model.vo.AwardVo;
 import org.apache.ibatis.annotations.Param;
 
 /**

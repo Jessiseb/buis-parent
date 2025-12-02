@@ -2,8 +2,8 @@ package com.buis.web.controller.api;
 
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.buis.bo.MemberInfoBO;
-import com.buis.bo.TeacherInfoBO;
+import com.buis.model.bo.MemberInfoBO;
+import com.buis.model.bo.TeacherInfoBO;
 import com.buis.common.config.RuoYiConfig;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -14,17 +14,17 @@ import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.common.utils.file.FileUtils;
-import com.buis.domain.*;
-import com.buis.dto.TeamMemberDto;
-import com.buis.enums.ChooseStatus;
-import com.buis.enums.NoticeType;
+import com.buis.model.domain.*;
+import com.buis.model.dto.TeamMemberDto;
+import com.buis.model.enums.ChooseStatus;
+import com.buis.model.enums.NoticeType;
 import com.buis.framework.config.ServerConfig;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.service.*;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.TeamMemberStudentVo;
-import com.buis.vo.TeamMemberTeacherVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.vo.TeamInfoVo;
+import com.buis.model.vo.TeamMemberStudentVo;
+import com.buis.model.vo.TeamMemberTeacherVo;
+import com.buis.model.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -341,6 +341,7 @@ public class TeamApiController extends BaseController {
             @ApiParam(name = "isPublish", value = "是否发布招募",required = false)
             @RequestParam(required = false) String isPublish){
         startPage();
+
         //如果userId不为空,则查询这个用户所参与的队伍
         if (userId != null) {
             List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
@@ -370,7 +371,6 @@ public class TeamApiController extends BaseController {
     /**
      * 根据项目队伍id查询团队信息
      */
-
     @ApiOperation("根据项目团队id查询团队信息")
     @GetMapping("/{id}")
     public R<TeamInfoVo> getTeamInfoById(@ApiParam(name = "id", value = "项目队伍id", required = true)
@@ -444,7 +444,10 @@ public class TeamApiController extends BaseController {
     public R<TeamInfo> addTeamInfo(@RequestBody TeamInfo teamInfo) {
         //获取当前创建队伍的用户id api/team/api/team
         Long userId = userInfoService.getLoginUser().getId();
+        UserInfo createUser = userInfoService.getLoginInfoByUserId(userId);
         teamInfo.setLeader(userId);
+        //设置团队的所属学院学院为负责人所在学院
+        teamInfo.setCollege(createUser.getCollege());
         TeamInfo result =  teamInfoService.insertTeamInfo(teamInfo);
         //生成唯一且随机的项目编码
         Long teamId =  result.getId();

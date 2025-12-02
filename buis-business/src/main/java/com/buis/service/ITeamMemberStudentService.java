@@ -1,8 +1,8 @@
 package com.buis.service;
 
-import com.buis.domain.TeamMemberStudent;
-import com.buis.vo.TeamMemberStudentVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.domain.TeamMemberStudent;
+import com.buis.model.vo.TeamMemberStudentVo;
+import com.buis.model.vo.UserInfoVo;
 
 import java.util.List;
 

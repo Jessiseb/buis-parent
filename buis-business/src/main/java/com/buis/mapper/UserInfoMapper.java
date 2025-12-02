@@ -1,8 +1,9 @@
 package com.buis.mapper;
 
 import java.util.List;
-import com.buis.domain.UserInfo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.domain.UserInfo;
+import com.buis.model.dto.UserSearchRequest;
+import com.buis.model.vo.UserInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -19,7 +20,7 @@ public interface UserInfoMapper
      * @param id 用户信息主键
      * @return 用户信息
      */
-    public UserInfo selectUserInfoById(Long id);
+    public UserInfo selectUserInfoById(@Param("id") Long id);
 
     /**
      * 查询用户信息列表
@@ -68,8 +69,18 @@ public interface UserInfoMapper
      */
     public UserInfo getLoginInfoByUserId(Long id);
 
+    /**
+     * 根据邮箱获取用户信息
+     * @param email
+     * @return
+     */
     public UserInfo getLoginInfoByEmail(String email);
 
+    /**
+     * 根据学号获取用户信息
+     * @param number
+     * @return
+     */
     public UserInfo getLoginInfoByNumber(String number);
 
     /**
@@ -82,9 +93,37 @@ public interface UserInfoMapper
 
     UserInfo selectUserInfoBynumber(String number);
 
+    /**
+     * 根据名称获取用户信息
+     * @param name
+     * @return
+     */
     UserInfoVo selectUserInfoByName(String name);
 
+    /**
+     * 查询教师信息
+     * @param isTeacher
+     * @return
+     */
     List<UserInfoVo> selectTeachers(Integer isTeacher);
 
+    /**
+     * 根据ids查询用户
+     * @param ids
+     * @return
+     */
     List<UserInfoVo> selectUserInfoByIds2(List<Long> ids);
+
+    /**
+     * 分页查询学生助理
+     */
+    List<UserInfoVo> queryAssistantsList(UserSearchRequest userSearchRequest);
+
+    /**
+     * 更新用户的学生助理状态
+     * @param userId 用户ID
+     * @param isAssistant 目标状态（0-否 1-是）
+     * @return 影响行数
+     */
+    int updateAssistantStatus(@Param("userId") Long userId, @Param("isAssistant") Integer isAssistant);
 }
