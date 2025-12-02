@@ -139,9 +139,9 @@ aliyun:
     endpoint: oss-cn-guangzhou.aliyuncs.com
     # 原先的 accessKeyId: LTAI5tFyxc44bBwycskuWnYB
     accessKeyId: LTAI5t7XHJm7NVn6BhMVsCeS
-    #accessKeySecret: LL5rU4lAyjazUCdLVHIh55ER7t2Pbr
+    # 原先的 accessKeySecret: LL5rU4lAyjazUCdLVHIh55ER7t2Pbr
     accessKeySecret: h3tEBpPMixdkzviCbF5Y1c2JLP2zz9
-    #bucketName: bucket-chuangxin
+    # 原先的 bucketName: bucket-chuangxin
     bucketName: chuangxin-bucket
 
 coze: pat_AOZh3ZemQoBTSWZrSAzjlZ7S50lclMvv0SzB0rrHOQM8P2fnHF4lSTPOmECg1Aui
