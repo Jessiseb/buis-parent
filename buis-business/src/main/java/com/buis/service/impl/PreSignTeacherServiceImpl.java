@@ -1,18 +1,11 @@
 package com.buis.service.impl;
 
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.PreSignTeacher;
-import com.buis.domain.RaceLanqiaoTeacher;
+import com.buis.model.domain.PreSignTeacher;
 import com.buis.mapper.PreSignTeacherMapper;
 import com.buis.service.IPreSignTeacherService;
-import com.buis.service.IRaceInfoService;
-import com.buis.service.IRaceLanqiaoTeacherService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.PreSignStudentVo;
-import com.buis.vo.PreSignTeacherVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.RaceLanqiaoTeacherVo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.buis.model.vo.PreSignTeacherVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

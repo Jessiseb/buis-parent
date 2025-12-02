@@ -3,13 +3,11 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.RaceDetail;
-import com.buis.domain.RaceInfo;
-import com.buis.domain.Reward;
-import com.buis.dto.GradeStatistic;
-import com.buis.vo.RaceDetailVo;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.SecondClassCountVo;
+import com.buis.model.domain.RaceInfo;
+import com.buis.model.domain.Reward;
+import com.buis.model.dto.GradeStatistic;
+import com.buis.model.vo.RaceInfoVo;
+import com.buis.model.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -121,7 +119,7 @@ public interface RaceInfoMapper {
 
     List<RaceInfoVo> getRaceInfoList(RaceInfo raceInfo);
 
-    List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo);
+    List<RaceInfoVo> selectSecondActivities(@Param("raceInfo")RaceInfo raceInfo, @Param("loginUserId")Long loginUserId);
 
     List<GradeStatistic> getStudentGradeCount();
 
@@ -138,4 +136,5 @@ public interface RaceInfoMapper {
     //分页查询我申报的第二课堂活动
     List<RaceInfoVo> selectMyDeclare(Long loginUserId);
 
+    void deleteRaceDeclareUrl(Long id);
 }

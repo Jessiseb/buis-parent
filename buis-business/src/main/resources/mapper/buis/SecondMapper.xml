@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.SecondMapper">
 
-    <resultMap type="com.buis.domain.Second" id="SecondResult">
+    <resultMap type="com.buis.model.domain.Second" id="SecondResult">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="startTime" column="start_time"/>
@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from second t1
     </sql>
 
-    <select id="selectSecondList" parameterType="com.buis.domain.Second" resultMap="SecondResult">
+    <select id="selectSecondList" parameterType="com.buis.model.domain.Second" resultMap="SecondResult">
         <include refid="selectSecondVo"/>
         <where>
             t1.is_deleted = 0
@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where t1.id = #{id} and t1.is_deleted = 0
     </select>
 
-    <insert id="insertSecond" parameterType="com.buis.vo.RaceSecondVo">
+    <insert id="insertSecond" parameterType="com.buis.model.vo.RaceSecondVo">
         insert into second
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -63,7 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
     </insert>
 
-    <update id="updateSecond" parameterType="com.buis.domain.Second">
+    <update id="updateSecond" parameterType="com.buis.model.domain.Second">
         update second
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null">name = #{name},</if>

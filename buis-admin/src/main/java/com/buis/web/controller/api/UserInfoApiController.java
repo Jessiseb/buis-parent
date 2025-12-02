@@ -6,25 +6,26 @@ import cn.hutool.core.io.FileUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.alioss.AliOssUtil;
-import com.buis.domain.AwardRecords;
-import com.buis.domain.CollegeMajor;
-import com.buis.domain.Notice;
-import com.buis.domain.UserInfo;
-import com.buis.dto.RegisterDto;
-import com.buis.dto.UserLoginDto;
+import com.buis.model.domain.AwardRecords;
+import com.buis.model.domain.CollegeMajor;
+import com.buis.model.domain.Notice;
+import com.buis.model.domain.UserInfo;
+import com.buis.model.dto.RegisterDto;
+import com.buis.model.dto.UserLoginDto;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.INoticeService;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AwardRecordsServiceImpl;
 import com.buis.service.impl.AwardServiceImpl;
-import com.buis.vo.AwardVo;
-import com.buis.vo.FindUserVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.vo.AwardVo;
+import com.buis.model.vo.FindUserVo;
+import com.buis.model.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.rmi.ServerException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.buis.service.impl.UserInfoServiceImpl.SALT;
@@ -316,7 +318,7 @@ public class UserInfoApiController extends BaseController {
         try {
             // 校验文件是否为空
             if (file.isEmpty()) {
-                throw new ServiceException("上传奖状不能为空");
+                throw new ServiceException("上传头像不能为空");
             }
 
             //校验头像文件格式
@@ -336,6 +338,18 @@ public class UserInfoApiController extends BaseController {
             //获取用户ID
             Long loginUserId=SecurityUtils.getFrontLoginUserId();
 
+            //查询用户原有头像url
+            UserInfo loginUser = userInfoService.getLoginUser();
+            String AvatarUrl=loginUser.getAvatarUrl();
+
+            if (AvatarUrl!=null){
+                //如果不为空，从旧头像url中解析出来oss的文件路径
+                String ossFilePath=AvatarUrl.substring(AvatarUrl.indexOf("user-avatars/"));
+                boolean deleteSuccess=aliOssUtil.delete(ossFilePath);
+
+            }
+
+
             //生成唯一文件名
             String uniqueFileName="user-avatars/"+loginUserId+"-"+System.currentTimeMillis()+"."+suffix;
 
@@ -354,7 +368,7 @@ public class UserInfoApiController extends BaseController {
 
             //调用service，完成更新
             int updateResult = userInfoService.updateUserInfo(userInfoToUpdate);
-            if (updateResult>0){
+            if (updateResult<=0){
                 throw new ServerException("头像URL更新失败");
             }
             //返回头像的URL地址
@@ -397,6 +411,7 @@ public class UserInfoApiController extends BaseController {
         noticeService.updateNotice(notice);
         return R.ok();
     }
+
 
 
 

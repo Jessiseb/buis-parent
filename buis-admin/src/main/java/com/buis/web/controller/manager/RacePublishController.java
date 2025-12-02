@@ -19,7 +19,7 @@ import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.enums.BusinessType;
-import com.buis.domain.RacePublish;
+import com.buis.model.domain.RacePublish;
 import com.buis.service.IRacePublishService;
 import com.buis.common.utils.poi.ExcelUtil;
 import com.buis.common.core.page.TableDataInfo;

@@ -4,13 +4,17 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceInfoMapper">
 
-    <resultMap type="com.buis.vo.RaceInfoVo" id="RaceInfoResult">
+    <resultMap type="com.buis.model.vo.RaceInfoVo" id="RaceInfoResult">
         <result property="id" column="id"/>
         <result property="parentTid" column="parent_tid"/>
         <result property="sonTid" column="son_tid"/>
         <result property="sonName" column="son_name"/>
         <result property="parentName" column="parent_name"/>
         <result property="teacherName" column="teacher_name"/>
+        <result property="teacherName2" column="teacher_name2"/>
+        <result property="teacherName3" column="teacher_name3"/>
+        <result property="teacherName4" column="teacher_name4"/>
+        <result property="teacherName5" column="teacher_name5"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
         <result property="joinStart" column="join_start"/>
@@ -23,8 +27,17 @@
         <result property="status" column="status"/>
         <result property="level" column="level"/>
         <result property="seniority" column="seniority"/>
+        <result property="seniority2" column="seniority2"/>
+        <result property="seniority3" column="seniority3"/>
+        <result property="seniority4" column="seniority4"/>
+        <result property="seniority5" column="seniority5"/>
         <result property="totalGuide" column="total_guide"/>
+        <result property="totalGuide2" column="total_guide2"/>
+        <result property="totalGuide3" column="total_guide3"/>
+        <result property="totalGuide4" column="total_guide4"/>
+        <result property="totalGuide5" column="total_guide5"/>
         <result property="descUrl" column="desc_url"/>
+        <result property="declareUrl" column="declare_url"/>
         <result property="department" column="department"/>
         <result property="organizers" column="organizers"/>
         <result property="course" column="course"/>
@@ -36,7 +49,7 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="raceType" column="race_type"/>
-        <collection property="rewardList" ofType="com.buis.domain.Reward">
+        <collection property="rewardList" ofType="com.buis.model.domain.Reward">
             <id property="id" column="id"></id>
             <result property="race" column="race"></result>
             <result property="rRank" column="r_rank"></result>
@@ -46,8 +59,8 @@
         </collection>
     </resultMap>
 
-    <resultMap id="RaceInfoRewardResult" type="com.buis.vo.RaceInfoVo" extends="RaceInfoResult">
-        <collection property="rewardList" ofType="com.buis.domain.Reward" column="id" select="selectRewardList">
+    <resultMap id="RaceInfoRewardResult" type="com.buis.model.vo.RaceInfoVo" extends="RaceInfoResult">
+        <collection property="rewardList" ofType="com.buis.model.domain.Reward" column="id" select="selectRewardList">
             <id property="id" column="id"></id>
             <result property="race" column="race"></result>
             <result property="rRank" column="r_rank"></result>
@@ -57,7 +70,7 @@
         </collection>
     </resultMap>
 
-    <resultMap type="com.buis.domain.Reward" id="RewardResult">
+    <resultMap type="com.buis.model.domain.Reward" id="RewardResult">
         <result property="id" column="id"/>
         <result property="race" column="race"/>
         <result property="rRank" column="r_rank"/>
@@ -91,6 +104,7 @@
                t1.seniority,
                t1.total_guide,
                t1.desc_url,
+               t1.declare_url,
                t1.department,
                t1.organizers,
                t1.course,
@@ -100,7 +114,19 @@
                t1.is_deleted,
                t1.create_time,
                t1.create_id,
-               t1.update_time
+               t1.update_time,
+               t1.seniority2,
+               t1.seniority3,
+               t1.seniority4,
+               t1.seniority5,
+               t1.teacher_name2,
+               t1.teacher_name3,
+               t1.teacher_name4,
+               t1.teacher_name5,
+               t1.total_guide2,
+               t1.total_guide3,
+               t1.total_guide4,
+               t1.total_guide5
         from race_info t1
                  left join race_type t2 on t2.id = t1.son_tid
                  left join race_type t3 on t3.id = t2.parent_id
@@ -182,6 +208,9 @@
             <if test="raceType != null ">
                 and t1.race_type = #{raceType}
             </if>
+            <if test="declareUrl != null  and declareUrl != ''">
+                and t1.declare_url like concat('%', #{declareUrl}, '%')
+            </if>
         </where>
         order by t1.create_time desc
     </select>
@@ -206,7 +235,7 @@
           and is_deleted = 0
         order by id
     </select>
-    <select id="selectRaceInfoByStatu" resultType="com.buis.domain.RaceInfo">
+    <select id="selectRaceInfoByStatu" resultType="com.buis.model.domain.RaceInfo">
         select id,
                race_start,
                race_end,
@@ -215,7 +244,7 @@
         where status = #{status}
           and is_deleted = 0
     </select>
-    <select id="selectRaceInfoByRaceIds" resultType="com.buis.domain.RaceInfo">
+    <select id="selectRaceInfoByRaceIds" resultType="com.buis.model.domain.RaceInfo">
         select id,
         parent_tid,
         name,
@@ -250,12 +279,16 @@
     </select>
 
 
-    <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceInfo" parameterType="com.buis.model.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">
         insert into race_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="parentTid != null">parent_tid,</if>
             <if test="sonTid != null">son_tid,</if>
             <if test="teacherName != null and teacherName != ''">teacher_name,</if>
+            <if test="teacherName2 != null and teacherName2 != ''">teacher_name2,</if>
+            <if test="teacherName3 != null and teacherName3 != ''">teacher_name3,</if>
+            <if test="teacherName4 != null and teacherName4 != ''">teacher_name4,</if>
+            <if test="teacherName5 != null and teacherName5 != ''">teacher_name5,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="description != null and description != ''">description,</if>
             <if test="joinStart != null">join_start,</if>
@@ -269,8 +302,17 @@
             <if test="reviewStatus != null">review_status,</if>
             <if test="level != null">level,</if>
             <if test="seniority != null and seniority != ''">seniority,</if>
+            <if test="seniority2 != null and seniority2 != ''">seniority2,</if>
+            <if test="seniority3 != null and seniority3 != ''">seniority3,</if>
+            <if test="seniority4 != null and seniority4 != ''">seniority4,</if>
+            <if test="seniority5 != null and seniority5 != ''">seniority5,</if>
             <if test="totalGuide != null and totalGuide != ''">total_guide,</if>
+            <if test="totalGuide2 != null and totalGuide2 != ''">total_guide2,</if>
+            <if test="totalGuide3 != null and totalGuide3 != ''">total_guide3,</if>
+            <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4,</if>
+            <if test="totalGuide5 != null and totalGuide5 != ''">total_guide5,</if>
             <if test="descUrl != null and descUrl != ''">desc_url,</if>
+            <if test="declareUrl != null and declareUrl != ''">declare_url,</if>
             <if test="department != null and department != ''">department,</if>
             <if test="organizers != null and organizers != ''">organizers,</if>
             <if test="course != null and course != ''">course,</if>
@@ -286,6 +328,10 @@
             <if test="parentTid != null">#{parentTid},</if>
             <if test="sonTid != null">#{sonTid},</if>
             <if test="teacherName != null and teacherName != ''">#{teacherName},</if>
+            <if test="teacherName2 != null and teacherName2 != ''">#{teacherName2},</if>
+            <if test="teacherName3 != null and teacherName3 != ''">#{teacherName3},</if>
+            <if test="teacherName4 != null and teacherName4 != ''">#{teacherName4},</if>
+            <if test="teacherName5 != null and teacherName5 != ''">#{teacherName5},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="description != null and description != ''">#{description},</if>
             <if test="joinStart != null">#{joinStart},</if>
@@ -299,8 +345,17 @@
             <if test="reviewStatus != null">#{reviewStatus},</if>
             <if test="level != null">#{level},</if>
             <if test="seniority != null and seniority != ''">#{seniority},</if>
+            <if test="seniority2 != null and seniority2 != ''">#{seniority2},</if>
+            <if test="seniority3 != null and seniority3 != ''">#{seniority3},</if>
+            <if test="seniority4 != null and seniority4 != ''">#{seniority4},</if>
+            <if test="seniority5 != null and seniority5 != ''">#{seniority5},</if>
             <if test="totalGuide != null and totalGuide != ''">#{totalGuide},</if>
+            <if test="totalGuide2 != null and totalGuide2 != ''">#{totalGuide2},</if>
+            <if test="totalGuide3 != null and totalGuide3 != ''">#{totalGuide3},</if>
+            <if test="totalGuide4 != null and totalGuide4 != ''">#{totalGuide4},</if>
+            <if test="totalGuide5 != null and totalGuide5 != ''">#{totalGuide5},</if>
             <if test="descUrl != null and descUrl != ''">#{descUrl},</if>
+            <if test="declareUrl != null and declareUrl != ''">#{declareUrl},</if>
             <if test="department != null and department != ''">#{department},</if>
             <if test="organizers != null and organizers != ''">#{organizers},</if>
             <if test="course != null and course != ''">#{course},</if>
@@ -314,12 +369,16 @@
         </trim>
     </insert>
 
-    <update id="updateRaceInfo" parameterType="com.buis.domain.RaceInfo">
+    <update id="updateRaceInfo" parameterType="com.buis.model.domain.RaceInfo">
         update race_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="parentTid != null">parent_tid = #{parentTid},</if>
             <if test="sonTid != null">son_tid = #{sonTid},</if>
             <if test="teacherName != null and teacherName != ''">teacher_name = #{teacherName},</if>
+            <if test="teacherName2 != null and teacherName2 != ''">teacher_name2 = #{teacherName2},</if>
+            <if test="teacherName3 != null and teacherName3 != ''">teacher_name3 = #{teacherName3},</if>
+            <if test="teacherName4 != null and teacherName4 != ''">teacher_name4 = #{teacherName4},</if>
+            <if test="teacherName5 != null and teacherName5 != ''">teacher_name5 = #{teacherName5},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="description != null and description != ''">description = #{description},</if>
             <if test="joinStart != null">join_start = #{joinStart},</if>
@@ -333,8 +392,17 @@
             <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
             <if test="level != null">level = #{level},</if>
             <if test="seniority != null and seniority != ''">seniority = #{seniority},</if>
+            <if test="seniority2 != null and seniority2 != ''">seniority2 = #{seniority2},</if>
+            <if test="seniority3 != null and seniority3 != ''">seniority3 = #{seniority3},</if>
+            <if test="seniority4 != null and seniority4 != ''">seniority4 = #{seniority4},</if>
+            <if test="seniority5 != null and seniority5 != ''">seniority5 = #{seniority5},</if>
             <if test="totalGuide != null and totalGuide != ''">total_guide = #{totalGuide},</if>
+            <if test="totalGuide2 != null and totalGuide2 != ''">total_guide2 = #{totalGuide2},</if>
+            <if test="totalGuide3 != null and totalGuide3 != ''">total_guide3 = #{totalGuide3},</if>
+            <if test="totalGuide4 != null and totalGuide4 != ''">total_guide4 = #{totalGuide4},</if>
+            <if test="totalGuide5 != null and totalGuide5 != ''">total_guide5 = #{totalGuide5},</if>
             <if test="descUrl != null and descUrl != ''">desc_url = #{descUrl},</if>
+            <if test="declareUrl != null and declareUrl !=''">declare_url = #{declareUrl},</if>
             <if test="department != null and department != ''">department = #{department},</if>
             <if test="organizers != null and organizers != ''">organizers = #{organizers},</if>
             <if test="course != null and course != ''">course = #{course},</if>
@@ -383,6 +451,12 @@
         where race = #{race}
     </delete>
 
+    <update id="deleteRaceDeclareUrl">
+        update race_info
+        set declare_url = NULL
+        where id = #{id}
+    </update>
+
     <insert id="batchReward">
         insert into t_reward(race, r_rank, name, quantity, remark, is_deleted, create_time, update_time) values
         <foreach item="item" index="index" collection="list" separator=",">
@@ -391,7 +465,7 @@
         </foreach>
     </insert>
 
-    <select id="getSecondClassCountByMonth" resultType="com.buis.vo.SecondClassCountVo">
+    <select id="getSecondClassCountByMonth" resultType="com.buis.model.vo.SecondClassCountVo">
         SELECT cm.name      AS college_name,
                COUNT(ri.id) AS count
         FROM race_info ri
@@ -408,7 +482,7 @@
         GROUP BY cm.name
     </select>
 
-    <select id="getSecondClassCountByYear" resultType="com.buis.vo.SecondClassCountVo">
+    <select id="getSecondClassCountByYear" resultType="com.buis.model.vo.SecondClassCountVo">
         SELECT cm.name      AS college_name,
                COUNT(ri.id) AS count
         FROM race_info ri
@@ -424,13 +498,13 @@
         GROUP BY cm.name
     </select>
 
-    <select id="selectRaceInfoAll" resultType="com.buis.vo.RaceInfoVo">
+    <select id="selectRaceInfoAll" resultType="com.buis.model.vo.RaceInfoVo">
         select id, create_time
         from race_info
         where is_deleted = 0
     </select>
 
-    <select id="getRaceInfoList" resultType="com.buis.vo.RaceInfoVo">
+    <select id="getRaceInfoList" resultType="com.buis.model.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
         <where>
             t1.is_deleted = 0 and t1.review_status in (3,4)
@@ -466,21 +540,36 @@
         </where>
 
          </select>
-    <select id="selectSecondActivities" resultType="com.buis.vo.RaceInfoVo">
+    <select id="selectSecondActivities" resultType="com.buis.model.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
-        where t1.is_deleted = 0
-          and t1.parent_tid = 5
+        <where>
+            t1.is_deleted = 0
+            and t1.parent_tid = 5
+            <if test="raceInfo.name != null and raceInfo.name != ''">
+                and t1.name like concat('%', #{raceInfo.name}, '%')
+            </if>
+            <if test="raceInfo.reviewStatus != null">
+                and t1.review_status = #{raceInfo.reviewStatus}
+            </if>
+            <if test="loginUserId != null">
+                and(
+                t1.create_id=#{loginUserId}
+                or t1.review_status = 2
+                )
+            </if>
+        </where>
         order by
-            case
-                when t1.review_status = 2 then 0
-                when t1.review_status = 1 then 1
-                when t1.review_status = 3 then 2
-                else 3
-                end,
+        case
+        when t1.review_status = 2 then 0
+        when t1.review_status = 1 then 1
+        when t1.review_status = 3 then 2
+        else 3
+        end,
         t1.id desc
     </select>
 
-    <select id="getStudentGradeCount" resultType="com.buis.dto.GradeStatistic">
+
+    <select id="getStudentGradeCount" resultType="com.buis.model.dto.GradeStatistic">
         WITH second_class_user_ids AS (SELECT DISTINCT tms.student AS user_id
                                        FROM team_info ti
                                                 JOIN
@@ -514,7 +603,7 @@
               WHERE parent_tid = 5) sub
         WHERE sub.create_id = #{userId}
     </select>
-    <select id="selectRaceInfoByName" resultType="com.buis.domain.RaceInfo">
+    <select id="selectRaceInfoByName" resultType="com.buis.model.domain.RaceInfo">
         select *
         from race_info
         where name = #{name}
@@ -611,7 +700,7 @@
         </where>
         ORDER BY t1.create_time ASC
     </select>
-    <select id="selectMyDeclare" resultType="com.buis.vo.RaceInfoVo">
+    <select id="selectMyDeclare" resultType="com.buis.model.vo.RaceInfoVo">
         select *
         from race_info t1
         where t1.is_deleted = 0
@@ -631,7 +720,7 @@
         where son_tid = #{sonTid}
         and is_deleted = 0
     </select>
-    <select id="selectSecondClassByRace" resultType="com.buis.domain.RaceInfo">
+    <select id="selectSecondClassByRace" resultType="com.buis.model.domain.RaceInfo">
         select *
         from race_info
         where id = #{raceId}

@@ -1,14 +1,19 @@
 # 数据源配置
 spring:
+  url: http://43.136.119.58:3306/
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     druid:
-      # 主库数据源
+      # 主库数据源(暂时用与另外一个服务器)
+#      master:
+#        url: jdbc:mysql://42.194.233.38:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+#        username: root
+#        password: .172110159zk
       master:
-        url: jdbc:mysql://42.194.233.38:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:mysql://43.136.119.58:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
-        password: .172110159zk
+        password: a2417317219A@
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -63,13 +68,13 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: 42.194.233.38
+    host: 43.136.119.58
     # 端口，默认为6379
-    port: 6338
+    port: 6379
     # 数据库索引
     database: 2
     # 密码
-    password: .172110159zk
+    password:
     # 连接超时时间
     timeout: 10s
     lettuce:

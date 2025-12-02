@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.AwardMapper">
 
-    <resultMap type="com.buis.vo.AwardVo" id="AwardResult">
+    <resultMap type="com.buis.model.vo.AwardVo" id="AwardResult">
         <result property="id" column="id"/>
         <result property="raceId" column="race_id"/>
         <result property="raceName" column="race_name"/>
@@ -20,7 +20,7 @@
         <result property="isDeleted" column="is_deleted"/>
     </resultMap>
 
-    <resultMap id="AwardraceResult" type="com.buis.vo.AwardVo" extends="AwardResult">
+    <resultMap id="AwardraceResult" type="com.buis.model.vo.AwardVo" extends="AwardResult">
         <result property="raceId" column="race_id"/>
         <result property="winners" column="winners"/>
     </resultMap>
@@ -58,7 +58,7 @@
         </where>
     </select>
 
-    <select id="selectAwardList" parameterType="com.buis.vo.AwardVo" resultMap="AwardResult">
+    <select id="selectAwardList" parameterType="com.buis.model.vo.AwardVo" resultMap="AwardResult">
         <include refid="selectAwardVo"/>
         <where>
             t1.is_deleted = 0
@@ -82,7 +82,7 @@
         where team_id = #{teamId} and is_deleted = 0
     </select>
 
-    <select id="selectAwardByNameAndRace" resultType="com.buis.domain.Award">
+    <select id="selectAwardByNameAndRace" resultType="com.buis.model.domain.Award">
         select a.race_id, a.name, a.year, a.award_level, a.teachers,a.award_project,a.award_date,a.race_name
         from award as a
         where name = #{name}
@@ -90,20 +90,20 @@
           and is_deleted = 0
         LIMIT 1
     </select>
-    <select id="selectAwardByawardId" resultType="com.buis.domain.Award">
+    <select id="selectAwardByawardId" resultType="com.buis.model.domain.Award">
         select a.name, a.year, a.award_level, a.teachers, a.award_project, a.award_date, a.race_name
         from award as a
         where id = #{awardId}
           and is_deleted = 0
     </select>
-    <select id="selectAwardById" resultType="com.buis.vo.AwardVo">
+    <select id="selectAwardById" resultType="com.buis.model.vo.AwardVo">
         select a.id, a.race_id, a.name, a.year, a.award_level, a.teachers, a.award_project, a.award_date, a.update_time, a.create_time, a.is_deleted, a.race_name
         from award as a
         where id = #{id}
           and is_deleted = 0
     </select>
 
-    <insert id="insertAward" parameterType="com.buis.vo.AwardVo">
+    <insert id="insertAward" parameterType="com.buis.model.vo.AwardVo">
         insert into award
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -137,7 +137,7 @@
         </trim>
     </insert>
 
-    <update id="updateAward" parameterType="com.buis.domain.Award">
+    <update id="updateAward" parameterType="com.buis.model.domain.Award">
         update award
         <trim prefix="SET" suffixOverrides=",">
             <if test="raceId != null">race_id = #{raceId},</if>

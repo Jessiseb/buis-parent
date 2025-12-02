@@ -3,9 +3,9 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.RaceDetail;
-import com.buis.domain.Weight;
-import com.buis.vo.RaceDetailVo;
+import com.buis.model.domain.RaceDetail;
+import com.buis.model.domain.Weight;
+import com.buis.model.vo.RaceDetailVo;
 import org.apache.ibatis.annotations.Param;
 
 /**

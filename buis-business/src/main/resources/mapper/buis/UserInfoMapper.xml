@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.UserInfoMapper">
     
-    <resultMap type="com.buis.vo.UserInfoVo" id="UserInfoResult">
+    <resultMap type="com.buis.model.vo.UserInfoVo" id="UserInfoResult">
         <result property="id"    column="id"    />
         <result property="number"    column="number"    />
         <result property="email"    column="email"    />
@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t1.is_deleted,
                t1.create_time,
                t1.update_time,
-               t1.avartar_url
+               t1.avatar_url
         from user_info t1
         LEFT JOIN
         t_college_major t2 ON t1.major = t2.id
@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
              t_college_major t3 ON t1.college = t3.id
     </sql>
 
-    <select id="selectUserInfoList" parameterType="com.buis.domain.UserInfo" resultMap="UserInfoResult">
+    <select id="selectUserInfoList" parameterType="com.buis.model.domain.UserInfo" resultMap="UserInfoResult">
         <include refid="selectUserInfoVo"/>
         <where>
             t1.is_deleted = 0
@@ -82,13 +82,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where t1.id = #{id} and t1.is_deleted = 0
     </select>
 
-    <select id="getLoginInfoByUserId" resultType="com.buis.domain.UserInfo">
+    <select id="getLoginInfoByUserId" resultType="com.buis.model.domain.UserInfo">
         select id, email, password, is_teacher
         from user_info
         where id = #{id} and is_deleted = 0
     </select>
 
-    <select id="selectUserInfoByIds" parameterType="java.util.List" resultType="com.buis.domain.UserInfo">
+    <select id="selectUserInfoByIds" parameterType="java.util.List" resultType="com.buis.model.domain.UserInfo">
         <include refid="selectUserInfoVo"/>
         WHERE t1.id IN
         <foreach item="id" collection="list" open="(" separator="," close=")">
@@ -96,27 +96,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
         AND t1.is_deleted = 0
     </select>
-    <select id="getLoginInfoByEmail" resultType="com.buis.domain.UserInfo">
+    <select id="getLoginInfoByEmail" resultType="com.buis.model.domain.UserInfo">
         select id, email, password,is_teacher
         from user_info
         where email = #{email} and is_deleted = 0
     </select>
-    <select id="getLoginInfoByNumber" resultType="com.buis.domain.UserInfo">
+    <select id="getLoginInfoByNumber" resultType="com.buis.model.domain.UserInfo">
         select id, email,number,password,is_teacher
         from user_info
         where number = #{number} and is_deleted = 0
     </select>
-    <select id="selectUserInfoBynumber" resultType="com.buis.domain.UserInfo">
+    <select id="selectUserInfoBynumber" resultType="com.buis.model.domain.UserInfo">
         select id, number, email, phone, name, description, sex, college, major, title, is_disabled, is_deleted, create_time, update_time
         from user_info
         where number = #{number} and is_deleted = 0
     </select>
-    <select id="selectUserInfoByName" resultType="com.buis.vo.UserInfoVo">
+    <select id="selectUserInfoByName" resultType="com.buis.model.vo.UserInfoVo">
         select id, number, email, phone, name, description, sex, college, major, title, is_disabled, is_deleted, create_time, update_time
         from user_info
         where name = #{name} and is_deleted = 0
     </select>
-    <select id="selectTeachers" resultType="com.buis.vo.UserInfoVo">
+    <select id="selectTeachers" resultType="com.buis.model.vo.UserInfoVo">
         select id,
                number,
                email,
@@ -131,7 +131,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where is_teacher = #{isTeacher} and is_deleted = 0
     </select>
 
-    <select id="selectUserInfoByIds2" resultType="com.buis.vo.UserInfoVo">
+
+    <select id="queryAssistantsList" resultType="com.buis.model.vo.UserInfoVo">
+        <include refid="selectUserInfoVo"/>
+        <where>
+            t1.is_deleted = 0 and t1.is_assistant = 1 and t1.is_teacher = 0
+            <if test="id != null "> and t1.id = #{id}</if>
+            <if test="number != null  and number != ''"> and t1.number = #{number}</if>
+            <if test="phone != null  and phone != ''"> and t1.phone = #{phone}</if>
+            <if test="name != null  and name != ''"> and t1.name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+
+
+    <update id="updateAssistantStatus" >
+        UPDATE user_info
+        SET is_assistant=#{isAssistant}
+        WHERE id=#{userId}
+          AND is_deleted=0
+    </update>
+
+    <select id="selectUserInfoByIds2" resultType="com.buis.model.vo.UserInfoVo">
         <include refid="selectUserInfoVo"/>
         where t1.id IN
         <foreach item="id" collection="list" open="(" separator="," close=")">
@@ -140,7 +160,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND t1.is_deleted = 0
     </select>
 
-    <insert id="insertUserInfo" parameterType="com.buis.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertUserInfo" parameterType="com.buis.model.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
         insert into user_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="number != null and number != ''">number,</if>
@@ -179,7 +199,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
 
-    <update id="updateUserInfo" parameterType="com.buis.domain.UserInfo">
+    <update id="updateUserInfo" parameterType="com.buis.model.domain.UserInfo">
         update user_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="number != null and number != ''">number = #{number},</if>

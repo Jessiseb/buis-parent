@@ -40,7 +40,7 @@ public class SwaggerConfig {
     public Docket createRestApi() {
         return new Docket(DocumentationType.OAS_30)
                 .enable(enabled)
-                .groupName("2. 后台管理系统") // Group name for management system APIs
+                .groupName("2. backendManagementSystem") // Group name for management system APIs
                 .apiInfo(apiInfo())
                 .select()
                 // Management System APIs
@@ -56,11 +56,26 @@ public class SwaggerConfig {
     public Docket createFrontendApi() {
         return new Docket(DocumentationType.OAS_30)
                 .enable(enabled)
-                .groupName("1. 前台API") // Group name for frontend APIs
+                .groupName("1. foregroundAPI") // Group name for frontend APIs
                 .apiInfo(apiInfo())
                 .select()
                 // Frontend APIs, excluding '/buis' prefix
                 .apis(RequestHandlerSelectors.basePackage("com.buis.web.controller.api"))
+                .paths(PathSelectors.any()) // Adjusted for management paths
+                .build()
+                .securitySchemes(securitySchemes())
+                .securityContexts(securityContexts());
+    }
+
+    @Bean
+    public Docket createCommonApi() {
+        return new Docket(DocumentationType.OAS_30)
+                .enable(enabled)
+                .groupName("3. universalAPI") // Group name for frontend APIs
+                .apiInfo(apiInfo())
+                .select()
+                // Frontend APIs, excluding '/buis' prefix
+                .apis(RequestHandlerSelectors.basePackage("com.buis.web.controller.common"))
                 .paths(PathSelectors.any()) // Adjusted for management paths
                 .build()
                 .securitySchemes(securitySchemes())

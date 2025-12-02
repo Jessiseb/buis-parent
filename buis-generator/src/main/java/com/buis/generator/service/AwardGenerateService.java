@@ -2,7 +2,7 @@ package com.buis.generator.service;
 
 import cn.hutool.core.date.DateUtil;
 import com.buis.common.core.domain.R;
-import com.buis.domain.Award;
+import com.buis.model.domain.Award;
 import com.buis.generator.util.AwardUtil;
 import com.buis.mapper.AwardMapper;
 import com.buis.service.*;

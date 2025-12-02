@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceLanqiaoTypeMapper">
     
-    <resultMap type="com.buis.domain.RaceLanqiaoType" id="RaceLanqiaoTypeResult">
+    <resultMap type="com.buis.model.domain.RaceLanqiaoType" id="RaceLanqiaoTypeResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
         <result property="parentId"    column="parent_id"    />
@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, name, parent_id, sort, is_deleted, create_time, update_time from race_lanqiao_type
     </sql>
 
-    <select id="selectRaceLanqiaoTypeList" parameterType="com.buis.domain.RaceLanqiaoType" resultMap="RaceLanqiaoTypeResult">
+    <select id="selectRaceLanqiaoTypeList" parameterType="com.buis.model.domain.RaceLanqiaoType" resultMap="RaceLanqiaoTypeResult">
         <include refid="selectRaceLanqiaoTypeVo"/>
         <where>
             is_deleted = 0
@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by sort asc
     </select>
 
-    <insert id="insertRaceLanqiaoType" parameterType="com.buis.domain.RaceLanqiaoType" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceLanqiaoType" parameterType="com.buis.model.domain.RaceLanqiaoType" useGeneratedKeys="true" keyProperty="id">
         insert into race_lanqiao_type
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">name,</if>
@@ -56,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceLanqiaoType" parameterType="com.buis.domain.RaceLanqiaoType">
+    <update id="updateRaceLanqiaoType" parameterType="com.buis.model.domain.RaceLanqiaoType">
         update race_lanqiao_type
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>

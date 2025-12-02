@@ -3,8 +3,8 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.PreSignTeacher;
-import com.buis.vo.PreSignTeacherVo;
+import com.buis.model.domain.PreSignTeacher;
+import com.buis.model.vo.PreSignTeacherVo;
 import org.apache.ibatis.annotations.Param;
 
 /**

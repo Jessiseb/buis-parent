@@ -6,9 +6,8 @@ import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.Second;
+import com.buis.model.domain.Second;
 import com.buis.service.ISecondService;
-import com.buis.vo.RaceSecondVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,7 @@ public class SecondController extends BaseController {
     /**
      * 新增关联第二课堂表
      */
-    @ApiOperation("新增关联第二课堂表")
+    @ApiOperation("新增关联第二课堂表")  // swagger相关注解
     @PreAuthorize("@ss.hasPermi('buis:second:add')")
     @Log(title = "关联第二课堂表", businessType = BusinessType.INSERT)
     @PostMapping
