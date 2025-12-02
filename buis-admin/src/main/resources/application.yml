@@ -139,9 +139,9 @@ aliyun:
     endpoint: oss-cn-guangzhou.aliyuncs.com
     # 原先的 accessKeyId: ***REMOVED***
     accessKeyId: ***REMOVED***
-    #accessKeySecret: ***REMOVED***
+    # 原先的 accessKeySecret: ***REMOVED***
     accessKeySecret: ***REMOVED***
-    #bucketName: bucket-chuangxin
+    # 原先的 bucketName: bucket-chuangxin
     bucketName: chuangxin-bucket
 
 coze: ***REMOVED***
