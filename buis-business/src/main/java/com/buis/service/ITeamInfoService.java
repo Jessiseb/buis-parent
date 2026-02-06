@@ -1,12 +1,14 @@
 package com.buis.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.buis.common.core.page.MyPageVo;
 import com.buis.model.domain.TeamInfo;
 import com.buis.model.domain.UserInfo;
 import com.buis.model.dto.TeamMemberDto;
 import com.buis.model.vo.TeamInfoVo;
+import com.buis.model.vo.TeamRecommendationVo;
 
 /**
  * 队伍信息Service接口
@@ -157,4 +159,14 @@ public interface ITeamInfoService {
      * @param teamInfo
      */
     void updateTeamInfoCache(TeamInfo teamInfo);
+    /**
+     * 获取推荐队伍列表
+     *
+     * @param userId 用户ID
+     * @param pageNum 页码
+     * @param pageSize 每页数量
+     * @param raceId 比赛ID（可选）
+     * @return 推荐结果列表
+     */
+    List<TeamRecommendationVo> getRecommendTeams(Long userId, Integer pageNum, Integer pageSize, Long raceId);
 }

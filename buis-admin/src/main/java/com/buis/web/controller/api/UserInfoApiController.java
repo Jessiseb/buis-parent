@@ -262,8 +262,9 @@ public class UserInfoApiController extends BaseController {
     @ApiOperation("用户上传奖状功能")
     @PostMapping("/uploadAward")
     @Transactional
-    public R<AwardRecords> uploadAward(@ApiParam(name = "file", value = "图片路径", required = true)
-            @RequestParam("file") MultipartFile file,
+    public R<AwardRecords> uploadAward(
+            @ApiParam(name = "file", value = "图片路径", required = true)
+            @RequestPart("file") MultipartFile file,
             @ApiParam(name = "name", value = "奖状参与的项目名称", required = true)
             @RequestParam("name")String name) {
         try {
@@ -314,7 +315,7 @@ public class UserInfoApiController extends BaseController {
     @Transactional
     public R<String> uploadAvatar(
             @ApiParam(name = "file",value = "头像图片文件",required = true)
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestPart("file") MultipartFile file) throws IOException {
         try {
             // 校验文件是否为空
             if (file.isEmpty()) {

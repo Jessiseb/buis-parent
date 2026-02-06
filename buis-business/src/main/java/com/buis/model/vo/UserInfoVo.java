@@ -78,4 +78,10 @@ public class UserInfoVo extends UserInfo {
     @ApiModelProperty(value = "老师指导的队伍数量-仅老师有此字段")
     private Long teamNum = 0L;
 
+    /**
+     * 个人描述
+     */
+    @ApiModelProperty(value = "简历")
+    private String description;
+
 }

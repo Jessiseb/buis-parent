@@ -96,4 +96,10 @@ public class TeamInfoVo extends TeamInfo {
      */
     @ApiModelProperty(value = "该指导老师是否已经指导该队伍")
     private Integer isInstruct = 0;
+
+    /**
+     *  队伍招募需求
+     */
+    @ApiModelProperty(value = "队伍招募需求")
+    private String request;
 }

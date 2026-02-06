@@ -21,11 +21,10 @@ import com.buis.model.enums.NoticeType;
 import com.buis.model.enums.ReviewStatus;
 import com.buis.mapper.TeamInfoMapper;
 import com.buis.mapper.TeamMemberStudentMapper;
+import com.buis.model.vo.*;
 import com.buis.service.*;
-import com.buis.model.vo.RaceDetailVo;
-import com.buis.model.vo.TeamInfoVo;
-import com.buis.model.vo.TeamMemberStudentVo;
-import com.buis.model.vo.UserInfoVo;
+import com.buis.service.extract.ResumeKeywordExtractor;
+import com.buis.service.extract.TeamRequirementExtractor;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -40,6 +39,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.buis.common.constant.CacheConstants.JOIN_TEAM_LOCK;
 
@@ -84,6 +84,11 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     private TeamMemberStudentMapper teamMemberStudentMapper;
     @Resource
     private INoticeService noticeService;
+    @Resource
+    private ResumeKeywordExtractor resumeKeywordExtractor;  // 使用简历关键词提取器获取用户技能
+
+    @Resource
+    private TeamRequirementExtractor teamRequirementExtractor;  // 使用队伍需求提取器获取队伍需求
 
     /**
      * 新增队伍信息
@@ -1044,4 +1049,319 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         }
         return teamInfoVo;
     }
+    /**
+     * 获取推荐队伍列表
+     *
+     * @param userId 用户ID
+     * @param pageNum 页码
+     * @param pageSize 每页数量
+     * @param raceId 比赛ID（可选）
+     * @return 推荐结果
+     */
+    @Override
+    public List<TeamRecommendationVo> getRecommendTeams(Long userId, Integer pageNum, Integer pageSize, Long raceId) {
+        List<TeamRecommendationVo> recommendations = new ArrayList<>();
+
+        //获取用户信息
+        UserInfoVo userInfo =userInfoService.selectUserInfoById(userId);
+        if (userInfo==null){
+            throw new ServiceException("用户不存在");
+        }
+
+
+        //获取用户技能(简历获取)
+        List<String> userSkills=getUserSkills(userId,userInfo);
+
+
+        // TODO: 添加Redis缓存 - 用户技能缓存
+        // String userSkillsKey = "user:skills:" + userId;
+        // List<String> userSkills = redisTemplate.opsForList().range(userSkillsKey, 0, -1);
+
+        //获取用户专业
+        String userMajor=userInfo.getMajorName();
+
+        //获取符合条件的队伍列表
+        TeamInfo queryTeam = new TeamInfo();
+        queryTeam.setIsPublish("Y");  // 只查询已发布招募的队伍
+
+        if (raceId != null) {
+            queryTeam.setRace(raceId);  // 按比赛筛选
+        }
+        //查询所有队伍
+        List<TeamInfoVo> allTeams = this.selectTeamInfoList(queryTeam);
+        if (allTeams == null || allTeams.isEmpty()) {
+            return recommendations;  // 如果没有队伍，直接返回空列表
+        }
+        // === 调试：查询到的队伍 ===
+        System.out.println("\n查询到的队伍总数: " + (allTeams != null ? allTeams.size() : 0));
+        if (allTeams != null && allTeams.size() > 0) {
+            System.out.println("前3个队伍ID: " +
+                    allTeams.get(0).getId() + ", " +
+                    (allTeams.size() > 1 ? allTeams.get(1).getId() : "") + ", " +
+                    (allTeams.size() > 2 ? allTeams.get(2).getId() : ""));
+        }
+
+
+
+
+        // 批量获取队伍ID，用于后续查询
+        List<Long> teamIds = allTeams.stream()
+                .map(TeamInfoVo::getId)
+                .collect(Collectors.toList());
+
+        // TODO: 添加Redis缓存 - 队伍需求缓存
+        // Map<Long, List<String>> teamRequirementsCache = new HashMap<>();
+        // 可以从Redis批量获取队伍需求
+
+        // 批量获取队伍成员数量，避免循环中多次查询
+        Map<Long, Long> teamMemberCountMap = new HashMap<>();
+        for (Long teamId : teamIds) {
+            Long count = teamMemberStudentService.getJoinCountByTeamId(teamId);
+            teamMemberCountMap.put(teamId, count);
+        }
+
+        // 批量检查用户是否已加入队伍
+        Map<Long, Boolean> userJoinedMap = new HashMap<>();
+        Map<Long, Boolean> userRequestedMap = new HashMap<>();
+        for (TeamInfoVo team : allTeams) {
+            Long teamId = team.getId();
+
+            // 检查用户是否已加入
+            int joinCount = teamMemberStudentService.getJoinCount(userId, team.getRace(), teamId);
+            userJoinedMap.put(teamId, joinCount > 0);
+
+            // 检查用户是否有待处理的申请
+            int requestCount = teamMemberStudentService.getRequestCount(userId, team.getRace(), teamId);
+            userRequestedMap.put(teamId, requestCount > 0);
+        }
+
+        // 批量获取队长信息，避免循环中多次查询
+        List<Long> leaderIds = allTeams.stream()
+                .map(TeamInfoVo::getLeader)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<Long, UserInfoVo> leaderInfoMap = new HashMap<>();
+        for (Long leaderId : leaderIds) {
+            UserInfoVo leaderInfo = userInfoService.selectUserInfoById(leaderId);
+            if (leaderInfo != null) {
+                leaderInfoMap.put(leaderId, leaderInfo);
+            }
+        }
+
+        Date now = new Date();
+
+        // 过滤和计算匹配度
+        for (TeamInfoVo team : allTeams) {
+            Long teamId = team.getId();
+
+            // 过滤条件1：队伍未过期
+            if (team.getEnd() != null && team.getEnd().before(now)) {
+                continue;
+            }
+
+            // 过滤条件2：队伍未满员 - 从缓存Map中获取
+            Long currentMembers = teamMemberCountMap.get(teamId);
+            if (currentMembers != null && currentMembers >= team.getNumber()) {
+                continue;
+            }
+
+            // 过滤条件3：用户未加入该队伍 - 从缓存Map中获取
+            if (userJoinedMap.getOrDefault(teamId, false)) {
+                continue;
+            }
+
+            // 过滤条件4：用户没有待处理的加入申请 - 从缓存Map中获取
+            if (userRequestedMap.getOrDefault(teamId, false)) {
+                continue;
+            }
+
+            // 计算匹配度
+            TeamRecommendationVo recommendation = calculateTeamMatch(
+                    team, userSkills, userMajor, userId, leaderInfoMap);
+
+            // 只添加有匹配度的队伍
+            if (recommendation.getMatchScore() > 0) {
+                recommendations.add(recommendation);
+            }
+            // 7. 只添加有匹配度的队伍
+            if (recommendation.getMatchScore() > 0) {
+                recommendations.add(recommendation);
+
+                // === 调试：匹配成功的队伍 ===
+                System.out.println("队伍 " + team.getId() + " 匹配成功！匹配度: " +
+                        String.format("%.2f", recommendation.getMatchScore() * 100) + "%");
+                // === 调试结束 ===
+            }
+        }
+
+
+        // 按匹配度降序排序
+        recommendations.sort((r1, r2) -> Double.compare(r2.getMatchScore(), r1.getMatchScore()));
+
+        // === 调试：最终结果 ===
+        System.out.println("\n=== 推荐结果统计 ===");
+        System.out.println("总查询队伍数: " + (allTeams != null ? allTeams.size() : 0));
+        System.out.println("最终推荐队伍数: " + recommendations.size());
+        System.out.println("=== 智能推荐调试结束 ===\n");
+        // === 调试结束 ===
+        return recommendations;
+
+
+
+    }
+    /**
+     * 获取用户技能
+     * 从用户简历中提取技能关键词
+     */
+    private List<String> getUserSkills(Long userId, UserInfoVo userInfo) {
+        // 获取用户简历描述
+        String resume = userInfo.getDescription();
+        if (resume == null || resume.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 使用简历提取器提取技能
+        String major = userInfo.getMajorName();
+        return resumeKeywordExtractor.extractSkills(resume, major);
+    }
+    /**
+     * 计算队伍匹配度（优化版本）
+     * 与之前版本的不同：
+     * 1. 通过leaderInfoMap传递队长信息，避免重复查询
+     * 2. 修复字段映射问题
+     */
+    private TeamRecommendationVo calculateTeamMatch(TeamInfoVo team, List<String> userSkills,
+                                                    String userMajor, Long userId,
+                                                    Map<Long, UserInfoVo> leaderInfoMap) {
+        TeamRecommendationVo recommendation = new TeamRecommendationVo();
+
+        // 复制TeamInfoVo的所有属性到TeamRecommendationVo
+        BeanUtil.copyProperties(team, recommendation);
+
+        // 获取队伍需求技能
+        List<String> teamRequirements = getTeamRequirements(team);
+        recommendation.setRequiredSkills(teamRequirements);
+
+        // === 调试：队伍需求 ===
+        if (teamRequirements != null && teamRequirements.size() > 0) {
+            System.out.println("队伍 " + team.getId() + " 需求技能: " + teamRequirements);
+        } else {
+            System.out.println("队伍 " + team.getId() + " 无需求技能");
+        }
+        // === 调试结束 ===
+
+        // 获取队长专业 - 从缓存Map中获取
+        String teamMajor = "";
+        UserInfoVo leaderInfo = leaderInfoMap.get(team.getLeader());
+        if (leaderInfo != null) {
+            teamMajor = leaderInfo.getMajorName() != null ? leaderInfo.getMajorName() : "";
+        }
+
+        // 计算技能匹配度
+        double skillMatchScore = calculateSkillMatchScore(userSkills, teamRequirements);
+        recommendation.setSkillMatchScore(skillMatchScore);
+
+        // 计算专业匹配加分
+        double majorBonus = calculateMajorBonus(userMajor, teamMajor);
+        recommendation.setMajorMatchBonus(majorBonus);
+        recommendation.setIsMajorMatch(majorBonus > 0);
+
+        // 计算最终匹配度
+        double finalScore = skillMatchScore + majorBonus;
+        recommendation.setMatchScore(finalScore);
+
+        // 获取匹配的技能列表
+        List<String> matchedSkills = getMatchedSkills(userSkills, teamRequirements);
+        recommendation.setMatchedSkills(matchedSkills);
+
+        // === 调试：匹配详情 ===
+        if (matchedSkills != null && matchedSkills.size() > 0) {
+            System.out.println("  匹配的技能: " + matchedSkills);
+        }
+        if (majorBonus > 0) {
+            System.out.println("  专业匹配: 是 (用户:" + userMajor + " 队长:" + teamMajor + ")");
+        }
+        // === 调试结束 ===
+
+        return recommendation;
+    }
+
+    /**
+     * 获取队伍需求技能
+     * 从队伍招募要求中提取
+     */
+    private List<String> getTeamRequirements(TeamInfoVo team) {
+        // 获取队伍招募要求
+        String requirementText = team.getRequest();
+
+        // 如果 request 为空，尝试 description
+        if (requirementText == null || requirementText.trim().isEmpty()) {
+            requirementText = team.getDescription();
+        }
+        if (requirementText == null || requirementText.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+
+
+        // 使用队伍需求提取器提取技能
+        return teamRequirementExtractor.extractSkills(requirementText);
+    }
+
+    /**
+     * 计算技能匹配度
+     */
+    private double calculateSkillMatchScore(List<String> userSkills, List<String> teamRequirements) {
+        if (teamRequirements == null || teamRequirements.isEmpty()) {
+            return 0.0;
+        }
+
+        if (userSkills == null || userSkills.isEmpty()) {
+            return 0.0;
+        }
+
+        // 使用队伍需求提取器中的计算方法
+        return teamRequirementExtractor.calculateMatchScore(userSkills, teamRequirements);
+    }
+    /**
+     * 计算专业匹配加分
+     * 专业匹配加0.2分
+     */
+    private double calculateMajorBonus(String userMajor, String teamMajor) {
+        if (userMajor == null || teamMajor == null ||
+                userMajor.trim().isEmpty() || teamMajor.trim().isEmpty()) {
+            return 0.0;
+        }
+
+        // 简单完全匹配
+        if (userMajor.equals(teamMajor)) {
+            return 0.2;  // 专业匹配加0.2分
+        }
+
+        return 0.0;
+    }
+    /**
+     * 获取匹配的技能列表
+     */
+    private List<String> getMatchedSkills(List<String> userSkills, List<String> teamRequirements) {
+        if (userSkills == null || teamRequirements == null) {
+            return new ArrayList<>();
+        }
+
+        List<String> matched = new ArrayList<>();
+        Set<String> userSkillSet = new HashSet<>(userSkills);
+
+        for (String requirement : teamRequirements) {
+            if (userSkillSet.contains(requirement)) {
+                matched.add(requirement);
+            }
+        }
+
+        return matched;
+    }
+
+
+
+
 }
