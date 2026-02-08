@@ -2,6 +2,7 @@ package com.buis.web.controller.api;
 
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.buis.common.constant.HttpStatus;
 import com.buis.model.bo.MemberInfoBO;
 import com.buis.model.bo.TeacherInfoBO;
 import com.buis.common.config.RuoYiConfig;
@@ -515,8 +516,8 @@ public class TeamApiController extends BaseController {
        //获取登录用户信息
         UserInfo loginUser = userInfoService.getLoginUser();
         int result = teamInfoService.joinTeamById(teamMemberDto,loginUser);
-        if (result == 0) {
-            return R.fail("操作失败");
+        if (result <= 0) {
+            throw new ServiceException("数据库操作失败", HttpStatus.ERROR);
         }
         //成功后发送邮箱通知
         emailService.requestJoin(teamMemberDto.getTeam());
