@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import com.buis.common.constant.HttpStatus;
 import com.buis.common.constant.TeamQueryConstants;
 import com.buis.common.core.page.MyPageVo;
 import com.buis.common.core.page.PageDomain;
@@ -318,7 +319,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     public int joinTeamById(TeamMemberDto teamMemberDto, UserInfo loginUser) {
         //判空
         if (teamMemberDto == null || loginUser == null) {
-            throw new ServiceException("参数错误");
+            throw new ServiceException("参数错误", HttpStatus.BAD_REQUEST);
         }
 
         //用户最多加入指定个队伍
@@ -326,16 +327,16 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         Long raceId = teamMemberDto.getRace();
         Long teamId = teamMemberDto.getTeam();
         if (raceId == null) {
-            throw new ServiceException("参数错误,id为空");
+            throw new ServiceException("参数错误,id为空", HttpStatus.BAD_REQUEST);
         }
         RaceDetailVo raceDetail = raceDetailService.selectRaceDetailVoByRaceId(raceId);
         if (raceDetail == null) {
-            throw new ServiceException("无详细比赛规则");
+            throw new ServiceException("无详细比赛规则",HttpStatus.NOT_FOUND);
         }
         Long count = raceDetail.getCount();
         //小于0或为空
-        if (count <= 0 || count == null) {
-            throw new ServiceException("比赛配置错误,最大加入队伍数无效");
+        if (count <= 0) {
+            throw new ServiceException("参数错误,count为空或小于0", HttpStatus.BAD_REQUEST);
         }
         //根据用户id查出用户已经加入多少个队伍
         Long userId = loginUser.getId();
@@ -353,7 +354,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             int hasJoin = teamStudentService.selectTeamMemberStudentList(memberStudent).size();
 //            int hasJoin = teamStudentService.getStudentJoinTeamByUserId(userId);
             if (hasJoin >= count) {
-                throw new ServiceException("在该比赛中您已加入其他团队,最多只能加入一个项目团队!!!");
+                throw new ServiceException("在该比赛中您已加入其他团队,最多只能加入一个项目团队!!!",HttpStatus.ERROR);
             }
 
             //分布式锁---->只有抢到锁的人才能加入队伍
@@ -364,7 +365,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             try {
                 boolean locked = rLock.tryLock(2, 30, TimeUnit.SECONDS);
                 if (!locked) {
-                    throw new ServiceException("系统繁忙,请稍后重试");
+                    throw new ServiceException("系统繁忙,请稍后重试",HttpStatus.CONFLICT);
                 }
                 //                while (true) {
                 //根据id查询项目队伍信息
@@ -373,27 +374,27 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                 //不能重复申请加入
                 TeamMemberStudent teamMemberStudent1 = teamMemberStudentMapper.selectTeamMemberStudentByTeamAndStudent(userId, teamId);
                 if (teamMemberStudent1 != null) {
-                    throw new ServiceException("您已经申请加入该队伍");
+                    throw new ServiceException("您已经申请加入该队伍",HttpStatus.CONFLICT);
                 }
 
                 //不能加入不存在的队伍
                 if (teamInfo == null) {
-                    throw new ServiceException("该队伍不存在");
+                    throw new ServiceException("该队伍不存在",HttpStatus.NOT_FOUND);
                 }
 
                 //已经过期的队伍不能加入
                 if (teamInfo.getEnd().before(DateUtils.getNowDate())) {
-                    throw new ServiceException("该队伍已过期");
+                    throw new ServiceException("已超过该队伍的截止时间",HttpStatus.ERROR);
                 }
 
                 //已经满人的队伍不能加入
                 if (teamStudentService.getJoinCountByTeamId(teamId) >= teamInfo.getNumber()) {
-                    throw new ServiceException("该队伍已满");
+                    throw new ServiceException("该队伍已满",HttpStatus.CONFLICT);
                 }
 
                 //不能重复加入已经加入的队伍
                 if (teamStudentService.getJoinCount(userId, teamInfo.getRace(), teamInfo.getId()) > 0) {
-                    throw new ServiceException("您已加入该队伍");
+                    throw new ServiceException("您已加入该队伍",HttpStatus.CONFLICT);
                 }
 
                 //修改用户队伍表信息
@@ -406,7 +407,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 //                }
             } catch (Exception e) {
                 log.error("加入队伍失败!", e);
-                throw new ServiceException("加入队伍失败: " + e.getMessage());
+                throw new ServiceException("加入队伍失败: " + e.getMessage(), HttpStatus.ERROR);
             } finally {
                 //释放锁
                 //只能释放自己的锁
@@ -416,7 +417,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             }
         } else if (isTeacher == 1) {
             //老师
-            throw new ServiceException("您不是学生,不能加入队伍");
+            throw new ServiceException("您不是学生,不能加入队伍",HttpStatus.ERROR);
         }
         Notice notice = new Notice();
         notice.setTitle("申请加入队伍");
@@ -427,7 +428,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         notice.setSenderId(userId);
         int i = noticeService.insertNotice(notice);
         if (i == 0) {
-            throw new ServiceException("加入队伍失败");
+            throw new ServiceException("加入队伍失败",HttpStatus.ERROR);
         }
         return teamStudentService.insertTeamMemberStudent(teamMemberStudent);
     }
@@ -444,17 +445,17 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
     public int quitTeam(Long team, Long userId) {
         //对id进行校验 -------------> 可以避免缓存穿透(不会直接打到数据库)
         if (team == null || userId == null) {
-            throw new ServiceException("参数错误");
+            throw new ServiceException("参数错误",HttpStatus.BAD_REQUEST);
         }
 
         //查询队伍是否存在
         TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(team);
         if (teamInfo == null) {
-            throw new ServiceException("退出失败: 该队伍不存在");
+            throw new ServiceException("退出失败: 该队伍不存在",HttpStatus.NOT_FOUND);
         }
         //校验登录用户是否已经加入队伍
         if (teamStudentService.getJoinCount(userId, teamInfo.getRace(), teamInfo.getId()) == 0) {
-            throw new ServiceException("退出失败: 您未加入该队伍");
+            throw new ServiceException("退出失败: 您未加入该队伍",HttpStatus.CONFLICT);
         }
         //如果队伍只有一个人就直接解散
         if (teamStudentService.getJoinCountByTeamId(team) == 1) {
@@ -509,7 +510,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
                     raceInfoService.deleteRacesInfoCache();
                     return teamStudentService.deleteTeamMemberStudentByTeamAndStudent(team, userId);
                 } else {
-                    throw new ServiceException("退出队伍失败");
+                    throw new ServiceException("退出队伍失败",HttpStatus.ERROR);
                 }
             } else {
                 //不是负责人退出队伍
@@ -530,14 +531,14 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
         // 获取申请记录
         if (teamMemberStudent.getIsChoosed() != ChooseStatus.TOBESELECTED.getCode()) { // 0表示待审核
-            throw new ServiceException("申请不存在或已处理");
+            throw new ServiceException("申请不存在或已处理",HttpStatus.NOT_FOUND);
         }
 
         // 4. 检查队伍容量
         TeamInfo teamInfo = teamInfoMapper.selectTeamInfoById(teamId);
         Long currentCount = teamStudentService.getJoinCountByTeamId(teamId);
         if (currentCount >= teamInfo.getNumber()) {
-            throw new ServiceException("队伍已满");
+            throw new ServiceException("队伍已满",HttpStatus.CONFLICT);
         }
 
 
@@ -545,7 +546,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         teamMemberStudent.setIsChoosed(ChooseStatus.CHOOSE.getCode()); // 1表示已同意
         int ok = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
         if (ok == 0) {
-            throw new ServiceException("同意失败");
+            throw new ServiceException("同意失败",HttpStatus.ERROR);
         }
 
         return ok;
@@ -562,13 +563,13 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         String studentName = userInfoService.selectUserInfoById(userId).getName();
         // 获取申请记录
         if (!teamMemberStudent.getIsChoosed().equals(ChooseStatus.TOBESELECTED.getCode())) { // 0表示待审核
-            throw new ServiceException("申请不存在或已处理");
+            throw new ServiceException("申请不存在或已处理",HttpStatus.NOT_FOUND);
         }
 
         teamMemberStudent.setIsChoosed(ChooseStatus.REFUSE.getCode()); // 2表示已拒绝
         int ok = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
         if (ok == 0) {
-            throw new ServiceException("同意失败");
+            throw new ServiceException("同意失败",HttpStatus.ERROR);
         }
         if (student.equals(userId)) {
             email = userInfoService.selectUserInfoById(decider).getEmail();
@@ -577,7 +578,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
             Matcher matcher = Pattern.compile(emailRegex).matcher(email);
             if (!matcher.find()) {
-                throw new ServiceException("邮箱格式有误,请重新输入!");
+                throw new ServiceException("邮箱格式有误,请重新输入!", HttpStatus.BAD_REQUEST);
             }
             //构建信息
             String massage = "您好，您邀请" + studentName + "同学加入《" + teamName + "》团队的请求已被拒绝。";
@@ -596,7 +597,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
             Matcher matcher = Pattern.compile(emailRegex).matcher(email);
             if (!matcher.find()) {
-                throw new ServiceException("邮箱格式有误,请重新输入!");
+                throw new ServiceException("邮箱格式有误,请重新输入!", HttpStatus.BAD_REQUEST);
             }
             //构建信息
             String massage = "您好，您申请加入《" + teamName + "》团队的请求已被拒绝。";
@@ -674,7 +675,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             redisCache.setCacheObject(pageCacheKey, JSON.toJSONString(myPageVo), 10, TimeUnit.MINUTES);
 
         } catch (Exception e) {
-            throw new ServiceException("查询失败: " + e.getMessage());
+            throw new ServiceException("查询失败: " + e.getMessage(), HttpStatus.ERROR);
         } finally {
             //释放锁
 //            if (rLock.isHeldByCurrentThread()) {
@@ -760,7 +761,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         //只有队长或指导老师有权限
         boolean ok = isTeamLeaderOrTeacher(team);
         if (!ok) {
-            throw new ServiceException("您没有操作权限!");
+            throw new ServiceException("您没有操作权限!", HttpStatus.UNAUTHORIZED);
         }
 
         //队伍表的leader改成user, leader_name改成user对应的用户名字,
@@ -782,7 +783,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
         int i = teamInfoService.updateTeamInfoWithLeader(teamInfoVo);
         if (i <= 0) {
-            throw new ServiceException("转让失败");
+            throw new ServiceException("转让失败", HttpStatus.ERROR);
         }
 
         //队伍用户中间表的队长修改成user
@@ -793,7 +794,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             result = teamStudentService.updateTeamMemberStudent(teamMemberStudent);
         }
         if (result <= 0) {
-            throw new ServiceException("更新失败");
+            throw new ServiceException("更新失败", HttpStatus.ERROR);
         }
         return result;
     }
@@ -804,7 +805,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
 
         //只有指导老师和负责人才能修改
         if (!isTeamLeaderOrTeacher(teamInfoVo.getId())) {
-            throw new ServiceException("您不是老师或负责人，不能修改队伍信息!");
+            throw new ServiceException("您不是老师或负责人，不能修改队伍信息!", HttpStatus.UNAUTHORIZED);
         }
         int i = teamInfoMapper.updateTeamInfo(teamInfoVo);
         //更新队伍信息缓存
@@ -1035,7 +1036,7 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
             redisCache.setCacheObject("team:" + id, JSONUtil.toJsonStr(teamInfoVo), 10, TimeUnit.MINUTES);
 
         } catch (Exception e) {
-            throw new ServiceException("查询失败: " + e.getMessage());
+            throw new ServiceException("查询失败: " + e.getMessage(), HttpStatus.ERROR);
         } finally {
             //释放锁
 //            if (rLock.isHeldByCurrentThread()) {

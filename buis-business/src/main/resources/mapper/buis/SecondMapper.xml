@@ -34,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="endTime != null ">and t1.end_time = #{endTime}</if>
             <if test="isDeleted != null ">and t1.is_deleted = #{isDeleted}</if>
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectSecondById" parameterType="Long" resultMap="SecondResult">
