@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.SkillTagMapper">
+
+    <resultMap type="com.buis.model.domain.SkillTag" id="SkillTagResult">
+        <result property="id"    column="id"    />
+        <result property="tagName"    column="tag_name"    />
+        <result property="category"    column="category"    />
+        <result property="description"    column="description"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="com.buis.model.vo.SkillTagVo" id="SkillTagVoResult">
+        <result property="id"    column="id"    />
+        <result property="tagName"    column="tag_name"    />
+        <result property="category"    column="category"    />
+        <result property="description"    column="description"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="categoryName"    column="category_name"    />
+    </resultMap>
+
+    <sql id="selectSkillTagVo">
+        select id, tag_name, category, description, is_active, create_time, update_time
+        from skill_tag
+    </sql>
+
+    <sql id="selectSkillTagVoWithCategory">
+        select st.id, st.tag_name, st.category, st.description, st.is_active, st.create_time, st.update_time,
+               case st.category
+                   when 'tech' then '技术类'
+                   when 'design' then '设计类'
+                   when 'business' then '商业类'
+                   when 'other' then '其他类'
+                   else st.category
+                   end as category_name
+        from skill_tag st
+    </sql>
+
+    <select id="selectSkillTagById" parameterType="Long" resultMap="SkillTagResult">
+        <include refid="selectSkillTagVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSkillTagList" parameterType="com.buis.model.domain.SkillTag" resultMap="SkillTagVoResult">
+        <include refid="selectSkillTagVoWithCategory"/>
+        <where>
+            <if test="id != null "> and st.id = #{id}</if>
+            <if test="tagName != null  and tagName != ''"> and st.tag_name like concat('%', #{tagName}, '%')</if>
+            <if test="category != null  and category != ''"> and st.category = #{category}</if>
+            <if test="description != null  and description != ''"> and st.description like concat('%', #{description}, '%')</if>
+            <if test="isActive != null "> and st.is_active = #{isActive}</if>
+        </where>
+        order by st.id asc, st.create_time desc
+    </select>
+
+    <select id="selectAllActiveTags" resultMap="SkillTagResult">
+        <include refid="selectSkillTagVo"/>
+        where is_active = 1
+        order by tag_name
+    </select>
+
+    <select id="selectSkillTagByName" parameterType="String" resultMap="SkillTagResult">
+        <include refid="selectSkillTagVo"/>
+        where tag_name = #{tagName} and is_active = 1
+    </select>
+
+    <select id="selectSkillTagsByNames" parameterType="java.util.List" resultMap="SkillTagResult">
+        <include refid="selectSkillTagVo"/>
+        where tag_name in
+        <foreach item="tagName" collection="tagNames" open="(" separator="," close=")">
+            #{tagName}
+        </foreach>
+        and is_active = 1
+    </select>
+
+    <select id="selectSkillTagsByCategory" parameterType="String" resultMap="SkillTagResult">
+        <include refid="selectSkillTagVo"/>
+        where category = #{category} and is_active = 1
+        order by tag_name
+    </select>
+
+    <select id="selectSkillTagsByIds" parameterType="java.util.List" resultMap="SkillTagResult">
+        <include refid="selectSkillTagVo"/>
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and is_active = 1
+    </select>
+
+    <select id="countSkillTags" resultType="int">
+        select count(*) from skill_tag where is_active = 1
+    </select>
+
+    <select id="searchSkillTags" parameterType="String" resultMap="SkillTagResult">
+        <include refid="selectSkillTagVo"/>
+        where is_active = 1
+        and (tag_name like concat('%', #{keyword}, '%') or description like concat('%', #{keyword}, '%'))
+        order by tag_name
+    </select>
+
+    <insert id="insertSkillTag" parameterType="com.buis.model.domain.SkillTag" useGeneratedKeys="true" keyProperty="id">
+        insert into skill_tag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tagName != null and tagName != ''">tag_name,</if>
+            <if test="category != null and category != ''">category,</if>
+            <if test="description != null">description,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tagName != null and tagName != ''">#{tagName},</if>
+            <if test="category != null and category != ''">#{category},</if>
+            <if test="description != null">#{description},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSkillTag" parameterType="com.buis.model.domain.SkillTag">
+        update skill_tag
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tagName != null and tagName != ''">tag_name = #{tagName},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSkillTagById" parameterType="Long">
+        delete from skill_tag where id = #{id}
+    </delete>
+
+    <delete id="deleteSkillTagByIds" parameterType="Long">
+        delete from skill_tag where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
