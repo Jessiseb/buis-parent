@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.UserSkillMapper">
+
+    <resultMap type="com.buis.model.domain.UserSkill" id="UserSkillResult">
+        <result property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="skillTagId" column="skill_tag_id" />
+        <result property="source" column="source" />
+        <result property="confidence" column="confidence" />
+        <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <resultMap type="com.buis.model.vo.UserSkillVo" id="UserSkillVoResult">
+        <result property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="skillTagId" column="skill_tag_id" />
+        <result property="tagName" column="tag_name" />
+        <result property="category" column="category" />
+        <result property="description" column="description" />
+        <result property="source" column="source" />
+        <result property="confidence" column="confidence" />
+        <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="selectUserSkillVo">
+        select us.id, us.user_id, us.skill_tag_id, us.source, us.confidence, us.create_time
+        from user_skill us
+    </sql>
+
+    <sql id="selectUserSkillVoWithTag">
+        select us.id, us.user_id, us.skill_tag_id, st.tag_name, st.category, st.description, us.source, us.confidence, us.create_time
+        from user_skill us
+                 left join skill_tag st on us.skill_tag_id = st.id
+    </sql>
+
+    <select id="selectUserSkillById" parameterType="Long" resultMap="UserSkillResult">
+        <include refid="selectUserSkillVo"/>
+        where us.id = #{id}
+    </select>
+
+    <select id="selectUserSkillList" parameterType="com.buis.model.domain.UserSkill" resultMap="UserSkillVoResult">
+        <include refid="selectUserSkillVoWithTag"/>
+        <where>
+            <if test="userId != null "> and us.user_id = #{userId}</if>
+            <if test="skillTagId != null "> and us.skill_tag_id = #{skillTagId}</if>
+            <if test="source != null  and source != ''"> and us.source = #{source}</if>
+        </where>
+        order by us.create_time desc
+    </select>
+
+    <select id="selectUserSkillsByUserId" parameterType="Long" resultMap="UserSkillVoResult">
+        <include refid="selectUserSkillVoWithTag"/>
+        where us.user_id = #{userId}
+        order by us.create_time desc
+    </select>
+
+    <select id="selectUserSkillsBySkillTagId" parameterType="Long" resultMap="UserSkillResult">
+        <include refid="selectUserSkillVo"/>
+        where us.skill_tag_id = #{skillTagId}
+    </select>
+
+    <select id="selectUserSkillsByUserIds" parameterType="java.util.List" resultMap="UserSkillVoResult">
+        <include refid="selectUserSkillVoWithTag"/>
+        where us.user_id in
+        <foreach item="userId" collection="userIds" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+        order by us.user_id, us.create_time desc
+    </select>
+
+    <select id="countUserSkills" parameterType="Long" resultType="int">
+        select count(*) from user_skill where user_id = #{userId}
+    </select>
+
+    <select id="existsByUserIdAndSkillTagId" resultType="int">
+        select count(*) from user_skill where user_id = #{userId} and skill_tag_id = #{skillTagId}
+    </select>
+
+    <select id="selectUserSkillsByUserIdAndCategory" resultMap="UserSkillVoResult">
+        <include refid="selectUserSkillVoWithTag"/>
+        where us.user_id = #{userId}
+        <if test="category != null and category != ''">
+            and st.category = #{category}
+        </if>
+        order by us.create_time desc
+    </select>
+
+    <insert id="insertUserSkill" parameterType="com.buis.model.domain.UserSkill" useGeneratedKeys="true" keyProperty="id">
+        insert into user_skill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="skillTagId != null">skill_tag_id,</if>
+            <if test="source != null and source != ''">source,</if>
+            <if test="confidence != null">confidence,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="skillTagId != null">#{skillTagId},</if>
+            <if test="source != null and source != ''">#{source},</if>
+            <if test="confidence != null">#{confidence},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsertUserSkill" parameterType="java.util.List">
+        insert into user_skill (user_id, skill_tag_id, source, confidence, create_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.userId}, #{item.skillTagId}, #{item.source}, #{item.confidence}, #{item.createTime})
+        </foreach>
+    </insert>
+
+    <update id="updateUserSkill" parameterType="com.buis.model.domain.UserSkill">
+        update user_skill
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="skillTagId != null">skill_tag_id = #{skillTagId},</if>
+            <if test="source != null and source != ''">source = #{source},</if>
+            <if test="confidence != null">confidence = #{confidence},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserSkillById" parameterType="Long">
+        delete from user_skill where id = #{id}
+    </delete>
+
+    <delete id="deleteUserSkillByUserIdAndSkillTagId">
+        delete from user_skill where user_id = #{userId} and skill_tag_id = #{skillTagId}
+    </delete>
+
+    <delete id="deleteUserSkillByIds" parameterType="Long">
+        delete from user_skill where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUserSkillsByUserId" parameterType="Long">
+        delete from user_skill where user_id = #{userId}
+    </delete>
+</mapper>

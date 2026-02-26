@@ -1155,26 +1155,26 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         for (TeamInfoVo team : allTeams) {
             Long teamId = team.getId();
 
-            // 过滤条件1：队伍未过期
-            if (team.getEnd() != null && team.getEnd().before(now)) {
-                continue;
-            }
-
-            // 过滤条件2：队伍未满员 - 从缓存Map中获取
-            Long currentMembers = teamMemberCountMap.get(teamId);
-            if (currentMembers != null && currentMembers >= team.getNumber()) {
-                continue;
-            }
-
-            // 过滤条件3：用户未加入该队伍 - 从缓存Map中获取
-            if (userJoinedMap.getOrDefault(teamId, false)) {
-                continue;
-            }
-
-            // 过滤条件4：用户没有待处理的加入申请 - 从缓存Map中获取
-            if (userRequestedMap.getOrDefault(teamId, false)) {
-                continue;
-            }
+//            // 过滤条件1：队伍未过期
+//            if (team.getEnd() != null && team.getEnd().before(now)) {
+//                continue;
+//            }
+//
+//            // 过滤条件2：队伍未满员 - 从缓存Map中获取
+//            Long currentMembers = teamMemberCountMap.get(teamId);
+//            if (currentMembers != null && currentMembers >= team.getNumber()) {
+//                continue;
+//            }
+//
+//            // 过滤条件3：用户未加入该队伍 - 从缓存Map中获取
+//            if (userJoinedMap.getOrDefault(teamId, false)) {
+//                continue;
+//            }
+//
+//            // 过滤条件4：用户没有待处理的加入申请 - 从缓存Map中获取
+//            if (userRequestedMap.getOrDefault(teamId, false)) {
+//                continue;
+//            }
 
             // 计算匹配度
             TeamRecommendationVo recommendation = calculateTeamMatch(
