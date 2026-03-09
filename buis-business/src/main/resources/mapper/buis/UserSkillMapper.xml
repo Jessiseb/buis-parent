@@ -88,6 +88,21 @@
         order by us.create_time desc
     </select>
 
+    <select id="selectUsersBySkillTags" parameterType="java.util.List" resultMap="UserSkillVoResult">
+        <include refid="selectUserSkillVoWithTag"/>
+        where us.skill_tag_id in
+        <foreach item="skillTagId" collection="skillTagIds" open="(" separator="," close=")">
+            #{skillTagId}
+        </foreach>
+        order by us.user_id, us.create_time desc
+    </select>
+
+    <select id="selectUserSkillsWithScore" parameterType="Long" resultMap="UserSkillVoResult">
+        <include refid="selectUserSkillVoWithTag"/>
+        where us.user_id = #{userId}
+        order by us.create_time desc
+    </select>
+
     <insert id="insertUserSkill" parameterType="com.buis.model.domain.UserSkill" useGeneratedKeys="true" keyProperty="id">
         insert into user_skill
         <trim prefix="(" suffix=")" suffixOverrides=",">
