@@ -2,11 +2,7 @@ package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
 import com.buis.model.dto.GradeStatistic;
-import com.buis.service.IRaceInfoService;
-import com.buis.service.ITeamInfoService;
-import com.buis.service.ITeamMemberStudentService;
-import com.buis.system.service.ISysDictDataService;
-import com.buis.system.service.ISysDictTypeService;
+import com.buis.service.*;
 import com.buis.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,9 +25,7 @@ public class StatisticsApiController {
     @Autowired
     private ITeamMemberStudentService teamMemberStudentService;
     @Autowired
-    private ISysDictTypeService sysDictTypeService;
-    @Autowired
-    private ISysDictDataService sysDictDataService;
+    private IStatisticsService statisticsService;
 
 
     /**
@@ -181,6 +175,17 @@ public class StatisticsApiController {
         //查出热门TOP10活动
         List<HotRaceVo> result = raceInfoService.getHot();
         //返回
+        return R.ok(result);
+    }
+
+    /**
+     * 获取所带学生的竞赛状态
+     * @param teacherId
+     * @return
+     */
+    public R<List<StudentCompetitionStatus>> getStudentCompetitionStatus(@RequestParam(value = "teacherId") Long teacherId) {
+        List<StudentCompetitionStatus> result = statisticsService.getStudentCompetitionStatus(teacherId);
+
         return R.ok(result);
     }
 
