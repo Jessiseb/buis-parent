@@ -1,8 +1,7 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.Second;
-import com.buis.vo.RaceSecondVo;
+import com.buis.model.domain.Second;
 
 /**
  * 关联第二课堂表Service接口

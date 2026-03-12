@@ -2,8 +2,8 @@ package com.buis.web.controller.api;
 
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.buis.bo.MemberInfoBO;
-import com.buis.bo.TeacherInfoBO;
+import com.buis.model.bo.MemberInfoBO;
+import com.buis.model.bo.TeacherInfoBO;
 import com.buis.common.config.RuoYiConfig;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -14,17 +14,14 @@ import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
 import com.buis.common.utils.file.FileUploadUtils;
 import com.buis.common.utils.file.FileUtils;
-import com.buis.domain.*;
-import com.buis.dto.TeamMemberDto;
-import com.buis.enums.ChooseStatus;
-import com.buis.enums.NoticeType;
+import com.buis.model.domain.*;
+import com.buis.model.dto.TeamMemberDto;
+import com.buis.model.enums.ChooseStatus;
+import com.buis.model.enums.NoticeType;
 import com.buis.framework.config.ServerConfig;
 import com.buis.mapper.TeamInfoMapper;
+import com.buis.model.vo.*;
 import com.buis.service.*;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.TeamMemberStudentVo;
-import com.buis.vo.TeamMemberTeacherVo;
-import com.buis.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,6 +36,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -341,6 +339,7 @@ public class TeamApiController extends BaseController {
             @ApiParam(name = "isPublish", value = "是否发布招募",required = false)
             @RequestParam(required = false) String isPublish){
         startPage();
+
         //如果userId不为空,则查询这个用户所参与的队伍
         if (userId != null) {
             List<TeamMemberStudent> teamMemberStudents = teamMemberStudentService.selectTeamMemberStudentByUserId(userId);
@@ -370,7 +369,6 @@ public class TeamApiController extends BaseController {
     /**
      * 根据项目队伍id查询团队信息
      */
-
     @ApiOperation("根据项目团队id查询团队信息")
     @GetMapping("/{id}")
     public R<TeamInfoVo> getTeamInfoById(@ApiParam(name = "id", value = "项目队伍id", required = true)
@@ -444,7 +442,10 @@ public class TeamApiController extends BaseController {
     public R<TeamInfo> addTeamInfo(@RequestBody TeamInfo teamInfo) {
         //获取当前创建队伍的用户id api/team/api/team
         Long userId = userInfoService.getLoginUser().getId();
+        UserInfo createUser = userInfoService.getLoginInfoByUserId(userId);
         teamInfo.setLeader(userId);
+        //设置团队的所属学院学院为负责人所在学院
+        teamInfo.setCollege(createUser.getCollege());
         TeamInfo result =  teamInfoService.insertTeamInfo(teamInfo);
         //生成唯一且随机的项目编码
         Long teamId =  result.getId();
@@ -634,6 +635,72 @@ public class TeamApiController extends BaseController {
         List<TeamInfoVo> list = teamInfoService.selectMyPublishedTeams(userId);
         return new MyPageVo<>(list);
     }
+//    /**
+//     * 智能推荐队伍
+//     * 基于用户技能和队伍需求匹配推荐适合的队伍
+//     *
+//     * @param pageNum 页码
+//     * @param pageSize 每页数量
+//     * @param raceId 比赛ID（可选筛选）
+//     * @return 推荐队伍列表
+//     */
+//    @ApiOperation("智能推荐队伍")
+//    @GetMapping("/recommend")
+//    public R<Map<String, Object>> recommendTeams(
+//            @ApiParam(name = "pageNum", value = "查询页数", required = false, defaultValue = "1")
+//            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+//            @ApiParam(name = "pageSize", value = "查询数量", required = false, defaultValue = "10")
+//            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+//            @ApiParam(name = "raceId", value = "比赛ID", required = false)
+//            @RequestParam(value = "raceId", required = false) Long raceId){
+//        // 获取当前登录用户
+//        UserInfo loginUser = userInfoService.getLoginUser();
+//
+//        // 只有学生才需要推荐，老师不需要
+//        if (loginUser.getIsTeacher() != null && loginUser.getIsTeacher() == 1) {
+//            // 老师用户，返回空列表
+//            Map<String, Object> result = new HashMap<>();
+//            result.put("total", 0);
+//            result.put("pageNum", pageNum);
+//            result.put("pageSize", pageSize);
+//            result.put("teams", new ArrayList<>());
+//            return R.ok(result);
+//        }
+//
+//        try {
+//            // 调用service获取推荐结果
+//            List<TeamRecommendationVo> recommendations = teamInfoService.getRecommendTeams(
+//                    loginUser.getId(), pageNum, pageSize, raceId);
+//
+//            // 计算总数
+//            int total = recommendations.size();
+//
+//            // 手动分页处理
+//            int start = (pageNum - 1) * pageSize;
+//            int end = Math.min(start + pageSize, total);
+//
+//            List<TeamRecommendationVo> pageResults = new ArrayList<>();
+//            if (start < total) {
+//                pageResults = recommendations.subList(start, end);
+//            }
+//
+//            // 组装返回结果 - 修复：使用"rows"字段以匹配原有list接口格式
+//            Map<String, Object> result = new HashMap<>();
+//            result.put("total", total);
+//            result.put("rows", pageResults);
+//
+//            return R.ok(result);
+//        } catch (Exception e) {
+//            log.error("推荐队伍失败", e);
+//            // 返回错误信息，但保持接口格式一致
+//            Map<String, Object> result = new HashMap<>();
+//            result.put("total", 0);
+//            result.put("rows", new ArrayList<>());
+//            return R.fail("推荐失败：" + e.getMessage());
+//        }
+
+
+   // }
 }
 
 

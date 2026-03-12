@@ -2,8 +2,8 @@ package com.buis.mapper;
 
 import java.util.List;
 
-import com.buis.domain.TeamMemberTeacher;
-import com.buis.vo.TeamMemberTeacherVo;
+import com.buis.model.domain.TeamMemberTeacher;
+import com.buis.model.vo.TeamMemberTeacherVo;
 import org.apache.ibatis.annotations.Param;
 
 /**

@@ -1,8 +1,8 @@
 package com.buis.mapper;
 
 import java.util.List;
-import com.buis.domain.RaceLanqiaoTeacher;
-import com.buis.vo.RaceLanqiaoTeacherVo;
+import com.buis.model.domain.RaceLanqiaoTeacher;
+import com.buis.model.vo.RaceLanqiaoTeacherVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

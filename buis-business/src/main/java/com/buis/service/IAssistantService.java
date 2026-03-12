@@ -1,9 +1,9 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.Assistant;
-import com.buis.vo.AssistantVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.domain.Assistant;
+import com.buis.model.vo.AssistantVo;
+import com.buis.model.vo.UserInfoVo;
 
 /**
  * 学生助理Service接口

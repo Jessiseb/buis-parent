@@ -1,8 +1,8 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.Award;
-import com.buis.vo.AwardVo;
+import com.buis.model.domain.Award;
+import com.buis.model.vo.AwardVo;
 
 /**
  * 奖状信息Service接口

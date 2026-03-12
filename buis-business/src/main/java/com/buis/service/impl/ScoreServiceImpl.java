@@ -10,19 +10,17 @@ import java.util.regex.Pattern;
 
 import com.buis.common.core.domain.R;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.Judge;
-import com.buis.domain.RaceDetail;
-import com.buis.domain.UserInfo;
-import com.buis.mapper.UserInfoMapper;
+import com.buis.model.domain.Judge;
+import com.buis.model.domain.UserInfo;
 import com.buis.service.*;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.ScoreVo;
-import com.buis.vo.TeamInfoVo;
+import com.buis.model.vo.RaceInfoVo;
+import com.buis.model.vo.ScoreVo;
+import com.buis.model.vo.TeamInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.ScoreMapper;
-import com.buis.domain.Score;
+import com.buis.model.domain.Score;
 
 /**
  * 评分管理Service业务层处理

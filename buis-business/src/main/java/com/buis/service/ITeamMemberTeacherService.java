@@ -2,11 +2,11 @@ package com.buis.service;
 
 import java.util.List;
 
-import com.buis.domain.TeamMemberTeacher;
-import com.buis.dto.TeamMemberTeacherDto;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.TeamMemberTeacherVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.domain.TeamMemberTeacher;
+import com.buis.model.dto.TeamMemberTeacherDto;
+import com.buis.model.vo.TeamInfoVo;
+import com.buis.model.vo.TeamMemberTeacherVo;
+import com.buis.model.vo.UserInfoVo;
 
 /**
  * 队伍老师管理Service接口

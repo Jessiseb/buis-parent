@@ -3,8 +3,7 @@ package com.buis.web.controller.manager;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.buis.vo.PreSignStudentVo;
-import com.buis.vo.PreSignTeacherVo;
+import com.buis.model.vo.PreSignTeacherVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +22,7 @@ import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.PreSignTeacher;
+import com.buis.model.domain.PreSignTeacher;
 import com.buis.service.IPreSignTeacherService;
 
 /**
