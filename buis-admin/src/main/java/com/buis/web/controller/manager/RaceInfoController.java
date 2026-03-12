@@ -4,21 +4,20 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
+import com.buis.common.core.domain.R;
 import com.buis.common.core.page.TableDataInfo;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.file.zipUtils;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.RaceInfo;
-import com.buis.domain.TeamInfo;
-import com.buis.dto.StudentExportToDiDto;
-import com.buis.dto.TeacherExportToDaDto;
-import com.buis.dto.TeacherExportToDiDto;
+import com.buis.model.domain.RaceInfo;
+import com.buis.model.dto.StudentExportToDiDto;
+import com.buis.model.dto.TeacherExportToDaDto;
+import com.buis.model.dto.TeacherExportToDiDto;
+import com.buis.model.vo.RaceInfoVo;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.TeamInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,12 +28,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -233,12 +229,9 @@ RaceInfoController extends BaseController {
                                  @RequestParam(value = "grade", required = true) int grade,
                                  HttpServletResponse response) {
         List<StudentExportToDiDto> studentExportToDiDtoList = new LinkedList<>(); //要导出的类型
-        List<StudentExportToDiDto> list = raceInfoService.exportStudentDiProjectCount(college,grade,studentExportToDiDtoList, "第二课堂", response);
+        List<StudentExportToDiDto> list = raceInfoService.exportStudentDiProjectCount(college, grade, studentExportToDiDtoList, "第二课堂", response);
         ExcelUtil<StudentExportToDiDto> util = new ExcelUtil<StudentExportToDiDto>(StudentExportToDiDto.class);
         util.exportExcel(response, list, "导出学生参与的第二课堂比赛数量");
     }
-
-
-
 
 }

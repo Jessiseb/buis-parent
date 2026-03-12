@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceDetailMapper">
 
-    <resultMap type="com.buis.vo.RaceDetailVo" id="RaceDetailResult">
+    <resultMap type="com.buis.model.vo.RaceDetailVo" id="RaceDetailResult">
         <result property="id"    column="id"    />
         <result property="typeId"    column="type_id"    />
         <result property="race"    column="race"    />
@@ -52,11 +52,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="raceType"    column="race_type"    />
     </resultMap>
 
-    <resultMap id="RaceDetailWeightResult" type="com.buis.vo.RaceDetailVo" extends="RaceDetailResult">
-        <collection property="weightList" ofType="com.buis.domain.Weight" column="id" select="selectWeightList"/>
+    <resultMap id="RaceDetailWeightResult" type="com.buis.model.vo.RaceDetailVo" extends="RaceDetailResult">
+        <collection property="weightList" ofType="com.buis.model.domain.Weight" column="id" select="selectWeightList"/>
     </resultMap>
 
-    <resultMap type="com.buis.domain.Weight" id="WeightResult">
+    <resultMap type="com.buis.model.domain.Weight" id="WeightResult">
         <result property="id" column="id"/>
         <result property="raceD" column="race_d"/>
         <result property="name" column="name"/>
@@ -118,7 +118,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  left join race_type t3 on t2.son_tid = t3.id
     </sql>
 
-    <select id="selectRaceDetailList" parameterType="com.buis.vo.RaceDetailVo" resultMap="RaceDetailResult">
+    <select id="selectRaceDetailList" parameterType="com.buis.model.vo.RaceDetailVo" resultMap="RaceDetailResult">
         <include refid="selectRaceDetailVo"/>
         <where>
             t1.is_deleted = 0
@@ -184,12 +184,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from t_weight
         where race_d = #{race_d} and is_deleted = 0
     </select>
-    <select id="selectRaceDetailVoByRaceId" resultType="com.buis.vo.RaceDetailVo">
+    <select id="selectRaceDetailVoByRaceId" resultType="com.buis.model.vo.RaceDetailVo">
         <include refid="selectRaceDetailVo"/>
         where t1.race = #{raceId}
           and t1.is_deleted = 0
     </select>
-    <select id="batchSelectRaceDetailByRaceIds" resultType="com.buis.domain.RaceDetail">
+    <select id="batchSelectRaceDetailByRaceIds" resultType="com.buis.model.domain.RaceDetail">
         select id, type_id,race, name,money,review_status, phone, email,
         desc_url, group_url, rule, capacity, team_min, team_max, teacher_min, teacher_max, r_rank, t_limit, is_deleted,
         create_time, update_time
@@ -201,7 +201,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and is_deleted = 0
     </select>
 
-    <select id="selectRaceDetailVoList" resultType="com.buis.vo.RaceDetailVo">
+    <select id="selectRaceDetailVoList" resultType="com.buis.model.vo.RaceDetailVo">
         <include refid="selectRaceDetailVo"/>
         <where>
             t1.is_deleted = 0
@@ -248,7 +248,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <insert id="insertRaceDetail" parameterType="com.buis.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceDetail" parameterType="com.buis.model.domain.RaceDetail" useGeneratedKeys="true" keyProperty="id">
         insert into race_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -326,7 +326,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateRaceDetail" parameterType="com.buis.domain.RaceDetail">
+    <update id="updateRaceDetail" parameterType="com.buis.model.domain.RaceDetail">
         update race_detail
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>

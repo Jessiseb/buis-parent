@@ -5,7 +5,7 @@ import com.buis.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoTypeMapper;
-import com.buis.domain.RaceLanqiaoType;
+import com.buis.model.domain.RaceLanqiaoType;
 import com.buis.service.IRaceLanqiaoTypeService;
 
 /**

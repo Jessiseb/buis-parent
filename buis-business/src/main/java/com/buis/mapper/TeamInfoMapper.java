@@ -3,8 +3,8 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.TeamInfo;
-import com.buis.vo.TeamInfoVo;
+import com.buis.model.domain.TeamInfo;
+import com.buis.model.vo.TeamInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 /**

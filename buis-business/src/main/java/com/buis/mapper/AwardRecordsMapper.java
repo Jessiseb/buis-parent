@@ -1,7 +1,7 @@
 package com.buis.mapper;
 
 import java.util.List;
-import com.buis.domain.AwardRecords;
+import com.buis.model.domain.AwardRecords;
 
 /**
  * 奖状汇总Mapper接口
