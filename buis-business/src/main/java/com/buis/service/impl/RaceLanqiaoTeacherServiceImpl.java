@@ -2,14 +2,12 @@ package com.buis.service.impl;
 
 import java.util.List;
 
-import com.buis.common.core.domain.R;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.StringUtils;
-import com.buis.domain.*;
+import com.buis.model.domain.*;
 import com.buis.service.*;
-import com.buis.vo.RaceLanqiaoTeacherVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.vo.RaceLanqiaoTeacherVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceLanqiaoTeacherMapper;

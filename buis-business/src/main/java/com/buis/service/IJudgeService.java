@@ -1,8 +1,8 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.Judge;
-import com.buis.vo.JudgeVo;
+import com.buis.model.domain.Judge;
+import com.buis.model.vo.JudgeVo;
 
 /**
  * 评委管理Service接口

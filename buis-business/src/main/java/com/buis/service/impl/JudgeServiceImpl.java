@@ -4,12 +4,11 @@ import java.util.List;
 import com.buis.common.utils.DateUtils;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.AssistantVo;
-import com.buis.vo.JudgeVo;
+import com.buis.model.vo.JudgeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.JudgeMapper;
-import com.buis.domain.Judge;
+import com.buis.model.domain.Judge;
 import com.buis.service.IJudgeService;
 
 import javax.annotation.Resource;

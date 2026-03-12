@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.PreSignTeacherMapper">
     
-    <resultMap type="com.buis.vo.PreSignTeacherVo" id="PreSignTeacherResult">
+    <resultMap type="com.buis.model.vo.PreSignTeacherVo" id="PreSignTeacherResult">
         <result property="id"    column="id"    />
         <result property="teacher"    column="teacher"    />
         <result property="race"    column="race"    />
@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  left join race_info t2 on t1.race = t2.id
     </sql>
 
-    <select id="selectPreSignTeacherList" parameterType="com.buis.domain.PreSignTeacher" resultMap="PreSignTeacherResult">
+    <select id="selectPreSignTeacherList" parameterType="com.buis.model.domain.PreSignTeacher" resultMap="PreSignTeacherResult">
         <include refid="selectPreSignTeacherVo"/>
         <where>
             t1.is_deleted = 0
@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectPreSignTeacherVo"/>
         where t1.id = #{id}  and t1.is_deleted = 0
     </select>
-    <select id="fuzzyQuery" resultType="com.buis.vo.PreSignTeacherVo">
+    <select id="fuzzyQuery" resultType="com.buis.model.vo.PreSignTeacherVo">
         SELECT pre_sign_teacher.* FROM pre_sign_teacher
         JOIN user_info ON pre_sign_teacher.teacher = user_info.id
         <where>
@@ -50,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <insert id="insertPreSignTeacher" parameterType="com.buis.domain.PreSignTeacher" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertPreSignTeacher" parameterType="com.buis.model.domain.PreSignTeacher" useGeneratedKeys="true" keyProperty="id">
         insert into pre_sign_teacher
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="teacher != null">teacher,</if>
@@ -75,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
 
-    <update id="updatePreSignTeacher" parameterType="com.buis.domain.PreSignTeacher">
+    <update id="updatePreSignTeacher" parameterType="com.buis.model.domain.PreSignTeacher">
         update pre_sign_teacher
         <trim prefix="SET" suffixOverrides=",">
             <if test="teacher != null">teacher = #{teacher},</if>

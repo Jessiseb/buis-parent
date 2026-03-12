@@ -5,19 +5,28 @@ import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
 import com.alibaba.dashscope.common.Message;
+import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.manager.RedisLimiterManager;
 import com.buis.common.utils.StringUtils;
+import com.buis.mapper.SkillTagMapper;
+import com.buis.model.domain.SkillTag;
+import com.buis.model.dto.SkillExtractRequest;
+import com.buis.model.dto.SkillExtractResult;
 import com.buis.reponse.AuthResponse;
 import com.buis.service.IAiService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpStatus;
@@ -37,6 +46,7 @@ import java.rmi.ServerException;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Service
 @ConfigurationProperties(prefix = "aliyun.ai")
@@ -45,6 +55,10 @@ public class AiServiceImpl implements IAiService {
 
     @Resource
     private RedisLimiterManager redisLimiterManager;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private SkillTagMapper skillTagMapper;
 
 
     private final Logger logger = LoggerFactory.getLogger(AiServiceImpl.class);
@@ -53,6 +67,25 @@ public class AiServiceImpl implements IAiService {
     private static boolean isFirstPrint = true;
     private static final String REASONING_SECTION = "[SECTION-1]====================思考过程====================";
     private static final String CONTENT_SECTION = "[SECTION-2]====================完整回复====================";
+    /**
+     * AI提取技能关键词的提示词模板
+     */
+    private static final String SKILL_EXTRACT_PROMPT =
+            "你是一个专业的技能分析专家。请仔细分析以下文本，从中提取用户可能具备的技能标签。\n\n" +
+                    "分析文本：\n" +
+                    "%s\n\n" +
+                    "请按照以下步骤进行分析：\n" +
+                    "1. 首先，识别文本中明确提到的技能（如'精通Java'、'熟悉Spring Boot'）\n" +
+                    "2. 然后，从用户的经历、职责、项目描述中推断可能相关的技能\n" +
+                    "3. 最后，综合考虑工具使用、方法论、相关领域知识\n\n" +
+                    "提取原则：\n" +
+                    "- 优先提取技术类技能（编程语言、框架、工具等）\n" +
+                    "- 其次提取软技能（沟通、协作、项目管理等）\n" +
+                    "- 避免提取过于宽泛的词语（如'计算机'、'技术'）\n" +
+                    "- 每个技能词尽量简洁、具体\n\n" +
+                    "返回格式要求：\n" +
+                    "请返回一个JSON数组，格式示例：[\"Java\", \"Spring Boot\", \"MySQL\", \"团队协作\", \"项目管理\"]\n\n" +
+                    "如果确实没有识别到任何技能，返回空数组[]。";
 
     @Value("${aliyun.ai.api-key}")
     String apiKey;
@@ -219,7 +252,151 @@ public class AiServiceImpl implements IAiService {
         }
     }
 
+    @Override
+    public SkillExtractResult extractSkillsFromText(SkillExtractRequest request) {
+        String text = request.getText();
+        String type = request.getType();
+
+        if (!StringUtils.hasText(text)) {
+            return SkillExtractResult.builder()
+                    .matchedSkills(Collections.emptyList())
+                    .unmatchedKeywords(Collections.emptyList())
+                    .status("failed")
+                    .message("文本内容为空")
+                    .fallbackUsed(false)
+                    .build();
+        }
+
+        try {
+            // 尝试调用AI接口提取技能
+            List<String> extractedKeywords = extractSkillsWithAI(text);
+
+            // 如果没有提取到关键词，尝试使用降级方案
+            if (CollectionUtils.isEmpty(extractedKeywords)) {
+                log.warn("AI提取技能失败，使用关键词匹配降级方案");
+                extractedKeywords = extractSkillsWithKeywordMatching(text);
+                return matchKeywordsToTags(extractedKeywords, true);
+            }
+
+            return matchKeywordsToTags(extractedKeywords, false);
+
+        } catch (Exception e) {
+            log.error("AI提取技能异常，使用降级方案", e);
+            // AI调用失败，使用降级方案
+            List<String> keywords = extractSkillsWithKeywordMatching(text);
+            return matchKeywordsToTags(keywords, true);
+        }
+    }
+    /**
+     * 调用AI接口提取技能关键词
+     */
+    private List<String> extractSkillsWithAI(String text) throws NoApiKeyException, ApiException, InputRequiredException {
+        Generation gen = new Generation();
+        Message userMsg = Message.builder()
+                .role(Role.USER.getValue())
+                .content(String.format(SKILL_EXTRACT_PROMPT, text))
+                .build();
+
+        GenerationParam param = GenerationParam.builder()
+                .apiKey(apiKey)
+                .model("deepseek-r1") // 或使用其他模型
+                .messages(Arrays.asList(userMsg))
+                .resultFormat(GenerationParam.ResultFormat.MESSAGE)
+                .build();
+
+        try {
+            GenerationResult result = gen.call(param);
+            String content = result.getOutput().getChoices().get(0).getMessage().getContent();
+
+            // 解析JSON数组
+            JsonNode jsonNode = objectMapper.readTree(content);
+            if (jsonNode.isArray()) {
+                List<String> keywords = new ArrayList<>();
+                for (JsonNode node : jsonNode) {
+                    keywords.add(node.asText());
+                }
+                return keywords;
+            }
+        } catch (Exception e) {
+            log.error("解析AI响应失败", e);
+        }
+
+        return Collections.emptyList();
+    }
+    /**
+     * 关键词匹配降级方案
+     */
+    private List<String> extractSkillsWithKeywordMatching(String text) {
+        // 从数据库中获取所有技能标签作为关键词库
+        List<SkillTag> allTags = skillTagMapper.selectAllActiveTags();
+        List<String> keywords = new ArrayList<>();
+        String lowerText = text.toLowerCase();
+
+        for (SkillTag tag : allTags) {
+            if (lowerText.contains(tag.getTagName().toLowerCase())) {
+                keywords.add(tag.getTagName());
+            }
+        }
+
+        return keywords;
+    }
+    /**
+     * 将关键词匹配到标准技能标签
+     */
+    private SkillExtractResult matchKeywordsToTags(List<String> keywords, boolean isFallback) {
+        if (CollectionUtils.isEmpty(keywords)) {
+            return SkillExtractResult.builder()
+                    .matchedSkills(Collections.emptyList())
+                    .unmatchedKeywords(Collections.emptyList())
+                    .status(isFallback ? "failed" : "success")
+                    .message(isFallback ? "未匹配到任何技能" : "成功提取但无匹配技能")
+                    .fallbackUsed(isFallback)
+                    .build();
+        }
+
+        // 查询所有启用的技能标签
+        List<SkillTag> allTags = skillTagMapper.selectAllActiveTags();
+        Map<String, SkillTag> tagMap = allTags.stream()
+                .collect(Collectors.toMap(SkillTag::getTagName, tag -> tag, (t1, t2) -> t1));
+
+        List<SkillTag> matchedSkills = new ArrayList<>();
+        List<String> unmatchedKeywords = new ArrayList<>();
+
+        for (String keyword : keywords) {
+            // 精确匹配
+            if (tagMap.containsKey(keyword)) {
+                matchedSkills.add(tagMap.get(keyword));
+            } else {
+                // 模糊匹配（可优化为相似度匹配）
+                Optional<SkillTag> fuzzyMatch = allTags.stream()
+                        .filter(tag -> tag.getTagName().toLowerCase().contains(keyword.toLowerCase()) ||
+                                keyword.toLowerCase().contains(tag.getTagName().toLowerCase()))
+                        .findFirst();
+
+                if (fuzzyMatch.isPresent()) {
+                    matchedSkills.add(fuzzyMatch.get());
+                } else {
+                    unmatchedKeywords.add(keyword);
+                }
+            }
+        }
+
+        String status = matchedSkills.isEmpty() ? "failed" :
+                !unmatchedKeywords.isEmpty() ? "partial" : "success";
+
+        return SkillExtractResult.builder()
+                .matchedSkills(matchedSkills)
+                .unmatchedKeywords(unmatchedKeywords)
+                .status(status)
+                .message(String.format("匹配到%d个技能，%d个未匹配", matchedSkills.size(), unmatchedKeywords.size()))
+                .fallbackUsed(isFallback)
+                .build();
+    }
 
 
-}
+
+
+
+
+    }
 

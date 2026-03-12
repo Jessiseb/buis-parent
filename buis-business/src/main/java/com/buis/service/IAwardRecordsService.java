@@ -1,7 +1,7 @@
 package com.buis.service;
 
 import java.util.List;
-import com.buis.domain.AwardRecords;
+import com.buis.model.domain.AwardRecords;
 
 /**
  * 奖状汇总Service接口

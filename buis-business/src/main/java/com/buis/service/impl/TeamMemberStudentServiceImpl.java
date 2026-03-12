@@ -3,23 +3,20 @@ package com.buis.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
-import com.buis.domain.RaceInfo;
-import com.buis.domain.TeamMemberStudent;
+import com.buis.model.domain.RaceInfo;
+import com.buis.model.domain.TeamMemberStudent;
 import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
 import com.buis.service.IUserInfoService;
-import com.buis.vo.RaceInfoVo;
-import com.buis.vo.TeamInfoVo;
-import com.buis.vo.TeamMemberStudentVo;
-import com.buis.vo.UserInfoVo;
+import com.buis.model.vo.TeamInfoVo;
+import com.buis.model.vo.TeamMemberStudentVo;
+import com.buis.model.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 队伍成员管理Service业务层处理

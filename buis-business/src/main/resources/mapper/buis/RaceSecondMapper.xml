@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceSecondMapper">
 
-    <resultMap type="com.buis.vo.RaceSecondVo" id="RaceSecondResult">
+    <resultMap type="com.buis.model.vo.RaceSecondVo" id="RaceSecondResult">
         <result property="id" column="id"/>
         <result property="secondName" column="second_name"/>
         <result property="raceName" column="race_name"/>
@@ -31,7 +31,7 @@
         left join second t3 on t1.second = t3.id
     </sql>
 
-    <select id="selectRaceSecondList" parameterType="com.buis.vo.RaceSecondVo" resultMap="RaceSecondResult">
+    <select id="selectRaceSecondList" parameterType="com.buis.model.vo.RaceSecondVo" resultMap="RaceSecondResult">
         <include refid="selectRaceSecondVo"/>
         <where>
             t1.is_deleted = 0
@@ -47,12 +47,12 @@
         <include refid="selectRaceSecondVo"/>
         where t1.id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="selectRaceSecondByRace" resultType="com.buis.domain.RaceSecond">
+    <select id="selectRaceSecondByRace" resultType="com.buis.model.domain.RaceSecond">
         <include refid="selectRaceSecondVo"/>
         where t1.race = #{raceId} and t1.is_deleted = 0
     </select>
 
-    <insert id="insertRaceSecond" parameterType="com.buis.vo.RaceSecondVo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceSecond" parameterType="com.buis.model.vo.RaceSecondVo" useGeneratedKeys="true" keyProperty="id">
         insert into race_second
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="second != null">second,</if>
@@ -72,7 +72,7 @@
         </trim>
     </insert>
 
-    <update id="updateRaceSecond" parameterType="com.buis.vo.RaceSecondVo">
+    <update id="updateRaceSecond" parameterType="com.buis.model.vo.RaceSecondVo">
         update race_second
         <trim prefix="SET" suffixOverrides=",">
             <if test="second != null">second = #{second},</if>

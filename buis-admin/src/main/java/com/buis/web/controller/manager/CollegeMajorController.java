@@ -5,7 +5,7 @@ import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.enums.BusinessType;
 import com.buis.common.utils.poi.ExcelUtil;
-import com.buis.domain.CollegeMajor;
+import com.buis.model.domain.CollegeMajor;
 import com.buis.service.ICollegeMajorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -66,4 +66,40 @@ public class AliOssUtil {
 
         return stringBuilder.toString();
     }
+
+    /**
+     * 删除阿里云OSS上的指定文件
+     * @param objectName OSS文件路径（例如：user-avatars/123-1699999999999.png）
+     * @return true=删除成功；false=删除失败
+     */
+    public boolean delete(String objectName) {
+        // 1. 创建OSS客户端（复用上传时的配置，从AliOSSProperties获取参数）
+        OSS ossClient = new OSSClientBuilder().build(
+                aliOSSProperties.getEndpoint(),
+                aliOSSProperties.getAccessKeyId(),
+                aliOSSProperties.getAccessKeySecret()
+        );
+
+        try {
+            // 2. 执行删除操作（参数：bucketName + 要删除的文件路径）
+            ossClient.deleteObject(aliOSSProperties.getBucketName(), objectName);
+            log.info("OSS文件删除成功，路径：{}", objectName);
+            return true; // 删除成功返回true
+        } catch (OSSException oe) {
+            // 处理OSS服务端异常（如文件不存在、权限不足等）
+            log.error("OSS删除异常：文件路径={}, ErrorMessage={}, ErrorCode={}",
+                    objectName, oe.getErrorMessage(), oe.getErrorCode());
+            return false;
+        } catch (ClientException ce) {
+            // 处理客户端异常（如网络问题）
+            log.error("OSS客户端异常：文件路径={}, ErrorMessage={}",
+                    objectName, ce.getMessage());
+            return false;
+        } finally {
+            // 3. 无论成功失败，都要关闭客户端释放资源
+            if (ossClient != null) {
+                ossClient.shutdown();
+            }
+        }
+    }
 }

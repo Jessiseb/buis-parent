@@ -5,7 +5,7 @@ import com.buis.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.CollegeMajorMapper;
-import com.buis.domain.CollegeMajor;
+import com.buis.model.domain.CollegeMajor;
 import com.buis.service.ICollegeMajorService;
 
 /**

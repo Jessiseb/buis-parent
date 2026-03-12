@@ -1,7 +1,6 @@
 package com.buis.mapper;
 
-import com.buis.domain.Second;
-import com.buis.vo.RaceSecondVo;
+import com.buis.model.domain.Second;
 
 import java.util.List;
 
