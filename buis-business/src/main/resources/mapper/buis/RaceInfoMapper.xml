@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.RaceInfoMapper">
 
-    <resultMap type="com.buis.vo.RaceInfoVo" id="RaceInfoResult">
+    <resultMap type="com.buis.model.vo.RaceInfoVo" id="RaceInfoResult">
         <result property="id" column="id"/>
         <result property="parentTid" column="parent_tid"/>
         <result property="sonTid" column="son_tid"/>
@@ -49,7 +49,7 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="raceType" column="race_type"/>
-        <collection property="rewardList" ofType="com.buis.domain.Reward">
+        <collection property="rewardList" ofType="com.buis.model.domain.Reward">
             <id property="id" column="id"></id>
             <result property="race" column="race"></result>
             <result property="rRank" column="r_rank"></result>
@@ -59,8 +59,8 @@
         </collection>
     </resultMap>
 
-    <resultMap id="RaceInfoRewardResult" type="com.buis.vo.RaceInfoVo" extends="RaceInfoResult">
-        <collection property="rewardList" ofType="com.buis.domain.Reward" column="id" select="selectRewardList">
+    <resultMap id="RaceInfoRewardResult" type="com.buis.model.vo.RaceInfoVo" extends="RaceInfoResult">
+        <collection property="rewardList" ofType="com.buis.model.domain.Reward" column="id" select="selectRewardList">
             <id property="id" column="id"></id>
             <result property="race" column="race"></result>
             <result property="rRank" column="r_rank"></result>
@@ -70,7 +70,7 @@
         </collection>
     </resultMap>
 
-    <resultMap type="com.buis.domain.Reward" id="RewardResult">
+    <resultMap type="com.buis.model.domain.Reward" id="RewardResult">
         <result property="id" column="id"/>
         <result property="race" column="race"/>
         <result property="rRank" column="r_rank"/>
@@ -235,7 +235,7 @@
           and is_deleted = 0
         order by id
     </select>
-    <select id="selectRaceInfoByStatu" resultType="com.buis.domain.RaceInfo">
+    <select id="selectRaceInfoByStatu" resultType="com.buis.model.domain.RaceInfo">
         select id,
                race_start,
                race_end,
@@ -244,7 +244,7 @@
         where status = #{status}
           and is_deleted = 0
     </select>
-    <select id="selectRaceInfoByRaceIds" resultType="com.buis.domain.RaceInfo">
+    <select id="selectRaceInfoByRaceIds" resultType="com.buis.model.domain.RaceInfo">
         select id,
         parent_tid,
         name,
@@ -279,7 +279,7 @@
     </select>
 
 
-    <insert id="insertRaceInfo" parameterType="com.buis.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertRaceInfo" parameterType="com.buis.model.domain.RaceInfo" useGeneratedKeys="true" keyProperty="id">
         insert into race_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="parentTid != null">parent_tid,</if>
@@ -369,7 +369,7 @@
         </trim>
     </insert>
 
-    <update id="updateRaceInfo" parameterType="com.buis.domain.RaceInfo">
+    <update id="updateRaceInfo" parameterType="com.buis.model.domain.RaceInfo">
         update race_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="parentTid != null">parent_tid = #{parentTid},</if>
@@ -459,7 +459,7 @@
         </foreach>
     </insert>
 
-    <select id="getSecondClassCountByMonth" resultType="com.buis.vo.SecondClassCountVo">
+    <select id="getSecondClassCountByMonth" resultType="com.buis.model.vo.SecondClassCountVo">
         SELECT cm.name      AS college_name,
                COUNT(ri.id) AS count
         FROM race_info ri
@@ -476,7 +476,7 @@
         GROUP BY cm.name
     </select>
 
-    <select id="getSecondClassCountByYear" resultType="com.buis.vo.SecondClassCountVo">
+    <select id="getSecondClassCountByYear" resultType="com.buis.model.vo.SecondClassCountVo">
         SELECT cm.name      AS college_name,
                COUNT(ri.id) AS count
         FROM race_info ri
@@ -492,13 +492,13 @@
         GROUP BY cm.name
     </select>
 
-    <select id="selectRaceInfoAll" resultType="com.buis.vo.RaceInfoVo">
+    <select id="selectRaceInfoAll" resultType="com.buis.model.vo.RaceInfoVo">
         select id, create_time
         from race_info
         where is_deleted = 0
     </select>
 
-    <select id="getRaceInfoList" resultType="com.buis.vo.RaceInfoVo">
+    <select id="getRaceInfoList" resultType="com.buis.model.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
         <where>
             t1.is_deleted = 0 and t1.review_status in (3,4)
@@ -534,7 +534,7 @@
         </where>
 
          </select>
-    <select id="selectSecondActivities" resultType="com.buis.vo.RaceInfoVo">
+    <select id="selectSecondActivities" resultType="com.buis.model.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
         <where>
             t1.is_deleted = 0
@@ -557,7 +557,7 @@
     </select>
 
 
-    <select id="getStudentGradeCount" resultType="com.buis.dto.GradeStatistic">
+    <select id="getStudentGradeCount" resultType="com.buis.model.dto.GradeStatistic">
         WITH second_class_user_ids AS (SELECT DISTINCT tms.student AS user_id
                                        FROM team_info ti
                                                 JOIN
@@ -591,7 +591,7 @@
               WHERE parent_tid = 5) sub
         WHERE sub.create_id = #{userId}
     </select>
-    <select id="selectRaceInfoByName" resultType="com.buis.domain.RaceInfo">
+    <select id="selectRaceInfoByName" resultType="com.buis.model.domain.RaceInfo">
         select *
         from race_info
         where name = #{name}
@@ -688,7 +688,7 @@
         </where>
         ORDER BY t1.create_time ASC
     </select>
-    <select id="selectMyDeclare" resultType="com.buis.vo.RaceInfoVo">
+    <select id="selectMyDeclare" resultType="com.buis.model.vo.RaceInfoVo">
         select *
         from race_info t1
         where t1.is_deleted = 0
@@ -708,7 +708,7 @@
         where son_tid = #{sonTid}
         and is_deleted = 0
     </select>
-    <select id="selectSecondClassByRace" resultType="com.buis.domain.RaceInfo">
+    <select id="selectSecondClassByRace" resultType="com.buis.model.domain.RaceInfo">
         select *
         from race_info
         where id = #{raceId}
