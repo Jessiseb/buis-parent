@@ -200,5 +200,10 @@ public class TeamInfo extends BaseEntity {
     @ApiModelProperty("标识是否被删除，0表示未删除")
     private Integer isDeleted;
 
-
+    /**
+     * 标识是否被选择
+     * @param isChoosed
+     */
+    public void setIsChoosed(Integer isChoosed) {
+    }
 }
