@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.AwardRecordsMapper">
     
-    <resultMap type="com.buis.domain.AwardRecords" id="AwardRecordsResult">
+    <resultMap type="com.buis.model.domain.AwardRecords" id="AwardRecordsResult">
         <result property="id"    column="id"    />
         <result property="awardUrl"    column="award_url"    />
         <result property="members"    column="members"    />
@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, award_url,members, project, competition_name, teacher, award_date, award_level, school, status, create_time, update_time, is_deleted from award_records
     </sql>
 
-    <select id="selectAwardRecordsList" parameterType="com.buis.domain.AwardRecords" resultMap="AwardRecordsResult">
+    <select id="selectAwardRecordsList" parameterType="com.buis.model.domain.AwardRecords" resultMap="AwardRecordsResult">
         <include refid="selectAwardRecordsVo"/>
         <where>
             is_deleted = 0
@@ -44,12 +44,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}  and is_deleted = 0
     </select>
 
-    <select id="getAwardByUserId" resultType="com.buis.domain.AwardRecords" parameterType="java.lang.Long">
+    <select id="getAwardByUserId" resultType="com.buis.model.domain.AwardRecords" parameterType="java.lang.Long">
         select id,award_url,status,create_time from award_records
         where user = #{id} and is_deleted = 0
     </select>
 
-    <insert id="insertAwardRecords" parameterType="com.buis.domain.AwardRecords">
+    <insert id="insertAwardRecords" parameterType="com.buis.model.domain.AwardRecords">
         insert into award_records
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -85,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateAwardRecords" parameterType="com.buis.domain.AwardRecords">
+    <update id="updateAwardRecords" parameterType="com.buis.model.domain.AwardRecords">
         update award_records
         <trim prefix="SET" suffixOverrides=",">
             <if test="members != null and members != ''">members = #{members},</if>

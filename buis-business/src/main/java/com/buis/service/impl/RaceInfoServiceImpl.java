@@ -12,18 +12,18 @@ import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.PageUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
-import com.buis.domain.*;
-import com.buis.dto.GradeStatistic;
-import com.buis.dto.StudentExportToDiDto;
-import com.buis.dto.TeacherExportToDaDto;
-import com.buis.dto.TeacherExportToDiDto;
-import com.buis.enums.RaceLabel;
-import com.buis.enums.RaceStatus;
-import com.buis.enums.ReviewStatus;
+import com.buis.model.domain.*;
+import com.buis.model.dto.GradeStatistic;
+import com.buis.model.dto.StudentExportToDiDto;
+import com.buis.model.dto.TeacherExportToDaDto;
+import com.buis.model.dto.TeacherExportToDiDto;
+import com.buis.model.enums.RaceLabel;
+import com.buis.model.enums.RaceStatus;
+import com.buis.model.enums.ReviewStatus;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
-import com.buis.vo.*;
+import com.buis.model.vo.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -956,7 +956,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo) {
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectSecondActivities(raceInfo);
+        //获取登录用户id
+        Long loginUserId=SecurityUtils.getFrontLoginUserId();
+
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectSecondActivities(raceInfo,loginUserId);
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             //设置比赛详情
             RaceDetail raceDetail = new RaceDetail();

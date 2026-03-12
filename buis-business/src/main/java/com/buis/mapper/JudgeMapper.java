@@ -3,9 +3,8 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.CollegeMajor;
-import com.buis.domain.Judge;
-import com.buis.vo.JudgeVo;
+import com.buis.model.domain.Judge;
+import com.buis.model.vo.JudgeVo;
 
 /**
  * 评委管理Mapper接口

@@ -3,8 +3,7 @@ package com.buis.mapper;
 import java.util.List;
 
 
-import com.buis.domain.RaceInfo;
-import com.buis.domain.RaceType;
+import com.buis.model.domain.RaceType;
 
 /**
  * 比赛类型Mapper接口

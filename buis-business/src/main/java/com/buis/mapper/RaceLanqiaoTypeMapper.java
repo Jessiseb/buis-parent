@@ -1,7 +1,7 @@
 package com.buis.mapper;
 
 import java.util.List;
-import com.buis.domain.RaceLanqiaoType;
+import com.buis.model.domain.RaceLanqiaoType;
 
 /**
  * 蓝桥杯赛道类型Mapper接口

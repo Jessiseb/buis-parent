@@ -1,29 +1,22 @@
 package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
-import com.buis.domain.RaceInfo;
-import com.buis.domain.TeamInfo;
-import com.buis.domain.TeamMemberStudent;
-import com.buis.dto.GradeStatistic;
+import com.buis.model.dto.GradeStatistic;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.ITeamMemberStudentService;
-import com.buis.service.IUserInfoService;
 import com.buis.system.service.ISysDictDataService;
 import com.buis.system.service.ISysDictTypeService;
-import com.buis.vo.*;
+import com.buis.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Api(tags = "统计Api")
 @RestController

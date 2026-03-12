@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.buis.mapper.TeamMemberStudentMapper">
 
-    <resultMap type="com.buis.vo.TeamMemberStudentVo" id="TeamMemberStudentResult">
+    <resultMap type="com.buis.model.vo.TeamMemberStudentVo" id="TeamMemberStudentResult">
         <result property="id" column="id"/>
         <result property="race" column="race"/>
         <result property="raceName" column="race_name"/>
@@ -98,14 +98,14 @@
             <if test="userId != null">and student = #{userId}</if>
         </where>
     </select>
-    <select id="selectTeamMemberStudentByTeamId" resultType="com.buis.domain.TeamMemberStudent">
+    <select id="selectTeamMemberStudentByTeamId" resultType="com.buis.model.domain.TeamMemberStudent">
         select *
         from team_member_student
         where team = #{team}
           and is_deleted = 0
           and is_choosed = 1
     </select>
-    <select id="selectTeamMemberStudentByTeamAndStudent" resultType="com.buis.domain.TeamMemberStudent">
+    <select id="selectTeamMemberStudentByTeamAndStudent" resultType="com.buis.model.domain.TeamMemberStudent">
         select *
         from team_member_student
 
@@ -127,14 +127,14 @@
             <if test="userId != null">and student = #{userId}</if>
         </where>
     </select>
-    <select id="selectTeamMemberStudentByUserId" resultType="com.buis.domain.TeamMemberStudent">
+    <select id="selectTeamMemberStudentByUserId" resultType="com.buis.model.domain.TeamMemberStudent">
         select *
         from team_member_student
         where student = #{userId}
           and is_deleted = 0
           and is_choosed = 1
     </select>
-    <select id="selectTeamMemberStudentListVo" resultType="com.buis.vo.TeamMemberStudentVo">
+    <select id="selectTeamMemberStudentListVo" resultType="com.buis.model.vo.TeamMemberStudentVo">
             <include refid="selectTeamMemberStudentVo"/>
         left join user_info t4 on t1.student = t4.id
             <where>
@@ -164,7 +164,7 @@
 
 
 
-    <insert id="insertTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent" useGeneratedKeys="true"
+    <insert id="insertTeamMemberStudent" parameterType="com.buis.model.domain.TeamMemberStudent" useGeneratedKeys="true"
             keyProperty="id">
         insert into team_member_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -218,7 +218,7 @@
         </foreach>
     </insert>
 
-    <update id="updateTeamMemberStudent" parameterType="com.buis.domain.TeamMemberStudent">
+    <update id="updateTeamMemberStudent" parameterType="com.buis.model.domain.TeamMemberStudent">
         update team_member_student
         <trim prefix="SET" suffixOverrides=",">
             <if test="race != null">race = #{race},</if>

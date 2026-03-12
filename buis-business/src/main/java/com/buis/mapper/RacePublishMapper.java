@@ -1,7 +1,7 @@
 package com.buis.mapper;
 
 import java.util.List;
-import com.buis.domain.RacePublish;
+import com.buis.model.domain.RacePublish;
 
 /**
  * 第二课堂活动发布表Mapper接口

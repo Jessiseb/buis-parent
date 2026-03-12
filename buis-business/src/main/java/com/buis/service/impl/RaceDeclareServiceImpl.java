@@ -2,11 +2,10 @@ package com.buis.service.impl;
 
 import java.util.List;
 import com.buis.common.utils.DateUtils;
-import com.buis.enums.ReviewStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.buis.model.enums.ReviewStatus;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.RaceDeclareMapper;
-import com.buis.domain.RaceDeclare;
+import com.buis.model.domain.RaceDeclare;
 import com.buis.service.IRaceDeclareService;
 
 import javax.annotation.Resource;
