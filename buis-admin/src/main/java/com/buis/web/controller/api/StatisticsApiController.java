@@ -183,6 +183,8 @@ public class StatisticsApiController {
      * @param teacherId
      * @return
      */
+    @ApiOperation("获取所带学生的竞赛参与信息")
+    @GetMapping("/getStudentCompetitionStatus")
     public R<List<StudentCompetitionStatus>> getStudentCompetitionStatus(@RequestParam(value = "teacherId") Long teacherId) {
         List<StudentCompetitionStatus> result = statisticsService.getStudentCompetitionStatus(teacherId);
 
