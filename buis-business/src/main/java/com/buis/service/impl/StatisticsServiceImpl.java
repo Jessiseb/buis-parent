@@ -9,10 +9,12 @@ import com.buis.model.vo.TeamInfoVo;
 import com.buis.service.IStatisticsService;
 import com.buis.service.ITeamMemberTeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class StatisticsServiceImpl implements IStatisticsService {
     @Autowired
     private ITeamMemberTeacherService teamMemberTeacherService;
