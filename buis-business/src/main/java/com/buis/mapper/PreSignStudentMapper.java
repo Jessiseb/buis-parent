@@ -1,11 +1,15 @@
 package com.buis.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 
 import com.buis.model.domain.PreSignStudent;
 import com.buis.model.vo.PreSignStudentVo;
+import com.buis.model.vo.TrendResultVo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 学生预报名Mapper接口
@@ -77,5 +81,11 @@ public interface PreSignStudentMapper
     List<PreSignStudentVo> selectPreSignStudentByRace(@Param("race") Long race);
 
     List<PreSignStudentVo> selectPreSignStudentByUserId(@Param("userId") Long userId);
+
+    /**
+     * 查询最近12个月的报名趋势数据
+     */
+    @Select("SELECT DATE_FORMAT(create_time, '%Y-%m') as month, COUNT(*) as count FROM pre_sign_student WHERE is_deleted = 0 GROUP BY DATE_FORMAT(create_time, '%Y-%m') ORDER BY month DESC LIMIT 12")
+    List<TrendResultVo> selectMonthlyTrend();
 
 }

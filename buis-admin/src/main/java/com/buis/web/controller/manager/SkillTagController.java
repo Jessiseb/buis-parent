@@ -104,4 +104,15 @@ public class SkillTagController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(skillTagService.deleteSkillTagByIds(ids));
     }
+
+
+    /*
+    * 获取学生掌握的技能
+    * */
+    @ApiOperation("获取学生掌握的技能")
+    @PostMapping("/getSkillTagByAllUser")
+    public AjaxResult getSkillTagByAllUser() {
+        return success(skillTagService.getSkillTagByAllUser());
+    }
+
 }

@@ -89,5 +89,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by tag_name
     </select>
 
+    <!-- 获取热门技能统计（前7条） -->
+    <select id="selectTop7StudentSkillStats" resultType="com.buis.model.vo.StudentSkillStatVo">
+        SELECT
+            st.tag_name as skillName,
+            COUNT(DISTINCT us.user_id) as studentCount
+        FROM skill_tag st
+                 LEFT JOIN user_skill us ON st.id = us.skill_tag_id
+
+        WHERE st.is_active = 1
+        GROUP BY st.id, st.tag_name
+        ORDER BY
+            COUNT(DISTINCT us.user_id) DESC,
+            st.create_time DESC
+            LIMIT 7
+    </select>
+
 
 </mapper>

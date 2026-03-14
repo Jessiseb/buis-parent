@@ -7,6 +7,7 @@ import com.buis.model.domain.RaceInfo;
 import com.buis.model.domain.Reward;
 import com.buis.model.dto.GradeStatistic;
 import com.buis.model.vo.RaceInfoVo;
+import com.buis.model.vo.RaceNumsVo;
 import com.buis.model.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -137,4 +138,17 @@ public interface RaceInfoMapper {
     List<RaceInfoVo> selectMyDeclare(Long loginUserId);
 
     void deleteRaceDeclareUrl(Long id);
+
+    /**
+     * 查询比赛数量
+     * @return 比赛数量
+     */
+    long selectRaceInfoCount();
+
+    /**
+     * 查询热门活动比赛名称 - 按报名人数排序
+     * 联合查询 PreSignStudent 表统计报名人数
+     * @return 热门活动比赛名称列表
+     */
+    List<RaceNumsVo> selectHotRaceWithSignCount();
 }
