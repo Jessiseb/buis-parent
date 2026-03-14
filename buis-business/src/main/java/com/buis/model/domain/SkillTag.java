@@ -2,6 +2,7 @@ package com.buis.model.domain;
 
 import com.buis.common.annotation.Excel;
 import com.buis.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,6 +48,12 @@ public class SkillTag extends BaseEntity {
      */
     @Excel(name = "是否启用")
     private Integer isActive;
+
+    /**
+     * 标识是否被删除，0表示未删除
+     */
+    @ApiModelProperty("标识是否被删除，0表示未删除")
+    private Integer isDeleted;
 
 
 }

@@ -82,6 +82,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Resource
     private SysRoleMapper sysRoleMapper;
 
+
     /**
      * 查询比赛信息
      *
@@ -396,6 +397,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 删除比赛申报材料
+     *
      * @param id
      */
     @Transactional
@@ -957,9 +959,9 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     @Override
     public List<RaceInfoVo> selectSecondActivities(RaceInfo raceInfo) {
         //获取登录用户id
-        Long loginUserId=SecurityUtils.getFrontLoginUserId();
+        Long loginUserId = SecurityUtils.getFrontLoginUserId();
 
-        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectSecondActivities(raceInfo,loginUserId);
+        List<RaceInfoVo> raceInfoVos = raceInfoMapper.selectSecondActivities(raceInfo, loginUserId);
         for (RaceInfoVo raceInfoVo : raceInfoVos) {
             //设置比赛详情
             RaceDetail raceDetail = new RaceDetail();
@@ -1116,7 +1118,7 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
                 if (MyRaceInfoVos != null && !MyRaceInfoVos.isEmpty()) {
                     raceInfoVos = MyRaceInfoVos.subList(0, Math.min(pageSize, MyRaceInfoVos.size()));
                 }
-            //如果pageNum1大于0，则返回用户报名比赛信息+其他比赛信息
+                //如果pageNum1大于0，则返回用户报名比赛信息+其他比赛信息
             } else if (MyRaceInfoVos != null) {
                 int num = (size + pageSize - size % 10) / 10 + 1;
                 if (pageNum >= num) {
@@ -1450,13 +1452,92 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
     /**
      * 分页查询我申报的第二课堂活动
+     *
      * @param LoginUserId 用户id
      * @return 返回结果
      */
     @Override
     public List<RaceInfoVo> selectMyDeclare(Long LoginUserId) {
-       return raceInfoMapper.selectMyDeclare(LoginUserId);
+        return raceInfoMapper.selectMyDeclare(LoginUserId);
     }
+
+
+    /**
+     * 生成随机过期时间（6-8天）
+     */
+    private int generateRandomExpireSeconds() {
+        Random random = new Random();
+        // 6天的基础时间（6 * 24 * 60 * 60秒 = 518400秒）
+        int baseSeconds = 6 * 24 * 60 * 60;
+        // ±1天的随机范围（86400秒）
+        int randomRange = 24 * 60 * 60;
+        // 生成6-8天之间的随机秒数
+        return baseSeconds + random.nextInt(2 * randomRange + 1);
+    }
+
+    /**
+     * 查询总比赛数量 - 带缓存，随机过期时间6-8天
+     */
+    @Override
+    public long selectRaceInfoCount() {
+        final String CACHE_KEY = "race:total:count";
+        // 1. 先尝试从缓存获取
+        Long count = redisCache.getCacheObject(CACHE_KEY);
+        if (count != null) {
+            return count;
+        }
+        // 2. 缓存不存在，查询数据库
+        count = raceInfoMapper.selectRaceInfoCount();
+        // 3. 设置缓存，随机过期时间6-8天
+        int expireSeconds = generateRandomExpireSeconds();
+        redisCache.setCacheObject(CACHE_KEY, count, expireSeconds, TimeUnit.SECONDS);
+        return count;
+    }
+
+
+    /**
+     * 获取热门活动分布 - 基于报名人数
+     */
+    @Override
+    public List<RaceNumsVo> selectHotRaceWithSignCount() {
+        final String CACHE_KEY = "race:hot:name";
+
+        // 1. 先尝试从缓存获取
+        List<RaceNumsVo> cachedData = redisCache.getCacheObject(CACHE_KEY);
+        if (cachedData != null) {
+            return cachedData;
+        }
+
+        // 2. 缓存不存在，查询数据库
+        List<RaceNumsVo> data = raceInfoMapper.selectHotRaceWithSignCount();
+
+        // 3. 设置缓存，随机过期时间6-8天
+        int expireSeconds = generateRandomExpireSeconds();
+        redisCache.setCacheObject(CACHE_KEY, data, expireSeconds, TimeUnit.SECONDS);
+
+        return data;
+    }
+
+    @Override
+    public List<RaceStatCardVo> selectCard() {
+        List<RaceStatCardVo> cardList = new ArrayList<>();
+
+        // 模拟数据
+        // 1. 总比赛数
+        cardList.add(new RaceStatCardVo("总比赛数", "989个", "+5.2%"));
+
+        // 2. 竞赛总参与人次
+        cardList.add(new RaceStatCardVo("竞赛总参与人次", "3,655人次", "+8.3%"));
+
+        // 3. 竞赛获奖率
+        cardList.add(new RaceStatCardVo("竞赛获奖率", "23.7%", "+1.5%"));
+
+        // 4. 新增竞赛项目数
+        cardList.add(new RaceStatCardVo("新增竞赛项目数", "8项", "+20.0%"));
+
+        return cardList;
+    }
+
 
 }
 

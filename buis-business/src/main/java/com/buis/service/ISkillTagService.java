@@ -1,6 +1,7 @@
 package com.buis.service;
 
 import com.buis.model.domain.SkillTag;
+import com.buis.model.vo.StudentSkillStatVo;
 
 import java.util.List;
 
@@ -60,4 +61,6 @@ public interface ISkillTagService
      * @return 结果
      */
     public int deleteSkillTagById(Long id);
+
+    List<StudentSkillStatVo> getSkillTagByAllUser();
 }

@@ -1,6 +1,8 @@
 package com.buis.service;
 
 import java.util.List;
+
+import com.buis.common.core.domain.AjaxResult;
 import com.buis.model.domain.PreSignStudent;
 import com.buis.model.vo.PreSignStudentVo;
 
@@ -73,4 +75,9 @@ public interface IPreSignStudentService
     int studentSign(Long id, Long userId,PreSignStudent preSignStudent);
 
     PreSignStudent getPreStudentsByRaceId(Long raceId);
+
+    /**
+     * 年度参与趋势分析
+     */
+    AjaxResult trend();
 }
