@@ -20,6 +20,7 @@ import com.buis.model.dto.TeacherExportToDiDto;
 import com.buis.model.vo.RaceInfoVo;
 import com.buis.model.vo.RaceNumsVo;
 import com.buis.model.vo.RaceStatCardVo;
+import com.buis.model.vo.RaceTypeCountVo;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
@@ -240,21 +241,9 @@ RaceInfoController extends BaseController {
         util.exportExcel(response, list, "导出学生参与的第二课堂比赛数量");
     }
 
-    /*
-     * 查询总比赛数量
-     * */
-    @ApiOperation("查询总比赛数量")
-    @PreAuthorize("@ss.hasPermi('buis:raceInfo:count')")
-    @PostMapping("/count")
-    public AjaxResult count() {
-        //is_delete = 0才返回
-        // 查询数量
-        long count = raceInfoService.selectRaceInfoCount();
-        return AjaxResult.success(count);
-    }
 
     /*
-    * 热门赛事报名排行
+    * 热门赛事报名排行 可视化报表
     * */
     @ApiOperation("热门赛事报名排行")
     @PostMapping("/getHotRace")
@@ -275,6 +264,20 @@ RaceInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('buis:raceInfo:getCard')")
     public AjaxResult getCard() {
         List<RaceStatCardVo> list = raceInfoService.selectCard();
+        return AjaxResult.success(list);
+    }
+
+
+    /**
+     * 查询比赛类型分类数量分布图
+     */
+    @ApiOperation("查询比赛类型分类数量")  // 接口说明，和示例风格一致
+    @PostMapping("/getRaceTypeCount")     // 自定义接口路径，建议语义化
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:getRaceTypeCount')")  // 权限控制，和示例格式一致
+    public AjaxResult getRaceTypeCount() {
+        // 调用Service获取比赛类型统计数据
+        List<RaceTypeCountVo> list = raceInfoService.getRaceTypeCount();
+        // 按示例格式返回AjaxResult.success
         return AjaxResult.success(list);
     }
 

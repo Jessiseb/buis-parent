@@ -111,6 +111,7 @@ public class SkillTagController extends BaseController {
     * */
     @ApiOperation("获取学生掌握的技能")
     @PostMapping("/getSkillTagByAllUser")
+    @PreAuthorize("@ss.hasPermi('buis:skillTag:getSkillTagByAllUser')")
     public AjaxResult getSkillTagByAllUser() {
         return success(skillTagService.getSkillTagByAllUser());
     }

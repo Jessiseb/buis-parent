@@ -745,4 +745,25 @@
             ri.create_time DESC
             LIMIT 10
     </select>
+
+    <!-- 结果映射：数据库字段 -> RaceTypeCountVo 属性 -->
+    <resultMap id="RaceTypeCountMap" type="com.buis.model.vo.RaceTypeCountVo">
+        <result column="race_type" property="raceType"/>
+        <result column="count" property="count"/>
+    </resultMap>
+
+    <!-- 按比赛类型分组统计，直接过滤未删除数据（is_deleted=0） -->
+    <select id="countByRaceType" resultMap="RaceTypeCountMap">
+        SELECT
+        race_type,
+        COUNT(id) AS count
+        FROM
+        race_info  <!-- 替换为你的实际数据库表名 -->
+        WHERE
+        is_deleted = 0  <!-- 直接写死过滤条件，只统计未删除数据 -->
+        GROUP BY
+        race_type
+        ORDER BY
+        race_type ASC;
+    </select>
 </mapper>

@@ -17,6 +17,7 @@ import org.apache.ibatis.annotations.Select;
  * @author buis
  * @date 2024-10-11
  */
+@Mapper
 public interface PreSignStudentMapper
 {
     /**
@@ -87,5 +88,12 @@ public interface PreSignStudentMapper
      */
     @Select("SELECT DATE_FORMAT(create_time, '%Y-%m') as month, COUNT(*) as count FROM pre_sign_student WHERE is_deleted = 0 GROUP BY DATE_FORMAT(create_time, '%Y-%m') ORDER BY month DESC LIMIT 12")
     List<TrendResultVo> selectMonthlyTrend();
+
+
+    /**
+     * 统计总参赛人数（从报名表面）
+     */
+    @Select("SELECT COUNT(*) FROM pre_sign_student WHERE is_deleted = 0")
+    long countTotalParticipant();
 
 }
