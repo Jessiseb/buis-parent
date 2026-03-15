@@ -178,4 +178,10 @@ public interface IRaceInfoService
 
     List<RaceStatCardVo> selectCard();
 
+    /**
+     * 按比赛类型分组统计数量（XML 中直接过滤未删除数据）
+     * @return 各类型比赛的统计列表
+     */
+    List<RaceTypeCountVo> getRaceTypeCount();
+
 }

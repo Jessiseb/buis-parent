@@ -8,6 +8,7 @@ import com.buis.model.domain.Reward;
 import com.buis.model.dto.GradeStatistic;
 import com.buis.model.vo.RaceInfoVo;
 import com.buis.model.vo.RaceNumsVo;
+import com.buis.model.vo.RaceTypeCountVo;
 import com.buis.model.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -151,4 +152,10 @@ public interface RaceInfoMapper {
      * @return 热门活动比赛名称列表
      */
     List<RaceNumsVo> selectHotRaceWithSignCount();
+
+    /**
+     * 按比赛类型分组统计数量（包含所有数据，不过滤逻辑删除）
+     * @return 各类型比赛的统计列表
+     */
+    List<RaceTypeCountVo> countByRaceType();
 }

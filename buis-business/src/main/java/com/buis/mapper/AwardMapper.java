@@ -3,7 +3,9 @@ package com.buis.mapper;
 import java.util.List;
 import com.buis.model.domain.Award;
 import com.buis.model.vo.AwardVo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 奖状信息Mapper接口
@@ -11,6 +13,7 @@ import org.apache.ibatis.annotations.Param;
  * @author zjx
  * @date 2025-03-16
  */
+@Mapper
 public interface AwardMapper 
 {
 
@@ -69,4 +72,12 @@ public interface AwardMapper
 
 
     AwardVo selectAwardById(Long id);
+
+    /**
+     * 统计总获奖人数（去重）
+     */
+    @Select("SELECT COUNT(DISTINCT name) FROM award WHERE is_deleted = 0")
+    long countTotalAwardUser();
+
+
 }

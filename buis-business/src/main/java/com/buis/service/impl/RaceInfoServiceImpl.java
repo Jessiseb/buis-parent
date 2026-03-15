@@ -12,6 +12,8 @@ import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.PageUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
+import com.buis.mapper.AwardMapper;
+import com.buis.mapper.PreSignStudentMapper;
 import com.buis.model.domain.*;
 import com.buis.model.dto.GradeStatistic;
 import com.buis.model.dto.StudentExportToDiDto;
@@ -37,6 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -81,7 +85,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private IRaceInfoService raceInfoService;
     @Resource
     private SysRoleMapper sysRoleMapper;
-
+    @Autowired
+    private PreSignStudentMapper preSignStudentMapper;
+    @Autowired
+    private AwardMapper awardMapper;
 
     /**
      * 查询比赛信息
@@ -1522,20 +1529,107 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     public List<RaceStatCardVo> selectCard() {
         List<RaceStatCardVo> cardList = new ArrayList<>();
 
-        // 模拟数据
-        // 1. 总比赛数
-        cardList.add(new RaceStatCardVo("总比赛数", "989个", "+5.2%"));
+        // 1. 总比赛数（替换为真实数据，从数据库+缓存获取）
+        long totalRaceCount = selectRaceInfoCount(); // 调用真实统计方法
+        // 环比增长率暂时保留模拟值（如需真实可补充计算逻辑）
+        cardList.add(new RaceStatCardVo("总比赛数", totalRaceCount + "个", "+5.2%"));
 
         // 2. 竞赛总参与人次
-        cardList.add(new RaceStatCardVo("竞赛总参与人次", "3,655人次", "+8.3%"));
+        // 2. 竞赛总参与人次（替换为 Redis 真实数据）
+        List<TrendResultVo> trendList = getTrendDataFromRedis();
+        // 计算近12个月总报名人次
+        long totalParticipant = trendList.stream().mapToLong(TrendResultVo::getCount).sum();
+        // 计算环比增长率（最新月 vs 上月）
+        String growthRate = calculateGrowthRate(
+                trendList.size() > 0 ? Math.toIntExact(trendList.get(0).getCount()) : 0,
+                trendList.size() > 1 ? Math.toIntExact(trendList.get(1).getCount()) : 0
+        );
+        cardList.add(new RaceStatCardVo("竞赛总参与人次", totalParticipant + "人次", growthRate));
 
-        // 3. 竞赛获奖率
-        cardList.add(new RaceStatCardVo("竞赛获奖率", "23.7%", "+1.5%"));
+        // 3. 竞赛获奖率（真实数值 ）
+        String realAwardRate = calculateAwardRate();
+        cardList.add(new RaceStatCardVo("竞赛获奖率", realAwardRate, "+1.5%"));
+
 
         // 4. 新增竞赛项目数
         cardList.add(new RaceStatCardVo("新增竞赛项目数", "8项", "+20.0%"));
 
         return cardList;
+    }
+
+
+    /**
+     * 从 Redis 获取趋势数据（缓存未命中则查库并回填）
+     */
+    @SuppressWarnings("unchecked")
+    private List<TrendResultVo> getTrendDataFromRedis() {
+        // 1. 先查 Redis 缓存
+        Object cachedData = redisTemplate.opsForValue().get("trend:data");
+        if (cachedData != null) {
+            return (List<TrendResultVo>) cachedData;
+        }
+
+        // 2. 缓存未命中，查询数据库
+        List<TrendResultVo> dbData = preSignStudentMapper.selectMonthlyTrend();
+
+        // 3. 回填 Redis 缓存（移除过期时间参数，缓存永久有效）
+        redisTemplate.opsForValue().set("trend:data", dbData);
+
+        return dbData;
+    }
+
+    /**
+     * 计算环比增长率（保留1位小数，带正负号）
+     */
+    private String calculateGrowthRate(Integer current, Integer previous) {
+        if (current == 0 || previous == 0) {
+            return current == 0 ? "0.0%" : "+100.0%";
+        }
+
+        BigDecimal growth = new BigDecimal(current - previous)
+                .divide(new BigDecimal(previous), 3, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal(100));
+
+        String rate = growth.setScale(1, RoundingMode.HALF_UP).toString();
+        return (growth.compareTo(BigDecimal.ZERO) >= 0 ? "+" : "") + rate + "%";
+    }
+
+
+    /**
+     * 计算竞赛获奖率（真实数值，带永久缓存）
+     */
+    private String calculateAwardRate() {
+        final String CACHE_KEY = "race:award:rate";
+        String rate = redisCache.getCacheObject(CACHE_KEY);
+        if (rate != null) {
+            return rate;
+        }
+
+        // 获奖人数 → AwardMapper
+        long totalAwardUser = awardMapper.countTotalAwardUser();
+        // 参赛人数 → PreSignStudentMapper（修正后）
+        long totalParticipant = preSignStudentMapper.countTotalParticipant();
+
+        BigDecimal awardRate = BigDecimal.ZERO;
+        if (totalParticipant > 0) {
+            awardRate = new BigDecimal(totalAwardUser)
+                    .divide(new BigDecimal(totalParticipant), 3, RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal(100))
+                    .setScale(1, RoundingMode.HALF_UP);
+        }
+        rate = awardRate + "%";
+        redisCache.setCacheObject(CACHE_KEY, rate);
+        return rate;
+    }
+
+    /**
+     * 获取所有未删除比赛的类型数量统计
+     * @return 各类型统计列表
+     */
+    @Override
+    public List<RaceTypeCountVo> getRaceTypeCount() {
+        // 直接调用，无需传参，XML 已固定过滤条件
+        return raceInfoMapper.countByRaceType();
     }
 
 
