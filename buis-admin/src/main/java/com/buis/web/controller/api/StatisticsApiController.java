@@ -204,4 +204,15 @@ public class StatisticsApiController {
 
         return R.ok(teamSkillStatistics);
     }
+
+    /**
+     * 统计总活动数（无筛选条件）
+     * @return
+     */
+    @ApiOperation("统计总活动数")
+    @GetMapping("/getActivityCount")
+    public R<Integer> getActivityCount() {
+        int count = raceInfoService.getActivityCount();
+        return R.ok(count);
+    }
 }
