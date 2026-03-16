@@ -144,4 +144,20 @@ public interface UserSkillMapper {
      * @param userId 用户ID
      */
     List<UserSkillCategoryCount> countUserSkillCategory(@Param("userId") Long userId);
+
+    /**
+     * 根据技能标签ID列表查询用户
+     *
+     * @param skillTagIds 技能标签ID列表
+     * @return 用户技能列表
+     */
+    List<UserSkill> selectUsersBySkillTags(@Param("skillTagIds") List<Long> skillTagIds);
+
+    /**
+     * 查询用户技能及其得分
+     *
+     * @param userId 用户ID
+     * @return 用户技能列表
+     */
+    List<UserSkillVo> selectUserSkillsWithScore(Long userId);
 }
