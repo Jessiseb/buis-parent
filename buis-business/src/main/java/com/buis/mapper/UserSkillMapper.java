@@ -1,6 +1,7 @@
 package com.buis.mapper;
 
 import com.buis.model.domain.UserSkill;
+import com.buis.model.domain.UserSkillCategoryCount;
 import com.buis.model.vo.UserSkillVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -137,4 +138,10 @@ public interface UserSkillMapper {
      * @return 用户技能列表
      */
     List<UserSkillVo> selectUserSkillsByUserIdAndCategory(@Param("userId") Long userId, @Param("category") String category);
+
+    /**
+     * 根据用户ID统计每个技能分类拥有的数量
+     * @param userId 用户ID
+     */
+    List<UserSkillCategoryCount> countUserSkillCategory(@Param("userId") Long userId);
 }

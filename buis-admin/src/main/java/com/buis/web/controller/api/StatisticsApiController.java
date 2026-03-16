@@ -26,6 +26,8 @@ public class StatisticsApiController {
     private ITeamMemberStudentService teamMemberStudentService;
     @Autowired
     private IStatisticsService statisticsService;
+    @Autowired
+    private ITeamSkillService teamSkillService;
 
 
     /**
@@ -191,4 +193,15 @@ public class StatisticsApiController {
         return R.ok(result);
     }
 
+    /**
+     * 统计教师所带的团队技能数量
+     * @return
+     */
+    @ApiOperation("根据团队Id查询技能数量")
+    @GetMapping("/statisticsTeamSkill")
+    public R<TeamSkillStatisticsVO> statisticsTeamSkill(@RequestParam(value = "teamId") Long teamId) {
+        TeamSkillStatisticsVO teamSkillStatistics = teamSkillService.getTeamSkillStatistics(teamId);
+
+        return R.ok(teamSkillStatistics);
+    }
 }
