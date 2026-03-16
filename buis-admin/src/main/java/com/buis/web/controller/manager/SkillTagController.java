@@ -116,4 +116,16 @@ public class SkillTagController extends BaseController {
         return success(skillTagService.getSkillTagByAllUser());
     }
 
+    /**
+     * 获取团队技能缺口
+     */
+    @ApiOperation("获取团队技能缺口")
+    @PostMapping("/getSkillDemandByAllTeam")
+    @PreAuthorize("@ss.hasPermi('buis:skillTag:getSkillDemandByAllTeam')")
+    public AjaxResult getSkillDemandByAllTeam() {
+        return AjaxResult.success(skillTagService.getSkillDemandStatistics());
+    }
+
+
+
 }

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import com.buis.common.core.redis.RedisCache;
 import com.buis.common.utils.DateUtils;
 import com.buis.model.domain.SkillTag;
+import com.buis.model.vo.SkillDemandStatVo;
 import com.buis.model.vo.StudentSkillStatVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,7 +133,7 @@ public class SkillTagServiceImpl implements ISkillTagService
         }
 
         // 2. 缓存不存在，查询数据库
-        List<StudentSkillStatVo> data = skillTagMapper.selectTop7StudentSkillStats();
+        List<StudentSkillStatVo> data = skillTagMapper.selectTop8StudentSkillStats();
 
         // 3. 如果数据库中数据为空，返回空列表
         if (data == null) {
@@ -145,5 +146,27 @@ public class SkillTagServiceImpl implements ISkillTagService
 
         return data;
     }
+
+
+    @Override
+    public List<SkillDemandStatVo> getSkillDemandStatistics() {
+        final String CACHE_KEY = "skill:demand:stats:all";
+        // 1. 先尝试从缓存获取
+        List<SkillDemandStatVo> cachedData = redisCache.getCacheObject(CACHE_KEY);
+        if (cachedData != null) {
+            return cachedData;
+        }
+        // 2. 缓存不存在，查询数据库
+        List<SkillDemandStatVo> data = skillTagMapper.countSkillDemandByTeams();
+        // 3. 如果数据库中数据为空，返回空列表
+        if (data == null) {
+            data = new ArrayList<>();
+        }
+        // 4. 设置缓存，不设置过期时间
+        redisCache.setCacheObject(CACHE_KEY, data);
+        return data;
+    }
+
+
 }
 

@@ -1628,8 +1628,23 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
      */
     @Override
     public List<RaceTypeCountVo> getRaceTypeCount() {
-        // 直接调用，无需传参，XML 已固定过滤条件
-        return raceInfoMapper.countByRaceType();
+        // 定义缓存键，遵循业务语义命名规范
+        final String CACHE_KEY = "race:type:count";
+
+        // 1. 先尝试从缓存获取数据
+        List<RaceTypeCountVo> cachedData = redisCache.getCacheObject(CACHE_KEY);
+        if (cachedData != null) {
+            return cachedData;
+        }
+
+        // 2. 缓存未命中，查询数据库（XML已固定过滤未删除条件）
+        List<RaceTypeCountVo> data = raceInfoMapper.countByRaceType();
+
+        // 3. 设置缓存，使用随机过期时间（避免缓存雪崩）
+        int expireSeconds = generateRandomExpireSeconds();
+        redisCache.setCacheObject(CACHE_KEY, data, expireSeconds, TimeUnit.SECONDS);
+
+        return data;
     }
 
 
