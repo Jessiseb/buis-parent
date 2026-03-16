@@ -715,4 +715,10 @@
         and parent_tid = 5
         and is_deleted = 0
     </select>
+
+    <select id="getActivityCount" resultType="java.lang.Integer">
+        select count(*)
+        from race_info
+        and is_deleted = 0
+    </select>
 </mapper>

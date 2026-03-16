@@ -166,4 +166,7 @@ public interface IRaceInfoService
 
     //分页查询我申报的第二课堂活动
     List<RaceInfoVo> selectMyDeclare(Long id);
+
+    //查询活动总数
+    int getActivityCount();
 }

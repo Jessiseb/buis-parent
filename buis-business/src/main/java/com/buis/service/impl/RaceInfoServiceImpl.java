@@ -1458,6 +1458,11 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
        return raceInfoMapper.selectMyDeclare(LoginUserId);
     }
 
+    @Override
+    public int getActivityCount() {
+        return raceInfoMapper.getActivityCount();
+    }
+
 }
 
 

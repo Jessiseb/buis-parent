@@ -137,4 +137,6 @@ public interface RaceInfoMapper {
     List<RaceInfoVo> selectMyDeclare(Long loginUserId);
 
     void deleteRaceDeclareUrl(Long id);
+
+    int getActivityCount();
 }
