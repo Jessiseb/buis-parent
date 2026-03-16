@@ -28,6 +28,8 @@ public class StatisticsApiController {
     private IStatisticsService statisticsService;
     @Autowired
     private ITeamSkillService teamSkillService;
+    @Autowired
+    private IPreSignStudentService preSignStudentService;
 
 
     /**
@@ -222,8 +224,20 @@ public class StatisticsApiController {
      */
     @ApiOperation("查询前五个热门第二课堂活动类型")
     @GetMapping("/getRecentlyPopularActType")
-    R<List<HotRaceVo>> getRecentlyPopularAct() {
+    public R<List<HotRaceVo>> getRecentlyPopularAct() {
         List<HotRaceVo> result = raceInfoService.getRecentlyPopularActType();
+
+        return R.ok(result);
+    }
+
+    /**
+     * 获取活动报名人数排行
+     * @return
+     */
+    @ApiOperation("获取活动报名人数排行")
+    @GetMapping("/getActPeopleCount")
+    public R<List<ActPeopleCountVo>> getActPeopleCount() {
+        List<ActPeopleCountVo> result = preSignStudentService.getActPeopleCount();
 
         return R.ok(result);
     }

@@ -6,6 +6,7 @@ import com.buis.common.utils.DateUtils;
 import com.buis.model.domain.PreSignStudent;
 import com.buis.model.enums.ReviewStatus;
 import com.buis.mapper.PreSignStudentMapper;
+import com.buis.model.vo.ActPeopleCountVo;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.IUserInfoService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -207,6 +209,15 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
 
 //        return preSignStudentVo;
         return preSignStudent;
+    }
+
+    /**
+     * 获取活动报名人数排行
+     * @return
+     */
+    @Override
+    public List<ActPeopleCountVo> getActPeopleCount() {
+        return preSignStudentMapper.getActPeopleCount();
     }
 
     @Override
