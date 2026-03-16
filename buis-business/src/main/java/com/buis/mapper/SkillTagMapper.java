@@ -1,6 +1,7 @@
 package com.buis.mapper;
 
 import com.buis.model.domain.SkillTag;
+import com.buis.model.vo.SkillDemandStatVo;
 import com.buis.model.vo.StudentSkillStatVo;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -72,6 +73,11 @@ public interface SkillTagMapper {
      * 连接skill_tag和user_skill表统计学生掌握情况
      * @return 学生技能统计列表
      */
-    List<StudentSkillStatVo> selectTop7StudentSkillStats();
+    List<StudentSkillStatVo> selectTop8StudentSkillStats();
+
+    /**
+     * 统计各技能被团队需求的数量
+     */
+    List<SkillDemandStatVo> countSkillDemandByTeams();
 
 }
