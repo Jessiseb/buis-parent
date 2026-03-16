@@ -2,11 +2,15 @@ package com.buis.service.impl;
 
 import com.buis.common.exception.ServiceException;
 import com.buis.mapper.SkillTagMapper;
+import com.buis.mapper.TeamMemberStudentMapper;
 import com.buis.mapper.TeamSkillMapper;
+import com.buis.mapper.UserSkillMapper;
 import com.buis.model.domain.SkillTag;
 import com.buis.model.domain.TeamSkill;
+import com.buis.model.domain.UserSkillCategoryCount;
 import com.buis.model.dto.SkillExtractRequest;
 import com.buis.model.dto.SkillExtractResult;
+import com.buis.model.vo.TeamSkillStatisticsVO;
 import com.buis.model.vo.TeamSkillVo;
 import com.buis.service.IAiService;
 import com.buis.service.ITeamSkillService;
@@ -35,6 +39,12 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
 
     @Autowired
     private IAiService aiService;
+
+    @Autowired
+    private TeamMemberStudentMapper teamMemberStudentMapper;
+
+    @Autowired
+    private UserSkillMapper userSkillMapper;
 
     /**
      * 查询团队技能需求关联
@@ -294,5 +304,53 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
     public boolean needsSkill(Long teamId, Long skillTagId) {
         int exists = teamSkillMapper.existsByTeamIdAndSkillTagId(teamId, skillTagId);
         return exists > 0;
+    }
+
+    /**
+     * 获取团队技能统计信息
+     * @param teamId 团队ID
+     * @return
+     */
+    @Override
+    public TeamSkillStatisticsVO getTeamSkillStatistics(Long teamId) {
+        TeamSkillStatisticsVO teamSkillStatisticsVO = new TeamSkillStatisticsVO();
+        teamSkillStatisticsVO.setTeamId(teamId);
+        // 查询团队关联队员
+        List<Long> stuIdList = teamMemberStudentMapper.getMemberStudentByTeamId(teamId);
+        teamSkillStatisticsVO.setTotalMembers(stuIdList.size()); // 团队总人数
+        // 遍历队员统计该团队的各方向技能数量
+
+        for (Long stuId : stuIdList) {
+            // 查询该学生的各技能分类数量
+            List<UserSkillCategoryCount> userSkillCategoryCounts = userSkillMapper.countUserSkillCategory(stuId);
+            // 遍历该学生的技能分类统计结果，累加团队数据
+            for (UserSkillCategoryCount countItem : userSkillCategoryCounts) {
+                // 获取分类类型和对应数量
+                String category = countItem.getCategory();
+                Integer skillNum = countItem.getSkillCount() == null ? 0 : countItem.getSkillCount();
+
+                // 根据分类类型累加团队对应字段
+                switch (category) {
+                    case "tech":
+                        teamSkillStatisticsVO.setTechCount(teamSkillStatisticsVO.getTechCount() + skillNum);
+                        break;
+                    case "design":
+                        teamSkillStatisticsVO.setDesignCount(teamSkillStatisticsVO.getDesignCount() + skillNum);
+                        break;
+                    case "business":
+                        teamSkillStatisticsVO.setBusinessCount(teamSkillStatisticsVO.getBusinessCount() + skillNum);
+                        break;
+                    case "other":
+                        teamSkillStatisticsVO.setOtherCount(teamSkillStatisticsVO.getOtherCount() + skillNum);
+                        break;
+                    // 兼容未知分类（可选：抛出异常/打印日志/忽略）
+                    default:
+                        // log.warn("未知的技能分类：{}，用户ID：{}", category, stuId);
+                        break;
+                }
+            }
+        }
+
+        return teamSkillStatisticsVO;
     }
 }

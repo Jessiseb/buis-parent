@@ -88,6 +88,24 @@
         order by us.create_time desc
     </select>
 
+    <select id="countUserSkillCategory" parameterType="java.lang.Long" resultType="com.buis.model.domain.UserSkillCategoryCount">
+        SELECT
+            st.category AS category,  <!-- 对应POJO的category字段 -->
+            COUNT(us.id) AS skillCount  <!-- 对应POJO的skillCount字段 -->
+        FROM
+            user_skill us
+        INNER JOIN
+            skill_tag st ON us.skill_tag_id = st.id
+        WHERE
+            us.user_id = #{userId}
+            AND st.is_active = 1
+            AND st.is_deleted = 0
+        GROUP BY
+            st.category
+        ORDER BY
+            skillCount DESC;
+    </select>
+
     <insert id="insertUserSkill" parameterType="com.buis.model.domain.UserSkill" useGeneratedKeys="true" keyProperty="id">
         insert into user_skill
         <trim prefix="(" suffix=")" suffixOverrides=",">

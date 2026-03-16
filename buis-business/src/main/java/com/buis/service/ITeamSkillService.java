@@ -3,6 +3,7 @@ package com.buis.service;
 import com.buis.model.domain.TeamSkill;
 import com.buis.model.dto.SkillExtractRequest;
 import com.buis.model.dto.SkillExtractResult;
+import com.buis.model.vo.TeamSkillStatisticsVO;
 import com.buis.model.vo.TeamSkillVo;
 
 import java.util.List;
@@ -121,4 +122,12 @@ public interface ITeamSkillService {
      * @return 是否需要
      */
     boolean needsSkill(Long teamId, Long skillTagId);
+
+    /**
+     * 获取团队技能统计信息
+     *
+     * @param teamId 团队ID
+     * @return 技能统计信息
+     */
+    TeamSkillStatisticsVO getTeamSkillStatistics(Long teamId);
 }
