@@ -137,4 +137,20 @@ public interface TeamSkillMapper {
      * @return 团队技能需求列表
      */
     List<TeamSkillVo> selectTeamSkillsByTeamIdAndLevel(@Param("teamId") Long teamId, @Param("importanceLevel") Integer importanceLevel);
+
+    /**
+     * 根据技能标签ID列表查询团队
+     *
+     * @param skillTagIds 技能标签ID列表
+     * @return 团队技能需求列表
+     */
+    List<TeamSkill> selectTeamsBySkillTags(@Param("skillTagIds") List<Long> skillTagIds);
+
+    /**
+     * 查询团队技能需求及其重要性
+     *
+     * @param teamId 团队ID
+     * @return 团队技能需求列表
+     */
+    List<TeamSkillVo> selectTeamSkillsWithImportance(Long teamId);
 }

@@ -87,6 +87,21 @@
         order by ts.importance_level, ts.create_time desc
     </select>
 
+    <select id="selectTeamsBySkillTags" parameterType="java.util.List" resultMap="TeamSkillVoResult">
+        <include refid="selectTeamSkillVoWithTag"/>
+        where ts.skill_tag_id in
+        <foreach item="skillTagId" collection="skillTagIds" open="(" separator="," close=")">
+            #{skillTagId}
+        </foreach>
+        order by ts.team_id, ts.importance_level, ts.create_time desc
+    </select>
+
+    <select id="selectTeamSkillsWithImportance" parameterType="Long" resultMap="TeamSkillVoResult">
+        <include refid="selectTeamSkillVoWithTag"/>
+        where ts.team_id = #{teamId}
+        order by ts.importance_level, ts.create_time desc
+    </select>
+
     <insert id="insertTeamSkill" parameterType="com.buis.model.domain.TeamSkill" useGeneratedKeys="true" keyProperty="id">
         insert into team_skill
         <trim prefix="(" suffix=")" suffixOverrides=",">
