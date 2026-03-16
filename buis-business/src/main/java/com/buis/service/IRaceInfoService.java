@@ -169,4 +169,10 @@ public interface IRaceInfoService
 
     //查询活动总数
     int getActivityCount();
+
+    /**
+     * 获取最近最热门的5个活动
+     * @return
+     */
+    List<HotRaceVo> getRecentlyPopularActType();
 }

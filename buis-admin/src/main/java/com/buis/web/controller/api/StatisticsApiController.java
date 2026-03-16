@@ -215,4 +215,16 @@ public class StatisticsApiController {
         int count = raceInfoService.getActivityCount();
         return R.ok(count);
     }
+
+    /**
+     * 查询前五个热门第二课堂活动类型
+     * @return
+     */
+    @ApiOperation("查询前五个热门第二课堂活动类型")
+    @GetMapping("/getRecentlyPopularActType")
+    R<List<HotRaceVo>> getRecentlyPopularAct() {
+        List<HotRaceVo> result = raceInfoService.getRecentlyPopularActType();
+
+        return R.ok(result);
+    }
 }
