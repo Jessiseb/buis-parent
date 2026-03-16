@@ -11,6 +11,7 @@ import com.buis.model.dto.SkillExtractResult;
 import com.buis.model.vo.UserSkillVo;
 import com.buis.service.IAiService;
 import com.buis.service.IUserSkillService;
+import com.buis.service.RedisCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,8 @@ public class UserSkillServiceImpl implements IUserSkillService {
 
     @Autowired
     private IAiService aiService;
+    @Autowired
+    private RedisCacheService redisCacheService;
 
     /**
      * 查询用户技能关联
@@ -102,6 +105,8 @@ public class UserSkillServiceImpl implements IUserSkillService {
         if (userSkill.getCreateTime() == null) {
             userSkill.setCreateTime(new Date());
         }
+        // 添加缓存清理
+        redisCacheService.deleteUserSkillsCache(userSkill.getUserId());
 
         return userSkillMapper.insertUserSkill(userSkill);
     }
@@ -141,6 +146,10 @@ public class UserSkillServiceImpl implements IUserSkillService {
         if (CollectionUtils.isEmpty(toInsert)) {
             return 0;
         }
+        // 添加缓存清理 - 使用第一个元素的userId清理缓存
+        if (!toInsert.isEmpty()) {
+            redisCacheService.deleteUserSkillsCache(toInsert.get(0).getUserId());
+        }
 
         return userSkillMapper.batchInsertUserSkill(toInsert);
     }
@@ -158,6 +167,8 @@ public class UserSkillServiceImpl implements IUserSkillService {
         if (existing == null) {
             throw new ServiceException("用户技能关联不存在");
         }
+        // 添加缓存清理
+        redisCacheService.deleteUserSkillsCache(userSkill.getUserId());
 
         return userSkillMapper.updateUserSkill(userSkill);
     }
@@ -170,6 +181,12 @@ public class UserSkillServiceImpl implements IUserSkillService {
      */
     @Override
     public int deleteUserSkillById(Long id) {
+        // 先查询用户ID
+        UserSkill userSkill = userSkillMapper.selectUserSkillById(id);
+        if (userSkill != null) {
+            // 添加缓存清理
+            redisCacheService.deleteUserSkillsCache(userSkill.getUserId());
+        }
         return userSkillMapper.deleteUserSkillById(id);
     }
 
@@ -182,6 +199,8 @@ public class UserSkillServiceImpl implements IUserSkillService {
      */
     @Override
     public int deleteUserSkillByUserIdAndSkillTagId(Long userId, Long skillTagId) {
+        // 添加缓存清理
+        redisCacheService.deleteUserSkillsCache(userId);
         return userSkillMapper.deleteUserSkillByUserIdAndSkillTagId(userId, skillTagId);
     }
 
@@ -193,6 +212,13 @@ public class UserSkillServiceImpl implements IUserSkillService {
      */
     @Override
     public int deleteUserSkillByIds(Long[] ids) {
+        // 批量删除时清理缓存
+        for (Long id : ids) {
+            UserSkill userSkill = userSkillMapper.selectUserSkillById(id);
+            if (userSkill != null) {
+                redisCacheService.deleteUserSkillsCache(userSkill.getUserId());
+            }
+        }
         return userSkillMapper.deleteUserSkillByIds(ids);
     }
 
@@ -204,6 +230,8 @@ public class UserSkillServiceImpl implements IUserSkillService {
      */
     @Override
     public int deleteUserSkillsByUserId(Long userId) {
+        // 添加缓存清理
+        redisCacheService.deleteUserSkillsCache(userId);
         return userSkillMapper.deleteUserSkillsByUserId(userId);
     }
 

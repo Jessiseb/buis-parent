@@ -6,6 +6,7 @@ import java.util.List;
 import com.buis.model.domain.TeamInfo;
 import com.buis.model.vo.TeamInfoVo;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * 队伍信息Mapper接口
@@ -13,8 +14,8 @@ import org.apache.ibatis.annotations.Param;
  * @author buis
  * @date 2024-10-11
  */
-public interface TeamInfoMapper 
-{
+@Repository
+public interface TeamInfoMapper {
     /**
      * 查询队伍信息
      * 
