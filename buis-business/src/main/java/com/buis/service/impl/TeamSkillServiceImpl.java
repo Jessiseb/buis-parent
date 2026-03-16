@@ -353,4 +353,9 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
 
         return teamSkillStatisticsVO;
     }
+
+    /**
+     * 统计团队维度下所有技能分类的平均强度
+     */
+
 }
