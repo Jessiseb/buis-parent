@@ -17,6 +17,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap id="ActPeopleCountVoMap" type="com.buis.model.vo.ActPeopleCountVo">
+        <result column="raceName" property="raceName"/>
+        <result column="peopleCount" property="peopleCount"/>
+    </resultMap>
+
     <sql id="selectPreSignStudentVo">
         select t1.id,
                t1.student,
@@ -72,6 +77,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectPreSignStudentByUserId" resultType="com.buis.model.vo.PreSignStudentVo">
         select * from pre_sign_student where student = #{userId} and is_deleted = 0
+    </select>
+
+    <!-- 查询活动报名人数前十 -->
+    <select id="getActPeopleCount" resultMap="ActPeopleCountVoMap">
+        SELECT
+            ri.name AS raceName,
+            COUNT(pss.id) AS peopleCount
+        FROM
+            pre_sign_student pss
+        LEFT JOIN
+            race_info ri ON pss.race = ri.id
+        WHERE
+            pss.is_deleted = 0  <!-- 排除已删除的报名记录 -->
+            AND ri.is_deleted = 0  <!-- 排除已删除的活动 -->
+        GROUP BY
+            pss.race, ri.name  <!-- 按活动分组 -->
+        ORDER BY
+            peopleCount DESC  <!-- 按报名人数降序 -->
+        LIMIT 10;  <!-- 取前10条 -->
     </select>
 
     <insert id="insertPreSignStudent" parameterType="com.buis.model.domain.PreSignStudent" useGeneratedKeys="true" keyProperty="id">

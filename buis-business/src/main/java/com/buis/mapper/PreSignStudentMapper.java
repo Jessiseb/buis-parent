@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import com.buis.model.domain.PreSignStudent;
+import com.buis.model.vo.ActPeopleCountVo;
 import com.buis.model.vo.PreSignStudentVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -78,4 +79,9 @@ public interface PreSignStudentMapper
 
     List<PreSignStudentVo> selectPreSignStudentByUserId(@Param("userId") Long userId);
 
+    /**
+     * 获取活动报名人数排行
+     * @return
+     */
+    List<ActPeopleCountVo> getActPeopleCount();
 }
