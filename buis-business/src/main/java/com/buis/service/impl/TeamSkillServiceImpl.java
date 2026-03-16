@@ -10,6 +10,7 @@ import com.buis.model.dto.SkillExtractResult;
 import com.buis.model.vo.TeamSkillVo;
 import com.buis.service.IAiService;
 import com.buis.service.ITeamSkillService;
+import com.buis.service.RedisCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,9 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
 
     @Autowired
     private IAiService aiService;
+
+    @Autowired
+    private RedisCacheService redisCacheService;
 
     /**
      * 查询团队技能需求关联
@@ -98,6 +102,9 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
             teamSkill.setCreateTime(new Date());
         }
 
+        // 添加缓存清理
+        redisCacheService.deleteTeamSkillsCache(teamSkill.getTeamId());
+
         return teamSkillMapper.insertTeamSkill(teamSkill);
     }
 
@@ -135,6 +142,11 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
             return 0;
         }
 
+        // 添加缓存清理 - 使用第一个元素的teamId清理缓存
+        if (!toInsert.isEmpty()) {
+            redisCacheService.deleteTeamSkillsCache(toInsert.get(0).getTeamId());
+        }
+
         return teamSkillMapper.batchInsertTeamSkill(toInsert);
     }
 
@@ -152,6 +164,9 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
             throw new ServiceException("团队技能需求关联不存在");
         }
 
+        // 添加缓存清理
+        redisCacheService.deleteTeamSkillsCache(existing.getTeamId());
+
         return teamSkillMapper.updateTeamSkill(teamSkill);
     }
 
@@ -163,6 +178,12 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
      */
     @Override
     public int deleteTeamSkillById(Long id) {
+        // 先查询团队ID
+        TeamSkill teamSkill = teamSkillMapper.selectTeamSkillById(id);
+        if (teamSkill != null) {
+            // 添加缓存清理
+            redisCacheService.deleteTeamSkillsCache(teamSkill.getTeamId());
+        }
         return teamSkillMapper.deleteTeamSkillById(id);
     }
 
@@ -175,6 +196,8 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
      */
     @Override
     public int deleteTeamSkillByTeamIdAndSkillTagId(Long teamId, Long skillTagId) {
+        // 添加缓存清理
+        redisCacheService.deleteTeamSkillsCache(teamId);
         return teamSkillMapper.deleteTeamSkillByTeamIdAndSkillTagId(teamId, skillTagId);
     }
 
@@ -186,6 +209,13 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
      */
     @Override
     public int deleteTeamSkillByIds(Long[] ids) {
+        // 批量删除时清理缓存
+        for (Long id : ids) {
+            TeamSkill teamSkill = teamSkillMapper.selectTeamSkillById(id);
+            if (teamSkill != null) {
+                redisCacheService.deleteTeamSkillsCache(teamSkill.getTeamId());
+            }
+        }
         return teamSkillMapper.deleteTeamSkillByIds(ids);
     }
 
@@ -197,6 +227,8 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
      */
     @Override
     public int deleteTeamSkillsByTeamId(Long teamId) {
+        // 添加缓存清理
+        redisCacheService.deleteTeamSkillsCache(teamId);
         return teamSkillMapper.deleteTeamSkillsByTeamId(teamId);
     }
 
@@ -213,6 +245,9 @@ public class TeamSkillServiceImpl implements ITeamSkillService {
         if (teamId == null) {
             throw new ServiceException("团队ID不能为空");
         }
+
+        // 添加缓存清理
+        redisCacheService.deleteTeamSkillsCache(teamId);
 
         // 删除团队原有的技能关联
         teamSkillMapper.deleteTeamSkillsByTeamId(teamId);

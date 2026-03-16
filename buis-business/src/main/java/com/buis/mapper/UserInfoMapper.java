@@ -5,6 +5,7 @@ import com.buis.model.domain.UserInfo;
 import com.buis.model.dto.UserSearchRequest;
 import com.buis.model.vo.UserInfoVo;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * 用户信息Mapper接口
@@ -12,8 +13,8 @@ import org.apache.ibatis.annotations.Param;
  * @author buis
  * @date 2024-10-11
  */
-public interface UserInfoMapper 
-{
+@Repository
+public interface UserInfoMapper {
     /**
      * 查询用户信息
      * 
