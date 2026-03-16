@@ -721,4 +721,35 @@
         from race_info
         and is_deleted = 0
     </select>
+
+    <!-- 查询最近热门活动：先获取parentType=5的前5个热门sonType，再统计各类型报名人数 -->
+    <select id="getRecentlyPopularActType" resultType="com.buis.model.vo.HotRaceVo">
+        SELECT
+            r.son_type AS labelName, -- 先返回sonType（service层匹配字典转名称）
+            IFNULL(s.registration_count, 0) AS registrationCount
+        FROM (
+        -- 第一步：筛选parentType=5的记录，按sonType分组统计数量，取前5个热门sonType
+        SELECT
+            son_type,
+            COUNT(*) AS type_count
+        FROM race_info
+            WHERE parentType = 5
+            AND son_type IS NOT NULL -- 排除空值，避免无效分组
+            GROUP BY son_type
+        ORDER BY type_count DESC
+        LIMIT 5
+        ) r
+        LEFT JOIN (
+            -- 第二步：关联pre_sign_student，统计每个race对应的报名人数，再按sonType汇总
+            SELECT
+                ri.son_type,
+                COUNT(DISTINCT pss.student) AS registration_count -- 按学生去重，避免重复统计
+            FROM race_info ri
+            LEFT JOIN pre_sign_student pss ON ri.id = pss.race
+            AND pss.is_deleted = 0 -- 排除已删除的报名记录
+            WHERE ri.parentType = 5
+                GROUP BY ri.son_type
+        ) s ON r.son_type = s.son_type
+        ORDER BY r.type_count DESC; -- 最终结果按热门程度排序
+    </select>
 </mapper>

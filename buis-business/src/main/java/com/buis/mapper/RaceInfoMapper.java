@@ -6,6 +6,7 @@ import java.util.List;
 import com.buis.model.domain.RaceInfo;
 import com.buis.model.domain.Reward;
 import com.buis.model.dto.GradeStatistic;
+import com.buis.model.vo.HotRaceVo;
 import com.buis.model.vo.RaceInfoVo;
 import com.buis.model.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
@@ -138,5 +139,15 @@ public interface RaceInfoMapper {
 
     void deleteRaceDeclareUrl(Long id);
 
+    /**
+     * 获取活动数量
+     * @return
+     */
     int getActivityCount();
+
+    /**
+     * 获取近期最热门活动
+     * @return
+     */
+    List<HotRaceVo> getRecentlyPopularActType();
 }

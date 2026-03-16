@@ -17,9 +17,7 @@ import com.buis.model.dto.GradeStatistic;
 import com.buis.model.dto.StudentExportToDiDto;
 import com.buis.model.dto.TeacherExportToDaDto;
 import com.buis.model.dto.TeacherExportToDiDto;
-import com.buis.model.enums.RaceLabel;
-import com.buis.model.enums.RaceStatus;
-import com.buis.model.enums.ReviewStatus;
+import com.buis.model.enums.*;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
@@ -1458,11 +1456,40 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
        return raceInfoMapper.selectMyDeclare(LoginUserId);
     }
 
+    /**
+     * 获取近期热门的比赛
+     * @return
+     */
     @Override
     public int getActivityCount() {
         return raceInfoMapper.getActivityCount();
     }
 
+
+    @Override
+    public List<HotRaceVo> getRecentlyPopularActType() {
+        // 1. 调用Mapper获取原始数据（labelName为sonType数字）
+        List<HotRaceVo> popularActTypelList = raceInfoMapper.getRecentlyPopularActType();
+
+        // 2. 替换字典名称（解耦核心：只调用通用方法，不直接依赖枚举内部）
+        List<HotRaceVo> resultList = popularActTypelList.stream()
+                .map(vo -> {
+                    // 非空校验：避免空指针/类型转换异常
+                    if (vo.getLabelName() == null || vo.getLabelName().isEmpty()) {
+                        vo.setLabelName("未知类型");
+                        return vo;
+                    }
+
+                    // 调用枚举的快捷方法
+                    Integer sonType = Integer.valueOf(vo.getLabelName());
+                    vo.setLabelName(DictEnum.getNameByCode(RaceSonTypeEnum.class, sonType, "未知类型"));
+
+                    return vo;
+                })
+                .collect(Collectors.toList());
+
+        return resultList;
+    }
 }
 
 
