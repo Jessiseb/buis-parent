@@ -1,6 +1,7 @@
 package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.model.domain.RaceDetail;
 import com.buis.model.domain.RaceInfo;
 import com.buis.model.domain.TeamMemberTeacher;
@@ -311,5 +312,27 @@ public class StatisticsApiController {
   public R<Double> getProjectCompletionRate(@RequestParam(value = "teacherId") Long teacherId) {
     Double rate = teamInfoService.getProjectCompletionRate(teacherId);
     return R.ok(rate);
+  }
+
+  /**
+   * 获取老师的近期指导记录（分页）
+   * 
+   * @param teacherId 老师ID
+   * @param pageNum   页码
+   * @param pageSize  每页数量
+   * @return 指导记录列表
+   */
+  @ApiOperation("获取老师的近期指导记录")
+  @GetMapping("/getRecentGuideRecords")
+  public MyPageVo<List<TeacherGuideRecordVo>> getRecentGuideRecords(
+      @RequestParam(value = "teacherId") Long teacherId,
+      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+    List<TeacherGuideRecordVo> records = teamInfoService.getRecentGuideRecords(teacherId, pageNum, pageSize);
+    int total = teamInfoService.getRecentGuideRecordsCount(teacherId);
+    MyPageVo<List<TeacherGuideRecordVo>> pageVo = new MyPageVo<>();
+    pageVo.setRows(records);
+    pageVo.setTotal(total);
+    return pageVo;
   }
 }
