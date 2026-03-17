@@ -383,4 +383,28 @@ public class StatisticsApiController {
         sClass, projectType, year);
     return R.ok(classAwardCount);
   }
+
+  /**
+   * 获取老师负责学生的学生培养明细表
+   * 
+   * @param teacherId   老师ID
+   * @param major       专业
+   * @param sClass      班级
+   * @param projectType 项目类型
+   * @param year        学年
+   * @return 学生培养明细表列表
+   */
+  @ApiOperation("获取老师负责学生的学生培养明细表")
+  @GetMapping("/getStudentCultivationDetail")
+  public R<List<StudentCultivationDetailVo>> getStudentCultivationDetail(
+      @RequestParam(value = "teacherId") Long teacherId,
+      @RequestParam(value = "major", required = false, defaultValue = "0") Integer major,
+      @RequestParam(value = "sClass", required = false, defaultValue = "") String sClass,
+      @RequestParam(value = "projectType", required = false, defaultValue = "0") Integer projectType,
+      @RequestParam(value = "year", required = false, defaultValue = "") String year) {
+    List<StudentCultivationDetailVo> studentCultivationDetail = statisticsService.getStudentCultivationDetail(teacherId,
+        major,
+        sClass, projectType, year);
+    return R.ok(studentCultivationDetail);
+  }
 }

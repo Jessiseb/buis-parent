@@ -7,6 +7,7 @@ import com.buis.model.domain.PreSignStudent;
 import com.buis.model.vo.ClassAwardCountVo;
 import com.buis.model.vo.PreSignStudentVo;
 import com.buis.model.vo.StudentCompetitionStatus;
+import com.buis.model.vo.StudentCultivationDetailVo;
 import com.buis.model.vo.TeamInfoVo;
 import com.buis.service.IStatisticsService;
 import com.buis.service.ITeamMemberTeacherService;
@@ -14,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StatisticsServiceImpl implements IStatisticsService {
@@ -73,5 +76,44 @@ public class StatisticsServiceImpl implements IStatisticsService {
     @Override
     public List<ClassAwardCountVo> getClassAwardCount(Long teacherId, Integer major, String sClass, Integer projectType, String year) {
         return statisticsMapper.selectClassAwardCount(teacherId, major, sClass, projectType, year);
+    }
+
+    /**
+     * 获取老师负责学生的学生培养明细表
+     * @param teacherId 老师ID
+     * @param major 专业
+     * @param sClass 班级
+     * @param projectType 项目类型
+     * @param year 学年
+     * @return 学生培养明细表列表
+     */
+    @Override
+    public List<StudentCultivationDetailVo> getStudentCultivationDetail(Long teacherId, Integer major, String sClass, Integer projectType, String year) {
+        // 查询学生培养明细数据
+        List<StudentCultivationDetailVo> rawData = statisticsMapper.selectStudentCultivationDetail(teacherId, major, sClass, projectType, year);
+        
+        // 处理数据，去重并合并能力标签
+        Map<String, StudentCultivationDetailVo> studentMap = new HashMap<>();
+        for (StudentCultivationDetailVo detail : rawData) {
+            String key = detail.getStudentName() + detail.getMajorClass();
+            if (studentMap.containsKey(key)) {
+                // 如果学生已存在，合并能力标签
+                StudentCultivationDetailVo existing = studentMap.get(key);
+                if (detail.getAbilityTags() != null) {
+                    existing.getAbilityTags().addAll(detail.getAbilityTags());
+                }
+            } else {
+                // 如果学生不存在，添加到map
+                studentMap.put(key, detail);
+            }
+        }
+        
+        // 转换为列表并添加序号
+        List<StudentCultivationDetailVo> result = new ArrayList<>(studentMap.values());
+        for (int i = 0; i < result.size(); i++) {
+            result.get(i).setSerialNumber(i + 1);
+        }
+        
+        return result;
     }
 }

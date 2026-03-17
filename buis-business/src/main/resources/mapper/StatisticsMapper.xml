@@ -7,6 +7,17 @@
         <result property="awardCount" column="award_count" />
     </resultMap>
     
+    <resultMap id="StudentCultivationDetailResult" type="com.buis.model.vo.StudentCultivationDetailVo">
+        <result property="studentName" column="student_name" />
+        <result property="majorClass" column="major_class" />
+        <result property="totalScore" column="total_score" />
+        <collection property="abilityTags" ofType="java.lang.String">
+            <constructor>
+                <arg column="skill_name" />
+            </constructor>
+        </collection>
+    </resultMap>
+    
     <select id="selectClassAwardCount" resultMap="ClassAwardCountResult">
         SELECT 
             u.class_name as class_name,
@@ -39,5 +50,43 @@
             u.class_name
         ORDER BY 
             award_count DESC
+    </select>
+    
+    <select id="selectStudentCultivationDetail" resultMap="StudentCultivationDetailResult">
+        SELECT 
+            u.name as student_name,
+            CONCAT(u.major_name, '-', u.class_name) as major_class,
+            COALESCE(s.total_score, 0) as total_score,
+            st.skill_name as skill_name
+        FROM 
+            team_member_teacher tmt
+        JOIN 
+            team_info ti ON tmt.team_id = ti.id
+        JOIN 
+            team_member_student tms ON ti.id = tms.team_id
+        JOIN 
+            user_info u ON tms.student_id = u.id
+        LEFT JOIN 
+            score s ON u.id = s.user_id
+        LEFT JOIN 
+            user_skill us ON u.id = us.user_id
+        LEFT JOIN 
+            skill_tag st ON us.skill_id = st.id
+        WHERE 
+            tmt.teacher_id = #{teacherId}
+        <if test="major != null and major != 0">
+            AND u.major = #{major}
+        </if>
+        <if test="sClass != null and sClass != ''">
+            AND u.class_name = #{sClass}
+        </if>
+        <if test="projectType != null and projectType != 0">
+            AND ti.type = #{projectType}
+        </if>
+        <if test="year != null and year != ''">
+            AND ti.year = #{year}
+        </if>
+        ORDER BY 
+            total_score DESC
     </select>
 </mapper>
