@@ -1,6 +1,8 @@
 package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
+import com.buis.model.domain.RaceDetail;
+import com.buis.model.domain.RaceInfo;
 import com.buis.model.dto.GradeStatistic;
 import com.buis.service.*;
 import com.buis.model.vo.*;
@@ -240,5 +242,20 @@ public class StatisticsApiController {
         List<ActPeopleCountVo> result = preSignStudentService.getActPeopleCount();
 
         return R.ok(result);
+    }
+
+    /**
+     * 获取待审核项目
+     * @param teacherId
+     * @return
+     */
+    @ApiOperation("获取待审核项目")
+    @GetMapping("/getUnderReviewProject")
+    public R<List<RaceInfoVo>> getUnderReviewProject(@RequestParam(value = "teacherId") Long teacherId) {
+        RaceInfo raceInfo = new RaceInfo();
+        raceInfo.setCreateId(teacherId);
+        List<RaceInfoVo> raceInfoList = raceInfoService.getRaceInfoList(raceInfo);
+
+        return R.ok(raceInfoList);
     }
 }
