@@ -275,7 +275,7 @@
         select parent_tid
         from race_type
         where son_tid = #{id}
-        and is_deleted = 0
+          and is_deleted = 0
     </select>
 
 
@@ -460,35 +460,39 @@
     </insert>
 
     <select id="getSecondClassCountByMonth" resultType="com.buis.model.vo.SecondClassCountVo">
-        SELECT cm.name      AS college_name,
+        SELECT cm.name AS college_name,
                COUNT(ri.id) AS count
         FROM race_info ri
-                 JOIN
-             (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
-              FROM race_detail) AS rd ON ri.id = rd.race
-                 JOIN
-             user_info ui ON rd.name = ui.name
-                 JOIN
-             t_college_major cm ON ui.college = cm.id
+            JOIN
+            (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+            FROM race_detail) AS rd
+        ON ri.id = rd.race
+            JOIN
+            user_info ui ON rd.name = ui.name
+            JOIN
+            t_college_major cm ON ui.college = cm.id
         WHERE ri.parent_tid = 5
-          AND YEAR(ri.create_time) = YEAR(CURRENT_DATE)
-          AND MONTH(ri.create_time) = IFNULL(#{month}, MONTH(CURRENT_DATE))
+          AND YEAR (ri.create_time) = YEAR (CURRENT_DATE)
+          AND MONTH (ri.create_time) = IFNULL(#{month}
+            , MONTH (CURRENT_DATE))
         GROUP BY cm.name
     </select>
 
     <select id="getSecondClassCountByYear" resultType="com.buis.model.vo.SecondClassCountVo">
-        SELECT cm.name      AS college_name,
+        SELECT cm.name AS college_name,
                COUNT(ri.id) AS count
         FROM race_info ri
-                 JOIN
-             (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
-              FROM race_detail) AS rd ON ri.id = rd.race
-                 JOIN
-             user_info ui ON rd.name = ui.name
-                 JOIN
-             t_college_major cm ON ui.college = cm.id
+            JOIN
+            (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+            FROM race_detail) AS rd
+        ON ri.id = rd.race
+            JOIN
+            user_info ui ON rd.name = ui.name
+            JOIN
+            t_college_major cm ON ui.college = cm.id
         WHERE ri.parent_tid = 5
-          AND YEAR(ri.create_time) = IFNULL(#{year}, YEAR(CURRENT_DATE))
+          AND YEAR (ri.create_time) = IFNULL(#{year}
+            , YEAR (CURRENT_DATE))
         GROUP BY cm.name
     </select>
 
@@ -533,7 +537,7 @@
             <if test="raceType != null ">and t1.race_type = #{raceType}</if>
         </where>
 
-         </select>
+    </select>
     <select id="selectSecondActivities" resultType="com.buis.model.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
         <where>
@@ -571,16 +575,16 @@
                                                 JOIN
                                             race_info ri ON ti.race = ri.id
                                        WHERE ri.parent_tid = 5)
-        SELECT LEFT(ui.number, 4)                       AS grade,
-               COUNT(*)                                 AS count,
-               COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS percentage
+        SELECT LEFT (ui.number, 4) AS grade, COUNT (*) AS count, COUNT (*) * 100.0 / SUM (COUNT (*)) OVER () AS percentage
         FROM user_info ui
-                 JOIN
-             second_class_user_ids scui ON ui.id = scui.user_id
+            JOIN
+            second_class_user_ids scui
+        ON ui.id = scui.user_id
         WHERE ui.number IS NOT NULL
-          AND LEFT(ui.number, 4) REGEXP '^[0-9]{4}$'
+          AND LEFT (ui.number
+            , 4) REGEXP '^[0-9]{4}$'
           AND is_teacher = 0
-        GROUP BY LEFT(ui.number, 4)
+        GROUP BY LEFT (ui.number, 4)
     </select>
 
     <select id="getTeacherInstructCountFromSecond" resultType="java.lang.String"
@@ -595,8 +599,7 @@
         select *
         from race_info
         where name = #{name}
-          and is_deleted = 0
-        LIMIT 1
+          and is_deleted = 0 LIMIT 1
     </select>
 
     <select id="selectRaceInfoNoMyRaceList" resultMap="RaceInfoRewardResult">
@@ -706,14 +709,62 @@
         select count(*)
         from race_info
         where son_tid = #{sonTid}
-        and is_deleted = 0
+          and is_deleted = 0
     </select>
     <select id="selectSecondClassByRace" resultType="com.buis.model.domain.RaceInfo">
         select *
         from race_info
         where id = #{raceId}
-        and parent_tid = 5
-        and is_deleted = 0
+          and parent_tid = 5
+          and is_deleted = 0
+    </select>
+
+    <select id="selectRaceInfoCount"  resultType="long">
+        SELECT COUNT(*) FROM race_info
+        WHERE is_deleted = 0
+        <!-- 如果有其他查询条件，可以在这里添加 -->
+    </select>
+
+    <!-- 查询热门活动比赛名称和报名人数 - 按报名人数排序 -->
+    <select id="selectHotRaceWithSignCount" resultType="com.buis.model.vo.RaceNumsVo">
+        SELECT
+            ri.name as raceName,
+            COALESCE(ps.sign_count, 0) as signCount
+        FROM race_info ri
+                 LEFT JOIN (
+            SELECT
+                race,
+                COUNT(*) as sign_count
+            FROM pre_sign_student
+            WHERE is_deleted = 0
+            GROUP BY race
+        ) ps ON ri.id = ps.race
+        WHERE ri.is_deleted = 0
+        ORDER BY
+            COALESCE(ps.sign_count, 0) DESC,
+            ri.create_time DESC
+            LIMIT 10
+    </select>
+
+    <!-- 结果映射：数据库字段 -> RaceTypeCountVo 属性 -->
+    <resultMap id="RaceTypeCountMap" type="com.buis.model.vo.RaceTypeCountVo">
+        <result column="race_type" property="raceType"/>
+        <result column="count" property="count"/>
+    </resultMap>
+
+    <!-- 按比赛类型分组统计，直接过滤未删除数据（is_deleted=0） -->
+    <select id="countByRaceType" resultMap="RaceTypeCountMap">
+        SELECT
+        race_type,
+        COUNT(id) AS count
+        FROM
+        race_info  <!-- 替换为你的实际数据库表名 -->
+        WHERE
+        is_deleted = 0  <!-- 直接写死过滤条件，只统计未删除数据 -->
+        GROUP BY
+        race_type
+        ORDER BY
+        race_type ASC;
     </select>
 
     <select id="getActivityCount" resultType="java.lang.Integer">

@@ -9,9 +9,7 @@ import com.buis.model.dto.GradeStatistic;
 import com.buis.model.dto.StudentExportToDiDto;
 import com.buis.model.dto.TeacherExportToDaDto;
 import com.buis.model.dto.TeacherExportToDiDto;
-import com.buis.model.vo.HotRaceVo;
-import com.buis.model.vo.RaceInfoVo;
-import com.buis.model.vo.SecondClassCountVo;
+import com.buis.model.vo.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author kaven
  * @date 2024-10-23
  */
-public interface IRaceInfoService 
+public interface IRaceInfoService
 {
     /**
      * 前台查询比赛信息
@@ -175,4 +173,22 @@ public interface IRaceInfoService
      * @return
      */
     List<HotRaceVo> getRecentlyPopularActType();
+
+    //查询比赛总数
+    long selectRaceInfoCount();
+
+    /**
+     * 查询热门活动比赛名称和报名人数 - 按报名人数排序
+     * 联合查询 PreSignStudent 表统计报名人数
+     * @return 比赛名称和报名人数列表
+     */
+    List<RaceNumsVo> selectHotRaceWithSignCount();
+
+    List<RaceStatCardVo> selectCard();
+
+    /**
+     * 按比赛类型分组统计数量（XML 中直接过滤未删除数据）
+     * @return 各类型比赛的统计列表
+     */
+    List<RaceTypeCountVo> getRaceTypeCount();
 }
