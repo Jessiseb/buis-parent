@@ -360,4 +360,27 @@ public class StatisticsApiController {
         sClass, projectType, year);
     return R.ok(distribution);
   }
+
+  /**
+   * 获取老师负责学生的班级获奖情况对比
+   * 
+   * @param teacherId   老师ID
+   * @param major       专业
+   * @param sClass      班级
+   * @param projectType 项目类型
+   * @param year        学年
+   * @return 班级获奖数量列表
+   */
+  @ApiOperation("获取老师负责学生的班级获奖情况对比")
+  @GetMapping("/getClassAwardCount")
+  public R<List<ClassAwardCountVo>> getClassAwardCount(
+      @RequestParam(value = "teacherId") Long teacherId,
+      @RequestParam(value = "major", required = false, defaultValue = "0") Integer major,
+      @RequestParam(value = "sClass", required = false, defaultValue = "") String sClass,
+      @RequestParam(value = "projectType", required = false, defaultValue = "0") Integer projectType,
+      @RequestParam(value = "year", required = false, defaultValue = "") String year) {
+    List<ClassAwardCountVo> classAwardCount = statisticsService.getClassAwardCount(teacherId, major,
+        sClass, projectType, year);
+    return R.ok(classAwardCount);
+  }
 }
