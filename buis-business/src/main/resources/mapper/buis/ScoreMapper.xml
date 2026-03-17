@@ -134,10 +134,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getStudentAbilityDistribution" parameterType="map" resultType="com.buis.model.vo.StudentAbilityDistributionVo">
         SELECT
             CASE
-                WHEN s.score >= 60 AND s.score < 70 THEN '60-70'
-                WHEN s.score >= 70 AND s.score < 80 THEN '70-80'
-                WHEN s.score >= 80 AND s.score < 90 THEN '80-90'
-                WHEN s.score >= 90 AND s.score <= 100 THEN '90-100'
+                WHEN s.score >= 60 AND s.score &lt; 70 THEN '60-70'
+                WHEN s.score >= 70 AND s.score &lt; 80 THEN '70-80'
+                WHEN s.score >= 80 AND s.score &lt; 90 THEN '80-90'
+                WHEN s.score >= 90 AND s.score &lt;= 100 THEN '90-100'
                 ELSE '其他'
             END AS scoreRange,
             COUNT(DISTINCT u.id) AS studentCount
