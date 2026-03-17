@@ -170,5 +170,11 @@
         </foreach>
     </delete>
 
+    <select id="getAwardCount" parameterType="String" resultType="int">
+        select count(*)
+        from award
+        where is_deleted = 0
+          and teachers like concat('%', #{teacherName}, '%')
+    </select>
 
 </mapper>

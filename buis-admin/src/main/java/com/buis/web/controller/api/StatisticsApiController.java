@@ -1,6 +1,9 @@
 package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
+import com.buis.model.domain.RaceDetail;
+import com.buis.model.domain.RaceInfo;
+import com.buis.model.domain.TeamMemberTeacher;
 import com.buis.model.dto.GradeStatistic;
 import com.buis.service.*;
 import com.buis.model.vo.*;
@@ -18,227 +21,295 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/statistics")
 public class StatisticsApiController {
-    @Autowired
-    private IRaceInfoService raceInfoService;
-    @Autowired
-    private ITeamInfoService teamInfoService;
-    @Autowired
-    private ITeamMemberStudentService teamMemberStudentService;
-    @Autowired
-    private IStatisticsService statisticsService;
-    @Autowired
-    private ITeamSkillService teamSkillService;
-    @Autowired
-    private IPreSignStudentService preSignStudentService;
+  @Autowired
+  private IRaceInfoService raceInfoService;
+  @Autowired
+  private ITeamInfoService teamInfoService;
+  @Autowired
+  private ITeamMemberStudentService teamMemberStudentService;
+  @Autowired
+  private IStatisticsService statisticsService;
+  @Autowired
+  private ITeamSkillService teamSkillService;
+  @Autowired
+  private IPreSignStudentService preSignStudentService;
+  @Autowired
+  private ITeamMemberTeacherService teamMemberTeacherService;
+  @Autowired
+  private IAwardService awardService;
 
+  /**
+   * 统计各年级学生的参与活动
+   */
 
-    /**
-     * 统计各年级学生的参与活动
-     */
+  /**
+   * 根据月份查询各学院第二课堂活动数量
+   * 
+   * @param month 没有即查询本月
+   */
+  @ApiOperation("查询本月各学院第二课堂活动数量")
+  @GetMapping("/getSecondClassCount/month")
+  public R<List<SecondClassCountVo>> getSecondClassCountByMonth(@RequestParam(required = false) Integer month) {
+    return R.ok(raceInfoService.getSecondClassCountByMonth(month));
+  }
 
-    /**
-     * 根据月份查询各学院第二课堂活动数量
-     * @param month 没有即查询本月
-     */
-    @ApiOperation("查询本月各学院第二课堂活动数量")
-    @GetMapping("/getSecondClassCount/month")
-    public R<List<SecondClassCountVo>> getSecondClassCountByMonth(@RequestParam(required = false) Integer month) {
-        return R.ok(raceInfoService.getSecondClassCountByMonth(month));
-    }
+  /**
+   * 根据年份查询各学院第二课堂活动数量
+   * 
+   * @param year 没有即查询本年
+   */
+  @ApiOperation("查询今年各学院第二课堂活动数量")
+  @GetMapping("/getSecondClassCount/year")
+  public R<List<SecondClassCountVo>> getSecondClassCountByYear(@RequestParam(required = false) Integer year) {
+    return R.ok(raceInfoService.getSecondClassCountByYear(year));
+  }
 
-    /**
-     * 根据年份查询各学院第二课堂活动数量
-     * @param year 没有即查询本年
-     */
-    @ApiOperation("查询今年各学院第二课堂活动数量")
-    @GetMapping("/getSecondClassCount/year")
-    public R<List<SecondClassCountVo>> getSecondClassCountByYear(@RequestParam(required = false) Integer year) {
-        return R.ok(raceInfoService.getSecondClassCountByYear(year));
-    }
+  /**
+   * 获取热门比赛TOP10
+   * 
+   * @return
+   */
+  @ApiOperation("查询热门比赛")
+  @GetMapping("/getHotRaces")
+  public R<List<HotRaceVo>> getHotRaces() {
+    return R.ok(raceInfoService.getHotRace());
+  }
 
-    /**
-     * 获取热门比赛TOP10
-     * @return
-     */
-    @ApiOperation("查询热门比赛")
-    @GetMapping("/getHotRaces")
-    public R<List<HotRaceVo>> getHotRaces() {
-        return R.ok(raceInfoService.getHotRace());
-    }
+  /**
+   * 统计各年级学生的参与第二课堂的活动占比
+   * 
+   * @return
+   */
+  @ApiOperation("统计各年级学生的参与第二课堂的活动占比")
+  @GetMapping("/getStudentGradeCount")
+  public R<List<GradeStatistic>> getStudentGradeCount() {
+    return R.ok(raceInfoService.getStudentGradeCount());
+  }
 
+  /**
+   * 查询个人年度参与活动率
+   * 
+   * @param userId
+   * @param grade
+   * @return
+   */
+  @ApiOperation("查询个人年度参与活动率")
+  @GetMapping("/participationRateByUser")
+  public R<String> getUserAnnualParticipationRate(@RequestParam(value = "userId") Long userId,
+      @RequestParam(value = "grade") int grade) {
+    String result = raceInfoService.userAnnualParticipationRate(userId, grade);
+    return R.ok(result);
+  }
 
-    /**
-     * 统计各年级学生的参与第二课堂的活动占比
-     * @return
-     */
-    @ApiOperation("统计各年级学生的参与第二课堂的活动占比")
-    @GetMapping("/getStudentGradeCount")
-    public R<List<GradeStatistic>> getStudentGradeCount() {
-        return R.ok(raceInfoService.getStudentGradeCount());
-    }
+  /**
+   * 查询学科竞赛教师指导项目数
+   * 
+   * @param userId
+   * @return
+   */
+  @ApiOperation("查询学科竞赛教师指导项目数")
+  @GetMapping("/getTeacherInstructCount/contest")
+  public R<String> getTeacherInstructCountFromContest(@RequestParam(value = "userId") Long userId) {
+    return R.ok(teamInfoService.getTeacherInstructCountFromContest(userId));
+  }
 
+  /**
+   * 查询大创申报教师指导项目数
+   * 
+   * @param userId
+   * @return
+   */
+  @ApiOperation("查询大创申报教师指导项目数")
+  @GetMapping("/getTeacherInstructCount/innovation")
+  public R<String> getTeacherInstructCountFromInnovation(@RequestParam(value = "userId") Long userId) {
+    return R.ok(teamInfoService.getTeacherInstructCountFromInnovation(userId));
+  }
 
-    /**
-     * 查询个人年度参与活动率
-     * @param userId
-     * @param grade
-     * @return
-     */
-    @ApiOperation("查询个人年度参与活动率")
-    @GetMapping("/participationRateByUser")
-    public R<String> getUserAnnualParticipationRate(@RequestParam(value = "userId") Long userId,
-                                                    @RequestParam(value = "grade") int grade) {
-        String result = raceInfoService.userAnnualParticipationRate(userId, grade);
-        return R.ok(result);
-    }
+  /**
+   * 查询第二课堂教师指导项目数
+   * 
+   * @param userId
+   * @return
+   */
+  @ApiOperation("查询第二课堂教师指导项目数")
+  @GetMapping("/getTeacherInstructCount/second")
+  public R<String> getTeacherInstructCountFromSecond(@RequestParam(value = "userId") Long userId) {
+    return R.ok(raceInfoService.getTeacherInstructCountFromSecond(userId));
+  }
 
-    /**
-     * 查询学科竞赛教师指导项目数
-     * @param userId
-     * @return
-     */
-    @ApiOperation("查询学科竞赛教师指导项目数")
-    @GetMapping("/getTeacherInstructCount/contest")
-    public R<String> getTeacherInstructCountFromContest(@RequestParam(value = "userId") Long userId) {
-        return R.ok(teamInfoService.getTeacherInstructCountFromContest(userId));
-    }
+  /**
+   * 查询学生参与第二课堂活动数
+   */
+  @ApiOperation("查询学生参与第二课堂活动数")
+  @GetMapping("/getStudentJoinCount/second")
+  public R<Integer> getStudentInstructCountFromSecond(@RequestParam(value = "userId") Long userId) {
+    return R.ok(teamMemberStudentService.getStudentJoinSecondCountByUserId(userId));
+  }
 
-    /**
-     * 查询大创申报教师指导项目数
-     * @param userId
-     * @return
-     */
-    @ApiOperation("查询大创申报教师指导项目数")
-    @GetMapping("/getTeacherInstructCount/innovation")
-    public R<String> getTeacherInstructCountFromInnovation(@RequestParam(value = "userId") Long userId) {
-        return R.ok(teamInfoService.getTeacherInstructCountFromInnovation(userId));
-    }
+  /**
+   * 查询学生参与活动总数
+   */
+  @ApiOperation("查询学生参与活动总数")
+  @GetMapping("/getStudentJoinCount/activity")
+  public R<Integer> getStudentInstructCountFromActivity(@RequestParam(value = "userId") Long userId) {
+    return R.ok(teamMemberStudentService.getStudentActivityByUserId(userId));
+  }
 
-    /**
-     * 查询第二课堂教师指导项目数
-     * @param userId
-     * @return
-     */
-    @ApiOperation("查询第二课堂教师指导项目数")
-    @GetMapping("/getTeacherInstructCount/second")
-    public R<String> getTeacherInstructCountFromSecond(@RequestParam(value = "userId") Long userId) {
-        return R.ok(raceInfoService.getTeacherInstructCountFromSecond(userId));
-    }
+  /**
+   * 查询学生参与大创立项活动数
+   */
+  @ApiOperation("查询学生参与大创立项活动数")
+  @GetMapping("/getStudentJoinCount/innovation")
+  public R<Integer> getStudentInstructCountFromInnovation(@RequestParam(value = "userId") Long userId) {
+    return R.ok(teamMemberStudentService.getStudentJoinInnovationCountByUserId(userId));
+  }
 
-    /**
-     * 查询学生参与第二课堂活动数
-     */
-    @ApiOperation("查询学生参与第二课堂活动数")
-    @GetMapping("/getStudentJoinCount/second")
-    public R<Integer> getStudentInstructCountFromSecond(@RequestParam(value = "userId") Long userId) {
-        return R.ok(teamMemberStudentService.getStudentJoinSecondCountByUserId(userId));
-    }
+  // /**
+  // * 统计第二课堂热门活动类型TOP5
+  // */
+  // @ApiOperation("统计第二课堂热门活动类型TOP5")
+  // @GetMapping("/getSecondHotRaceType")
+  // public R<List<String>> getSecondHotRaceType() {
+  // //查出热门TOP10活动
+  // List<HotRaceVo> hotRace = raceInfoService.getHotRace();
+  // List<String> result = new ArrayList<>();
+  // //获取热门活动的类型
+  // for (HotRaceVo hotRaceVo : hotRace) {
+  // String secondType = hotRaceVo.getRaceDetail().getSecondType();
+  // //根据value和type从字典获取到对应的活动类型
+  // String type = sysDictDataService.selectDictLabel("second_type", secondType);
+  // result.add(type);
+  // }
+  // //返回
+  // return R.ok(result);
+  // }
 
-    /**
-     * 查询学生参与活动总数
-     */
-    @ApiOperation("查询学生参与活动总数")
-    @GetMapping("/getStudentJoinCount/activity")
-    public R<Integer> getStudentInstructCountFromActivity(@RequestParam(value = "userId") Long userId) {
-        return R.ok(teamMemberStudentService.getStudentActivityByUserId(userId));
-    }
+  @ApiOperation("统计第二课堂热门活动类型数量")
+  @GetMapping("/getSecondHotRace")
+  public R<List<HotRaceVo>> getSecondHotRace() {
+    // 查出热门TOP10活动
+    List<HotRaceVo> result = raceInfoService.getHot();
+    // 返回
+    return R.ok(result);
+  }
 
-    /**
-     * 查询学生参与大创立项活动数
-     */
-    @ApiOperation("查询学生参与大创立项活动数")
-    @GetMapping("/getStudentJoinCount/innovation")
-    public R<Integer> getStudentInstructCountFromInnovation(@RequestParam(value = "userId") Long userId) {
-        return R.ok(teamMemberStudentService.getStudentJoinInnovationCountByUserId(userId));
-    }
+  /**
+   * 获取所带学生的竞赛状态
+   * 
+   * @param teacherId
+   * @return
+   */
+  @ApiOperation("获取所带学生的竞赛参与信息")
+  @GetMapping("/getStudentCompetitionStatus")
+  public R<List<StudentCompetitionStatus>> getStudentCompetitionStatus(
+      @RequestParam(value = "teacherId") Long teacherId) {
+    List<StudentCompetitionStatus> result = statisticsService.getStudentCompetitionStatus(teacherId);
 
-//    /**
-//     * 统计第二课堂热门活动类型TOP5
-//     */
-//    @ApiOperation("统计第二课堂热门活动类型TOP5")
-//    @GetMapping("/getSecondHotRaceType")
-//    public R<List<String>> getSecondHotRaceType() {
-//        //查出热门TOP10活动
-//        List<HotRaceVo> hotRace = raceInfoService.getHotRace();
-//        List<String> result = new ArrayList<>();
-//        //获取热门活动的类型
-//        for (HotRaceVo hotRaceVo : hotRace) {
-//            String secondType = hotRaceVo.getRaceDetail().getSecondType();
-//            //根据value和type从字典获取到对应的活动类型
-//            String type = sysDictDataService.selectDictLabel("second_type", secondType);
-//            result.add(type);
-//        }
-//        //返回
-//        return R.ok(result);
-//    }
+    return R.ok(result);
+  }
 
+  /**
+   * 统计教师所带的团队技能数量
+   * 
+   * @return
+   */
+  @ApiOperation("根据团队Id查询技能数量")
+  @GetMapping("/statisticsTeamSkill")
+  public R<TeamSkillStatisticsVO> statisticsTeamSkill(@RequestParam(value = "teamId") Long teamId) {
+    TeamSkillStatisticsVO teamSkillStatistics = teamSkillService.getTeamSkillStatistics(teamId);
 
-    @ApiOperation("统计第二课堂热门活动类型数量")
-    @GetMapping("/getSecondHotRace")
-    public R<List<HotRaceVo>> getSecondHotRace() {
-        //查出热门TOP10活动
-        List<HotRaceVo> result = raceInfoService.getHot();
-        //返回
-        return R.ok(result);
-    }
+    return R.ok(teamSkillStatistics);
+  }
 
-    /**
-     * 获取所带学生的竞赛状态
-     * @param teacherId
-     * @return
-     */
-    @ApiOperation("获取所带学生的竞赛参与信息")
-    @GetMapping("/getStudentCompetitionStatus")
-    public R<List<StudentCompetitionStatus>> getStudentCompetitionStatus(@RequestParam(value = "teacherId") Long teacherId) {
-        List<StudentCompetitionStatus> result = statisticsService.getStudentCompetitionStatus(teacherId);
+  /**
+   * 统计总活动数（无筛选条件）
+   * 
+   * @return
+   */
+  @ApiOperation("统计总活动数")
+  @GetMapping("/getActivityCount")
+  public R<Integer> getActivityCount() {
+    int count = raceInfoService.getActivityCount();
+    return R.ok(count);
+  }
 
-        return R.ok(result);
-    }
+  /**
+   * 查询前五个热门第二课堂活动类型
+   * 
+   * @return
+   */
+  @ApiOperation("查询前五个热门第二课堂活动类型")
+  @GetMapping("/getRecentlyPopularActType")
+  public R<List<HotRaceVo>> getRecentlyPopularAct() {
+    List<HotRaceVo> result = raceInfoService.getRecentlyPopularActType();
 
-    /**
-     * 统计教师所带的团队技能数量
-     * @return
-     */
-    @ApiOperation("根据团队Id查询技能数量")
-    @GetMapping("/statisticsTeamSkill")
-    public R<TeamSkillStatisticsVO> statisticsTeamSkill(@RequestParam(value = "teamId") Long teamId) {
-        TeamSkillStatisticsVO teamSkillStatistics = teamSkillService.getTeamSkillStatistics(teamId);
+    return R.ok(result);
+  }
 
-        return R.ok(teamSkillStatistics);
-    }
+  /**
+   * 获取活动报名人数排行
+   * 
+   * @return
+   */
+  @ApiOperation("获取活动报名人数排行")
+  @GetMapping("/getActPeopleCount")
+  public R<List<ActPeopleCountVo>> getActPeopleCount() {
+    List<ActPeopleCountVo> result = preSignStudentService.getActPeopleCount();
 
-    /**
-     * 统计总活动数（无筛选条件）
-     * @return
-     */
-    @ApiOperation("统计总活动数")
-    @GetMapping("/getActivityCount")
-    public R<Integer> getActivityCount() {
-        int count = raceInfoService.getActivityCount();
-        return R.ok(count);
-    }
+    return R.ok(result);
+  }
 
-    /**
-     * 查询前五个热门第二课堂活动类型
-     * @return
-     */
-    @ApiOperation("查询前五个热门第二课堂活动类型")
-    @GetMapping("/getRecentlyPopularActType")
-    public R<List<HotRaceVo>> getRecentlyPopularAct() {
-        List<HotRaceVo> result = raceInfoService.getRecentlyPopularActType();
+  /**
+   * 获取待审核项目
+   * 
+   * @param teacherId
+   * @return
+   */
+  @ApiOperation("获取待审核项目")
+  @GetMapping("/getUnderReviewProject")
+  public R<List<RaceInfoVo>> getUnderReviewProject(@RequestParam(value = "teacherId") Long teacherId) {
+    RaceInfo raceInfo = new RaceInfo();
+    raceInfo.setCreateId(teacherId);
+    List<RaceInfoVo> raceInfoList = raceInfoService.getRaceInfoList(raceInfo);
 
-        return R.ok(result);
-    }
+    return R.ok(raceInfoList);
+  }
 
-    /**
-     * 获取活动报名人数排行
-     * @return
-     */
-    @ApiOperation("获取活动报名人数排行")
-    @GetMapping("/getActPeopleCount")
-    public R<List<ActPeopleCountVo>> getActPeopleCount() {
-        List<ActPeopleCountVo> result = preSignStudentService.getActPeopleCount();
+  /**
+   * 获取指导总人数
+   * 
+   * @return
+   */
+  @ApiOperation("获取指导总人数")
+  @GetMapping("/getTotalGuideNumber")
+  public R<Integer> getTotalGuideNumber(@RequestParam(value = "teacherId") Long teacherId) {
+    int count = teamMemberTeacherService.getTotalGuideNumber(teacherId);
+    return R.ok(count);
+  }
 
-        return R.ok(result);
-    }
+  /**
+   * 获取指导下获奖数
+   * 
+   * @param teacherId
+   * @return
+   */
+  @ApiOperation("获取指导下获奖数")
+  @GetMapping("/getAwardCount")
+  public R<Integer> getAwardCount(@RequestParam(value = "teacherId") Long teacherId) {
+    int count = awardService.getAwardCount(teacherId);
+    return R.ok(count);
+  }
+
+  /**
+   * 获取老师项目完成率
+   * 
+   * @param teacherId
+   * @return
+   */
+  @ApiOperation("获取老师项目完成率")
+  @GetMapping("/getProjectCompletionRate")
+  public R<Double> getProjectCompletionRate(@RequestParam(value = "teacherId") Long teacherId) {
+    Double rate = teamInfoService.getProjectCompletionRate(teacherId);
+    return R.ok(rate);
+  }
 }

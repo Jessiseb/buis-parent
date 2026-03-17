@@ -112,4 +112,20 @@ public interface TeamInfoMapper {
     List<TeamInfo> selectAllTeamInfoById(@Param("userId") Long userId);
 
     Integer selectByTeamIdAndUserId(Long teamId, Long userId);
+
+    /**
+     * 获取老师指导的总项目数
+     *
+     * @param teacherId 老师ID
+     * @return 总项目数
+     */
+    int getTotalProjectCountByTeacherId(@Param("teacherId") Long teacherId);
+
+    /**
+     * 获取老师指导的已完成项目数
+     *
+     * @param teacherId 老师ID
+     * @return 已完成项目数
+     */
+    int getCompletedProjectCountByTeacherId(@Param("teacherId") Long teacherId);
 }
