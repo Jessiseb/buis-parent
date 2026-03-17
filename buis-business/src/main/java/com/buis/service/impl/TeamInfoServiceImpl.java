@@ -1367,6 +1367,22 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return matched;
     }
 
+    /**
+     * 获取老师项目完成率
+     *
+     * @param teacherId 老师ID
+     * @return 完成率（百分比）
+     */
+    @Override
+    public Double getProjectCompletionRate(Long teacherId) {
+        int totalCount = teamInfoMapper.getTotalProjectCountByTeacherId(teacherId);
+        if (totalCount == 0) {
+            return 0.0;
+        }
+        int completedCount = teamInfoMapper.getCompletedProjectCountByTeacherId(teacherId);
+        return (double) completedCount / totalCount * 100;
+    }
+
 
 
 

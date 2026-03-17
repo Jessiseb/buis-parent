@@ -299,4 +299,17 @@ public class StatisticsApiController {
     int count = awardService.getAwardCount(teacherId);
     return R.ok(count);
   }
+
+  /**
+   * 获取老师项目完成率
+   * 
+   * @param teacherId
+   * @return
+   */
+  @ApiOperation("获取老师项目完成率")
+  @GetMapping("/getProjectCompletionRate")
+  public R<Double> getProjectCompletionRate(@RequestParam(value = "teacherId") Long teacherId) {
+    Double rate = teamInfoService.getProjectCompletionRate(teacherId);
+    return R.ok(rate);
+  }
 }

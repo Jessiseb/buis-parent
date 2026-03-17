@@ -169,4 +169,12 @@ public interface ITeamInfoService {
      * @return 推荐结果列表
      */
     List<TeamRecommendationVo> getRecommendTeams(Long userId, Integer pageNum, Integer pageSize, Long raceId);
+
+    /**
+     * 获取老师项目完成率
+     *
+     * @param teacherId 老师ID
+     * @return 完成率（百分比）
+     */
+    Double getProjectCompletionRate(Long teacherId);
 }
