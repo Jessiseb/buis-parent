@@ -1,6 +1,8 @@
 package com.buis.service;
 
 import java.util.List;
+
+import com.buis.common.core.domain.AjaxResult;
 import com.buis.model.domain.PreSignStudent;
 import com.buis.model.vo.ActPeopleCountVo;
 import com.buis.model.vo.PreSignStudentVo;
@@ -80,4 +82,9 @@ public interface IPreSignStudentService
      * @return
      */
     List<ActPeopleCountVo> getActPeopleCount();
+
+    /**
+     * 年度参与趋势分析
+     */
+    AjaxResult trend();
 }

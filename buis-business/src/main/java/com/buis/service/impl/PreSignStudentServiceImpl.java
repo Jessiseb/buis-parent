@@ -1,12 +1,13 @@
 package com.buis.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.buis.common.core.domain.AjaxResult;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.model.domain.PreSignStudent;
 import com.buis.model.enums.ReviewStatus;
 import com.buis.mapper.PreSignStudentMapper;
-import com.buis.model.vo.ActPeopleCountVo;
+import com.buis.model.vo.TrendResultVo;
 import com.buis.service.IPreSignStudentService;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.IUserInfoService;
@@ -15,12 +16,15 @@ import com.buis.model.vo.RaceInfoVo;
 import com.buis.model.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,6 +42,9 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     private IUserInfoService userInfoService;
     @Resource
     private IRaceInfoService raceInfoService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     /**
@@ -223,6 +230,20 @@ public class PreSignStudentServiceImpl implements IPreSignStudentService {
     @Override
     public PreSignStudent selectByUserIdAndRace(Long userId, Long raceId) {
         return preSignStudentMapper.selectByUserIdAndRace(userId, raceId);
+    }
+
+    /**
+     * 年度参与趋势分析
+     */
+    @Override
+    public AjaxResult trend() {
+        Object cached = redisTemplate.opsForValue().get("trend:data");
+        if (cached != null) return AjaxResult.success(cached);
+
+        List<TrendResultVo> data = preSignStudentMapper.selectMonthlyTrend();
+        redisTemplate.opsForValue().set("trend:data", data);
+
+        return AjaxResult.success(data);
     }
 
 }

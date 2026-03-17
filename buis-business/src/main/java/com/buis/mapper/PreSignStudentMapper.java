@@ -1,12 +1,16 @@
 package com.buis.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 
 import com.buis.model.domain.PreSignStudent;
 import com.buis.model.vo.ActPeopleCountVo;
 import com.buis.model.vo.PreSignStudentVo;
+import com.buis.model.vo.TrendResultVo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 学生预报名Mapper接口
@@ -14,6 +18,7 @@ import org.apache.ibatis.annotations.Param;
  * @author buis
  * @date 2024-10-11
  */
+@Mapper
 public interface PreSignStudentMapper
 {
     /**
@@ -84,4 +89,18 @@ public interface PreSignStudentMapper
      * @return
      */
     List<ActPeopleCountVo> getActPeopleCount();
+
+    /**
+     * 查询最近12个月的报名趋势数据
+     */
+    @Select("SELECT DATE_FORMAT(create_time, '%Y-%m') as month, COUNT(*) as count FROM pre_sign_student WHERE is_deleted = 0 GROUP BY DATE_FORMAT(create_time, '%Y-%m') ORDER BY month DESC LIMIT 12")
+    List<TrendResultVo> selectMonthlyTrend();
+
+
+    /**
+     * 统计总参赛人数（从报名表面）
+     */
+    @Select("SELECT COUNT(*) FROM pre_sign_student WHERE is_deleted = 0")
+    long countTotalParticipant();
+
 }
