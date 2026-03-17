@@ -109,4 +109,14 @@ public class PreSignStudentController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(preSignStudentService.deletePreSignStudentByIds(ids));
     }
+
+    /*
+    * 年度参与趋势分析
+    * */
+    @ApiOperation("年度参与趋势分析")
+    @PreAuthorize("@ss.hasPermi('buis:preStudent:trend')")
+    @GetMapping("/trend")
+    public AjaxResult trend() {
+        return preSignStudentService.trend();
+    }
 }

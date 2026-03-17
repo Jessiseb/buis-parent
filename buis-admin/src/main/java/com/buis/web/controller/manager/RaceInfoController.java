@@ -1,6 +1,9 @@
 package com.buis.web.controller.manager;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.buis.common.annotation.Log;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.AjaxResult;
@@ -15,6 +18,9 @@ import com.buis.model.dto.StudentExportToDiDto;
 import com.buis.model.dto.TeacherExportToDaDto;
 import com.buis.model.dto.TeacherExportToDiDto;
 import com.buis.model.vo.RaceInfoVo;
+import com.buis.model.vo.RaceNumsVo;
+import com.buis.model.vo.RaceStatCardVo;
+import com.buis.model.vo.RaceTypeCountVo;
 import com.buis.service.IRaceInfoService;
 import com.buis.service.ITeamInfoService;
 import com.buis.service.IUserInfoService;
@@ -24,6 +30,7 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,7 +101,7 @@ RaceInfoController extends BaseController {
     public void declarationDownload(@RequestBody Long[] raceIdList, HttpServletResponse response) throws IOException {
         // 接收比赛id列表
         List<RaceInfoVo> raceInfoList = new ArrayList<>();
-        for (Long raceId : raceIdList){
+        for (Long raceId : raceIdList) {
             RaceInfo raceInfo = new RaceInfo();
             raceInfo.setId(raceId);
             raceInfoList.add(raceInfoService.selectRaceInfoById(raceId)); // 获得活动信息
@@ -198,7 +205,7 @@ RaceInfoController extends BaseController {
                                             @RequestParam(value = "grade", required = true) int grade,
                                             HttpServletResponse response) {
         List<TeacherExportToDaDto> teacherExporToDektDtoList = new LinkedList<>(); //要导出的类型
-        List<TeacherExportToDaDto> list = raceInfoService.exportTeacherDaProjectCount(college,grade,teacherExporToDektDtoList, "大创立项", response);
+        List<TeacherExportToDaDto> list = raceInfoService.exportTeacherDaProjectCount(college, grade, teacherExporToDektDtoList, "大创立项", response);
         ExcelUtil<TeacherExportToDaDto> util = new ExcelUtil<TeacherExportToDaDto>(TeacherExportToDaDto.class);
         util.exportExcel(response, list, "老师所指导的大创项目数量数据");
     }
@@ -214,7 +221,7 @@ RaceInfoController extends BaseController {
                                             @RequestParam(value = "grade", required = true) int grade,
                                             HttpServletResponse response) {
         List<TeacherExportToDiDto> teacherExporToDektDtoList = new LinkedList<>(); //要导出的类型
-        List<TeacherExportToDiDto> list = raceInfoService.exportTeacherDiProjectCount(college,grade,teacherExporToDektDtoList, "第二课堂", response);
+        List<TeacherExportToDiDto> list = raceInfoService.exportTeacherDiProjectCount(college, grade, teacherExporToDektDtoList, "第二课堂", response);
         ExcelUtil<TeacherExportToDiDto> util = new ExcelUtil<TeacherExportToDiDto>(TeacherExportToDiDto.class);
         util.exportExcel(response, list, "老师所指导的第二课堂项目数量数据");
     }
@@ -233,5 +240,46 @@ RaceInfoController extends BaseController {
         ExcelUtil<StudentExportToDiDto> util = new ExcelUtil<StudentExportToDiDto>(StudentExportToDiDto.class);
         util.exportExcel(response, list, "导出学生参与的第二课堂比赛数量");
     }
+
+
+    /*
+    * 热门赛事报名排行 可视化报表
+    * */
+    @ApiOperation("热门赛事报名排行")
+    @PostMapping("/getHotRace")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:hotRace')")
+    public AjaxResult getHotRace() {
+        List<RaceNumsVo> list = raceInfoService.selectHotRaceWithSignCount();
+        return AjaxResult.success(list);
+    }
+
+    /*
+    * 查询总比赛数量
+    * 竞赛总参与人次
+    * 竞赛获奖率
+    * 新增竞赛项目数
+    * */
+    @ApiOperation("查询小卡")
+    @PostMapping("/getCard")
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:getCard')")
+    public AjaxResult getCard() {
+        List<RaceStatCardVo> list = raceInfoService.selectCard();
+        return AjaxResult.success(list);
+    }
+
+
+    /**
+     * 查询比赛类型分类数量分布图
+     */
+    @ApiOperation("查询比赛类型分类数量")  // 接口说明，和示例风格一致
+    @PostMapping("/getRaceTypeCount")     // 自定义接口路径，建议语义化
+    @PreAuthorize("@ss.hasPermi('buis:raceInfo:getRaceTypeCount')")  // 权限控制，和示例格式一致
+    public AjaxResult getRaceTypeCount() {
+        // 调用Service获取比赛类型统计数据
+        List<RaceTypeCountVo> list = raceInfoService.getRaceTypeCount();
+        // 按示例格式返回AjaxResult.success
+        return AjaxResult.success(list);
+    }
+
 
 }

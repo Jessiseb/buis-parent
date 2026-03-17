@@ -104,4 +104,28 @@ public class SkillTagController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(skillTagService.deleteSkillTagByIds(ids));
     }
+
+
+    /*
+    * 获取学生掌握的技能
+    * */
+    @ApiOperation("获取学生掌握的技能")
+    @PostMapping("/getSkillTagByAllUser")
+    @PreAuthorize("@ss.hasPermi('buis:skillTag:getSkillTagByAllUser')")
+    public AjaxResult getSkillTagByAllUser() {
+        return success(skillTagService.getSkillTagByAllUser());
+    }
+
+    /**
+     * 获取团队技能缺口
+     */
+    @ApiOperation("获取团队技能缺口")
+    @PostMapping("/getSkillDemandByAllTeam")
+    @PreAuthorize("@ss.hasPermi('buis:skillTag:getSkillDemandByAllTeam')")
+    public AjaxResult getSkillDemandByAllTeam() {
+        return AjaxResult.success(skillTagService.getSkillDemandStatistics());
+    }
+
+
+
 }
