@@ -3,6 +3,7 @@ package com.buis.web.controller.api;
 import com.buis.common.core.domain.R;
 import com.buis.model.domain.RaceDetail;
 import com.buis.model.domain.RaceInfo;
+import com.buis.model.domain.TeamMemberTeacher;
 import com.buis.model.dto.GradeStatistic;
 import com.buis.service.*;
 import com.buis.model.vo.*;
@@ -32,6 +33,8 @@ public class StatisticsApiController {
     private ITeamSkillService teamSkillService;
     @Autowired
     private IPreSignStudentService preSignStudentService;
+    @Autowired
+    private ITeamMemberTeacherService teamMemberTeacherService;
 
 
     /**
@@ -257,5 +260,16 @@ public class StatisticsApiController {
         List<RaceInfoVo> raceInfoList = raceInfoService.getRaceInfoList(raceInfo);
 
         return R.ok(raceInfoList);
+    }
+
+    /**
+     * 获取指导总人数
+     * @return
+     */
+    @ApiOperation("获取指导总人数")
+    @GetMapping("/getTotalGuideNumber")
+    public R<Integer> getTotalGuideNumber(@RequestParam(value = "teacherId")Long teacherId) {
+        int count = teamMemberTeacherService.getTotalGuideNumber(teacherId);
+        return R.ok(count);
     }
 }
