@@ -152,4 +152,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         set is_deleted = 1
         where student = #{userId} and race = #{race}
     </delete>
+
+
+
 </mapper>

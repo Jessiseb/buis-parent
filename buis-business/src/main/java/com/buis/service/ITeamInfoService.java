@@ -177,4 +177,22 @@ public interface ITeamInfoService {
      * @return 完成率（百分比）
      */
     Double getProjectCompletionRate(Long teacherId);
+
+    /**
+     * 获取老师的近期指导记录（分页）
+     *
+     * @param teacherId 老师ID
+     * @param pageNum 页码
+     * @param pageSize 每页数量
+     * @return 指导记录列表
+     */
+    List<com.buis.model.vo.TeacherGuideRecordVo> getRecentGuideRecords(Long teacherId, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取老师的近期指导记录总数
+     *
+     * @param teacherId 老师ID
+     * @return 记录总数
+     */
+    int getRecentGuideRecordsCount(Long teacherId);
 }

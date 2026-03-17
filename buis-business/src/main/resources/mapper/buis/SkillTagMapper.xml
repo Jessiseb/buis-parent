@@ -89,5 +89,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by tag_name
     </select>
 
+    <!-- 获取热门技能统计 -->
+    <select id="selectTop8StudentSkillStats" resultType="com.buis.model.vo.StudentSkillStatVo">
+        SELECT
+            st.tag_name as skillName,
+            COUNT(DISTINCT us.user_id) as studentCount
+        FROM skill_tag st
+                 LEFT JOIN user_skill us ON st.id = us.skill_tag_id
+
+        WHERE st.is_active = 1
+        GROUP BY st.id, st.tag_name
+        ORDER BY
+            COUNT(DISTINCT us.user_id) DESC,
+            st.create_time DESC
+            LIMIT 9
+    </select>
+
+
+    <!-- 统计各技能被团队需求的数量 -->
+    <select id="countSkillDemandByTeams" resultType="com.buis.model.vo.SkillDemandStatVo">
+        SELECT st.id                      AS skillId,
+               st.tag_name                AS skillName,
+               st.category,
+               COUNT(DISTINCT ts.team_id) AS demandTeamCount
+        FROM skill_tag st
+                 LEFT JOIN team_skill ts ON st.id = ts.skill_tag_id
+        WHERE st.is_deleted = 0
+          AND st.is_active = 1
+        GROUP BY st.id, st.tag_name, st.category
+        ORDER BY demandTeamCount DESC, st.tag_name LIMIT 20
+    </select>
+
 
 </mapper>

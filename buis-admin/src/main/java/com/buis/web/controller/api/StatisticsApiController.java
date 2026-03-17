@@ -1,6 +1,7 @@
 package com.buis.web.controller.api;
 
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.model.domain.RaceDetail;
 import com.buis.model.domain.RaceInfo;
 import com.buis.model.domain.TeamMemberTeacher;
@@ -37,6 +38,8 @@ public class StatisticsApiController {
   private ITeamMemberTeacherService teamMemberTeacherService;
   @Autowired
   private IAwardService awardService;
+  @Autowired
+  private IScoreService scoreService;
 
   /**
    * 统计各年级学生的参与活动
@@ -311,5 +314,50 @@ public class StatisticsApiController {
   public R<Double> getProjectCompletionRate(@RequestParam(value = "teacherId") Long teacherId) {
     Double rate = teamInfoService.getProjectCompletionRate(teacherId);
     return R.ok(rate);
+  }
+
+  /**
+   * 获取老师的近期指导记录（分页）
+   * 
+   * @param teacherId 老师ID
+   * @param pageNum   页码
+   * @param pageSize  每页数量
+   * @return 指导记录列表
+   */
+  @ApiOperation("获取老师的近期指导记录")
+  @GetMapping("/getRecentGuideRecords")
+  public MyPageVo<List<TeacherGuideRecordVo>> getRecentGuideRecords(
+      @RequestParam(value = "teacherId") Long teacherId,
+      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+    List<TeacherGuideRecordVo> records = teamInfoService.getRecentGuideRecords(teacherId, pageNum, pageSize);
+    int total = teamInfoService.getRecentGuideRecordsCount(teacherId);
+    MyPageVo<List<TeacherGuideRecordVo>> pageVo = new MyPageVo<>();
+    pageVo.setRows(records);
+    pageVo.setTotal(total);
+    return pageVo;
+  }
+
+  /**
+   * 获取老师负责学生的能力分布
+   * 
+   * @param teacherId   老师ID
+   * @param major       专业
+   * @param sClass      班级
+   * @param projectType 项目类型
+   * @param year        学年
+   * @return 能力分布列表
+   */
+  @ApiOperation("获取老师负责学生的能力分布")
+  @GetMapping("/getStudentAbilityDistribution")
+  public R<List<StudentAbilityDistributionVo>> getStudentAbilityDistribution(
+      @RequestParam(value = "teacherId") Long teacherId,
+      @RequestParam(value = "major", required = false, defaultValue = "0") Integer major,
+      @RequestParam(value = "sClass", required = false, defaultValue = "") String sClass,
+      @RequestParam(value = "projectType", required = false, defaultValue = "0") Integer projectType,
+      @RequestParam(value = "year", required = false, defaultValue = "") String year) {
+    List<StudentAbilityDistributionVo> distribution = scoreService.getStudentAbilityDistribution(teacherId, major,
+        sClass, projectType, year);
+    return R.ok(distribution);
   }
 }
