@@ -1383,6 +1383,18 @@ public class TeamInfoServiceImpl implements ITeamInfoService {
         return (double) completedCount / totalCount * 100;
     }
 
+    @Override
+    public List<com.buis.model.vo.TeacherGuideRecordVo> getRecentGuideRecords(Long teacherId, Integer pageNum, Integer pageSize) {
+        // 计算偏移量
+        int offset = (pageNum - 1) * pageSize;
+        return teamInfoMapper.getRecentGuideRecords(teacherId, offset, pageSize);
+    }
+
+    @Override
+    public int getRecentGuideRecordsCount(Long teacherId) {
+        return teamInfoMapper.getRecentGuideRecordsCount(teacherId);
+    }
+
 
 
 

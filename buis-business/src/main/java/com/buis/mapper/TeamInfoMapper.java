@@ -128,4 +128,22 @@ public interface TeamInfoMapper {
      * @return 已完成项目数
      */
     int getCompletedProjectCountByTeacherId(@Param("teacherId") Long teacherId);
+
+    /**
+     * 获取老师的近期指导记录（分页）
+     *
+     * @param teacherId 老师ID
+     * @param offset 偏移量
+     * @param limit 每页数量
+     * @return 指导记录列表
+     */
+    List<com.buis.model.vo.TeacherGuideRecordVo> getRecentGuideRecords(@Param("teacherId") Long teacherId, @Param("offset") int offset, @Param("limit") int limit);
+
+    /**
+     * 获取老师的近期指导记录总数
+     *
+     * @param teacherId 老师ID
+     * @return 记录总数
+     */
+    int getRecentGuideRecordsCount(@Param("teacherId") Long teacherId);
 }
