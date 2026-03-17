@@ -149,4 +149,10 @@ public interface ITeamMemberTeacherService
 
     int deleteTeamMemberTeacherByTeam(Long team);
 
+    /**
+     * 获取指导数量
+     * @param teacherId
+     * @return
+     */
+    int getTotalGuideNumber(Long teacherId);
 }

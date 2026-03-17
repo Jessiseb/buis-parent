@@ -214,6 +214,20 @@ private void setTeamInfo(TeamMemberTeacherVo teamMemberTeacherVo) {
         return teamMemberTeacherMapper.deleteTeamMemberTeacherByTeam(team);
     }
 
+    @Override
+    public int getTotalGuideNumber(Long teacherId) {
+        TeamMemberTeacher teamMemberTeacher = new TeamMemberTeacher();
+        teamMemberTeacher.setTeacher(teacherId);
+
+        int totalCount = 0;
+        List<TeamMemberTeacherVo> teamMemberTeacherVos = this.selectTeamMemberTeacherList(teamMemberTeacher);
+        for (TeamMemberTeacherVo teamMemberTeacherVo : teamMemberTeacherVos) {
+            totalCount += teamMemberTeacherVo.getTeamInfo().getStudentCount();
+        }
+
+        return totalCount;
+    }
+
     /**
      * 根据team和user删除邀请
      * @param team
