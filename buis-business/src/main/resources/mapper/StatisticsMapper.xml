@@ -89,4 +89,32 @@
         ORDER BY 
             total_score DESC
     </select>
+    
+    <resultMap id="ProjectCompetitionDetailResult" type="com.buis.model.vo.ProjectCompetitionDetailVo">
+        <result property="projectName" column="project_name" />
+        <result property="studentName" column="student_name" />
+        <result property="submissionStatus" column="submission_status" />
+    </resultMap>
+    
+    <select id="selectProjectCompetitionDetail" resultMap="ProjectCompetitionDetailResult">
+        SELECT 
+            ti.name as project_name,
+            u.name as student_name,
+            CASE 
+                WHEN pss.id IS NOT NULL THEN '已提交'
+                ELSE '未提交'
+            END as submission_status
+        FROM 
+            team_member_teacher tmt
+        JOIN 
+            team_info ti ON tmt.team_id = ti.id
+        JOIN 
+            team_member_student tms ON ti.id = tms.team_id
+        JOIN 
+            user_info u ON tms.student_id = u.id
+        LEFT JOIN 
+            pre_sign_student pss ON ti.id = pss.team_id AND u.id = pss.student
+        WHERE 
+            tmt.teacher_id = #{teacherId}
+    </select>
 </mapper>
