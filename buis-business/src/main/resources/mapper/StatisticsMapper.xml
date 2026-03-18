@@ -115,7 +115,7 @@
         LEFT JOIN 
             pre_sign_student pss ON ti.id = pss.team_id AND u.id = pss.student
         WHERE 
-            tmt.teacher_id = #{teacherId}
+            tmt.teacher = #{teacherId}
     </select>
     
     <resultMap id="YearlyGuidanceResultResult" type="com.buis.model.vo.YearlyGuidanceResultVo">
