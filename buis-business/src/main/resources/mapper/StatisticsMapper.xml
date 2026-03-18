@@ -117,4 +117,51 @@
         WHERE 
             tmt.teacher_id = #{teacherId}
     </select>
+    
+    <resultMap id="YearlyGuidanceResultResult" type="com.buis.model.vo.YearlyGuidanceResultVo">
+        <result property="year" column="year" />
+        <result property="awardCount" column="award_count" />
+        <result property="projectCount" column="project_count" />
+    </resultMap>
+    
+    <select id="selectYearlyGuidanceResult" resultMap="YearlyGuidanceResultResult">
+        SELECT 
+            year,
+            MAX(award_count) as award_count,
+            MAX(project_count) as project_count
+        FROM 
+            (
+                SELECT 
+                    ti.year as year,
+                    COUNT(a.id) as award_count,
+                    0 as project_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                LEFT JOIN 
+                    award a ON ti.id = a.team_id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                GROUP BY 
+                    ti.year
+                UNION ALL
+                SELECT 
+                    ti.year as year,
+                    0 as award_count,
+                    COUNT(ti.id) as project_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                GROUP BY 
+                    ti.year
+            ) combined
+        GROUP BY 
+            year
+        ORDER BY 
+            year
+    </select>
 </mapper>

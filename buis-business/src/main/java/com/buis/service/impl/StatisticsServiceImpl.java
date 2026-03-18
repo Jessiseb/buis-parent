@@ -10,6 +10,7 @@ import com.buis.model.vo.ProjectCompetitionDetailVo;
 import com.buis.model.vo.StudentCompetitionStatus;
 import com.buis.model.vo.StudentCultivationDetailVo;
 import com.buis.model.vo.TeamInfoVo;
+import com.buis.model.vo.YearlyGuidanceResultVo;
 import com.buis.service.IStatisticsService;
 import com.buis.service.ITeamMemberTeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,5 +128,10 @@ public class StatisticsServiceImpl implements IStatisticsService {
   @Override
   public List<ProjectCompetitionDetailVo> getProjectCompetitionDetail(Long teacherId) {
     return statisticsMapper.selectProjectCompetitionDetail(teacherId);
+  }
+
+  @Override
+  public List<YearlyGuidanceResultVo> getYearlyGuidanceResult(Long teacherId) {
+    return statisticsMapper.selectYearlyGuidanceResult(teacherId);
   }
 }
