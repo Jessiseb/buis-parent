@@ -152,9 +152,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND t.is_deleted = 0
             AND tms.is_deleted = 0
             AND u.is_deleted = 0
-            <if test="major != null and major != 0">
-                AND u.major = #{major}
-            </if>
             <if test="sClass != null and sClass != ''">
                 AND u.s_class = #{sClass}
             </if>

@@ -352,11 +352,10 @@ public class StatisticsApiController {
   @GetMapping("/getStudentAbilityDistribution")
   public R<List<StudentAbilityDistributionVo>> getStudentAbilityDistribution(
       @RequestParam(value = "teacherId") Long teacherId,
-      @RequestParam(value = "major", required = false, defaultValue = "0") Integer major,
       @RequestParam(value = "sClass", required = false, defaultValue = "") String sClass,
       @RequestParam(value = "projectType", required = false, defaultValue = "0") Integer projectType,
       @RequestParam(value = "year", required = false, defaultValue = "") String year) {
-    List<StudentAbilityDistributionVo> distribution = scoreService.getStudentAbilityDistribution(teacherId, major,
+    List<StudentAbilityDistributionVo> distribution = scoreService.getStudentAbilityDistribution(teacherId,
         sClass, projectType, year);
     return R.ok(distribution);
   }
@@ -375,11 +374,10 @@ public class StatisticsApiController {
   @GetMapping("/getClassAwardCount")
   public R<List<ClassAwardCountVo>> getClassAwardCount(
       @RequestParam(value = "teacherId") Long teacherId,
-      @RequestParam(value = "major", required = false, defaultValue = "0") Integer major,
       @RequestParam(value = "sClass", required = false, defaultValue = "") String sClass,
       @RequestParam(value = "projectType", required = false, defaultValue = "0") Integer projectType,
       @RequestParam(value = "year", required = false, defaultValue = "") String year) {
-    List<ClassAwardCountVo> classAwardCount = statisticsService.getClassAwardCount(teacherId, major,
+    List<ClassAwardCountVo> classAwardCount = statisticsService.getClassAwardCount(teacherId,
         sClass, projectType, year);
     return R.ok(classAwardCount);
   }
@@ -407,7 +405,7 @@ public class StatisticsApiController {
         sClass, projectType, year);
     return R.ok(studentCultivationDetail);
   }
-  
+
   /**
    * 获取老师负责的项目/竞赛管理明细表
    * 
@@ -418,7 +416,8 @@ public class StatisticsApiController {
   @GetMapping("/getProjectCompetitionDetail")
   public R<List<ProjectCompetitionDetailVo>> getProjectCompetitionDetail(
       @RequestParam(value = "teacherId") Long teacherId) {
-    List<ProjectCompetitionDetailVo> projectCompetitionDetail = statisticsService.getProjectCompetitionDetail(teacherId);
+    List<ProjectCompetitionDetailVo> projectCompetitionDetail = statisticsService
+        .getProjectCompetitionDetail(teacherId);
     return R.ok(projectCompetitionDetail);
   }
 

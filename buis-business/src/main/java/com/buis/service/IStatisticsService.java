@@ -33,7 +33,7 @@ public interface IStatisticsService {
    * @param year        学年
    * @return 班级获奖数量列表
    */
-  List<ClassAwardCountVo> getClassAwardCount(Long teacherId, Integer major, String sClass, Integer projectType,
+  List<ClassAwardCountVo> getClassAwardCount(Long teacherId, String sClass, Integer projectType,
       String year);
 
   /**
