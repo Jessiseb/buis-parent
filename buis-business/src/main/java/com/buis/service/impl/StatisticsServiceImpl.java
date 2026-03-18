@@ -80,9 +80,9 @@ public class StatisticsServiceImpl implements IStatisticsService {
    * @return 班级获奖数量列表
    */
   @Override
-  public List<ClassAwardCountVo> getClassAwardCount(Long teacherId, Integer major, String sClass, Integer projectType,
+  public List<ClassAwardCountVo> getClassAwardCount(Long teacherId, String sClass, Integer projectType,
       String year) {
-    return statisticsMapper.selectClassAwardCount(teacherId, major, sClass, projectType, year);
+    return statisticsMapper.selectClassAwardCount(teacherId, sClass, projectType, year);
   }
 
   /**

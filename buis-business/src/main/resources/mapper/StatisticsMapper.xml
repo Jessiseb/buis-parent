@@ -34,9 +34,6 @@
             user_info u ON tms.student_id = u.id
         WHERE 
             tmt.teacher_id = #{teacherId}
-        <if test="major != null and major != 0">
-            AND u.major = #{major}
-        </if>
         <if test="sClass != null and sClass != ''">
             AND u.class_name = #{sClass}
         </if>
@@ -144,7 +141,7 @@
         FROM 
             (
                 SELECT 
-                    ti.year as year,
+                    DATE_FORMAT(ti.create_time, '%Y') as year,
                     COUNT(a.id) as award_count,
                     0 as project_count
                 FROM 
@@ -156,10 +153,10 @@
                 WHERE 
                     tmt.teacher_id = #{teacherId}
                 GROUP BY 
-                    ti.year
+                    DATE_FORMAT(ti.create_time, '%Y')
                 UNION ALL
                 SELECT 
-                    ti.year as year,
+                    DATE_FORMAT(ti.create_time, '%Y') as year,
                     0 as award_count,
                     COUNT(ti.id) as project_count
                 FROM 
@@ -169,7 +166,7 @@
                 WHERE 
                     tmt.teacher_id = #{teacherId}
                 GROUP BY 
-                    ti.year
+                    DATE_FORMAT(ti.create_time, '%Y')
             ) combined
         GROUP BY 
             year
@@ -196,7 +193,7 @@
         LEFT JOIN 
             race_info ri ON a.race_id = ri.id
         WHERE 
-            tmt.teacher_id = #{teacherId}
+            tmt.teacher = #{teacherId}
             AND ri.level IS NOT NULL
         GROUP BY 
             ri.level
