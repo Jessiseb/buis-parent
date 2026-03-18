@@ -407,4 +407,18 @@ public class StatisticsApiController {
         sClass, projectType, year);
     return R.ok(studentCultivationDetail);
   }
+  
+  /**
+   * 获取老师负责的项目/竞赛管理明细表
+   * 
+   * @param teacherId 老师ID
+   * @return 项目/竞赛管理明细表列表
+   */
+  @ApiOperation("获取老师负责的项目/竞赛管理明细表")
+  @GetMapping("/getProjectCompetitionDetail")
+  public R<List<ProjectCompetitionDetailVo>> getProjectCompetitionDetail(
+      @RequestParam(value = "teacherId") Long teacherId) {
+    List<ProjectCompetitionDetailVo> projectCompetitionDetail = statisticsService.getProjectCompetitionDetail(teacherId);
+    return R.ok(projectCompetitionDetail);
+  }
 }
