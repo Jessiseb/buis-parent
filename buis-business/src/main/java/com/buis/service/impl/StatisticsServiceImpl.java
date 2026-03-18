@@ -4,6 +4,7 @@ import com.buis.mapper.PreSignStudentMapper;
 import com.buis.mapper.StatisticsMapper;
 import com.buis.model.bo.MemberInfoBO;
 import com.buis.model.domain.PreSignStudent;
+import com.buis.model.vo.AwardLevelDistributionVo;
 import com.buis.model.vo.ClassAwardCountVo;
 import com.buis.model.vo.PreSignStudentVo;
 import com.buis.model.vo.ProjectCompetitionDetailVo;
@@ -133,5 +134,10 @@ public class StatisticsServiceImpl implements IStatisticsService {
   @Override
   public List<YearlyGuidanceResultVo> getYearlyGuidanceResult(Long teacherId) {
     return statisticsMapper.selectYearlyGuidanceResult(teacherId);
+  }
+
+  @Override
+  public List<AwardLevelDistributionVo> getAwardLevelDistribution(Long teacherId) {
+    return statisticsMapper.selectAwardLevelDistribution(teacherId);
   }
 }

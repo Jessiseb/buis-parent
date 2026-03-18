@@ -124,6 +124,11 @@
         <result property="projectCount" column="project_count" />
     </resultMap>
     
+    <resultMap id="AwardLevelDistributionResult" type="com.buis.model.vo.AwardLevelDistributionVo">
+        <result property="awardLevel" column="award_level" />
+        <result property="count" column="count" />
+    </resultMap>
+    
     <select id="selectYearlyGuidanceResult" resultMap="YearlyGuidanceResultResult">
         SELECT 
             year,
@@ -163,5 +168,38 @@
             year
         ORDER BY 
             year
+    </select>
+    
+    <select id="selectAwardLevelDistribution" resultMap="AwardLevelDistributionResult">
+        SELECT 
+            CASE 
+                WHEN ri.level = 4 THEN '国家级'
+                WHEN ri.level = 3 THEN '省级'
+                WHEN ri.level = 1 THEN '校级'
+                WHEN ri.level = 0 THEN '院级'
+                ELSE '其他'
+            END as award_level,
+            COUNT(a.id) as count
+        FROM 
+            team_member_teacher tmt
+        JOIN 
+            team_info ti ON tmt.team_id = ti.id
+        LEFT JOIN 
+            award a ON ti.id = a.team_id
+        LEFT JOIN 
+            race_info ri ON a.race_id = ri.id
+        WHERE 
+            tmt.teacher_id = #{teacherId}
+            AND ri.level IS NOT NULL
+        GROUP BY 
+            ri.level
+        ORDER BY 
+            CASE ri.level
+                WHEN 4 THEN 1
+                WHEN 3 THEN 2
+                WHEN 1 THEN 3
+                WHEN 0 THEN 4
+                ELSE 5
+            END
     </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.buis.service;
 
+import com.buis.model.vo.AwardLevelDistributionVo;
 import com.buis.model.vo.ClassAwardCountVo;
 import com.buis.model.vo.ProjectCompetitionDetailVo;
 import com.buis.model.vo.StudentCompetitionStatus;
@@ -62,4 +63,12 @@ public interface IStatisticsService {
    * @return 历年指导成果列表
    */
   List<YearlyGuidanceResultVo> getYearlyGuidanceResult(Long teacherId);
+
+  /**
+   * 获取老师负责项目/竞赛的获奖等级分布
+   * 
+   * @param teacherId 老师ID
+   * @return 获奖等级分布列表
+   */
+  List<AwardLevelDistributionVo> getAwardLevelDistribution(Long teacherId);
 }

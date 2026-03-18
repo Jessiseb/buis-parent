@@ -435,4 +435,18 @@ public class StatisticsApiController {
     List<YearlyGuidanceResultVo> yearlyGuidanceResult = statisticsService.getYearlyGuidanceResult(teacherId);
     return R.ok(yearlyGuidanceResult);
   }
+
+  /**
+   * 获取老师负责项目/竞赛的获奖等级分布
+   * 
+   * @param teacherId 老师ID
+   * @return 获奖等级分布列表
+   */
+  @ApiOperation("获取老师负责项目/竞赛的获奖等级分布")
+  @GetMapping("/getAwardLevelDistribution")
+  public R<List<AwardLevelDistributionVo>> getAwardLevelDistribution(
+      @RequestParam(value = "teacherId") Long teacherId) {
+    List<AwardLevelDistributionVo> awardLevelDistribution = statisticsService.getAwardLevelDistribution(teacherId);
+    return R.ok(awardLevelDistribution);
+  }
 }

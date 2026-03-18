@@ -1,5 +1,6 @@
 package com.buis.mapper;
 
+import com.buis.model.vo.AwardLevelDistributionVo;
 import com.buis.model.vo.ClassAwardCountVo;
 import com.buis.model.vo.ProjectCompetitionDetailVo;
 import com.buis.model.vo.StudentCultivationDetailVo;
@@ -55,4 +56,12 @@ public interface StatisticsMapper {
    * @return 历年指导成果列表
    */
   List<YearlyGuidanceResultVo> selectYearlyGuidanceResult(Long teacherId);
+
+  /**
+   * 查询老师负责项目/竞赛的获奖等级分布
+   * 
+   * @param teacherId 老师ID
+   * @return 获奖等级分布列表
+   */
+  List<AwardLevelDistributionVo> selectAwardLevelDistribution(Long teacherId);
 }
