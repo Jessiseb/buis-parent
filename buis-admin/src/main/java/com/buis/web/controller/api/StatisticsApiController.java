@@ -449,4 +449,18 @@ public class StatisticsApiController {
     List<AwardLevelDistributionVo> awardLevelDistribution = statisticsService.getAwardLevelDistribution(teacherId);
     return R.ok(awardLevelDistribution);
   }
+
+  /**
+   * 获取学生创新活动趋势
+   * 
+   * @param teacherId 老师ID
+   * @return 学生创新活动趋势列表
+   */
+  @ApiOperation("获取学生创新活动趋势")
+  @GetMapping("/getStudentInnovationTrend")
+  public R<List<StudentInnovationTrendVo>> getStudentInnovationTrend(
+      @RequestParam(value = "teacherId") Long teacherId) {
+    List<StudentInnovationTrendVo> studentInnovationTrend = statisticsService.getStudentInnovationTrend(teacherId);
+    return R.ok(studentInnovationTrend);
+  }
 }

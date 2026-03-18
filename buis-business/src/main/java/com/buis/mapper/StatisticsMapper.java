@@ -4,6 +4,7 @@ import com.buis.model.vo.AwardLevelDistributionVo;
 import com.buis.model.vo.ClassAwardCountVo;
 import com.buis.model.vo.ProjectCompetitionDetailVo;
 import com.buis.model.vo.StudentCultivationDetailVo;
+import com.buis.model.vo.StudentInnovationTrendVo;
 import com.buis.model.vo.YearlyGuidanceResultVo;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -64,4 +65,12 @@ public interface StatisticsMapper {
    * @return 获奖等级分布列表
    */
   List<AwardLevelDistributionVo> selectAwardLevelDistribution(Long teacherId);
+
+  /**
+   * 查询学生创新活动趋势
+   * 
+   * @param teacherId 老师ID
+   * @return 学生创新活动趋势列表
+   */
+  List<StudentInnovationTrendVo> selectStudentInnovationTrend(Long teacherId);
 }

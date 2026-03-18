@@ -129,6 +129,13 @@
         <result property="count" column="count" />
     </resultMap>
     
+    <resultMap id="StudentInnovationTrendResult" type="com.buis.model.vo.StudentInnovationTrendVo">
+        <result property="month" column="month" />
+        <result property="competitionCount" column="competition_count" />
+        <result property="projectCount" column="project_count" />
+        <result property="secondClassCount" column="second_class_count" />
+    </resultMap>
+    
     <select id="selectYearlyGuidanceResult" resultMap="YearlyGuidanceResultResult">
         SELECT 
             year,
@@ -201,5 +208,70 @@
                 WHEN 0 THEN 4
                 ELSE 5
             END
+    </select>
+    
+    <select id="selectStudentInnovationTrend" resultMap="StudentInnovationTrendResult">
+        SELECT 
+            month,
+            MAX(competition_count) as competition_count,
+            MAX(project_count) as project_count,
+            MAX(second_class_count) as second_class_count
+        FROM 
+            (
+                -- 竞赛数量
+                SELECT 
+                    DATE_FORMAT(ti.create_time, '%Y-%m') as month,
+                    COUNT(DISTINCT ti.id) as competition_count,
+                    0 as project_count,
+                    0 as second_class_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                    AND ti.type = 1 -- 竞赛类型
+                GROUP BY 
+                    month
+                UNION ALL
+                -- 大创项目数量
+                SELECT 
+                    DATE_FORMAT(ti.create_time, '%Y-%m') as month,
+                    0 as competition_count,
+                    COUNT(DISTINCT ti.id) as project_count,
+                    0 as second_class_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                    AND ti.type = 2 -- 大创项目类型
+                GROUP BY 
+                    month
+                UNION ALL
+                -- 第二课堂数量
+                SELECT 
+                    DATE_FORMAT(s.create_time, '%Y-%m') as month,
+                    0 as competition_count,
+                    0 as project_count,
+                    COUNT(DISTINCT s.id) as second_class_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                JOIN 
+                    team_member_student tms ON ti.id = tms.team_id
+                JOIN 
+                    second s ON tms.student_id = s.student_id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                GROUP BY 
+                    month
+            ) combined
+        GROUP BY 
+            month
+        ORDER BY 
+            month
     </select>
 </mapper>
