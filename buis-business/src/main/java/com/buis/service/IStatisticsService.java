@@ -4,6 +4,7 @@ import com.buis.model.vo.ClassAwardCountVo;
 import com.buis.model.vo.ProjectCompetitionDetailVo;
 import com.buis.model.vo.StudentCompetitionStatus;
 import com.buis.model.vo.StudentCultivationDetailVo;
+import com.buis.model.vo.YearlyGuidanceResultVo;
 
 import java.util.List;
 
@@ -53,4 +54,12 @@ public interface IStatisticsService {
    * @return 项目/竞赛管理明细表列表
    */
   List<ProjectCompetitionDetailVo> getProjectCompetitionDetail(Long teacherId);
+
+  /**
+   * 获取老师的历年指导成果
+   * 
+   * @param teacherId 老师ID
+   * @return 历年指导成果列表
+   */
+  List<YearlyGuidanceResultVo> getYearlyGuidanceResult(Long teacherId);
 }

@@ -421,4 +421,18 @@ public class StatisticsApiController {
     List<ProjectCompetitionDetailVo> projectCompetitionDetail = statisticsService.getProjectCompetitionDetail(teacherId);
     return R.ok(projectCompetitionDetail);
   }
+
+  /**
+   * 获取老师的历年指导成果
+   * 
+   * @param teacherId 老师ID
+   * @return 历年指导成果列表
+   */
+  @ApiOperation("获取老师的历年指导成果")
+  @GetMapping("/getYearlyGuidanceResult")
+  public R<List<YearlyGuidanceResultVo>> getYearlyGuidanceResult(
+      @RequestParam(value = "teacherId") Long teacherId) {
+    List<YearlyGuidanceResultVo> yearlyGuidanceResult = statisticsService.getYearlyGuidanceResult(teacherId);
+    return R.ok(yearlyGuidanceResult);
+  }
 }

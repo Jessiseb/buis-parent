@@ -3,6 +3,7 @@ package com.buis.mapper;
 import com.buis.model.vo.ClassAwardCountVo;
 import com.buis.model.vo.ProjectCompetitionDetailVo;
 import com.buis.model.vo.StudentCultivationDetailVo;
+import com.buis.model.vo.YearlyGuidanceResultVo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -46,4 +47,12 @@ public interface StatisticsMapper {
    * @return 项目/竞赛管理明细表列表
    */
   List<ProjectCompetitionDetailVo> selectProjectCompetitionDetail(Long teacherId);
+
+  /**
+   * 查询老师的历年指导成果
+   * 
+   * @param teacherId 老师ID
+   * @return 历年指导成果列表
+   */
+  List<YearlyGuidanceResultVo> selectYearlyGuidanceResult(Long teacherId);
 }
