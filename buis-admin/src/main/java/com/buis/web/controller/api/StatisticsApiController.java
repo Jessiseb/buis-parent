@@ -342,7 +342,6 @@ public class StatisticsApiController {
    * 获取老师负责学生的能力分布
    * 
    * @param teacherId   老师ID
-   * @param major       专业
    * @param sClass      班级
    * @param projectType 项目类型
    * @param year        学年
@@ -364,7 +363,6 @@ public class StatisticsApiController {
    * 获取老师负责学生的班级获奖情况对比
    * 
    * @param teacherId   老师ID
-   * @param major       专业
    * @param sClass      班级
    * @param projectType 项目类型
    * @param year        学年
@@ -386,7 +384,6 @@ public class StatisticsApiController {
    * 获取老师负责学生的学生培养明细表
    * 
    * @param teacherId   老师ID
-   * @param major       专业
    * @param sClass      班级
    * @param projectType 项目类型
    * @param year        学年
@@ -396,13 +393,10 @@ public class StatisticsApiController {
   @GetMapping("/getStudentCultivationDetail")
   public R<List<StudentCultivationDetailVo>> getStudentCultivationDetail(
       @RequestParam(value = "teacherId") Long teacherId,
-      @RequestParam(value = "major", required = false, defaultValue = "0") Integer major,
       @RequestParam(value = "sClass", required = false, defaultValue = "") String sClass,
       @RequestParam(value = "projectType", required = false, defaultValue = "0") Integer projectType,
       @RequestParam(value = "year", required = false, defaultValue = "") String year) {
-    List<StudentCultivationDetailVo> studentCultivationDetail = statisticsService.getStudentCultivationDetail(teacherId,
-        major,
-        sClass, projectType, year);
+    List<StudentCultivationDetailVo> studentCultivationDetail = statisticsService.getStudentCultivationDetail(teacherId,sClass, projectType, year);
     return R.ok(studentCultivationDetail);
   }
 

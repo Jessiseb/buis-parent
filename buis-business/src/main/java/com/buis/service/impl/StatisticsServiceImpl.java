@@ -89,17 +89,16 @@ public class StatisticsServiceImpl implements IStatisticsService {
    * 获取老师负责学生的学生培养明细表
    * 
    * @param teacherId   老师ID
-   * @param major       专业
    * @param sClass      班级
    * @param projectType 项目类型
    * @param year        学年
    * @return 学生培养明细表列表
    */
   @Override
-  public List<StudentCultivationDetailVo> getStudentCultivationDetail(Long teacherId, Integer major, String sClass,
+  public List<StudentCultivationDetailVo> getStudentCultivationDetail(Long teacherId, String sClass,
       Integer projectType, String year) {
     // 查询学生培养明细数据
-    List<StudentCultivationDetailVo> rawData = statisticsMapper.selectStudentCultivationDetail(teacherId, major, sClass,
+    List<StudentCultivationDetailVo> rawData = statisticsMapper.selectStudentCultivationDetail(teacherId, sClass,
         projectType, year);
 
     // 处理数据，去重并合并能力标签
