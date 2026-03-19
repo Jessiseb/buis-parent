@@ -375,6 +375,18 @@
 
     <!-- 13. 获奖档案 -->
     <select id="selectAwardRecords" resultType="com.buis.model.vo.AwardRecordVo">
+        <!-- 查询第二课堂奖状 -->
+        SELECT
+        a.id AS awardId,
+        a.name AS awardName,
+        a.award_level AS awardLevel,
+        a.race_name AS raceName,
+        a.create_time AS awardTime
+        FROM award a
+        WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
+        AND a.is_deleted = 0
+        UNION ALL
+        <!-- 查询通过队伍关联的奖状 -->
         SELECT
         a.id AS awardId,
         a.name AS awardName,
@@ -389,7 +401,7 @@
             SELECT team AS team_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
         ) ut ON a.team_id = ut.team_id
         WHERE a.is_deleted = 0
-        ORDER BY a.create_time DESC
+        ORDER BY awardTime DESC
     </select>
 
     <!-- 14. 项目档案 -->
