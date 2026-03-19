@@ -78,7 +78,6 @@ public interface ScoreMapper
      */
     List<com.buis.model.vo.StudentAbilityDistributionVo> getStudentAbilityDistribution(
         Long teacherId,
-        Integer major,
         String sClass,
         Integer projectType,
         String year

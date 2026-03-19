@@ -256,12 +256,11 @@ public class ScoreServiceImpl implements IScoreService {
     @Override
     public List<com.buis.model.vo.StudentAbilityDistributionVo> getStudentAbilityDistribution(
         Long teacherId,
-        Integer major,
         String sClass,
         Integer projectType,
         String year
     ) {
-        return scoreMapper.getStudentAbilityDistribution(teacherId, major, sClass, projectType, year);
+        return scoreMapper.getStudentAbilityDistribution(teacherId, sClass, projectType, year);
     }
 
 }
