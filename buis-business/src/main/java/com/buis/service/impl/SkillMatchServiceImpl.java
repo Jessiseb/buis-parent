@@ -41,9 +41,35 @@ public class SkillMatchServiceImpl implements ISkillMatchService {
     // 技能重要性权重
     private static final Map<Integer, Double> IMPORTANCE_WEIGHTS = new HashMap<>();
     static {
-        IMPORTANCE_WEIGHTS.put(1, 1.0); // 必须
-        IMPORTANCE_WEIGHTS.put(2, 0.7); // 重要
-        IMPORTANCE_WEIGHTS.put(3, 0.3); // 加分
+        IMPORTANCE_WEIGHTS.put(1, 1.3); // 必须
+        IMPORTANCE_WEIGHTS.put(2, 0.9); // 重要
+        IMPORTANCE_WEIGHTS.put(3, 0.5); // 加分
+    }
+
+    // 技能相关性映射
+    private static final Map<Long, List<Long>> SKILL_RELATIONS = new HashMap<>();
+    static {
+        // 设计技能相关性
+        SKILL_RELATIONS.put(21L, Arrays.asList(24L, 25L, 119L, 26L, 27L)); // UI设计 -> 原型设计, Figma, 高保真原型, Photoshop, Illustrator
+        SKILL_RELATIONS.put(24L, Arrays.asList(21L, 25L, 119L, 28L)); // 原型设计 -> UI设计, Figma, 高保真原型, Sketch
+        SKILL_RELATIONS.put(25L, Arrays.asList(21L, 24L, 119L, 28L)); // Figma -> UI设计, 原型设计, 高保真原型, Sketch
+        SKILL_RELATIONS.put(28L, Arrays.asList(21L, 24L, 25L, 119L)); // Sketch -> UI设计, 原型设计, Figma, 高保真原型
+        SKILL_RELATIONS.put(26L, Arrays.asList(21L, 27L, 29L)); // Photoshop -> UI设计, Illustrator, 动效设计
+        SKILL_RELATIONS.put(27L, Arrays.asList(21L, 26L, 29L)); // Illustrator -> UI设计, Photoshop, 动效设计
+        
+        // 开发技能相关性
+        SKILL_RELATIONS.put(7L, Arrays.asList(8L, 9L, 10L)); // Spring Boot -> Spring Cloud, MyBatis, Maven
+        SKILL_RELATIONS.put(6L, Arrays.asList(4L, 13L, 14L)); // React -> JavaScript, HTML, CSS
+        SKILL_RELATIONS.put(15L, Arrays.asList(4L, 13L, 14L)); // Vue -> JavaScript, HTML, CSS
+        SKILL_RELATIONS.put(18L, Arrays.asList(4L, 6L, 15L)); // TypeScript -> JavaScript, React, Vue
+        
+        // 数据技能相关性
+        SKILL_RELATIONS.put(2L, Arrays.asList(41L, 42L, 43L)); // Python -> Pandas, NumPy, Scikit-learn
+        SKILL_RELATIONS.put(44L, Arrays.asList(45L, 46L, 47L)); // SQL -> MySQL, PostgreSQL, MongoDB
+        
+        // 业务技能相关性
+        SKILL_RELATIONS.put(35L, Arrays.asList(51L, 52L, 53L)); // 项目管理 -> 团队协作, 沟通能力, 问题解决
+        SKILL_RELATIONS.put(32L, Arrays.asList(55L, 56L, 57L)); // 市场分析 -> 营销策划, 商业计划书, 定价策略
     }
 
     @Override
@@ -267,20 +293,34 @@ public class SkillMatchServiceImpl implements ISkillMatchService {
         int matchedCount = 0;
 
         for (TeamSkillVo teamSkill : teamSkills) {
+            boolean matched = false;
             for (UserSkillVo userSkill : userSkills) {
                 if (teamSkill.getSkillTagId().equals(userSkill.getSkillTagId())) {
+                    // 完全匹配
                     double importanceWeight = IMPORTANCE_WEIGHTS.getOrDefault(teamSkill.getImportanceLevel(), 0.0);
-                    double confidence = userSkill.getConfidence().doubleValue();
-                    totalScore += importanceWeight * confidence;
+                    totalScore += importanceWeight * userSkill.getConfidence().doubleValue();
                     matchedCount++;
+                    matched = true;
+                    break;
+                } else if (SKILL_RELATIONS.containsKey(teamSkill.getSkillTagId()) && 
+                           SKILL_RELATIONS.get(teamSkill.getSkillTagId()).contains(userSkill.getSkillTagId())) {
+                    // 相关技能匹配
+                    double importanceWeight = IMPORTANCE_WEIGHTS.getOrDefault(teamSkill.getImportanceLevel(), 0.0) * 0.7;
+                    totalScore += importanceWeight * userSkill.getConfidence().doubleValue();
+                    matched = true;
                     break;
                 }
             }
+            if (!matched) {
+                // 没有匹配，给予基础分
+                totalScore += 0.1;
+            }
         }
 
-        // 计算平均匹配度
-        double averageScore = totalScore / teamSkills.size();
-        return averageScore;
+        // 计算匹配度：考虑技能质量和匹配数量
+        double baseScore = totalScore / teamSkills.size();
+        double matchRate = (double) matchedCount / teamSkills.size();
+        return baseScore * 0.8 + matchRate * 0.2;
     }
 
     /**
