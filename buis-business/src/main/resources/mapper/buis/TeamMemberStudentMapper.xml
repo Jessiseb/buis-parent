@@ -267,4 +267,12 @@
         set is_deleted = 1
         where team = #{team}
     </delete>
+
+    <select id="selectByTeamIdAndUserId" resultType="java.lang.Integer">
+        select is_choosed
+        from team_member_student
+            where team = #{teamId}
+            and student = #{userId}
+            and is_deleted = 0
+    </select>
 </mapper>

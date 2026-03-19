@@ -333,4 +333,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where leader = #{userId}
           and race = #{race}
     </delete>
+
+    <select id="getTotalProjectCountByTeacherId" parameterType="Long" resultType="int">
+        select count(*)
+        from team_info
+        where (teacher1 = #{teacherId} or teacher2 = #{teacherId})
+          and is_deleted = 0
+    </select>
+
+    <select id="getCompletedProjectCountByTeacherId" parameterType="Long" resultType="int">
+        select count(*)
+        from team_info t
+                 left join race_info r on t.race = r.id
+        where (t.teacher1 = #{teacherId} or t.teacher2 = #{teacherId})
+          and t.is_deleted = 0
+          and (t.review_status = 4 or r.status = 4)
+    </select>
+
+    <select id="getRecentGuideRecords" parameterType="map" resultType="com.buis.model.vo.TeacherGuideRecordVo">
+        select 
+            t.leader_name as leaderName,
+            r.name as projectName,
+            t.create_time as guideTime,
+            t.description as guideContent
+        from team_info t
+                 left join race_info r on t.race = r.id
+        where (t.teacher1 = #{teacherId} or t.teacher2 = #{teacherId})
+          and t.is_deleted = 0
+        order by t.create_time desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="getRecentGuideRecordsCount" parameterType="Long" resultType="int">
+        select count(*)
+        from team_info t
+        where (t.teacher1 = #{teacherId} or t.teacher2 = #{teacherId})
+          and t.is_deleted = 0
+    </select>
 </mapper>

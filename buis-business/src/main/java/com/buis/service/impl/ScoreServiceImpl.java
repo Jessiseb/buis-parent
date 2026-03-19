@@ -253,4 +253,14 @@ public class ScoreServiceImpl implements IScoreService {
         return scoreMapper.selectScoreListFuzzyQuery(scoreVo);
     }
 
+    @Override
+    public List<com.buis.model.vo.StudentAbilityDistributionVo> getStudentAbilityDistribution(
+        Long teacherId,
+        String sClass,
+        Integer projectType,
+        String year
+    ) {
+        return scoreMapper.getStudentAbilityDistribution(teacherId, sClass, projectType, year);
+    }
+
 }

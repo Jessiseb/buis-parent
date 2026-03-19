@@ -6,6 +6,7 @@ import cn.hutool.core.io.FileUtil;
 import com.buis.common.constant.RedisConstant;
 import com.buis.common.core.controller.BaseController;
 import com.buis.common.core.domain.R;
+import com.buis.common.core.page.MyPageVo;
 import com.buis.common.exception.ServiceException;
 import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.SecurityUtils;
@@ -17,14 +18,14 @@ import com.buis.model.domain.Notice;
 import com.buis.model.domain.UserInfo;
 import com.buis.model.dto.RegisterDto;
 import com.buis.model.dto.UserLoginDto;
-import com.buis.model.vo.AwardVo;
-import com.buis.model.vo.FindUserVo;
-import com.buis.model.vo.UserInfoVo;
 import com.buis.service.ICollegeMajorService;
 import com.buis.service.INoticeService;
 import com.buis.service.IUserInfoService;
 import com.buis.service.impl.AwardRecordsServiceImpl;
 import com.buis.service.impl.AwardServiceImpl;
+import com.buis.model.vo.AwardVo;
+import com.buis.model.vo.FindUserVo;
+import com.buis.model.vo.UserInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.rmi.ServerException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.buis.service.impl.UserInfoServiceImpl.SALT;
@@ -68,8 +70,7 @@ public class UserInfoApiController extends BaseController {
 
     @ApiOperation("用户登录功能")
     @PostMapping("/login")
-    public R<String> login(@ApiParam(name = "userLoginDTO", value = "用户登录信息", required = true)
-                           @RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
+    public R<String> login(@ApiParam(name = "userLoginDTO", value = "用户登录信息", required = true)@RequestBody UserLoginDto userLoginDTO, HttpServletRequest request) {
         if (userLoginDTO == null) {
             throw new ServiceException("参数有误!");
         }
@@ -261,7 +262,8 @@ public class UserInfoApiController extends BaseController {
     @ApiOperation("用户上传奖状功能")
     @PostMapping("/uploadAward")
     @Transactional
-    public R<AwardRecords> uploadAward(@ApiParam(name = "file", value = "图片路径", required = true)
+    public R<AwardRecords> uploadAward(
+            @ApiParam(name = "file", value = "图片路径", required = true)
             @RequestPart("file") MultipartFile file,
             @ApiParam(name = "name", value = "奖状参与的项目名称", required = true)
             @RequestParam("name")String name) {
@@ -313,7 +315,7 @@ public class UserInfoApiController extends BaseController {
     @Transactional
     public R<String> uploadAvatar(
             @ApiParam(name = "file",value = "头像图片文件",required = true)
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestPart("file") MultipartFile file) throws IOException {
         try {
             // 校验文件是否为空
             if (file.isEmpty()) {

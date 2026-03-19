@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.DashboardMapper">
+
+    <!-- 公共SQL片段：用户参与的所有队伍(作为队长或已确认成员) -->
+    <sql id="userTeams">
+        SELECT t.id AS team_id, t.race AS race_id, 'leader' AS role
+        FROM team_info t
+        WHERE t.leader = #{userId} AND t.is_deleted = 0
+        UNION
+        SELECT tms.team AS team_id, tms.race AS race_id, 'member' AS role
+        FROM team_member_student tms
+        WHERE tms.student = #{userId} AND tms.is_choosed = 1 AND tms.is_deleted = 0
+    </sql>
+
+    <!-- 1. 统计参赛总数(去重比赛ID) -->
+    <select id="countUserRaces" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT race_id) FROM (
+            <include refid="userTeams"/>
+        ) user_races
+    </select>
+
+    <!-- 2. 统计获奖总数: award表通过team_id匹配 + award_records表通过user匹配 -->
+    <select id="countUserAwards" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (
+            SELECT a.id
+            FROM award a
+            INNER JOIN (
+                <include refid="userTeams"/>
+            ) ut ON a.team_id = ut.team_id
+            WHERE a.is_deleted = 0
+            UNION ALL
+            SELECT ar.id
+            FROM award_records ar
+            WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
+        ) all_awards
+    </select>
+
+    <!-- 3. 统计参加项目数(去重队伍ID) -->
+    <select id="countUserProjects" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT team_id) FROM (
+            <include refid="userTeams"/>
+        ) user_teams
+    </select>
+
+    <!-- 4. 统计组队次数(含重复，每次组队经历都算) -->
+    <select id="countUserTeams" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (
+            SELECT t.id AS team_id
+            FROM team_info t
+            WHERE t.leader = #{userId} AND t.is_deleted = 0
+            UNION ALL
+            SELECT tms.team AS team_id
+            FROM team_member_student tms
+            WHERE tms.student = #{userId} AND tms.is_choosed = 1 AND tms.is_deleted = 0
+        ) user_teams
+    </select>
+
+    <!-- 5. 竞赛成长曲线: 按时间排列的参赛记录及获奖情况 -->
+    <select id="selectGrowthCurve" resultType="com.buis.model.vo.GrowthCurveItemVo">
+        SELECT
+            DATE_FORMAT(ri.race_start, '%Y-%m') AS period,
+            ri.id AS raceId,
+            ri.name AS raceName,
+            ri.level AS raceLevel,
+            ri.race_type AS raceType,
+            ti.name AS teamName,
+            ti.id AS teamId,
+            COALESCE(a.award_level, ti.r_rank) AS awardLevel,
+            ri.race_start AS raceStart,
+            ri.race_end AS raceEnd,
+            ut.role AS role
+        FROM (
+            <include refid="userTeams"/>
+        ) ut
+        JOIN race_info ri ON ut.race_id = ri.id AND ri.is_deleted = 0
+        JOIN team_info ti ON ut.team_id = ti.id
+        LEFT JOIN award a ON a.team_id = ti.id AND a.race_id = ri.id AND a.is_deleted = 0
+        ORDER BY ri.race_start ASC
+    </select>
+
+    <!-- 6. 获奖等级分布 -->
+    <select id="selectAwardLevelDistribution" resultType="com.buis.model.vo.DashboardRankingVo$AwardLevelDistributionItem">
+        SELECT award_level AS awardLevel, COUNT(*) AS count
+        FROM (
+            SELECT a.award_level
+            FROM award a
+            INNER JOIN (
+                <include refid="userTeams"/>
+            ) ut ON a.team_id = ut.team_id
+            WHERE a.is_deleted = 0 AND a.award_level IS NOT NULL AND a.award_level != ''
+            UNION ALL
+            SELECT ar.award_level
+            FROM award_records ar
+            WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
+              AND ar.award_level IS NOT NULL AND ar.award_level != ''
+        ) all_awards
+        GROUP BY award_level
+        ORDER BY award_level ASC
+    </select>
+
+    <!-- 7. 比赛类型分布 -->
+    <select id="selectRaceCategoryDistribution" resultType="com.buis.model.vo.DashboardRankingVo$RaceCategoryCountItem">
+        SELECT ri.race_type AS raceType, COUNT(DISTINCT ri.id) AS count
+        FROM (
+            <include refid="userTeams"/>
+        ) ut
+        JOIN race_info ri ON ut.race_id = ri.id AND ri.is_deleted = 0
+        GROUP BY ri.race_type
+        ORDER BY ri.race_type ASC
+    </select>
+
+    <!-- 8. 用户综合评分: 参赛数 + 获奖加权分 -->
+    <select id="selectUserCompositeScore" resultType="java.util.HashMap">
+        SELECT
+            COALESCE(race_score, 0) +
+            COALESCE(project_score, 0) +
+            COALESCE(team_score, 0) +
+            COALESCE(role_score, 0) +
+            COALESCE(award_score, 0) AS compositeScore
+        FROM (
+                 SELECT
+                     -- 1. 比赛基础分 (保持原有逻辑)
+                     (SELECT COUNT(DISTINCT race_id) FROM (
+                                                              SELECT t.race AS race_id FROM team_info t WHERE t.leader = #{userId} AND t.is_deleted = 0
+                                                              UNION
+                                                              SELECT tms.race AS race_id FROM team_member_student tms WHERE tms.student = #{userId} AND tms.is_choosed = 1 AND tms.is_deleted = 0
+                                                          ) ur) AS race_score,
+
+                     -- 2. 项目参与分 (去重队伍数 × 0.5)
+                     (SELECT COUNT(DISTINCT team_id) * 0.5 FROM (
+                                                                    SELECT t.id AS team_id FROM team_info t WHERE t.leader = #{userId} AND t.is_deleted = 0
+                                                                    UNION
+                                                                    SELECT tms.team AS team_id FROM team_member_student tms WHERE tms.student = #{userId} AND tms.is_choosed = 1 AND tms.is_deleted = 0
+                                                                ) ut) AS project_score,
+
+                     -- 3. 队伍参与分 (组队次数 × 0.2)
+                     (SELECT (
+                                 (SELECT COUNT(*) FROM team_info t WHERE t.leader = #{userId} AND t.is_deleted = 0) +
+                                 (SELECT COUNT(*) FROM team_member_student tms WHERE tms.student = #{userId} AND tms.is_choosed = 1 AND tms.is_deleted = 0)
+                                 ) * 0.2) AS team_score,
+
+                     -- 4. 角色加分 (队长次数 × 0.3)
+                     (SELECT COUNT(*) * 0.3 FROM team_info t WHERE t.leader = #{userId} AND t.is_deleted = 0) AS role_score,
+
+                     -- 5. 获奖加权分 (保持原有逻辑)
+                     (SELECT COALESCE(SUM(
+                                              CASE
+                                                  WHEN a.award_level LIKE '%一等%' THEN 10
+                                                  WHEN a.award_level LIKE '%二等%' THEN 7
+                                                  WHEN a.award_level LIKE '%三等%' THEN 5
+                                                  WHEN a.award_level LIKE '%优秀%' OR a.award_level LIKE '%优胜%' THEN 3
+                                                  ELSE 1
+                                                  END
+                                                  *
+                                              CASE ri.level
+                                                  WHEN 4 THEN 3.0
+                                                  WHEN 3 THEN 2.5
+                                                  WHEN 2 THEN 2.0
+                                                  WHEN 1 THEN 1.5
+                                                  ELSE 1.0
+                                                  END
+                                      ), 0)
+                      FROM award a
+                               JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+                               INNER JOIN (
+                          SELECT t.id AS team_id FROM team_info t WHERE t.leader = #{userId} AND t.is_deleted = 0
+                          UNION
+                          SELECT tms.team AS team_id FROM team_member_student tms WHERE tms.student = #{userId} AND tms.is_choosed = 1 AND tms.is_deleted = 0
+                      ) ut ON a.team_id = ut.team_id
+                      WHERE a.is_deleted = 0
+                     ) AS award_score
+             ) scores
+    </select>
+
+    <!-- 9. 年级排名: 同年级学生按综合评分排名 -->
+    <select id="selectGradeRank" resultType="java.util.HashMap">
+        WITH student_scores AS (
+            SELECT
+                ui.id AS user_id,
+                (
+                    -- 1. 比赛基础分
+                    (SELECT COUNT(DISTINCT r) FROM (
+                                                       SELECT race AS r FROM team_info WHERE leader = ui.id AND is_deleted = 0
+                                                       UNION
+                                                       SELECT race AS r FROM team_member_student WHERE student = ui.id AND is_choosed = 1 AND is_deleted = 0
+                                                   ) t)
+                        +
+                        -- 2. 项目参与分
+                    (SELECT COUNT(DISTINCT team_id) * 0.5 FROM (
+                                                                   SELECT id AS team_id FROM team_info WHERE leader = ui.id AND is_deleted = 0
+                                                                   UNION
+                                                                   SELECT team AS team_id FROM team_member_student WHERE student = ui.id AND is_choosed = 1 AND is_deleted = 0
+                                                               ) ut)
+                        +
+                        -- 3. 队伍参与分
+                    (SELECT (
+                                (SELECT COUNT(*) FROM team_info WHERE leader = ui.id AND is_deleted = 0) +
+                                (SELECT COUNT(*) FROM team_member_student WHERE student = ui.id AND is_choosed = 1 AND is_deleted = 0)
+                                ) * 0.2)
+                        +
+                        -- 4. 角色加分
+                    (SELECT COUNT(*) * 0.3 FROM team_info WHERE leader = ui.id AND is_deleted = 0)
+                        +
+                        -- 5. 获奖加权分
+                    COALESCE((
+                                 SELECT SUM(
+                                                CASE
+                                                    WHEN a.award_level LIKE '%一等%' THEN 10
+                                                    WHEN a.award_level LIKE '%二等%' THEN 7
+                                                    WHEN a.award_level LIKE '%三等%' THEN 5
+                                                    WHEN a.award_level LIKE '%优秀%' OR a.award_level LIKE '%优胜%' THEN 3
+                                                    ELSE 1
+                                                    END
+                                                    *
+                                                CASE ri.level
+                                                    WHEN 4 THEN 3.0 WHEN 3 THEN 2.5 WHEN 2 THEN 2.0 WHEN 1 THEN 1.5 ELSE 1.0
+                                                    END
+                                        )
+                                 FROM award a
+                                          JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+                                          INNER JOIN (
+                                     SELECT ti.id AS team_id FROM team_info ti WHERE ti.leader = ui.id AND ti.is_deleted = 0
+                                     UNION
+                                     SELECT tms.team FROM team_member_student tms WHERE tms.student = ui.id AND tms.is_choosed = 1 AND tms.is_deleted = 0
+                                 ) ut ON a.team_id = ut.team_id
+                                 WHERE a.is_deleted = 0
+                             ), 0)
+                    ) AS score
+            FROM user_info ui
+            WHERE ui.grade = CAST(#{grade} AS CHAR) AND ui.is_teacher = 0 AND ui.is_deleted = 0
+        ),
+             ranked AS (
+                 SELECT user_id, score, RANK() OVER (ORDER BY score DESC) AS rnk
+                 FROM student_scores
+             )
+        SELECT
+                (SELECT rnk FROM ranked WHERE user_id = #{userId}) AS `rank`,
+                (SELECT COUNT(*) FROM student_scores) AS total
+    </select>
+
+    <!-- 10. 学院排名: 同学院学生按综合评分排名 -->
+    <select id="selectCollegeRank" resultType="java.util.HashMap">
+        WITH student_scores AS (
+            SELECT
+                ui.id AS user_id,
+                (
+                    -- 1. 比赛基础分
+                    (SELECT COUNT(DISTINCT r) FROM (
+                                                       SELECT race AS r FROM team_info WHERE leader = ui.id AND is_deleted = 0
+                                                       UNION
+                                                       SELECT race AS r FROM team_member_student WHERE student = ui.id AND is_choosed = 1 AND is_deleted = 0
+                                                   ) t)
+                        +
+                        -- 2. 项目参与分
+                    (SELECT COUNT(DISTINCT team_id) * 0.5 FROM (
+                                                                   SELECT id AS team_id FROM team_info WHERE leader = ui.id AND is_deleted = 0
+                                                                   UNION
+                                                                   SELECT team AS team_id FROM team_member_student WHERE student = ui.id AND is_choosed = 1 AND is_deleted = 0
+                                                               ) ut)
+                        +
+                        -- 3. 队伍参与分
+                    (SELECT (
+                                (SELECT COUNT(*) FROM team_info WHERE leader = ui.id AND is_deleted = 0) +
+                                (SELECT COUNT(*) FROM team_member_student WHERE student = ui.id AND is_choosed = 1 AND is_deleted = 0)
+                                ) * 0.2)
+                        +
+                        -- 4. 角色加分
+                    (SELECT COUNT(*) * 0.3 FROM team_info WHERE leader = ui.id AND is_deleted = 0)
+                        +
+                        -- 5. 获奖加权分
+                    COALESCE((
+                                 SELECT SUM(
+                                                CASE
+                                                    WHEN a.award_level LIKE '%一等%' THEN 10
+                                                    WHEN a.award_level LIKE '%二等%' THEN 7
+                                                    WHEN a.award_level LIKE '%三等%' THEN 5
+                                                    WHEN a.award_level LIKE '%优秀%' OR a.award_level LIKE '%优胜%' THEN 3
+                                                    ELSE 1
+                                                    END
+                                                    *
+                                                CASE ri.level
+                                                    WHEN 4 THEN 3.0 WHEN 3 THEN 2.5 WHEN 2 THEN 2.0 WHEN 1 THEN 1.5 ELSE 1.0
+                                                    END
+                                        )
+                                 FROM award a
+                                          JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+                                          INNER JOIN (
+                                     SELECT ti.id AS team_id FROM team_info ti WHERE ti.leader = ui.id AND ti.is_deleted = 0
+                                     UNION
+                                     SELECT tms.team FROM team_member_student tms WHERE tms.student = ui.id AND tms.is_choosed = 1 AND tms.is_deleted = 0
+                                 ) ut ON a.team_id = ut.team_id
+                                 WHERE a.is_deleted = 0
+                             ), 0)
+                    ) AS score
+            FROM user_info ui
+            WHERE ui.college = #{college} AND ui.is_teacher = 0 AND ui.is_deleted = 0
+        ),
+             ranked AS (
+                 SELECT user_id, score, RANK() OVER (ORDER BY score DESC) AS rnk
+                 FROM student_scores
+             )
+        SELECT
+                (SELECT rnk FROM ranked WHERE user_id = #{userId}) AS `rank`,
+                (SELECT COUNT(*) FROM student_scores) AS total
+    </select>
+    <!-- 11. 赛事提醒信息 -->
+    <select id="selectRaceReminders" resultType="com.buis.model.vo.RaceReminderVo">
+        SELECT
+            ri.id AS raceId,
+            ri.name AS raceName,
+            ri.race_start AS raceStart,
+            ri.race_end AS raceEnd,
+            ri.join_start AS joinStart,
+            ri.join_end AS joinEnd
+        FROM race_info ri
+        WHERE ri.is_deleted = 0
+          AND (
+            ri.join_end IS NOT NULL AND ri.join_end > NOW()
+                OR ri.race_start IS NOT NULL AND ri.race_start > NOW()
+                OR ri.race_end IS NOT NULL AND ri.race_end > NOW()
+            )
+        ORDER BY
+            CASE
+                WHEN ri.join_end IS NOT NULL AND ri.join_end > NOW() THEN ri.join_end
+                WHEN ri.race_start IS NOT NULL AND ri.race_start > NOW() THEN ri.race_start
+                WHEN ri.race_end IS NOT NULL AND ri.race_end > NOW() THEN ri.race_end
+                END ASC
+            LIMIT 10
+    </select>
+    <!-- 12. 个人成长时间轴 -->
+    <select id="selectGrowthTimeline" resultType="com.buis.model.vo.GrowthEventVo">
+        SELECT
+            'race' AS eventType,
+            ri.race_start AS eventTime,
+            ri.name AS eventName,
+            '参赛' AS eventDescription,
+            ri.id AS relatedId
+        FROM race_info ri
+                 JOIN (
+            SELECT race AS race_id FROM team_info WHERE leader = #{userId} AND is_deleted = 0
+            UNION
+            SELECT race AS race_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+        ) ut ON ri.id = ut.race_id
+        WHERE ri.is_deleted = 0
+        UNION ALL
+        SELECT
+        'award' AS eventType,
+        a.create_time AS eventTime,
+        a.name AS eventName,
+        CONCAT('获得', a.award_level) AS eventDescription,
+        a.id AS relatedId
+        FROM award a
+                 JOIN (
+            SELECT id AS team_id FROM team_info WHERE leader = #{userId} AND is_deleted = 0
+            UNION
+            SELECT team AS team_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+        ) ut ON a.team_id = ut.team_id
+        WHERE a.is_deleted = 0
+        UNION ALL
+        SELECT
+            'project' AS eventType,
+            ti.create_time AS eventTime,
+            ti.name AS eventName,
+            '创建项目' AS eventDescription,
+            ti.id AS relatedId
+        FROM team_info ti
+        WHERE (ti.leader = #{userId} OR ti.id IN (
+            SELECT team FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+        )) AND ti.is_deleted = 0
+        ORDER BY eventTime DESC
+    </select>
+
+    <!-- 13. 获奖档案 -->
+    <select id="selectAwardRecords" resultType="com.buis.model.vo.AwardRecordVo">
+        <!-- 查询第二课堂奖状 -->
+        SELECT
+        a.id AS awardId,
+        a.name AS awardName,
+        a.award_level AS awardLevel,
+        a.race_name AS raceName,
+        a.create_time AS awardTime
+        FROM award a
+        WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
+        AND a.is_deleted = 0
+        UNION ALL
+        <!-- 查询通过队伍关联的奖状 -->
+        SELECT
+        a.id AS awardId,
+        a.name AS awardName,
+        a.award_level AS awardLevel,
+        ri.name AS raceName,
+        a.create_time AS awardTime
+        FROM award a
+                 JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+                 JOIN (
+            SELECT id AS team_id FROM team_info WHERE leader = #{userId} AND is_deleted = 0
+            UNION
+            SELECT team AS team_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+        ) ut ON a.team_id = ut.team_id
+        WHERE a.is_deleted = 0
+        ORDER BY awardTime DESC
+    </select>
+
+    <!-- 14. 项目档案 -->
+    <select id="selectProjectRecords" resultType="com.buis.model.vo.ProjectRecordVo">
+        SELECT
+            ti.id AS projectId,
+            ti.name AS projectName,
+            ri.name AS raceName,
+            ti.create_time AS createTime
+        FROM team_info ti
+                 JOIN race_info ri ON ti.race = ri.id AND ri.is_deleted = 0
+        WHERE (ti.leader = #{userId} OR ti.id IN (
+            SELECT team FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+        )) AND ti.is_deleted = 0
+        ORDER BY ti.create_time DESC
+    </select>
+
+    <!-- 15. 成长报告数据 -->
+    <select id="selectGrowthReport" resultType="com.buis.model.vo.GrowthReportVo">
+        SELECT
+            ui.id AS userId,
+            ui.name AS userName,
+            ui.college AS collegeId,
+            cm.name AS collegeName,
+            ui.major AS majorId,
+            cm.major_name AS majorName,
+            ui.grade AS grade,
+            ui.stu_grade AS stuGrade
+        FROM user_info ui
+                 LEFT JOIN college_major cm ON ui.college = cm.id
+        WHERE ui.id = #{userId} AND ui.is_deleted = 0
+    </select>
+
+
+</mapper>

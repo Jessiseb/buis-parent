@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.StatisticsMapper">
+    
+    <resultMap id="ClassAwardCountResult" type="com.buis.model.vo.ClassAwardCountVo">
+        <result property="className" column="class_name" />
+        <result property="awardCount" column="award_count" />
+    </resultMap>
+    
+    <resultMap id="StudentCultivationDetailResult" type="com.buis.model.vo.StudentCultivationDetailVo">
+        <result property="studentName" column="student_name" />
+        <result property="majorClass" column="major_class" />
+        <result property="totalScore" column="total_score" />
+        <collection property="abilityTags" ofType="java.lang.String">
+            <constructor>
+                <arg column="skill_name" />
+            </constructor>
+        </collection>
+    </resultMap>
+    
+    <select id="selectClassAwardCount" resultMap="ClassAwardCountResult">
+        SELECT 
+            u.class_name as class_name,
+            COUNT(a.id) as award_count
+        FROM 
+            award a
+        JOIN 
+            team_info ti ON a.team_id = ti.id
+        JOIN 
+            team_member_teacher tmt ON ti.id = tmt.team_id
+        JOIN 
+            team_member_student tms ON ti.id = tms.team_id
+        JOIN 
+            user_info u ON tms.student_id = u.id
+        WHERE 
+            tmt.teacher_id = #{teacherId}
+        <if test="sClass != null and sClass != ''">
+            AND u.class_name = #{sClass}
+        </if>
+        <if test="projectType != null and projectType != 0">
+            AND ti.type = #{projectType}
+        </if>
+        <if test="year != null and year != ''">
+            AND ti.year = #{year}
+        </if>
+        GROUP BY 
+            u.class_name
+        ORDER BY 
+            award_count DESC
+    </select>
+    
+    <select id="selectStudentCultivationDetail" resultMap="StudentCultivationDetailResult">
+        SELECT 
+            u.name as student_name,
+            CONCAT(u.major_name, '-', u.class_name) as major_class,
+            COALESCE(s.total_score, 0) as total_score,
+            st.skill_name as skill_name
+        FROM 
+            team_member_teacher tmt
+        JOIN 
+            team_info ti ON tmt.team_id = ti.id
+        JOIN 
+            team_member_student tms ON ti.id = tms.team_id
+        JOIN 
+            user_info u ON tms.student_id = u.id
+        LEFT JOIN 
+            score s ON u.id = s.user_id
+        LEFT JOIN 
+            user_skill us ON u.id = us.user_id
+        LEFT JOIN 
+            skill_tag st ON us.skill_id = st.id
+        WHERE 
+            tmt.teacher_id = #{teacherId}
+        <if test="major != null and major != 0">
+            AND u.major = #{major}
+        </if>
+        <if test="sClass != null and sClass != ''">
+            AND u.class_name = #{sClass}
+        </if>
+        <if test="projectType != null and projectType != 0">
+            AND ti.type = #{projectType}
+        </if>
+        <if test="year != null and year != ''">
+            AND ti.year = #{year}
+        </if>
+        ORDER BY 
+            total_score DESC
+    </select>
+    
+    <resultMap id="ProjectCompetitionDetailResult" type="com.buis.model.vo.ProjectCompetitionDetailVo">
+        <result property="projectName" column="project_name" />
+        <result property="studentName" column="student_name" />
+        <result property="submissionStatus" column="submission_status" />
+    </resultMap>
+    
+    <select id="selectProjectCompetitionDetail" resultMap="ProjectCompetitionDetailResult">
+        SELECT 
+            ti.name as project_name,
+            u.name as student_name,
+            CASE 
+                WHEN pss.id IS NOT NULL THEN '已提交'
+                ELSE '未提交'
+            END as submission_status
+        FROM 
+            team_member_teacher tmt
+        JOIN 
+            team_info ti ON tmt.team_id = ti.id
+        JOIN 
+            team_member_student tms ON ti.id = tms.team_id
+        JOIN 
+            user_info u ON tms.student_id = u.id
+        LEFT JOIN 
+            pre_sign_student pss ON ti.id = pss.team_id AND u.id = pss.student
+        WHERE 
+            tmt.teacher = #{teacherId}
+    </select>
+    
+    <resultMap id="YearlyGuidanceResultResult" type="com.buis.model.vo.YearlyGuidanceResultVo">
+        <result property="year" column="year" />
+        <result property="awardCount" column="award_count" />
+        <result property="projectCount" column="project_count" />
+    </resultMap>
+    
+    <resultMap id="AwardLevelDistributionResult" type="com.buis.model.vo.AwardLevelDistributionVo">
+        <result property="awardLevel" column="award_level" />
+        <result property="count" column="count" />
+    </resultMap>
+    
+    <resultMap id="StudentInnovationTrendResult" type="com.buis.model.vo.StudentInnovationTrendVo">
+        <result property="month" column="month" />
+        <result property="competitionCount" column="competition_count" />
+        <result property="projectCount" column="project_count" />
+        <result property="secondClassCount" column="second_class_count" />
+    </resultMap>
+    
+    <select id="selectYearlyGuidanceResult" resultMap="YearlyGuidanceResultResult">
+        SELECT 
+            year,
+            MAX(award_count) as award_count,
+            MAX(project_count) as project_count
+        FROM 
+            (
+                SELECT 
+                    DATE_FORMAT(ti.create_time, '%Y') as year,
+                    COUNT(a.id) as award_count,
+                    0 as project_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                LEFT JOIN 
+                    award a ON ti.id = a.team_id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                GROUP BY 
+                    DATE_FORMAT(ti.create_time, '%Y')
+                UNION ALL
+                SELECT 
+                    DATE_FORMAT(ti.create_time, '%Y') as year,
+                    0 as award_count,
+                    COUNT(ti.id) as project_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                GROUP BY 
+                    DATE_FORMAT(ti.create_time, '%Y')
+            ) combined
+        GROUP BY 
+            year
+        ORDER BY 
+            year
+    </select>
+    
+    <select id="selectAwardLevelDistribution" resultMap="AwardLevelDistributionResult">
+        SELECT 
+            CASE 
+                WHEN ri.level = 4 THEN '国家级'
+                WHEN ri.level = 3 THEN '省级'
+                WHEN ri.level = 1 THEN '校级'
+                WHEN ri.level = 0 THEN '院级'
+                ELSE '其他'
+            END as award_level,
+            COUNT(a.id) as count
+        FROM 
+            team_member_teacher tmt
+        JOIN 
+            team_info ti ON tmt.team_id = ti.id
+        LEFT JOIN 
+            award a ON ti.id = a.team_id
+        LEFT JOIN 
+            race_info ri ON a.race_id = ri.id
+        WHERE 
+            tmt.teacher = #{teacherId}
+            AND ri.level IS NOT NULL
+        GROUP BY 
+            ri.level
+        ORDER BY 
+            CASE ri.level
+                WHEN 4 THEN 1
+                WHEN 3 THEN 2
+                WHEN 1 THEN 3
+                WHEN 0 THEN 4
+                ELSE 5
+            END
+    </select>
+    
+    <select id="selectStudentInnovationTrend" resultMap="StudentInnovationTrendResult">
+        SELECT 
+            month,
+            MAX(competition_count) as competition_count,
+            MAX(project_count) as project_count,
+            MAX(second_class_count) as second_class_count
+        FROM 
+            (
+                -- 竞赛数量
+                SELECT 
+                    DATE_FORMAT(ti.create_time, '%Y-%m') as month,
+                    COUNT(DISTINCT ti.id) as competition_count,
+                    0 as project_count,
+                    0 as second_class_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                    AND ti.type = 1 -- 竞赛类型
+                GROUP BY 
+                    month
+                UNION ALL
+                -- 大创项目数量
+                SELECT 
+                    DATE_FORMAT(ti.create_time, '%Y-%m') as month,
+                    0 as competition_count,
+                    COUNT(DISTINCT ti.id) as project_count,
+                    0 as second_class_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                    AND ti.type = 2 -- 大创项目类型
+                GROUP BY 
+                    month
+                UNION ALL
+                -- 第二课堂数量
+                SELECT 
+                    DATE_FORMAT(s.create_time, '%Y-%m') as month,
+                    0 as competition_count,
+                    0 as project_count,
+                    COUNT(DISTINCT s.id) as second_class_count
+                FROM 
+                    team_member_teacher tmt
+                JOIN 
+                    team_info ti ON tmt.team_id = ti.id
+                JOIN 
+                    team_member_student tms ON ti.id = tms.team_id
+                JOIN 
+                    second s ON tms.student_id = s.student_id
+                WHERE 
+                    tmt.teacher_id = #{teacherId}
+                GROUP BY 
+                    month
+            ) combined
+        GROUP BY 
+            month
+        ORDER BY 
+            month
+    </select>
+</mapper>

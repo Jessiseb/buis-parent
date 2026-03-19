@@ -3,6 +3,7 @@ package com.buis.model.vo;
 import com.buis.model.bo.MemberInfoBO;
 import com.buis.model.bo.TeacherInfoBO;
 import com.buis.common.annotation.Excel;
+import com.buis.common.core.domain.BaseEntity;
 import com.buis.model.domain.TeamInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
