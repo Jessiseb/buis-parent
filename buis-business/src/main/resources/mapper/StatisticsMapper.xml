@@ -10,7 +10,6 @@
     <resultMap id="StudentCultivationDetailResult" type="com.buis.model.vo.StudentCultivationDetailVo">
         <result property="studentName" column="student_name" />
         <result property="majorClass" column="major_class" />
-        <result property="totalScore" column="total_score" />
         <collection property="abilityTags" ofType="java.lang.String">
             <constructor>
                 <arg column="skill_name" />
@@ -52,9 +51,8 @@
     <select id="selectStudentCultivationDetail" resultMap="StudentCultivationDetailResult">
         SELECT 
             u.name as student_name,
-            CONCAT(u.major_name, '-', u.class_name) as major_class,
-            COALESCE(s.total_score, 0) as total_score,
-            st.skill_name as skill_name
+            CONCAT(cm.name, '-', u.s_class) as major_class,
+            st.tag_name as skill_name
         FROM 
             team_member_teacher tmt
         JOIN 
@@ -64,15 +62,15 @@
         JOIN 
             user_info u ON tms.student = u.id
         LEFT JOIN 
-            score s ON u.id = s.user_id
+            t_college_major cm ON u.major = cm.id
         LEFT JOIN 
             user_skill us ON u.id = us.user_id
         LEFT JOIN 
-            skill_tag st ON us.skill_id = st.id
+            skill_tag st ON us.skill_tag_id = st.id
         WHERE 
             tmt.teacher = #{teacherId}
         <if test="sClass != null and sClass != ''">
-            AND u.class_name = #{sClass}
+            AND u.s_class = #{sClass}
         </if>
         <if test="projectType != null and projectType != 0">
             AND ti.type = #{projectType}
@@ -81,7 +79,7 @@
             AND ti.year = #{year}
         </if>
         ORDER BY 
-            total_score DESC
+            u.name
     </select>
     
     <resultMap id="ProjectCompetitionDetailResult" type="com.buis.model.vo.ProjectCompetitionDetailVo">

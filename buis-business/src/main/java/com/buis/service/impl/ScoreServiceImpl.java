@@ -5,6 +5,10 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -253,14 +257,61 @@ public class ScoreServiceImpl implements IScoreService {
         return scoreMapper.selectScoreListFuzzyQuery(scoreVo);
     }
 
-    @Override
-    public List<com.buis.model.vo.StudentAbilityDistributionVo> getStudentAbilityDistribution(
-        Long teacherId,
-        String sClass,
-        Integer projectType,
-        String year
-    ) {
-        return scoreMapper.getStudentAbilityDistribution(teacherId, sClass, projectType, year);
+  @Override
+  public List<com.buis.model.vo.StudentAbilityDistributionVo> getStudentAbilityDistribution(
+      Long teacherId,
+      String sClass,
+      Integer projectType,
+      String year) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("teacherId", teacherId);
+    params.put("sClass", sClass);
+    params.put("projectType", projectType);
+    params.put("year", year);
+
+    List<Map<String, Object>> studentSkills = scoreMapper.getStudentAbilityDistribution(params);
+
+    Map<String, Integer> scoreRangeCount = new HashMap<>();
+    scoreRangeCount.put("60-70", 0);
+    scoreRangeCount.put("70-80", 0);
+    scoreRangeCount.put("80-90", 0);
+    scoreRangeCount.put("90-100", 0);
+    scoreRangeCount.put("其他", 0);
+
+    for (Map<String, Object> student : studentSkills) {
+      int skillCount = ((Number) student.get("skill_count")).intValue();
+      double score = calculateSkillScore(skillCount);
+      String scoreRange = getScoreRange(score);
+      scoreRangeCount.put(scoreRange, scoreRangeCount.get(scoreRange) + 1);
     }
+
+    List<com.buis.model.vo.StudentAbilityDistributionVo> result = new ArrayList<>();
+    for (Map.Entry<String, Integer> entry : scoreRangeCount.entrySet()) {
+      result.add(new com.buis.model.vo.StudentAbilityDistributionVo(entry.getKey(), entry.getValue()));
+    }
+
+    result.sort(Comparator.comparing(com.buis.model.vo.StudentAbilityDistributionVo::getScoreRange));
+
+    return result;
+  }
+
+  private double calculateSkillScore(int skillCount) {
+    double score = skillCount * 5.0;
+    return Math.min(score, 100.0);
+  }
+
+  private String getScoreRange(double score) {
+    if (score >= 60 && score < 70) {
+      return "60-70";
+    } else if (score >= 70 && score < 80) {
+      return "70-80";
+    } else if (score >= 80 && score < 90) {
+      return "80-90";
+    } else if (score >= 90 && score <= 100) {
+      return "90-100";
+    } else {
+      return "其他";
+    }
+  }
 
 }
