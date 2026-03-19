@@ -20,22 +20,22 @@
     
     <select id="selectClassAwardCount" resultMap="ClassAwardCountResult">
         SELECT 
-            u.class_name as class_name,
+            u.s_class as class_name,
             COUNT(a.id) as award_count
         FROM 
             award a
         JOIN 
             team_info ti ON a.team_id = ti.id
         JOIN 
-            team_member_teacher tmt ON ti.id = tmt.team_id
+            team_member_teacher tmt ON ti.id = tmt.team
         JOIN 
-            team_member_student tms ON ti.id = tms.team_id
+            team_member_student tms ON ti.id = tms.team
         JOIN 
-            user_info u ON tms.student_id = u.id
+            user_info u ON tms.student = u.id
         WHERE 
-            tmt.teacher_id = #{teacherId}
+            tmt.teacher = #{teacherId}
         <if test="sClass != null and sClass != ''">
-            AND u.class_name = #{sClass}
+            AND u.s_class = #{sClass}
         </if>
         <if test="projectType != null and projectType != 0">
             AND ti.type = #{projectType}
@@ -44,7 +44,7 @@
             AND ti.year = #{year}
         </if>
         GROUP BY 
-            u.class_name
+            u.s_class
         ORDER BY 
             award_count DESC
     </select>
@@ -58,11 +58,11 @@
         FROM 
             team_member_teacher tmt
         JOIN 
-            team_info ti ON tmt.team_id = ti.id
+            team_info ti ON tmt.team = ti.id
         JOIN 
-            team_member_student tms ON ti.id = tms.team_id
+            team_member_student tms ON ti.id = tms.team
         JOIN 
-            user_info u ON tms.student_id = u.id
+            user_info u ON tms.student = u.id
         LEFT JOIN 
             score s ON u.id = s.user_id
         LEFT JOIN 
@@ -70,10 +70,7 @@
         LEFT JOIN 
             skill_tag st ON us.skill_id = st.id
         WHERE 
-            tmt.teacher_id = #{teacherId}
-        <if test="major != null and major != 0">
-            AND u.major = #{major}
-        </if>
+            tmt.teacher = #{teacherId}
         <if test="sClass != null and sClass != ''">
             AND u.class_name = #{sClass}
         </if>
@@ -90,27 +87,20 @@
     <resultMap id="ProjectCompetitionDetailResult" type="com.buis.model.vo.ProjectCompetitionDetailVo">
         <result property="projectName" column="project_name" />
         <result property="studentName" column="student_name" />
-        <result property="submissionStatus" column="submission_status" />
     </resultMap>
     
     <select id="selectProjectCompetitionDetail" resultMap="ProjectCompetitionDetailResult">
         SELECT 
             ti.name as project_name,
-            u.name as student_name,
-            CASE 
-                WHEN pss.id IS NOT NULL THEN '已提交'
-                ELSE '未提交'
-            END as submission_status
+            u.name as student_name
         FROM 
             team_member_teacher tmt
         JOIN 
-            team_info ti ON tmt.team_id = ti.id
+            team_info ti ON tmt.team = ti.id
         JOIN 
-            team_member_student tms ON ti.id = tms.team_id
+            team_member_student tms ON ti.id = tms.team
         JOIN 
-            user_info u ON tms.student_id = u.id
-        LEFT JOIN 
-            pre_sign_student pss ON ti.id = pss.team_id AND u.id = pss.student
+            user_info u ON tms.student = u.id
         WHERE 
             tmt.teacher = #{teacherId}
     </select>
@@ -147,11 +137,11 @@
                 FROM 
                     team_member_teacher tmt
                 JOIN 
-                    team_info ti ON tmt.team_id = ti.id
+                    team_info ti ON tmt.team = ti.id
                 LEFT JOIN 
                     award a ON ti.id = a.team_id
                 WHERE 
-                    tmt.teacher_id = #{teacherId}
+                    tmt.teacher = #{teacherId}
                 GROUP BY 
                     DATE_FORMAT(ti.create_time, '%Y')
                 UNION ALL
@@ -162,9 +152,9 @@
                 FROM 
                     team_member_teacher tmt
                 JOIN 
-                    team_info ti ON tmt.team_id = ti.id
+                    team_info ti ON tmt.team = ti.id
                 WHERE 
-                    tmt.teacher_id = #{teacherId}
+                    tmt.teacher = #{teacherId}
                 GROUP BY 
                     DATE_FORMAT(ti.create_time, '%Y')
             ) combined
@@ -187,7 +177,7 @@
         FROM 
             team_member_teacher tmt
         JOIN 
-            team_info ti ON tmt.team_id = ti.id
+            team_info ti ON tmt.team = ti.id
         LEFT JOIN 
             award a ON ti.id = a.team_id
         LEFT JOIN 
@@ -224,9 +214,9 @@
                 FROM 
                     team_member_teacher tmt
                 JOIN 
-                    team_info ti ON tmt.team_id = ti.id
+                    team_info ti ON tmt.team = ti.id
                 WHERE 
-                    tmt.teacher_id = #{teacherId}
+                    tmt.teacher = #{teacherId}
                     AND ti.type = 1 -- 竞赛类型
                 GROUP BY 
                     month
@@ -240,9 +230,9 @@
                 FROM 
                     team_member_teacher tmt
                 JOIN 
-                    team_info ti ON tmt.team_id = ti.id
+                    team_info ti ON tmt.team = ti.id
                 WHERE 
-                    tmt.teacher_id = #{teacherId}
+                    tmt.teacher = #{teacherId}
                     AND ti.type = 2 -- 大创项目类型
                 GROUP BY 
                     month
@@ -256,13 +246,13 @@
                 FROM 
                     team_member_teacher tmt
                 JOIN 
-                    team_info ti ON tmt.team_id = ti.id
+                    team_info ti ON tmt.team = ti.id
                 JOIN 
-                    team_member_student tms ON ti.id = tms.team_id
+                    race_second rs ON ti.id = rs.race
                 JOIN 
-                    second s ON tms.student_id = s.student_id
+                    second s ON rs.second = s.id
                 WHERE 
-                    tmt.teacher_id = #{teacherId}
+                    tmt.teacher = #{teacherId}
                 GROUP BY 
                     month
             ) combined

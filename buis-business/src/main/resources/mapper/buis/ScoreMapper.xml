@@ -143,8 +143,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             COUNT(DISTINCT u.id) AS studentCount
         FROM t_score s
         JOIN team_info t ON s.team = t.id
-        JOIN team_member_student tms ON t.id = tms.team_id
-        JOIN user_info u ON tms.student_id = u.id
+        JOIN team_member_student tms ON t.id = tms.team
+        JOIN user_info u ON tms.student = u.id
         LEFT JOIN race_info r ON s.race = r.id
         WHERE
             (t.teacher1 = #{teacherId} OR t.teacher2 = #{teacherId})
