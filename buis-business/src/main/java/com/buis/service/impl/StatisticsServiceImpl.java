@@ -97,33 +97,55 @@ public class StatisticsServiceImpl implements IStatisticsService {
   @Override
   public List<StudentCultivationDetailVo> getStudentCultivationDetail(Long teacherId, String sClass,
       Integer projectType, String year) {
-    // 查询学生培养明细数据
     List<StudentCultivationDetailVo> rawData = statisticsMapper.selectStudentCultivationDetail(teacherId, sClass,
         projectType, year);
 
-    // 处理数据，去重并合并能力标签
     Map<String, StudentCultivationDetailVo> studentMap = new HashMap<>();
     for (StudentCultivationDetailVo detail : rawData) {
       String key = detail.getStudentName() + detail.getMajorClass();
       if (studentMap.containsKey(key)) {
-        // 如果学生已存在，合并能力标签
         StudentCultivationDetailVo existing = studentMap.get(key);
         if (detail.getAbilityTags() != null) {
           existing.getAbilityTags().addAll(detail.getAbilityTags());
         }
       } else {
-        // 如果学生不存在，添加到map
         studentMap.put(key, detail);
       }
     }
 
-    // 转换为列表并添加序号
     List<StudentCultivationDetailVo> result = new ArrayList<>(studentMap.values());
+    for (StudentCultivationDetailVo detail : result) {
+      int skillCount = detail.getAbilityTags() != null ? detail.getAbilityTags().size() : 0;
+      int competitionCount = getCompetitionCount(teacherId, sClass, projectType, year, detail.getStudentName());
+      double totalScore = calculateScore(skillCount, competitionCount);
+      detail.setTotalScore(totalScore);
+    }
+
+    result.sort((a, b) -> Double.compare(b.getTotalScore(), a.getTotalScore()));
+
     for (int i = 0; i < result.size(); i++) {
       result.get(i).setSerialNumber(i + 1);
     }
 
     return result;
+  }
+
+  private int getCompetitionCount(Long teacherId, String sClass, Integer projectType, String year, String studentName) {
+    List<StudentCultivationDetailVo> rawData = statisticsMapper.selectStudentCultivationDetail(teacherId, sClass,
+        projectType, year);
+    int count = 0;
+    for (StudentCultivationDetailVo detail : rawData) {
+      if (detail.getStudentName().equals(studentName)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  private double calculateScore(int skillCount, int competitionCount) {
+    double skillScore = Math.min(skillCount * 5.0, 50.0);
+    double competitionScore = Math.min(competitionCount * 10.0, 50.0);
+    return skillScore + competitionScore;
   }
 
   @Override
