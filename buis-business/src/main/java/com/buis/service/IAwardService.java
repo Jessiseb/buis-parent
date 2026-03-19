@@ -67,4 +67,11 @@ public interface IAwardService
     public int deleteAwardById(Long id);
 
     Award selectAwardByNameAndRace(String name,Long raceId);
+
+    /**
+     * 获取指导下获奖人数
+     * @param teacherId
+     * @return
+     */
+    int getAwardCount(Long teacherId);
 }

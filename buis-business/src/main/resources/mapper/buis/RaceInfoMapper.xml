@@ -275,7 +275,7 @@
         select parent_tid
         from race_type
         where son_tid = #{id}
-        and is_deleted = 0
+          and is_deleted = 0
     </select>
 
 
@@ -451,12 +451,6 @@
         where race = #{race}
     </delete>
 
-    <update id="deleteRaceDeclareUrl">
-        update race_info
-        set declare_url = NULL
-        where id = #{id}
-    </update>
-
     <insert id="batchReward">
         insert into t_reward(race, r_rank, name, quantity, remark, is_deleted, create_time, update_time) values
         <foreach item="item" index="index" collection="list" separator=",">
@@ -466,35 +460,39 @@
     </insert>
 
     <select id="getSecondClassCountByMonth" resultType="com.buis.model.vo.SecondClassCountVo">
-        SELECT cm.name      AS college_name,
+        SELECT cm.name AS college_name,
                COUNT(ri.id) AS count
         FROM race_info ri
-                 JOIN
-             (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
-              FROM race_detail) AS rd ON ri.id = rd.race
-                 JOIN
-             user_info ui ON rd.name = ui.name
-                 JOIN
-             t_college_major cm ON ui.college = cm.id
+            JOIN
+            (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+            FROM race_detail) AS rd
+        ON ri.id = rd.race
+            JOIN
+            user_info ui ON rd.name = ui.name
+            JOIN
+            t_college_major cm ON ui.college = cm.id
         WHERE ri.parent_tid = 5
-          AND YEAR(ri.create_time) = YEAR(CURRENT_DATE)
-          AND MONTH(ri.create_time) = IFNULL(#{month}, MONTH(CURRENT_DATE))
+          AND YEAR (ri.create_time) = YEAR (CURRENT_DATE)
+          AND MONTH (ri.create_time) = IFNULL(#{month}
+            , MONTH (CURRENT_DATE))
         GROUP BY cm.name
     </select>
 
     <select id="getSecondClassCountByYear" resultType="com.buis.model.vo.SecondClassCountVo">
-        SELECT cm.name      AS college_name,
+        SELECT cm.name AS college_name,
                COUNT(ri.id) AS count
         FROM race_info ri
-                 JOIN
-             (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
-              FROM race_detail) AS rd ON ri.id = rd.race
-                 JOIN
-             user_info ui ON rd.name = ui.name
-                 JOIN
-             t_college_major cm ON ui.college = cm.id
+            JOIN
+            (SELECT race, SUBSTRING_INDEX(name, '、', 1) AS name
+            FROM race_detail) AS rd
+        ON ri.id = rd.race
+            JOIN
+            user_info ui ON rd.name = ui.name
+            JOIN
+            t_college_major cm ON ui.college = cm.id
         WHERE ri.parent_tid = 5
-          AND YEAR(ri.create_time) = IFNULL(#{year}, YEAR(CURRENT_DATE))
+          AND YEAR (ri.create_time) = IFNULL(#{year}
+            , YEAR (CURRENT_DATE))
         GROUP BY cm.name
     </select>
 
@@ -539,23 +537,17 @@
             <if test="raceType != null ">and t1.race_type = #{raceType}</if>
         </where>
 
-         </select>
+    </select>
     <select id="selectSecondActivities" resultType="com.buis.model.vo.RaceInfoVo">
         <include refid="selectRaceInfoVo"/>
         <where>
             t1.is_deleted = 0
             and t1.parent_tid = 5
-            <if test="raceInfo.name != null and raceInfo.name != ''">
-                and t1.name like concat('%', #{raceInfo.name}, '%')
+            <if test="name != null and name != ''">
+                and t1.name like concat('%', #{name}, '%')
             </if>
-            <if test="raceInfo.reviewStatus != null">
-                and t1.review_status = #{raceInfo.reviewStatus}
-            </if>
-            <if test="loginUserId != null">
-                and(
-                t1.create_id=#{loginUserId}
-                or t1.review_status = 2
-                )
+            <if test="status != null">
+                and t1.status = #{status}
             </if>
         </where>
         order by
@@ -583,16 +575,16 @@
                                                 JOIN
                                             race_info ri ON ti.race = ri.id
                                        WHERE ri.parent_tid = 5)
-        SELECT LEFT(ui.number, 4)                       AS grade,
-               COUNT(*)                                 AS count,
-               COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS percentage
+        SELECT LEFT (ui.number, 4) AS grade, COUNT (*) AS count, COUNT (*) * 100.0 / SUM (COUNT (*)) OVER () AS percentage
         FROM user_info ui
-                 JOIN
-             second_class_user_ids scui ON ui.id = scui.user_id
+            JOIN
+            second_class_user_ids scui
+        ON ui.id = scui.user_id
         WHERE ui.number IS NOT NULL
-          AND LEFT(ui.number, 4) REGEXP '^[0-9]{4}$'
+          AND LEFT (ui.number
+            , 4) REGEXP '^[0-9]{4}$'
           AND is_teacher = 0
-        GROUP BY LEFT(ui.number, 4)
+        GROUP BY LEFT (ui.number, 4)
     </select>
 
     <select id="getTeacherInstructCountFromSecond" resultType="java.lang.String"
@@ -607,8 +599,7 @@
         select *
         from race_info
         where name = #{name}
-          and is_deleted = 0
-        LIMIT 1
+          and is_deleted = 0 LIMIT 1
     </select>
 
     <select id="selectRaceInfoNoMyRaceList" resultMap="RaceInfoRewardResult">
@@ -718,13 +709,98 @@
         select count(*)
         from race_info
         where son_tid = #{sonTid}
-        and is_deleted = 0
+          and is_deleted = 0
     </select>
     <select id="selectSecondClassByRace" resultType="com.buis.model.domain.RaceInfo">
         select *
         from race_info
         where id = #{raceId}
-        and parent_tid = 5
+          and parent_tid = 5
+          and is_deleted = 0
+    </select>
+
+    <select id="selectRaceInfoCount"  resultType="long">
+        SELECT COUNT(*) FROM race_info
+        WHERE is_deleted = 0
+        <!-- 如果有其他查询条件，可以在这里添加 -->
+    </select>
+
+    <!-- 查询热门活动比赛名称和报名人数 - 按报名人数排序 -->
+    <select id="selectHotRaceWithSignCount" resultType="com.buis.model.vo.RaceNumsVo">
+        SELECT
+            ri.name as raceName,
+            COALESCE(ps.sign_count, 0) as signCount
+        FROM race_info ri
+                 LEFT JOIN (
+            SELECT
+                race,
+                COUNT(*) as sign_count
+            FROM pre_sign_student
+            WHERE is_deleted = 0
+            GROUP BY race
+        ) ps ON ri.id = ps.race
+        WHERE ri.is_deleted = 0
+        ORDER BY
+            COALESCE(ps.sign_count, 0) DESC,
+            ri.create_time DESC
+            LIMIT 10
+    </select>
+
+    <!-- 结果映射：数据库字段 -> RaceTypeCountVo 属性 -->
+    <resultMap id="RaceTypeCountMap" type="com.buis.model.vo.RaceTypeCountVo">
+        <result column="race_type" property="raceType"/>
+        <result column="count" property="count"/>
+    </resultMap>
+
+    <!-- 按比赛类型分组统计，直接过滤未删除数据（is_deleted=0） -->
+    <select id="countByRaceType" resultMap="RaceTypeCountMap">
+        SELECT
+        race_type,
+        COUNT(id) AS count
+        FROM
+        race_info  <!-- 替换为你的实际数据库表名 -->
+        WHERE
+        is_deleted = 0  <!-- 直接写死过滤条件，只统计未删除数据 -->
+        GROUP BY
+        race_type
+        ORDER BY
+        race_type ASC;
+    </select>
+
+    <select id="getActivityCount" resultType="java.lang.Integer">
+        select count(*)
+        from race_info
         and is_deleted = 0
+    </select>
+
+    <!-- 查询最近热门活动：先获取parentType=5的前5个热门sonType，再统计各类型报名人数 -->
+    <select id="getRecentlyPopularActType" resultType="com.buis.model.vo.HotRaceVo">
+        SELECT
+            r.son_type AS labelName, -- 先返回sonType（service层匹配字典转名称）
+            IFNULL(s.registration_count, 0) AS registrationCount
+        FROM (
+        -- 第一步：筛选parentType=5的记录，按sonType分组统计数量，取前5个热门sonType
+        SELECT
+            son_type,
+            COUNT(*) AS type_count
+        FROM race_info
+            WHERE parentType = 5
+            AND son_type IS NOT NULL -- 排除空值，避免无效分组
+            GROUP BY son_type
+        ORDER BY type_count DESC
+        LIMIT 5
+        ) r
+        LEFT JOIN (
+            -- 第二步：关联pre_sign_student，统计每个race对应的报名人数，再按sonType汇总
+            SELECT
+                ri.son_type,
+                COUNT(DISTINCT pss.student) AS registration_count -- 按学生去重，避免重复统计
+            FROM race_info ri
+            LEFT JOIN pre_sign_student pss ON ri.id = pss.race
+            AND pss.is_deleted = 0 -- 排除已删除的报名记录
+            WHERE ri.parentType = 5
+                GROUP BY ri.son_type
+        ) s ON r.son_type = s.son_type
+        ORDER BY r.type_count DESC; -- 最终结果按热门程度排序
     </select>
 </mapper>

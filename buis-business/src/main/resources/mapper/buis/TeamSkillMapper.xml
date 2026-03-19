@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buis.mapper.TeamSkillMapper">
+
+    <resultMap type="com.buis.model.domain.TeamSkill" id="TeamSkillResult">
+        <result property="id" column="id" />
+        <result property="teamId" column="team_id" />
+        <result property="skillTagId" column="skill_tag_id" />
+        <result property="importanceLevel" column="importance_level" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <resultMap type="com.buis.model.vo.TeamSkillVo" id="TeamSkillVoResult">
+        <result property="id" column="id" />
+        <result property="teamId" column="team_id" />
+        <result property="skillTagId" column="skill_tag_id" />
+        <result property="tagName" column="tag_name" />
+        <result property="category" column="category" />
+        <result property="description" column="description" />
+        <result property="importanceLevel" column="importance_level" />
+        <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="selectTeamSkillVo">
+        select ts.id, ts.team_id, ts.skill_tag_id, ts.importance_level, ts.create_time, ts.update_time
+        from team_skill ts
+    </sql>
+
+    <sql id="selectTeamSkillVoWithTag">
+        select ts.id, ts.team_id, ts.skill_tag_id, st.tag_name, st.category, st.description, ts.importance_level, ts.create_time
+        from team_skill ts
+                 left join skill_tag st on ts.skill_tag_id = st.id
+    </sql>
+
+    <select id="selectTeamSkillById" parameterType="Long" resultMap="TeamSkillResult">
+        <include refid="selectTeamSkillVo"/>
+        where ts.id = #{id}
+    </select>
+
+    <select id="selectTeamSkillList" parameterType="com.buis.model.domain.TeamSkill" resultMap="TeamSkillVoResult">
+        <include refid="selectTeamSkillVoWithTag"/>
+        <where>
+            <if test="teamId != null "> and ts.team_id = #{teamId}</if>
+            <if test="skillTagId != null "> and ts.skill_tag_id = #{skillTagId}</if>
+            <if test="importanceLevel != null "> and ts.importance_level = #{importanceLevel}</if>
+        </where>
+        order by ts.importance_level, ts.create_time desc
+    </select>
+
+    <select id="selectTeamSkillsByTeamId" parameterType="Long" resultMap="TeamSkillVoResult">
+        <include refid="selectTeamSkillVoWithTag"/>
+        where ts.team_id = #{teamId}
+        order by ts.importance_level, ts.create_time desc
+    </select>
+
+    <select id="selectTeamSkillsBySkillTagId" parameterType="Long" resultMap="TeamSkillResult">
+        <include refid="selectTeamSkillVo"/>
+        where ts.skill_tag_id = #{skillTagId}
+    </select>
+
+    <select id="selectTeamSkillsByTeamIds" parameterType="java.util.List" resultMap="TeamSkillVoResult">
+        <include refid="selectTeamSkillVoWithTag"/>
+        where ts.team_id in
+        <foreach item="teamId" collection="teamIds" open="(" separator="," close=")">
+            #{teamId}
+        </foreach>
+        order by ts.team_id, ts.importance_level, ts.create_time desc
+    </select>
+
+    <select id="countTeamSkills" parameterType="Long" resultType="int">
+        select count(*) from team_skill where team_id = #{teamId}
+    </select>
+
+    <select id="existsByTeamIdAndSkillTagId" resultType="int">
+        select count(*) from team_skill where team_id = #{teamId} and skill_tag_id = #{skillTagId}
+    </select>
+
+    <select id="selectTeamSkillsByTeamIdAndLevel" resultMap="TeamSkillVoResult">
+        <include refid="selectTeamSkillVoWithTag"/>
+        where ts.team_id = #{teamId}
+        <if test="importanceLevel != null">
+            and ts.importance_level = #{importanceLevel}
+        </if>
+        order by ts.importance_level, ts.create_time desc
+    </select>
+
+    <select id="selectTeamsBySkillTags" parameterType="java.util.List" resultMap="TeamSkillVoResult">
+        <include refid="selectTeamSkillVoWithTag"/>
+        where ts.skill_tag_id in
+        <foreach item="skillTagId" collection="skillTagIds" open="(" separator="," close=")">
+            #{skillTagId}
+        </foreach>
+        order by ts.team_id, ts.importance_level, ts.create_time desc
+    </select>
+
+    <select id="selectTeamSkillsWithImportance" parameterType="Long" resultMap="TeamSkillVoResult">
+        <include refid="selectTeamSkillVoWithTag"/>
+        where ts.team_id = #{teamId}
+        order by ts.importance_level, ts.create_time desc
+    </select>
+
+    <insert id="insertTeamSkill" parameterType="com.buis.model.domain.TeamSkill" useGeneratedKeys="true" keyProperty="id">
+        insert into team_skill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamId != null">team_id,</if>
+            <if test="skillTagId != null">skill_tag_id,</if>
+            <if test="importanceLevel != null">importance_level,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamId != null">#{teamId},</if>
+            <if test="skillTagId != null">#{skillTagId},</if>
+            <if test="importanceLevel != null">#{importanceLevel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsertTeamSkill" parameterType="java.util.List">
+        insert into team_skill (team_id, skill_tag_id, importance_level, create_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.teamId}, #{item.skillTagId}, #{item.importanceLevel}, #{item.createTime})
+        </foreach>
+    </insert>
+
+    <update id="updateTeamSkill" parameterType="com.buis.model.domain.TeamSkill">
+        update team_skill
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamId != null">team_id = #{teamId},</if>
+            <if test="skillTagId != null">skill_tag_id = #{skillTagId},</if>
+            <if test="importanceLevel != null">importance_level = #{importanceLevel},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeamSkillById" parameterType="Long">
+        delete from team_skill where id = #{id}
+    </delete>
+
+    <delete id="deleteTeamSkillByTeamIdAndSkillTagId">
+        delete from team_skill where team_id = #{teamId} and skill_tag_id = #{skillTagId}
+    </delete>
+
+    <delete id="deleteTeamSkillByIds" parameterType="Long">
+        delete from team_skill where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTeamSkillsByTeamId" parameterType="Long">
+        delete from team_skill where team_id = #{teamId}
+    </delete>
+</mapper>

@@ -6,7 +6,10 @@ import java.util.List;
 import com.buis.model.domain.RaceInfo;
 import com.buis.model.domain.Reward;
 import com.buis.model.dto.GradeStatistic;
+import com.buis.model.vo.HotRaceVo;
 import com.buis.model.vo.RaceInfoVo;
+import com.buis.model.vo.RaceNumsVo;
+import com.buis.model.vo.RaceTypeCountVo;
 import com.buis.model.vo.SecondClassCountVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -137,4 +140,36 @@ public interface RaceInfoMapper {
     List<RaceInfoVo> selectMyDeclare(Long loginUserId);
 
     void deleteRaceDeclareUrl(Long id);
+
+    /**
+     * 获取活动数量
+     * @return
+     */
+    int getActivityCount();
+
+    /**
+     * 获取近期最热门活动
+     * @return
+     */
+    List<HotRaceVo> getRecentlyPopularActType();
+
+    /**
+     * 查询比赛数量
+     * @return 比赛数量
+     */
+    long selectRaceInfoCount();
+
+    /**
+     * 查询热门活动比赛名称 - 按报名人数排序
+     * 联合查询 PreSignStudent 表统计报名人数
+     * @return 热门活动比赛名称列表
+     */
+    List<RaceNumsVo> selectHotRaceWithSignCount();
+
+    /**
+     * 按比赛类型分组统计数量（包含所有数据，不过滤逻辑删除）
+     * @return 各类型比赛的统计列表
+     */
+    List<RaceTypeCountVo> countByRaceType();
+
 }

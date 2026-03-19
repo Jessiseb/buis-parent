@@ -12,14 +12,14 @@ import com.buis.common.utils.DateUtils;
 import com.buis.common.utils.PageUtils;
 import com.buis.common.utils.SecurityUtils;
 import com.buis.common.utils.StringUtils;
+import com.buis.mapper.AwardMapper;
+import com.buis.mapper.PreSignStudentMapper;
 import com.buis.model.domain.*;
 import com.buis.model.dto.GradeStatistic;
 import com.buis.model.dto.StudentExportToDiDto;
 import com.buis.model.dto.TeacherExportToDaDto;
 import com.buis.model.dto.TeacherExportToDiDto;
-import com.buis.model.enums.RaceLabel;
-import com.buis.model.enums.RaceStatus;
-import com.buis.model.enums.ReviewStatus;
+import com.buis.model.enums.*;
 import com.buis.mapper.RaceInfoMapper;
 import com.buis.service.*;
 import com.buis.system.mapper.SysRoleMapper;
@@ -37,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -81,6 +83,10 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
     private IRaceInfoService raceInfoService;
     @Resource
     private SysRoleMapper sysRoleMapper;
+    @Autowired
+    private PreSignStudentMapper preSignStudentMapper;
+    @Autowired
+    private AwardMapper awardMapper;
 
     /**
      * 查询比赛信息
@@ -1458,6 +1464,218 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
        return raceInfoMapper.selectMyDeclare(LoginUserId);
     }
 
+    /**
+     * 生成随机过期时间（6-8天）
+     */
+    private int generateRandomExpireSeconds() {
+        Random random = new Random();
+        // 6天的基础时间（6 * 24 * 60 * 60秒 = 518400秒）
+        int baseSeconds = 6 * 24 * 60 * 60;
+        // ±1天的随机范围（86400秒）
+        int randomRange = 24 * 60 * 60;
+        // 生成6-8天之间的随机秒数
+        return baseSeconds + random.nextInt(2 * randomRange + 1);
+    }
+
+    /**
+     * 查询总比赛数量 - 带缓存，随机过期时间6-8天
+     */
+    @Override
+    public long selectRaceInfoCount() {
+        final String CACHE_KEY = "race:total:count";
+        // 1. 先尝试从缓存获取
+        Long count = redisCache.getCacheObject(CACHE_KEY);
+        if (count != null) {
+            return count;
+        }
+        // 2. 缓存不存在，查询数据库
+        count = raceInfoMapper.selectRaceInfoCount();
+        // 3. 设置缓存，随机过期时间6-8天
+        int expireSeconds = generateRandomExpireSeconds();
+        redisCache.setCacheObject(CACHE_KEY, count, expireSeconds, TimeUnit.SECONDS);
+        return count;
+    }
+
+
+    /**
+     * 获取热门活动分布 - 基于报名人数
+     */
+    @Override
+    public List<RaceNumsVo> selectHotRaceWithSignCount() {
+        final String CACHE_KEY = "race:hot:name";
+
+        // 1. 先尝试从缓存获取
+        List<RaceNumsVo> cachedData = redisCache.getCacheObject(CACHE_KEY);
+        if (cachedData != null) {
+            return cachedData;
+        }
+
+        // 2. 缓存不存在，查询数据库
+        List<RaceNumsVo> data = raceInfoMapper.selectHotRaceWithSignCount();
+
+        // 3. 设置缓存，随机过期时间6-8天
+        int expireSeconds = generateRandomExpireSeconds();
+        redisCache.setCacheObject(CACHE_KEY, data, expireSeconds, TimeUnit.SECONDS);
+
+        return data;
+    }
+
+    @Override
+    public List<RaceStatCardVo> selectCard() {
+        List<RaceStatCardVo> cardList = new ArrayList<>();
+
+        // 1. 总比赛数（替换为真实数据，从数据库+缓存获取）
+        long totalRaceCount = selectRaceInfoCount(); // 调用真实统计方法
+        // 环比增长率暂时保留模拟值（如需真实可补充计算逻辑）
+        cardList.add(new RaceStatCardVo("总比赛数", totalRaceCount + "个", "+5.2%"));
+
+        // 2. 竞赛总参与人次
+        // 2. 竞赛总参与人次（替换为 Redis 真实数据）
+        List<TrendResultVo> trendList = getTrendDataFromRedis();
+        // 计算近12个月总报名人次
+        long totalParticipant = trendList.stream().mapToLong(TrendResultVo::getCount).sum();
+        // 计算环比增长率（最新月 vs 上月）
+        String growthRate = calculateGrowthRate(
+                trendList.size() > 0 ? Math.toIntExact(trendList.get(0).getCount()) : 0,
+                trendList.size() > 1 ? Math.toIntExact(trendList.get(1).getCount()) : 0
+        );
+        cardList.add(new RaceStatCardVo("竞赛总参与人次", totalParticipant + "人次", growthRate));
+
+        // 3. 竞赛获奖率（真实数值 ）
+        String realAwardRate = calculateAwardRate();
+        cardList.add(new RaceStatCardVo("竞赛获奖率", realAwardRate, "+1.5%"));
+
+
+        // 4. 新增竞赛项目数
+        cardList.add(new RaceStatCardVo("新增竞赛项目数", "8项", "+20.0%"));
+
+        return cardList;
+    }
+
+
+    /**
+     * 从 Redis 获取趋势数据（缓存未命中则查库并回填）
+     */
+    @SuppressWarnings("unchecked")
+    private List<TrendResultVo> getTrendDataFromRedis() {
+        // 1. 先查 Redis 缓存
+        Object cachedData = redisTemplate.opsForValue().get("trend:data");
+        if (cachedData != null) {
+            return (List<TrendResultVo>) cachedData;
+        }
+
+        // 2. 缓存未命中，查询数据库
+        List<TrendResultVo> dbData = preSignStudentMapper.selectMonthlyTrend();
+
+        // 3. 回填 Redis 缓存（移除过期时间参数，缓存永久有效）
+        redisTemplate.opsForValue().set("trend:data", dbData);
+
+        return dbData;
+    }
+
+    /**
+     * 计算环比增长率（保留1位小数，带正负号）
+     */
+    private String calculateGrowthRate(Integer current, Integer previous) {
+        if (current == 0 || previous == 0) {
+            return current == 0 ? "0.0%" : "+100.0%";
+        }
+
+        BigDecimal growth = new BigDecimal(current - previous)
+                .divide(new BigDecimal(previous), 3, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal(100));
+
+        String rate = growth.setScale(1, RoundingMode.HALF_UP).toString();
+        return (growth.compareTo(BigDecimal.ZERO) >= 0 ? "+" : "") + rate + "%";
+    }
+
+
+    /**
+     * 计算竞赛获奖率（真实数值，带永久缓存）
+     */
+    private String calculateAwardRate() {
+        final String CACHE_KEY = "race:award:rate";
+        String rate = redisCache.getCacheObject(CACHE_KEY);
+        if (rate != null) {
+            return rate;
+        }
+
+        // 获奖人数 → AwardMapper
+        long totalAwardUser = awardMapper.countTotalAwardUser();
+        // 参赛人数 → PreSignStudentMapper（修正后）
+        long totalParticipant = preSignStudentMapper.countTotalParticipant();
+
+        BigDecimal awardRate = BigDecimal.ZERO;
+        if (totalParticipant > 0) {
+            awardRate = new BigDecimal(totalAwardUser)
+                    .divide(new BigDecimal(totalParticipant), 3, RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal(100))
+                    .setScale(1, RoundingMode.HALF_UP);
+        }
+        rate = awardRate + "%";
+        redisCache.setCacheObject(CACHE_KEY, rate);
+        return rate;
+    }
+
+    /**
+     * 获取所有未删除比赛的类型数量统计
+     * @return 各类型统计列表
+     */
+    @Override
+    public List<RaceTypeCountVo> getRaceTypeCount() {
+        // 定义缓存键，遵循业务语义命名规范
+        final String CACHE_KEY = "race:type:count";
+
+        // 1. 先尝试从缓存获取数据
+        List<RaceTypeCountVo> cachedData = redisCache.getCacheObject(CACHE_KEY);
+        if (cachedData != null) {
+            return cachedData;
+        }
+
+        // 2. 缓存未命中，查询数据库（XML已固定过滤未删除条件）
+        List<RaceTypeCountVo> data = raceInfoMapper.countByRaceType();
+
+        // 3. 设置缓存，使用随机过期时间（避免缓存雪崩）
+        int expireSeconds = generateRandomExpireSeconds();
+        redisCache.setCacheObject(CACHE_KEY, data, expireSeconds, TimeUnit.SECONDS);
+
+        return data;
+    }
+
+    /**
+     * 获取近期热门的比赛
+     * @return
+     */
+    @Override
+    public int getActivityCount() {
+        return raceInfoMapper.getActivityCount();
+    }
+
+
+    @Override
+    public List<HotRaceVo> getRecentlyPopularActType() {
+        // 1. 调用Mapper获取原始数据（labelName为sonType数字）
+        List<HotRaceVo> popularActTypelList = raceInfoMapper.getRecentlyPopularActType();
+
+        // 2. 替换字典名称（解耦核心：只调用通用方法，不直接依赖枚举内部）
+        List<HotRaceVo> resultList = popularActTypelList.stream()
+                .map(vo -> {
+                    // 非空校验：避免空指针/类型转换异常
+                    if (vo.getLabelName() == null || vo.getLabelName().isEmpty()) {
+                        vo.setLabelName("未知类型");
+                        return vo;
+                    }
+
+                    // 调用枚举的快捷方法
+                    Integer sonType = Integer.valueOf(vo.getLabelName());
+                    vo.setLabelName(DictEnum.getNameByCode(RaceSonTypeEnum.class, sonType, "未知类型"));
+
+                    return vo;
+                })
+                .collect(Collectors.toList());
+
+        return resultList;
+    }
 }
 
 

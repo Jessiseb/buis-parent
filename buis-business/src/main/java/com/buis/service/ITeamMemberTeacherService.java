@@ -85,7 +85,7 @@ public interface ITeamMemberTeacherService
     List<UserInfoVo> getTeachersByRaceId(Long raceId);
 
     /**
-     * 根据老师id查询队伍队伍列表
+     * 根据老师id查询参赛队伍列表
      *
      * @param userId
      * @param race
@@ -149,4 +149,10 @@ public interface ITeamMemberTeacherService
 
     int deleteTeamMemberTeacherByTeam(Long team);
 
+    /**
+     * 获取指导数量
+     * @param teacherId
+     * @return
+     */
+    int getTotalGuideNumber(Long teacherId);
 }
