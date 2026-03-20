@@ -34,6 +34,9 @@ public class SkillCategoryVo implements Serializable {
     @ApiModelProperty("该分类下的技能数量")
     private Integer skillCount;
 
+    @ApiModelProperty("该分类的技能总分")
+    private Double categoryScore;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

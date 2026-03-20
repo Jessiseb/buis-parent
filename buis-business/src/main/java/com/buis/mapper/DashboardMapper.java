@@ -83,7 +83,17 @@ public interface DashboardMapper {
     List<ProjectRecordVo> selectProjectRecords(@Param("userId") Long userId);
 
     /**
+     * 获取成果明细（获奖记录）
+     */
+    List<AchievementItemVo> selectAchievementItems(@Param("userId") Long userId);
+
+    /**
      * 获取成长报告数据
      */
     GrowthReportVo selectGrowthReport(@Param("userId") Long userId);
+
+    /**
+     * 获取项目状态分布
+     */
+    List<Map<String, Object>> selectProjectStatusDistribution(@Param("userId") Long userId);
 }

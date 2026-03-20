@@ -22,9 +22,16 @@
         ) user_races
     </select>
 
-    <!-- 2. 统计获奖总数: award表通过team_id匹配 + award_records表通过user匹配 -->
+    <!-- 2. 统计获奖总数: award表通过name匹配 + award表通过team_id匹配 + award_records表通过user匹配 -->
     <select id="countUserAwards" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM (
+            -- 通过name匹配的第二课堂奖状
+            SELECT a.id
+            FROM award a
+            WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
+            AND a.is_deleted = 0
+            UNION ALL
+            -- 通过team_id匹配的奖状
             SELECT a.id
             FROM award a
             INNER JOIN (
@@ -32,6 +39,7 @@
             ) ut ON a.team_id = ut.team_id
             WHERE a.is_deleted = 0
             UNION ALL
+            -- 通过user匹配的第二课堂奖状
             SELECT ar.id
             FROM award_records ar
             WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
@@ -58,33 +66,150 @@
         ) user_teams
     </select>
 
-    <!-- 5. 竞赛成长曲线: 按时间排列的参赛记录及获奖情况 -->
+    <!-- 5. 成长曲线: 近3学期的综合得分 -->
     <select id="selectGrowthCurve" resultType="com.buis.model.vo.GrowthCurveItemVo">
-        SELECT
-            DATE_FORMAT(ri.race_start, '%Y-%m') AS period,
-            ri.id AS raceId,
-            ri.name AS raceName,
-            ri.level AS raceLevel,
-            ri.race_type AS raceType,
-            ti.name AS teamName,
-            ti.id AS teamId,
-            COALESCE(a.award_level, ti.r_rank) AS awardLevel,
-            ri.race_start AS raceStart,
-            ri.race_end AS raceEnd,
-            ut.role AS role
+        SELECT 
+            semesters.period,
+            COALESCE(SUM(COALESCE(scores.raceScore, 0) + COALESCE(scores.projectScore, 0) + COALESCE(scores.teamScore, 0) + COALESCE(scores.roleScore, 0) + COALESCE(scores.awardScore, 0)), 0) AS compositeScore,
+            COALESCE(SUM(scores.raceScore), 0) AS raceScore,
+            COALESCE(SUM(scores.projectScore), 0) AS projectScore,
+            COALESCE(SUM(scores.teamScore), 0) AS teamScore,
+            COALESCE(SUM(scores.roleScore), 0) AS roleScore,
+            COALESCE(SUM(scores.awardScore), 0) AS awardScore
         FROM (
-            <include refid="userTeams"/>
-        ) ut
-        JOIN race_info ri ON ut.race_id = ri.id AND ri.is_deleted = 0
-        JOIN team_info ti ON ut.team_id = ti.id
-        LEFT JOIN award a ON a.team_id = ti.id AND a.race_id = ri.id AND a.is_deleted = 0
-        ORDER BY ri.race_start ASC
+            -- 硬编码近3个学期
+            SELECT '2024-09' AS period UNION ALL
+            SELECT '2025-02' AS period UNION ALL
+            SELECT '2025-09' AS period
+        ) semesters
+        LEFT JOIN (
+            -- 计算各学期得分
+            SELECT 
+                CASE 
+                    WHEN t.create_time BETWEEN '2024-09-01' AND '2025-01-31' THEN '2024-09'
+                    WHEN t.create_time BETWEEN '2025-02-01' AND '2025-07-31' THEN '2025-02'
+                    WHEN t.create_time BETWEEN '2025-09-01' AND '2026-01-31' THEN '2025-09'
+                END AS period,
+                COUNT(DISTINCT t.race) AS raceScore,
+                COUNT(DISTINCT t.id) * 0.5 AS projectScore,
+                COUNT(*) * 0.2 AS teamScore,
+                COUNT(CASE WHEN t.leader = #{userId} THEN 1 END) * 0.3 AS roleScore,
+                0 AS awardScore
+            FROM team_info t
+            WHERE t.is_deleted = 0
+              AND ((t.leader = #{userId}) OR 
+                   EXISTS (SELECT 1 FROM team_member_student tms 
+                           WHERE tms.team = t.id AND tms.student = #{userId} 
+                           AND tms.is_choosed = 1 AND tms.is_deleted = 0))
+            GROUP BY period
+            UNION ALL
+            -- 获奖得分（通过team_id匹配的奖项）
+            SELECT 
+                CASE 
+                    WHEN a.create_time BETWEEN '2024-09-01' AND '2025-01-31' THEN '2024-09'
+                    WHEN a.create_time BETWEEN '2025-02-01' AND '2025-07-31' THEN '2025-02'
+                    WHEN a.create_time BETWEEN '2025-09-01' AND '2026-01-31' THEN '2025-09'
+                END AS period,
+                0 AS raceScore,
+                0 AS projectScore,
+                0 AS teamScore,
+                0 AS roleScore,
+                SUM(
+                    CASE
+                        WHEN a.award_level LIKE '%一等%' THEN 10
+                        WHEN a.award_level LIKE '%二等%' THEN 7
+                        WHEN a.award_level LIKE '%三等%' THEN 5
+                        WHEN a.award_level LIKE '%优秀%' OR a.award_level LIKE '%优胜%' THEN 3
+                        ELSE 1
+                    END
+                    *
+                    CASE ri.level
+                        WHEN 4 THEN 3.0
+                        WHEN 3 THEN 2.5
+                        WHEN 2 THEN 2.0
+                        WHEN 1 THEN 1.5
+                        ELSE 1.0
+                    END
+                ) AS awardScore
+            FROM award a
+            JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+            WHERE a.is_deleted = 0
+              AND EXISTS (
+                  SELECT 1 FROM team_info t 
+                  WHERE t.id = a.team_id AND t.is_deleted = 0
+                  AND ((t.leader = #{userId}) OR 
+                       EXISTS (SELECT 1 FROM team_member_student tms 
+                               WHERE tms.team = t.id AND tms.student = #{userId} 
+                               AND tms.is_choosed = 1 AND tms.is_deleted = 0))
+              )
+            GROUP BY period
+            UNION ALL
+            -- 获奖得分（通过name匹配的第二课堂奖项）
+            SELECT 
+                CASE 
+                    WHEN a.create_time BETWEEN '2024-09-01' AND '2025-01-31' THEN '2024-09'
+                    WHEN a.create_time BETWEEN '2025-02-01' AND '2025-07-31' THEN '2025-02'
+                    WHEN a.create_time BETWEEN '2025-09-01' AND '2026-01-31' THEN '2025-09'
+                END AS period,
+                0 AS raceScore,
+                0 AS projectScore,
+                0 AS teamScore,
+                0 AS roleScore,
+                SUM(
+                    CASE
+                        WHEN a.award_level LIKE '%一等%' THEN 10
+                        WHEN a.award_level LIKE '%二等%' THEN 7
+                        WHEN a.award_level LIKE '%三等%' THEN 5
+                        WHEN a.award_level LIKE '%优秀%' OR a.award_level LIKE '%优胜%' THEN 3
+                        ELSE 1
+                    END
+                    * 1.0 -- 默认级别权重
+                ) AS awardScore
+            FROM award a
+            WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
+            AND a.is_deleted = 0
+            GROUP BY period
+            UNION ALL
+            -- 获奖得分（通过user匹配的第二课堂奖项）
+            SELECT 
+                CASE 
+                    WHEN ar.award_date BETWEEN '2024-09-01' AND '2025-01-31' THEN '2024-09'
+                    WHEN ar.award_date BETWEEN '2025-02-01' AND '2025-07-31' THEN '2025-02'
+                    WHEN ar.award_date BETWEEN '2025-09-01' AND '2026-01-31' THEN '2025-09'
+                END AS period,
+                0 AS raceScore,
+                0 AS projectScore,
+                0 AS teamScore,
+                0 AS roleScore,
+                SUM(
+                    CASE
+                        WHEN ar.award_level LIKE '%一等%' THEN 10
+                        WHEN ar.award_level LIKE '%二等%' THEN 7
+                        WHEN ar.award_level LIKE '%三等%' THEN 5
+                        WHEN ar.award_level LIKE '%优秀%' OR ar.award_level LIKE '%优胜%' THEN 3
+                        ELSE 1
+                    END
+                    * 1.0 -- 默认级别权重
+                ) AS awardScore
+            FROM award_records ar
+            WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
+            GROUP BY period
+        ) scores ON semesters.period = scores.period
+        GROUP BY semesters.period
+        ORDER BY semesters.period ASC
     </select>
 
     <!-- 6. 获奖等级分布 -->
     <select id="selectAwardLevelDistribution" resultType="com.buis.model.vo.DashboardRankingVo$AwardLevelDistributionItem">
         SELECT award_level AS awardLevel, COUNT(*) AS count
         FROM (
+            -- 通过name匹配的第二课堂奖状
+            SELECT a.award_level
+            FROM award a
+            WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
+            AND a.is_deleted = 0 AND a.award_level IS NOT NULL AND a.award_level != ''
+            UNION ALL
+            -- 通过team_id匹配的奖状
             SELECT a.award_level
             FROM award a
             INNER JOIN (
@@ -92,6 +217,7 @@
             ) ut ON a.team_id = ut.team_id
             WHERE a.is_deleted = 0 AND a.award_level IS NOT NULL AND a.award_level != ''
             UNION ALL
+            -- 通过user匹配的第二课堂奖状
             SELECT ar.award_level
             FROM award_records ar
             WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
@@ -110,6 +236,20 @@
         JOIN race_info ri ON ut.race_id = ri.id AND ri.is_deleted = 0
         GROUP BY ri.race_type
         ORDER BY ri.race_type ASC
+    </select>
+
+    <!-- 8. 项目状态分布 -->
+    <select id="selectProjectStatusDistribution" resultType="java.util.HashMap">
+        SELECT status, COUNT(*) AS count
+        FROM (
+            SELECT ti.status
+            FROM team_info ti
+            WHERE (ti.leader = #{userId} OR ti.id IN (
+                SELECT team FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+            )) AND ti.is_deleted = 0
+        ) user_projects
+        GROUP BY status
+        ORDER BY status ASC
     </select>
 
     <!-- 8. 用户综合评分: 参赛数 + 获奖加权分 -->
@@ -332,6 +472,7 @@
     </select>
     <!-- 12. 个人成长时间轴 -->
     <select id="selectGrowthTimeline" resultType="com.buis.model.vo.GrowthEventVo">
+        <!-- 参赛记录 -->
         SELECT
             'race' AS eventType,
             ri.race_start AS eventTime,
@@ -345,21 +486,9 @@
             SELECT race AS race_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
         ) ut ON ri.id = ut.race_id
         WHERE ri.is_deleted = 0
+
         UNION ALL
-        SELECT
-        'award' AS eventType,
-        a.create_time AS eventTime,
-        a.name AS eventName,
-        CONCAT('获得', a.award_level) AS eventDescription,
-        a.id AS relatedId
-        FROM award a
-                 JOIN (
-            SELECT id AS team_id FROM team_info WHERE leader = #{userId} AND is_deleted = 0
-            UNION
-            SELECT team AS team_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
-        ) ut ON a.team_id = ut.team_id
-        WHERE a.is_deleted = 0
-        UNION ALL
+        <!-- 项目记录 -->
         SELECT
             'project' AS eventType,
             ti.create_time AS eventTime,
@@ -370,29 +499,27 @@
         WHERE (ti.leader = #{userId} OR ti.id IN (
             SELECT team FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
         )) AND ti.is_deleted = 0
-        ORDER BY eventTime DESC
-    </select>
 
-    <!-- 13. 获奖档案 -->
-    <select id="selectAwardRecords" resultType="com.buis.model.vo.AwardRecordVo">
-        <!-- 查询第二课堂奖状 -->
+        UNION ALL
+        <!-- 获奖记录（通过name匹配的第二课堂奖项） -->
         SELECT
-        a.id AS awardId,
-        a.name AS awardName,
-        a.award_level AS awardLevel,
-        a.race_name AS raceName,
-        a.create_time AS awardTime
+            'award' AS eventType,
+            COALESCE(a.create_time, NOW()) AS eventTime,
+            COALESCE(a.race_name, '未知比赛') AS eventName,
+            CONCAT('获得奖项，等级：', COALESCE(a.award_level, '未知')) AS eventDescription,
+            a.id AS relatedId
         FROM award a
         WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
         AND a.is_deleted = 0
+
         UNION ALL
-        <!-- 查询通过队伍关联的奖状 -->
+        <!-- 获奖记录（通过team_id关联的奖项） -->
         SELECT
-        a.id AS awardId,
-        a.name AS awardName,
-        a.award_level AS awardLevel,
-        ri.name AS raceName,
-        a.create_time AS awardTime
+            'award' AS eventType,
+            COALESCE(a.create_time, NOW()) AS eventTime,
+            COALESCE(ri.name, '未知比赛') AS eventName,
+            CONCAT('获得奖项，等级：', COALESCE(a.award_level, '未知')) AS eventDescription,
+            a.id AS relatedId
         FROM award a
                  JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
                  JOIN (
@@ -401,6 +528,58 @@
             SELECT team AS team_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
         ) ut ON a.team_id = ut.team_id
         WHERE a.is_deleted = 0
+
+        UNION ALL
+        <!-- 获奖记录（通过user匹配的第二课堂奖项） -->
+        SELECT
+            'award' AS eventType,
+            COALESCE(ar.award_date, NOW()) AS eventTime,
+            COALESCE(ar.competition_name, '未知比赛') AS eventName,
+            CONCAT('获得奖项，等级：', COALESCE(ar.award_level, '未知')) AS eventDescription,
+            ar.id AS relatedId
+        FROM award_records ar
+        WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
+        ORDER BY eventTime DESC
+    </select>
+
+    <!-- 13. 获奖档案 -->
+    <select id="selectAwardRecords" resultType="com.buis.model.vo.AwardRecordVo">
+        <!-- 查询第二课堂奖状（通过name匹配） -->
+        SELECT
+        a.id AS awardId,
+        COALESCE(a.name, '未知奖项') AS awardName,
+        COALESCE(a.award_level, '未知') AS awardLevel,
+        COALESCE(a.race_name, '未知比赛') AS raceName,
+        COALESCE(a.create_time, NOW()) AS awardTime
+        FROM award a
+        WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
+        AND a.is_deleted = 0
+        UNION ALL
+        <!-- 查询通过队伍关联的奖状 -->
+        SELECT
+        a.id AS awardId,
+        COALESCE(a.name, '未知奖项') AS awardName,
+        COALESCE(a.award_level, '未知') AS awardLevel,
+        COALESCE(ri.name, '未知比赛') AS raceName,
+        COALESCE(a.create_time, NOW()) AS awardTime
+        FROM award a
+                 JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+                 JOIN (
+            SELECT id AS team_id FROM team_info WHERE leader = #{userId} AND is_deleted = 0
+            UNION
+            SELECT team AS team_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+        ) ut ON a.team_id = ut.team_id
+        WHERE a.is_deleted = 0
+        UNION ALL
+        <!-- 查询第二课堂奖状（通过user匹配） -->
+        SELECT
+        ar.id AS awardId,
+        COALESCE(ar.competition_name, '未知奖项') AS awardName,
+        COALESCE(ar.award_level, '未知') AS awardLevel,
+        COALESCE(ar.competition_name, '未知比赛') AS raceName,
+        COALESCE(ar.award_date, NOW()) AS awardTime
+        FROM award_records ar
+        WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
         ORDER BY awardTime DESC
     </select>
 
@@ -410,13 +589,79 @@
             ti.id AS projectId,
             ti.name AS projectName,
             ri.name AS raceName,
-            ti.create_time AS createTime
+            ti.create_time AS createTime,
+            ti.status AS status
         FROM team_info ti
                  JOIN race_info ri ON ti.race = ri.id AND ri.is_deleted = 0
         WHERE (ti.leader = #{userId} OR ti.id IN (
             SELECT team FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
         )) AND ti.is_deleted = 0
         ORDER BY ti.create_time DESC
+    </select>
+
+    <!-- 15. 成果明细 -->
+    <select id="selectAchievementItems" resultType="com.buis.model.vo.AchievementItemVo">
+        <!-- 竞赛获奖记录（通过name匹配） -->
+        SELECT
+            'competition' AS type,
+            COALESCE(a.race_name, '未知比赛') AS name,
+            COALESCE(a.create_time, NOW()) AS time,
+            COALESCE(a.award_level, '未知') AS levelOrStatus,
+            a.id AS relatedId,
+            NULL AS certificateUrl
+        FROM award a
+        WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
+        AND a.is_deleted = 0
+
+        UNION ALL
+        <!-- 竞赛获奖记录（通过team_id关联） -->
+        SELECT
+            'competition' AS type,
+            COALESCE(ri.name, '未知比赛') AS name,
+            COALESCE(a.create_time, NOW()) AS time,
+            COALESCE(a.award_level, '未知') AS levelOrStatus,
+            a.id AS relatedId,
+            NULL AS certificateUrl
+        FROM award a
+                 JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+                 JOIN (
+            SELECT id AS team_id FROM team_info WHERE leader = #{userId} AND is_deleted = 0
+            UNION
+            SELECT team AS team_id FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+        ) ut ON a.team_id = ut.team_id
+        WHERE a.is_deleted = 0
+
+        UNION ALL
+        <!-- 第二课堂获奖记录（通过user匹配） -->
+        SELECT
+            'second_class' AS type,
+            COALESCE(ar.competition_name, '未知比赛') AS name,
+            COALESCE(ar.award_date, NOW()) AS time,
+            COALESCE(ar.award_level, '未知') AS levelOrStatus,
+            ar.id AS relatedId,
+            ar.award_url AS certificateUrl
+        FROM award_records ar
+        WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
+
+        UNION ALL
+        <!-- 大创项目记录 -->
+        SELECT
+            'project' AS type,
+            COALESCE(ti.name, '未知项目') AS name,
+            COALESCE(ti.create_time, NOW()) AS time,
+            CASE COALESCE(ti.status, -1)
+                WHEN 0 THEN '待审核'
+                WHEN 1 THEN '审核通过'
+                WHEN 4 THEN '已立项'
+                ELSE '其他'
+            END AS levelOrStatus,
+            ti.id AS relatedId,
+            NULL AS certificateUrl
+        FROM team_info ti
+        WHERE (ti.leader = #{userId} OR ti.id IN (
+            SELECT team FROM team_member_student WHERE student = #{userId} AND is_choosed = 1 AND is_deleted = 0
+        )) AND ti.is_deleted = 0
+        ORDER BY time DESC
     </select>
 
     <!-- 15. 成长报告数据 -->
