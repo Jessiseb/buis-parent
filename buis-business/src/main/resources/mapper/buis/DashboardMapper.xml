@@ -285,32 +285,41 @@
                      -- 4. 角色加分 (队长次数 × 0.3)
                      (SELECT COUNT(*) * 0.3 FROM team_info t WHERE t.leader = #{userId} AND t.is_deleted = 0) AS role_score,
 
-                     -- 5. 获奖加权分 (保持原有逻辑)
+                     -- 5. 获奖加权分 (包含所有类型的奖项)
                      (SELECT COALESCE(SUM(
                                               CASE
-                                                  WHEN a.award_level LIKE '%一等%' THEN 10
-                                                  WHEN a.award_level LIKE '%二等%' THEN 7
-                                                  WHEN a.award_level LIKE '%三等%' THEN 5
-                                                  WHEN a.award_level LIKE '%优秀%' OR a.award_level LIKE '%优胜%' THEN 3
+                                                  WHEN award_level LIKE '%一等%' THEN 10
+                                                  WHEN award_level LIKE '%二等%' THEN 7
+                                                  WHEN award_level LIKE '%三等%' THEN 5
+                                                  WHEN award_level LIKE '%优秀%' OR award_level LIKE '%优胜%' THEN 3
                                                   ELSE 1
                                                   END
                                                   *
-                                              CASE ri.level
-                                                  WHEN 4 THEN 3.0
-                                                  WHEN 3 THEN 2.5
-                                                  WHEN 2 THEN 2.0
-                                                  WHEN 1 THEN 1.5
-                                                  ELSE 1.0
-                                                  END
+                                              weight
                                       ), 0)
-                      FROM award a
+                      FROM (
+                          -- 通过team_id关联的奖项
+                          SELECT a.award_level, CASE ri.level WHEN 4 THEN 3.0 WHEN 3 THEN 2.5 WHEN 2 THEN 2.0 WHEN 1 THEN 1.5 ELSE 1.0 END AS weight
+                          FROM award a
                                JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
                                INNER JOIN (
-                          SELECT t.id AS team_id FROM team_info t WHERE t.leader = #{userId} AND t.is_deleted = 0
-                          UNION
-                          SELECT tms.team AS team_id FROM team_member_student tms WHERE tms.student = #{userId} AND tms.is_choosed = 1 AND tms.is_deleted = 0
-                      ) ut ON a.team_id = ut.team_id
-                      WHERE a.is_deleted = 0
+                                  SELECT t.id AS team_id FROM team_info t WHERE t.leader = #{userId} AND t.is_deleted = 0
+                                  UNION
+                                  SELECT tms.team AS team_id FROM team_member_student tms WHERE tms.student = #{userId} AND tms.is_choosed = 1 AND tms.is_deleted = 0
+                              ) ut ON a.team_id = ut.team_id
+                          WHERE a.is_deleted = 0
+                          UNION ALL
+                          -- 通过name匹配的第二课堂奖项
+                          SELECT a.award_level, 1.0 AS weight
+                          FROM award a
+                          WHERE a.name = (SELECT name FROM user_info WHERE id = #{userId})
+                          AND a.is_deleted = 0
+                          UNION ALL
+                          -- 通过user匹配的第二课堂奖项
+                          SELECT ar.award_level, 1.0 AS weight
+                          FROM award_records ar
+                          WHERE ar.user = #{userId} AND ar.status = 1 AND ar.is_deleted = 0
+                      ) all_awards
                      ) AS award_score
              ) scores
     </select>
@@ -348,25 +357,38 @@
                     COALESCE((
                                  SELECT SUM(
                                                 CASE
-                                                    WHEN a.award_level LIKE '%一等%' THEN 10
-                                                    WHEN a.award_level LIKE '%二等%' THEN 7
-                                                    WHEN a.award_level LIKE '%三等%' THEN 5
-                                                    WHEN a.award_level LIKE '%优秀%' OR a.award_level LIKE '%优胜%' THEN 3
+                                                    WHEN award_level LIKE '%一等%' THEN 10
+                                                    WHEN award_level LIKE '%二等%' THEN 7
+                                                    WHEN award_level LIKE '%三等%' THEN 5
+                                                    WHEN award_level LIKE '%优秀%' OR award_level LIKE '%优胜%' THEN 3
                                                     ELSE 1
                                                     END
                                                     *
-                                                CASE ri.level
-                                                    WHEN 4 THEN 3.0 WHEN 3 THEN 2.5 WHEN 2 THEN 2.0 WHEN 1 THEN 1.5 ELSE 1.0
-                                                    END
+                                                weight
                                         )
-                                 FROM award a
-                                          JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
-                                          INNER JOIN (
-                                     SELECT ti.id AS team_id FROM team_info ti WHERE ti.leader = ui.id AND ti.is_deleted = 0
-                                     UNION
-                                     SELECT tms.team FROM team_member_student tms WHERE tms.student = ui.id AND tms.is_choosed = 1 AND tms.is_deleted = 0
-                                 ) ut ON a.team_id = ut.team_id
-                                 WHERE a.is_deleted = 0
+                                 FROM (
+                                     -- 通过team_id关联的奖项
+                                     SELECT a.award_level, CASE ri.level WHEN 4 THEN 3.0 WHEN 3 THEN 2.5 WHEN 2 THEN 2.0 WHEN 1 THEN 1.5 ELSE 1.0 END AS weight
+                                     FROM award a
+                                              JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+                                              INNER JOIN (
+                                         SELECT ti.id AS team_id FROM team_info ti WHERE ti.leader = ui.id AND ti.is_deleted = 0
+                                         UNION
+                                         SELECT tms.team FROM team_member_student tms WHERE tms.student = ui.id AND tms.is_choosed = 1 AND tms.is_deleted = 0
+                                     ) ut ON a.team_id = ut.team_id
+                                     WHERE a.is_deleted = 0
+                                     UNION ALL
+                                     -- 通过name匹配的第二课堂奖项
+                                     SELECT a.award_level, 1.0 AS weight
+                                     FROM award a
+                                     WHERE a.name = ui.name
+                                     AND a.is_deleted = 0
+                                     UNION ALL
+                                     -- 通过user匹配的第二课堂奖项
+                                     SELECT ar.award_level, 1.0 AS weight
+                                     FROM award_records ar
+                                     WHERE ar.user = ui.id AND ar.status = 1 AND ar.is_deleted = 0
+                                 ) all_awards
                              ), 0)
                     ) AS score
             FROM user_info ui
@@ -414,25 +436,38 @@
                     COALESCE((
                                  SELECT SUM(
                                                 CASE
-                                                    WHEN a.award_level LIKE '%一等%' THEN 10
-                                                    WHEN a.award_level LIKE '%二等%' THEN 7
-                                                    WHEN a.award_level LIKE '%三等%' THEN 5
-                                                    WHEN a.award_level LIKE '%优秀%' OR a.award_level LIKE '%优胜%' THEN 3
+                                                    WHEN award_level LIKE '%一等%' THEN 10
+                                                    WHEN award_level LIKE '%二等%' THEN 7
+                                                    WHEN award_level LIKE '%三等%' THEN 5
+                                                    WHEN award_level LIKE '%优秀%' OR award_level LIKE '%优胜%' THEN 3
                                                     ELSE 1
                                                     END
                                                     *
-                                                CASE ri.level
-                                                    WHEN 4 THEN 3.0 WHEN 3 THEN 2.5 WHEN 2 THEN 2.0 WHEN 1 THEN 1.5 ELSE 1.0
-                                                    END
+                                                weight
                                         )
-                                 FROM award a
-                                          JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
-                                          INNER JOIN (
-                                     SELECT ti.id AS team_id FROM team_info ti WHERE ti.leader = ui.id AND ti.is_deleted = 0
-                                     UNION
-                                     SELECT tms.team FROM team_member_student tms WHERE tms.student = ui.id AND tms.is_choosed = 1 AND tms.is_deleted = 0
-                                 ) ut ON a.team_id = ut.team_id
-                                 WHERE a.is_deleted = 0
+                                 FROM (
+                                     -- 通过team_id关联的奖项
+                                     SELECT a.award_level, CASE ri.level WHEN 4 THEN 3.0 WHEN 3 THEN 2.5 WHEN 2 THEN 2.0 WHEN 1 THEN 1.5 ELSE 1.0 END AS weight
+                                     FROM award a
+                                              JOIN race_info ri ON a.race_id = ri.id AND ri.is_deleted = 0
+                                              INNER JOIN (
+                                         SELECT ti.id AS team_id FROM team_info ti WHERE ti.leader = ui.id AND ti.is_deleted = 0
+                                         UNION
+                                         SELECT tms.team FROM team_member_student tms WHERE tms.student = ui.id AND tms.is_choosed = 1 AND tms.is_deleted = 0
+                                     ) ut ON a.team_id = ut.team_id
+                                     WHERE a.is_deleted = 0
+                                     UNION ALL
+                                     -- 通过name匹配的第二课堂奖项
+                                     SELECT a.award_level, 1.0 AS weight
+                                     FROM award a
+                                     WHERE a.name = ui.name
+                                     AND a.is_deleted = 0
+                                     UNION ALL
+                                     -- 通过user匹配的第二课堂奖项
+                                     SELECT ar.award_level, 1.0 AS weight
+                                     FROM award_records ar
+                                     WHERE ar.user = ui.id AND ar.status = 1 AND ar.is_deleted = 0
+                                 ) all_awards
                              ), 0)
                     ) AS score
             FROM user_info ui
