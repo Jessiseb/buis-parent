@@ -54,8 +54,28 @@ public interface IDashboardService {
     List<ProjectRecordVo> getProjectRecords(Long userId);
 
     /**
+     * 获取成果明细
+     */
+    List<AchievementItemVo> getAchievementItems(Long userId);
+
+    /**
      * 获取成长报告数据
      */
     GrowthReportVo getGrowthReport(Long userId);
+
+    /**
+     * 获取综合评分
+     */
+    Double getCompositeScore(Long userId);
+
+    /**
+     * 获取成果统计
+     */
+    AchievementStatsVo getAchievementStats(Long userId);
+
+    /**
+     * 获取分布数据
+     */
+    DistributionVo getDistributionData(Long userId);
 
 }
