@@ -396,7 +396,8 @@ public class StatisticsApiController {
       @RequestParam(value = "sClass", required = false, defaultValue = "") String sClass,
       @RequestParam(value = "projectType", required = false, defaultValue = "0") Integer projectType,
       @RequestParam(value = "year", required = false, defaultValue = "") String year) {
-    List<StudentCultivationDetailVo> studentCultivationDetail = statisticsService.getStudentCultivationDetail(teacherId,sClass, projectType, year);
+    List<StudentCultivationDetailVo> studentCultivationDetail = statisticsService.getStudentCultivationDetail(teacherId,
+        sClass, projectType, year);
     return R.ok(studentCultivationDetail);
   }
 
@@ -455,5 +456,16 @@ public class StatisticsApiController {
       @RequestParam(value = "teacherId") Long teacherId) {
     List<StudentInnovationTrendVo> studentInnovationTrend = statisticsService.getStudentInnovationTrend(teacherId);
     return R.ok(studentInnovationTrend);
+  }
+
+  /**
+   * 获取参赛人数前7的比赛
+   * 
+   * @return 参赛人数前7的比赛列表
+   */
+  @ApiOperation("获取参赛人数前7的比赛")
+  @GetMapping("/getTop7RaceParticipation")
+  public R<List<RaceNumsVo>> getTop7RaceParticipation() {
+    return R.ok(raceInfoService.getTop7RaceParticipation());
   }
 }
