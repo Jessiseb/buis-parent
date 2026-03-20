@@ -1676,6 +1676,31 @@ public class RaceInfoServiceImpl implements IRaceInfoService {
 
         return resultList;
     }
+
+    @Override
+    public List<RaceNumsVo> getTop7RaceParticipation() {
+        final String CACHE_KEY = "race:top7:participation";
+
+        // 1. 先尝试从缓存获取
+        List<RaceNumsVo> cachedData = redisCache.getCacheObject(CACHE_KEY);
+        if (cachedData != null) {
+            return cachedData;
+        }
+
+        // 2. 缓存不存在，查询数据库
+        List<RaceNumsVo> data = raceInfoMapper.selectHotRaceWithSignCount();
+        
+        // 3. 取前7个结果
+        if (data.size() > 7) {
+            data = data.subList(0, 7);
+        }
+
+        // 4. 设置缓存，使用随机过期时间
+        int expireSeconds = generateRandomExpireSeconds();
+        redisCache.setCacheObject(CACHE_KEY, data, expireSeconds, TimeUnit.SECONDS);
+
+        return data;
+    }
 }
 
 
