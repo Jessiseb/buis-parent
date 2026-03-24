@@ -25,38 +25,21 @@ public class GrowthCurveItemVo implements Serializable {
     @ApiModelProperty("时间段标识, 格式: yyyy-MM")
     private String period;
 
-    @ApiModelProperty("比赛ID")
-    private Long raceId;
+    @ApiModelProperty("综合得分")
+    private Double compositeScore;
 
-    @ApiModelProperty("比赛名称")
-    private String raceName;
+    @ApiModelProperty("比赛基础分")
+    private Integer raceScore;
 
-    @ApiModelProperty("比赛级别(0院级,1校级,2市级,3省级,4国家级)")
-    private Long raceLevel;
+    @ApiModelProperty("项目参与分")
+    private Double projectScore;
 
-    @ApiModelProperty("比赛级别名称")
-    private String raceLevelName;
+    @ApiModelProperty("队伍参与分")
+    private Double teamScore;
 
-    @ApiModelProperty("比赛类型(0创新创业,1蓝桥杯,2第二课堂)")
-    private Integer raceType;
+    @ApiModelProperty("角色加分")
+    private Double roleScore;
 
-    @ApiModelProperty("队伍/项目名称")
-    private String teamName;
-
-    @ApiModelProperty("队伍ID")
-    private Long teamId;
-
-    @ApiModelProperty("获奖等级(null表示未获奖)")
-    private String awardLevel;
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty("比赛开始时间")
-    private Date raceStart;
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty("比赛结束时间")
-    private Date raceEnd;
-
-    @ApiModelProperty("角色: leader/member")
-    private String role;
+    @ApiModelProperty("获奖加权分")
+    private Double awardScore;
 }

@@ -46,7 +46,7 @@ public interface IStatisticsService {
    * @param year        学年
    * @return 学生培养明细表列表
    */
-  List<StudentCultivationDetailVo> getStudentCultivationDetail(Long teacherId, Integer major, String sClass,
+  List<StudentCultivationDetailVo> getStudentCultivationDetail(Long teacherId, String sClass,
       Integer projectType, String year);
 
   /**

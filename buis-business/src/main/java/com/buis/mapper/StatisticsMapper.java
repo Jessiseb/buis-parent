@@ -7,6 +7,7 @@ import com.buis.model.vo.StudentCultivationDetailVo;
 import com.buis.model.vo.StudentInnovationTrendVo;
 import com.buis.model.vo.YearlyGuidanceResultVo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -26,8 +27,12 @@ public interface StatisticsMapper {
    * @param year        学年
    * @return 班级获奖数量列表
    */
-  List<ClassAwardCountVo> selectClassAwardCount(Long teacherId, String sClass, Integer projectType,
-      String year);
+  List<ClassAwardCountVo> selectClassAwardCount(
+    @Param("teacherId") Long teacherId,
+    @Param("sClass") String sClass,
+    @Param("projectType") Integer projectType,
+    @Param("year") String year
+  );
 
   /**
    * 查询老师负责学生的学生培养明细表
@@ -39,8 +44,12 @@ public interface StatisticsMapper {
    * @param year        学年
    * @return 学生培养明细表列表
    */
-  List<StudentCultivationDetailVo> selectStudentCultivationDetail(Long teacherId, Integer major, String sClass,
-      Integer projectType, String year);
+  List<StudentCultivationDetailVo> selectStudentCultivationDetail(
+  @Param("teacherId") Long teacherId,
+  @Param("sClass") String sClass,
+  @Param("projectType") Integer projectType,
+  @Param("year") String year
+  );
 
   /**
    * 查询老师负责的项目/竞赛管理明细表

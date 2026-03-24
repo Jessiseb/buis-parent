@@ -52,7 +52,7 @@ public class DashboardApiController {
         return R.ok(dashboardService.getOverview(userId));
     }
 
-    @ApiOperation("获取竞赛成长曲线")
+    @ApiOperation("获取成长曲线")
     @GetMapping("/growthCurve")
     public R<List<GrowthCurveItemVo>> getGrowthCurve() {
         Long userId = SecurityUtils.getFrontLoginUserId();
@@ -107,11 +107,39 @@ public class DashboardApiController {
         return R.ok(dashboardService.getProjectRecords(userId));
     }
 
+    @ApiOperation("获取成果明细")
+    @GetMapping("/achievements/items")
+    public R<List<AchievementItemVo>> getAchievementItems() {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(dashboardService.getAchievementItems(userId));
+    }
+
     @ApiOperation("获取成长报告数据")
     @GetMapping("/report")
     public R<GrowthReportVo> getGrowthReport() {
         Long userId = SecurityUtils.getFrontLoginUserId();
         return R.ok(dashboardService.getGrowthReport(userId));
+    }
+
+    @ApiOperation("获取综合评分")
+    @GetMapping("/compositeScore")
+    public R<Double> getCompositeScore() {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(dashboardService.getCompositeScore(userId));
+    }
+
+    @ApiOperation("获取成果统计")
+    @GetMapping("/achievements")
+    public R<AchievementStatsVo> getAchievementStats() {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(dashboardService.getAchievementStats(userId));
+    }
+
+    @ApiOperation("获取分布数据")
+    @GetMapping("/distribution")
+    public R<DistributionVo> getDistributionData() {
+        Long userId = SecurityUtils.getFrontLoginUserId();
+        return R.ok(dashboardService.getDistributionData(userId));
     }
 
     @ApiOperation("AI学生数据分析与发展建议(流式)")

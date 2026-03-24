@@ -1,4 +1,5 @@
 package com.buis.web.controller.api;
+import com.buis.common.utils.SecurityUtils;
 import com.buis.model.dto.MatchFilterDto;
 import com.buis.model.dto.MatchRequestDto;
 import com.buis.model.vo.MatchResultVo;
@@ -24,17 +25,16 @@ public class SkillMatchController {
     private ISkillMatchService skillMatchService;
 
     /**
-     * 为用户推荐队伍
+     * 为当前登录用户推荐队伍
      *
-     * @param userId 用户ID
      * @param filter 过滤条件
      * @return 队伍推荐列表
      */
-    @ApiOperation("为用户推荐队伍")
-    @GetMapping("/teams/{userId}")
+    @ApiOperation("为当前登录用户推荐队伍")
+    @GetMapping("/teams")
     public List<TeamRecommendationVo> recommendTeamsForUser(
-            @ApiParam("用户ID") @PathVariable Long userId,
             @ApiParam("过滤条件") MatchFilterDto filter) {
+        Long userId = SecurityUtils.getFrontLoginUserId();
         if (filter == null) {
             filter = new MatchFilterDto();
         }
