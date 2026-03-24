@@ -28,4 +28,7 @@ public class ProjectRecordVo {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("创建时间")
     private Date createTime;
+
+    @ApiModelProperty("项目状态")
+    private Integer status;
 }

@@ -69,14 +69,6 @@ public class DashboardServiceImpl implements IDashboardService {
 
         List<GrowthCurveItemVo> list = dashboardMapper.selectGrowthCurve(userId);
 
-        // 填充比赛级别名称
-        for (GrowthCurveItemVo item : list) {
-            if (item.getRaceLevel() != null) {
-                RaceLevel level = RaceLevel.getEnumByCode(item.getRaceLevel());
-                item.setRaceLevelName(level != null ? level.getValue() : "未知");
-            }
-        }
-
         redisCache.setCacheObject(cacheKey, list, CACHE_TTL_MINUTES, TimeUnit.MINUTES);
         return list;
     }
@@ -186,11 +178,17 @@ public class DashboardServiceImpl implements IDashboardService {
                             Comparator.nullsLast(Comparator.reverseOrder())))
                     .collect(Collectors.toList());
 
+            // 计算该分类的技能总分
+            double categoryScore = entry.getValue().stream()
+                    .mapToDouble(s -> s.getConfidence() != null ? s.getConfidence().doubleValue() : 0.0)
+                    .sum();
+
             result.add(SkillCategoryVo.builder()
                     .category(entry.getKey())
                     .categoryName(categoryNameMap.getOrDefault(entry.getKey(), entry.getKey()))
                     .skills(items)
                     .skillCount(items.size())
+                    .categoryScore(categoryScore > 0 ? categoryScore : 0.0)
                     .build());
         }
 
@@ -280,6 +278,19 @@ public class DashboardServiceImpl implements IDashboardService {
     }
 
     @Override
+    public List<AchievementItemVo> getAchievementItems(Long userId) {
+        String cacheKey = CACHE_PREFIX + "achievement_items:" + userId;
+        List<AchievementItemVo> cached = redisCache.getCacheObject(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+
+        List<AchievementItemVo> list = dashboardMapper.selectAchievementItems(userId);
+        redisCache.setCacheObject(cacheKey, list, CACHE_TTL_MINUTES, TimeUnit.MINUTES);
+        return list;
+    }
+
+    @Override
     public GrowthReportVo getGrowthReport(Long userId) {
         String cacheKey = CACHE_PREFIX + "report:" + userId;
         GrowthReportVo cached = redisCache.getCacheObject(cacheKey);
@@ -315,5 +326,154 @@ public class DashboardServiceImpl implements IDashboardService {
 
         redisCache.setCacheObject(cacheKey, report, CACHE_TTL_MINUTES, TimeUnit.MINUTES);
         return report;
+    }
+
+    @Override
+    public Double getCompositeScore(Long userId) {
+        String cacheKey = CACHE_PREFIX + "score:" + userId;
+        Double cached = redisCache.getCacheObject(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+
+        Double score = 0.0;
+        try {
+            java.util.Map<String, Object> result = dashboardMapper.selectUserCompositeScore(userId);
+            if (result != null && result.containsKey("compositeScore")) {
+                Object value = result.get("compositeScore");
+                if (value != null) {
+                    score = Double.parseDouble(value.toString());
+                }
+            }
+        } catch (Exception e) {
+            log.error("获取综合评分失败", e);
+        }
+
+        redisCache.setCacheObject(cacheKey, score, CACHE_TTL_MINUTES, TimeUnit.MINUTES);
+        return score;
+    }
+
+    @Override
+    public AchievementStatsVo getAchievementStats(Long userId) {
+        String cacheKey = CACHE_PREFIX + "achievements:" + userId;
+        AchievementStatsVo cached = redisCache.getCacheObject(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+
+        int awardCount = dashboardMapper.countUserAwards(userId);
+        int projectCount = dashboardMapper.countUserProjects(userId);
+        // 证书总数暂时使用获奖总数，后续可以根据实际情况调整
+        int certificateCount = awardCount;
+
+        AchievementStatsVo stats = AchievementStatsVo.builder()
+                .awardCount(awardCount)
+                .projectCount(projectCount)
+                .certificateCount(certificateCount)
+                .build();
+
+        redisCache.setCacheObject(cacheKey, stats, CACHE_TTL_MINUTES, TimeUnit.MINUTES);
+        return stats;
+    }
+
+    @Override
+    public DistributionVo getDistributionData(Long userId) {
+        String cacheKey = CACHE_PREFIX + "distribution:" + userId;
+        DistributionVo cached = redisCache.getCacheObject(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+
+        // 竞赛获奖分布
+        List<DashboardRankingVo.AwardLevelDistributionItem> awardDistributionData = dashboardMapper.selectAwardLevelDistribution(userId);
+        List<DistributionVo.DistributionItem> awardDistribution = new ArrayList<>();
+        int totalAwards = awardDistributionData.stream().mapToInt(DashboardRankingVo.AwardLevelDistributionItem::getCount).sum();
+        
+        for (DashboardRankingVo.AwardLevelDistributionItem item : awardDistributionData) {
+            String awardLevel = item.getAwardLevel();
+            int count = item.getCount();
+            double percentage = totalAwards > 0 ? (double) count / totalAwards * 100 : 0;
+            
+            awardDistribution.add(DistributionVo.DistributionItem.builder()
+                    .type(awardLevel)
+                    .typeName(getAwardLevelName(awardLevel))
+                    .count(count)
+                    .percentage(percentage)
+                    .build());
+        }
+
+        // 大创项目状态分布
+        List<Map<String, Object>> projectStatusData = dashboardMapper.selectProjectStatusDistribution(userId);
+        List<DistributionVo.DistributionItem> projectStatusDistribution = new ArrayList<>();
+        int totalProjects = projectStatusData.stream().mapToInt(item -> {
+            Object countObj = item.get("count");
+            if (countObj instanceof Long) {
+                return ((Long) countObj).intValue();
+            } else if (countObj instanceof Integer) {
+                return (Integer) countObj;
+            }
+            return 0;
+        }).sum();
+        
+        for (Map<String, Object> item : projectStatusData) {
+            Object statusObj = item.get("status");
+            Integer status = null;
+            if (statusObj instanceof Long) {
+                status = ((Long) statusObj).intValue();
+            } else if (statusObj instanceof Integer) {
+                status = (Integer) statusObj;
+            }
+            
+            Object countObj = item.get("count");
+            int count = 0;
+            if (countObj instanceof Long) {
+                count = ((Long) countObj).intValue();
+            } else if (countObj instanceof Integer) {
+                count = (Integer) countObj;
+            }
+            
+            double percentage = totalProjects > 0 ? (double) count / totalProjects * 100 : 0;
+            
+            projectStatusDistribution.add(DistributionVo.DistributionItem.builder()
+                    .type(status != null ? status.toString() : "null")
+                    .typeName(getProjectStatusName(status))
+                    .count(count)
+                    .percentage(percentage)
+                    .build());
+        }
+
+        DistributionVo distribution = DistributionVo.builder()
+                .awardDistribution(awardDistribution)
+                .projectStatusDistribution(projectStatusDistribution)
+                .build();
+
+        redisCache.setCacheObject(cacheKey, distribution, CACHE_TTL_MINUTES, TimeUnit.MINUTES);
+        return distribution;
+    }
+
+    private String getAwardLevelName(String awardLevel) {
+        if ("4".equals(awardLevel)) {
+            return "国家级";
+        } else if ("3".equals(awardLevel)) {
+            return "省级";
+        } else if ("2".equals(awardLevel)) {
+            return "校级";
+        } else {
+            return awardLevel;
+        }
+    }
+
+    private String getProjectStatusName(Integer status) {
+        if (status == null) {
+            return "未提交";
+        } else if (status == 0) {
+            return "待审核";
+        } else if (status == 1) {
+            return "审核通过";
+        } else if (status == 4) {
+            return "已立项";
+        } else {
+            return "其他";
+        }
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.buis.model.domain.Score;
 import com.buis.model.vo.ScoreVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 评分管理Mapper接口
@@ -67,19 +68,12 @@ public interface ScoreMapper
     List<ScoreVo> selectScoreListFuzzyQuery( ScoreVo scoreVo);
 
     /**
-     * 查询老师负责学生的能力分布
+     * 查询老师负责学生的技能数量
      *
-     * @param teacherId 老师ID
-     * @param major 专业
-     * @param sClass 班级
-     * @param projectType 项目类型
-     * @param year 学年
-     * @return 能力分布列表
+     * @param params 查询参数
+     * @return 学生技能数量列表
      */
-    List<com.buis.model.vo.StudentAbilityDistributionVo> getStudentAbilityDistribution(
-        Long teacherId,
-        String sClass,
-        Integer projectType,
-        String year
+    List<java.util.Map<String, Object>> getStudentAbilityDistribution(
+        @Param("params") java.util.Map<String, Object> params
     );
 }

@@ -191,4 +191,10 @@ public interface IRaceInfoService
      * @return 各类型比赛的统计列表
      */
     List<RaceTypeCountVo> getRaceTypeCount();
+
+    /**
+     * 获取参赛人数前7的比赛
+     * @return 参赛人数前7的比赛列表
+     */
+    List<RaceNumsVo> getTop7RaceParticipation();
 }
