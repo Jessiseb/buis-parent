@@ -297,7 +297,7 @@ public class SecondApiController {
      * 根据活动id查询学生助理
      */
     @ApiOperation("根据活动id查询学生助理")
-    @GetMapping("/list")
+    @GetMapping("/getAssistantById")
     public R<List<UserInfoVo>> list(@ApiParam(name = "id", value = "第二课堂活动id", required = true)
                                     @RequestParam(value = "id")Long id) {
         List<UserInfoVo> list = assistantService.selectAssistantListByRace(id);

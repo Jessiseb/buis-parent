@@ -543,10 +543,10 @@
         <where>
             t1.is_deleted = 0
             and t1.parent_tid = 5
-            <if test="name != null and name != ''">
+            <if test="raceInfo.name != null and raceInfo.name != ''">
                 and t1.name like concat('%', #{name}, '%')
             </if>
-            <if test="status != null">
+            <if test="raceInfo.status != null">
                 and t1.status = #{status}
             </if>
         </where>
