@@ -19,12 +19,15 @@ import com.buis.model.domain.UserInfo;
 import com.buis.service.*;
 import com.buis.model.vo.RaceInfoVo;
 import com.buis.model.vo.ScoreVo;
+import com.buis.model.vo.StudentCultivationDetailVo;
 import com.buis.model.vo.TeamInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.buis.mapper.ScoreMapper;
+import com.buis.mapper.StatisticsMapper;
 import com.buis.model.domain.Score;
+import java.util.Arrays;
 
 /**
  * 评分管理Service业务层处理
@@ -35,227 +38,231 @@ import com.buis.model.domain.Score;
 @Service
 @Slf4j
 public class ScoreServiceImpl implements IScoreService {
-    @Autowired
-    private ScoreMapper scoreMapper;
-    @Autowired
-    private IUserInfoService userInfoService;
-    @Autowired
-    private IJudgeService judgeService;
-    @Autowired
-    private ITeamInfoService teamInfoService;
-    @Autowired
-    private IRaceInfoService raceInfoService;
+  @Autowired
+  private ScoreMapper scoreMapper;
+  @Autowired
+  private IUserInfoService userInfoService;
+  @Autowired
+  private IJudgeService judgeService;
+  @Autowired
+  private ITeamInfoService teamInfoService;
+  @Autowired
+  private IRaceInfoService raceInfoService;
 
-    /**
-     * 查询评分管理
-     *
-     * @param id 评分管理主键
-     * @return 评分管理
-     */
-    @Override
-    public Score selectScoreById(Long id) {
-        return scoreMapper.selectScoreById(id);
-    }
+  /**
+   * 查询评分管理
+   *
+   * @param id 评分管理主键
+   * @return 评分管理
+   */
+  @Override
+  public Score selectScoreById(Long id) {
+    return scoreMapper.selectScoreById(id);
+  }
 
-    /**
-     * 新增评分（带业务逻辑）
-     *
-     * @param score
-     * @return
-     */
-    @Override
-    public R addScore(Score score) {
-        // 判断是否是评委
-        UserInfo loginUser = userInfoService.getLoginUser();
-        if (loginUser != null) {
-            Long id = loginUser.getId();
-            Judge judge = judgeService.selectJudgeByTeacherId(id);
+  /**
+   * 新增评分（带业务逻辑）
+   *
+   * @param score
+   * @return
+   */
+  @Override
+  public R addScore(Score score) {
+    // 判断是否是评委
+    UserInfo loginUser = userInfoService.getLoginUser();
+    if (loginUser != null) {
+      Long id = loginUser.getId();
+      Judge judge = judgeService.selectJudgeByTeacherId(id);
 
-            if (judge != null) {
-                //验证评委是否为该比赛的评委
-                if (judge.getRace() != score.getRace()) {
-                    return R.fail("您不是该比赛的评委");
-                }
-                //验证队伍是否存在
-                Long team = score.getTeam();
-                TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
-                String raceName = raceInfoService.selectRaceInfoById(score.getRace()).getName();
-                if (teamInfoVo == null || !teamInfoVo.getRaceName().equals(raceName)) {
-                    return R.fail("队伍不存在/队伍未参加该比赛");
-                }
-
-                //验证评委在当前比赛是否已经为该队伍评分
-                Score score1 = new Score();
-                score1.setTeacher(id);
-                List<ScoreVo> scoreVos = scoreMapper.selectScoreList(score1);
-                for (ScoreVo scoreVo : scoreVos) {
-                    if (scoreVo.getRace() == score.getRace() && scoreVo.getTeam() == team) {
-                        return R.fail("您已经为该队伍评分");
-                    }
-                }
-                //判断是否在评分时间段内
-                RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(teamInfoVo.getRace());
-                Date scoreEnd = raceInfoVo.getScoreEnd();//评分截止时间
-                if (scoreEnd.getTime() <= DateUtils.getNowDate().getTime()) {
-                    return R.fail("当前比赛评分时间已结束");
-                }
-
-                //计算总分
-                BigDecimal totalScore = calculateTotalScore(score.getBuild());
-                score.setScore(totalScore);
-                //日志打印
-                log.info("评委:{},比赛:{},队伍:{},总分:{}", id, score.getRace(), team, totalScore);
-
-                return R.ok(insertScore(score));
-            }
-            return R.fail("您不是评委，无法进行评分");
+      if (judge != null) {
+        // 验证评委是否为该比赛的评委
+        if (judge.getRace() != score.getRace()) {
+          return R.fail("您不是该比赛的评委");
         }
-        return R.fail("请先登录");
-    }
-
-    private BigDecimal calculateTotalScore(String build) {
-        String[] parts = build.split(",");
-        BigDecimal totalScore = BigDecimal.ZERO;
-        BigDecimal totalWeight = BigDecimal.ZERO;
-
-        Pattern pattern = Pattern.compile("(.+?):(\\d+\\.?\\d*)%\\*(\\d+\\.?\\d*)");
-        MathContext mc = new MathContext(6, RoundingMode.HALF_UP); // 6位精度
-
-        for (String part : parts) {
-            Matcher matcher = pattern.matcher(part.trim());
-            if (!matcher.matches()) {
-                throw new IllegalArgumentException("格式错误: " + part);
-            }
-
-            try {
-                String name = matcher.group(1);
-
-                // 解析权重（带%的数值）
-                BigDecimal weight = new BigDecimal(matcher.group(2))
-                        .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP); // 保留4位小数
-
-                // 解析得分
-                BigDecimal score = new BigDecimal(matcher.group(3));
-
-                // 计算加权得分
-                BigDecimal weightedScore = weight.multiply(score, mc);
-                totalScore = totalScore.add(weightedScore, mc);
-                totalWeight = totalWeight.add(weight, mc);
-
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("数值解析失败: " + part, e);
-            }
+        // 验证队伍是否存在
+        Long team = score.getTeam();
+        TeamInfoVo teamInfoVo = teamInfoService.selectTeamInfoById(team);
+        String raceName = raceInfoService.selectRaceInfoById(score.getRace()).getName();
+        if (teamInfoVo == null || !teamInfoVo.getRaceName().equals(raceName)) {
+          return R.fail("队伍不存在/队伍未参加该比赛");
         }
 
-        // 验证权重总和（允许0.0001的误差）
-        BigDecimal expectedTotalWeight = new BigDecimal("1.0000");
-        if (totalWeight.setScale(4, RoundingMode.HALF_UP).compareTo(expectedTotalWeight) != 0) {
-            throw new IllegalArgumentException("权重总和非100%，当前总和: "
-                    + totalWeight.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP) + "%");
+        // 验证评委在当前比赛是否已经为该队伍评分
+        Score score1 = new Score();
+        score1.setTeacher(id);
+        List<ScoreVo> scoreVos = scoreMapper.selectScoreList(score1);
+        for (ScoreVo scoreVo : scoreVos) {
+          if (scoreVo.getRace() == score.getRace() && scoreVo.getTeam() == team) {
+            return R.fail("您已经为该队伍评分");
+          }
+        }
+        // 判断是否在评分时间段内
+        RaceInfoVo raceInfoVo = raceInfoService.selectRaceInfoById(teamInfoVo.getRace());
+        Date scoreEnd = raceInfoVo.getScoreEnd();// 评分截止时间
+        if (scoreEnd.getTime() <= DateUtils.getNowDate().getTime()) {
+          return R.fail("当前比赛评分时间已结束");
         }
 
-        // 最终结果保留两位小数
-        return totalScore.setScale(2, RoundingMode.HALF_UP);
-    }
-
-    /**
-     * 查询评分管理列表
-     *
-     * @param score 评分管理
-     * @return 评分管理
-     */
-    @Override
-    public List<ScoreVo> selectScoreList(Score score) {
-        return scoreMapper.selectScoreList(score);
-    }
-
-    /**
-     * 新增评分管理
-     *
-     * @param score 评分管理
-     * @return 结果
-     */
-    @Override
-    public int insertScore(Score score) {
-        score.setCreateTime(DateUtils.getNowDate());
-        return scoreMapper.insertScore(score);
-    }
-
-    /**
-     * 修改评分管理
-     *
-     * @param score 评分管理
-     * @return 结果
-     */
-    @Override
-    public int updateScore(Score score) {
-        //获取当前登录用户
-        UserInfo loginUser = userInfoService.getLoginUser();
-        if (loginUser.getId() != score.getTeacher()) {
-            return 0;
-        }
-        //重新计算总分
+        // 计算总分
         BigDecimal totalScore = calculateTotalScore(score.getBuild());
         score.setScore(totalScore);
-        score.setUpdateTime(DateUtils.getNowDate());
-        return scoreMapper.updateScore(score);
+        // 日志打印
+        log.info("评委:{},比赛:{},队伍:{},总分:{}", id, score.getRace(), team, totalScore);
+
+        return R.ok(insertScore(score));
+      }
+      return R.fail("您不是评委，无法进行评分");
+    }
+    return R.fail("请先登录");
+  }
+
+  private BigDecimal calculateTotalScore(String build) {
+    String[] parts = build.split(",");
+    BigDecimal totalScore = BigDecimal.ZERO;
+    BigDecimal totalWeight = BigDecimal.ZERO;
+
+    Pattern pattern = Pattern.compile("(.+?):(\\d+\\.?\\d*)%\\*(\\d+\\.?\\d*)");
+    MathContext mc = new MathContext(6, RoundingMode.HALF_UP); // 6位精度
+
+    for (String part : parts) {
+      Matcher matcher = pattern.matcher(part.trim());
+      if (!matcher.matches()) {
+        throw new IllegalArgumentException("格式错误: " + part);
+      }
+
+      try {
+        String name = matcher.group(1);
+
+        // 解析权重（带%的数值）
+        BigDecimal weight = new BigDecimal(matcher.group(2))
+            .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP); // 保留4位小数
+
+        // 解析得分
+        BigDecimal score = new BigDecimal(matcher.group(3));
+
+        // 计算加权得分
+        BigDecimal weightedScore = weight.multiply(score, mc);
+        totalScore = totalScore.add(weightedScore, mc);
+        totalWeight = totalWeight.add(weight, mc);
+
+      } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("数值解析失败: " + part, e);
+      }
     }
 
-    /**
-     * 批量删除评分管理
-     *
-     * @param ids 需要删除的评分管理主键
-     * @return 结果
-     */
-    @Override
-    public int deleteScoreByIds(Long[] ids) {
-        //获取当前登录用户
-        UserInfo loginUser = userInfoService.getLoginUser();
-
-        for (Long id : ids) {
-            //获取评分信息
-            Score score = scoreMapper.selectScoreById(id);
-            if (loginUser.getId()!= score.getTeacher()) {
-                return 0;
-            }
-        }
-        return scoreMapper.deleteScoreByIds(ids);
+    // 验证权重总和（允许0.0001的误差）
+    BigDecimal expectedTotalWeight = new BigDecimal("1.0000");
+    if (totalWeight.setScale(4, RoundingMode.HALF_UP).compareTo(expectedTotalWeight) != 0) {
+      throw new IllegalArgumentException("权重总和非100%，当前总和: "
+          + totalWeight.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP) + "%");
     }
 
-    /**
-     * 删除评分管理信息
-     *
-     * @param id 评分管理主键
-     * @return 结果
-     */
-    @Override
-    public int deleteScoreById(Long id) {
-        //获取当前登录用户
-        UserInfo loginUser = userInfoService.getLoginUser();
-        //获取评分信息
-        Score score = scoreMapper.selectScoreById(id);
+    // 最终结果保留两位小数
+    return totalScore.setScale(2, RoundingMode.HALF_UP);
+  }
 
-        if (loginUser.getId()!= score.getTeacher()) {
-            return 0;
-        }
-        return scoreMapper.deleteScoreById(id);
+  /**
+   * 查询评分管理列表
+   *
+   * @param score 评分管理
+   * @return 评分管理
+   */
+  @Override
+  public List<ScoreVo> selectScoreList(Score score) {
+    return scoreMapper.selectScoreList(score);
+  }
+
+  /**
+   * 新增评分管理
+   *
+   * @param score 评分管理
+   * @return 结果
+   */
+  @Override
+  public int insertScore(Score score) {
+    score.setCreateTime(DateUtils.getNowDate());
+    return scoreMapper.insertScore(score);
+  }
+
+  /**
+   * 修改评分管理
+   *
+   * @param score 评分管理
+   * @return 结果
+   */
+  @Override
+  public int updateScore(Score score) {
+    // 获取当前登录用户
+    UserInfo loginUser = userInfoService.getLoginUser();
+    if (loginUser.getId() != score.getTeacher()) {
+      return 0;
     }
+    // 重新计算总分
+    BigDecimal totalScore = calculateTotalScore(score.getBuild());
+    score.setScore(totalScore);
+    score.setUpdateTime(DateUtils.getNowDate());
+    return scoreMapper.updateScore(score);
+  }
 
-    /**
-     * 查询队伍排名
-     * @return
-     */
+  /**
+   * 批量删除评分管理
+   *
+   * @param ids 需要删除的评分管理主键
+   * @return 结果
+   */
+  @Override
+  public int deleteScoreByIds(Long[] ids) {
+    // 获取当前登录用户
+    UserInfo loginUser = userInfoService.getLoginUser();
 
-    @Override
-    public List<Score> selectTeamsRanking() {
-        return scoreMapper.selectTeamsRanking();
+    for (Long id : ids) {
+      // 获取评分信息
+      Score score = scoreMapper.selectScoreById(id);
+      if (loginUser.getId() != score.getTeacher()) {
+        return 0;
+      }
     }
+    return scoreMapper.deleteScoreByIds(ids);
+  }
 
-    @Override
-    public List<ScoreVo> fuzzyQuery(ScoreVo scoreVo) {
+  /**
+   * 删除评分管理信息
+   *
+   * @param id 评分管理主键
+   * @return 结果
+   */
+  @Override
+  public int deleteScoreById(Long id) {
+    // 获取当前登录用户
+    UserInfo loginUser = userInfoService.getLoginUser();
+    // 获取评分信息
+    Score score = scoreMapper.selectScoreById(id);
 
-        return scoreMapper.selectScoreListFuzzyQuery(scoreVo);
+    if (loginUser.getId() != score.getTeacher()) {
+      return 0;
     }
+    return scoreMapper.deleteScoreById(id);
+  }
+
+  /**
+   * 查询队伍排名
+   * 
+   * @return
+   */
+
+  @Override
+  public List<Score> selectTeamsRanking() {
+    return scoreMapper.selectTeamsRanking();
+  }
+
+  @Override
+  public List<ScoreVo> fuzzyQuery(ScoreVo scoreVo) {
+
+    return scoreMapper.selectScoreListFuzzyQuery(scoreVo);
+  }
+
+  @Autowired
+  private StatisticsMapper statisticsMapper;
 
   @Override
   public List<com.buis.model.vo.StudentAbilityDistributionVo> getStudentAbilityDistribution(
@@ -263,13 +270,30 @@ public class ScoreServiceImpl implements IScoreService {
       String sClass,
       Integer projectType,
       String year) {
-    Map<String, Object> params = new HashMap<>();
-    params.put("teacherId", teacherId);
-    params.put("sClass", sClass);
-    params.put("projectType", projectType);
-    params.put("year", year);
+    List<StudentCultivationDetailVo> rawData = statisticsMapper.selectStudentCultivationDetail(teacherId, sClass,
+        projectType, year);
 
-    List<Map<String, Object>> studentSkills = scoreMapper.getStudentAbilityDistribution(params);
+    Map<String, StudentCultivationDetailVo> studentMap = new HashMap<>();
+    for (StudentCultivationDetailVo detail : rawData) {
+      String key = detail.getStudentName() + detail.getMajorClass();
+      if (studentMap.containsKey(key)) {
+        StudentCultivationDetailVo existing = studentMap.get(key);
+        if (detail.getAbilityTags() != null) {
+          existing.getAbilityTags().addAll(detail.getAbilityTags());
+        }
+      } else {
+        studentMap.put(key, detail);
+      }
+    }
+
+    List<StudentCultivationDetailVo> students = new ArrayList<>(studentMap.values());
+
+    int[] skillCounts = students.stream()
+        .mapToInt(detail -> detail.getAbilityTags() != null ? detail.getAbilityTags().size() : 0)
+        .toArray();
+
+    int minSkillCount = skillCounts.length > 0 ? Arrays.stream(skillCounts).min().orElse(0) : 0;
+    int maxSkillCount = skillCounts.length > 0 ? Arrays.stream(skillCounts).max().orElse(0) : 0;
 
     Map<String, Integer> scoreRangeCount = new HashMap<>();
     scoreRangeCount.put("60-70", 0);
@@ -278,9 +302,9 @@ public class ScoreServiceImpl implements IScoreService {
     scoreRangeCount.put("90-100", 0);
     scoreRangeCount.put("其他", 0);
 
-    for (Map<String, Object> student : studentSkills) {
-      int skillCount = ((Number) student.get("skill_count")).intValue();
-      double score = calculateSkillScore(skillCount);
+    for (StudentCultivationDetailVo student : students) {
+      int skillCount = student.getAbilityTags() != null ? student.getAbilityTags().size() : 0;
+      double score = calculateScore(skillCount, minSkillCount, maxSkillCount);
       String scoreRange = getScoreRange(score);
       scoreRangeCount.put(scoreRange, scoreRangeCount.get(scoreRange) + 1);
     }
@@ -295,9 +319,30 @@ public class ScoreServiceImpl implements IScoreService {
     return result;
   }
 
-  private double calculateSkillScore(int skillCount) {
-    double score = skillCount * 5.0;
-    return Math.min(score, 100.0);
+  private double calculateScore(int skillCount, int minSkillCount, int maxSkillCount) {
+    if (maxSkillCount == minSkillCount) {
+      return 80.0;
+    }
+
+    double normalizedPosition = (double) (skillCount - minSkillCount) / (maxSkillCount - minSkillCount);
+
+    double score;
+    if (normalizedPosition < 0.1) {
+      score = 60.0 + normalizedPosition * 100.0;
+    } else if (normalizedPosition < 0.3) {
+      score = 70.0 + (normalizedPosition - 0.1) * 50.0;
+    } else if (normalizedPosition < 0.5) {
+      score = 80.0 + (normalizedPosition - 0.3) * 50.0;
+    } else if (normalizedPosition < 0.7) {
+      score = 90.0 + (normalizedPosition - 0.5) * 50.0;
+    } else if (normalizedPosition < 0.9) {
+      score = 95.0 + (normalizedPosition - 0.7) * 25.0;
+    } else {
+      score = 98.0 + (normalizedPosition - 0.9) * 20.0;
+    }
+
+    score = Math.min(100.0, Math.max(60.0, score));
+    return Math.round(score * 10.0) / 10.0;
   }
 
   private String getScoreRange(double score) {

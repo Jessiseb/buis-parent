@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,10 +115,17 @@ public class StatisticsServiceImpl implements IStatisticsService {
     }
 
     List<StudentCultivationDetailVo> result = new ArrayList<>(studentMap.values());
+
+    int[] skillCounts = result.stream()
+        .mapToInt(detail -> detail.getAbilityTags() != null ? detail.getAbilityTags().size() : 0)
+        .toArray();
+
+    int minSkillCount = skillCounts.length > 0 ? Arrays.stream(skillCounts).min().orElse(0) : 0;
+    int maxSkillCount = skillCounts.length > 0 ? Arrays.stream(skillCounts).max().orElse(0) : 0;
+
     for (StudentCultivationDetailVo detail : result) {
       int skillCount = detail.getAbilityTags() != null ? detail.getAbilityTags().size() : 0;
-      int competitionCount = getCompetitionCount(teacherId, sClass, projectType, year, detail.getStudentName());
-      double totalScore = calculateScore(skillCount, competitionCount);
+      double totalScore = calculateScore(skillCount, minSkillCount, maxSkillCount);
       detail.setTotalScore(totalScore);
     }
 
@@ -130,22 +138,30 @@ public class StatisticsServiceImpl implements IStatisticsService {
     return result;
   }
 
-  private int getCompetitionCount(Long teacherId, String sClass, Integer projectType, String year, String studentName) {
-    List<StudentCultivationDetailVo> rawData = statisticsMapper.selectStudentCultivationDetail(teacherId, sClass,
-        projectType, year);
-    int count = 0;
-    for (StudentCultivationDetailVo detail : rawData) {
-      if (detail.getStudentName().equals(studentName)) {
-        count++;
-      }
+  private double calculateScore(int skillCount, int minSkillCount, int maxSkillCount) {
+    if (maxSkillCount == minSkillCount) {
+      return 80.0;
     }
-    return count;
-  }
 
-  private double calculateScore(int skillCount, int competitionCount) {
-    double skillScore = Math.min(skillCount * 5.0, 50.0);
-    double competitionScore = Math.min(competitionCount * 10.0, 50.0);
-    return skillScore + competitionScore;
+    double normalizedPosition = (double) (skillCount - minSkillCount) / (maxSkillCount - minSkillCount);
+
+    double score;
+    if (normalizedPosition < 0.1) {
+      score = 60.0 + normalizedPosition * 100.0;
+    } else if (normalizedPosition < 0.3) {
+      score = 70.0 + (normalizedPosition - 0.1) * 50.0;
+    } else if (normalizedPosition < 0.5) {
+      score = 80.0 + (normalizedPosition - 0.3) * 50.0;
+    } else if (normalizedPosition < 0.7) {
+      score = 90.0 + (normalizedPosition - 0.5) * 50.0;
+    } else if (normalizedPosition < 0.9) {
+      score = 95.0 + (normalizedPosition - 0.7) * 25.0;
+    } else {
+      score = 98.0 + (normalizedPosition - 0.9) * 20.0;
+    }
+
+    score = Math.min(100.0, Math.max(60.0, score));
+    return Math.round(score * 10.0) / 10.0;
   }
 
   @Override

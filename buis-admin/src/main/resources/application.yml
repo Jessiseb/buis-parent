@@ -153,4 +153,4 @@ wenxin:
     secret:
       key: ***REMOVED*** #密钥
   agent:
-    api-url: https://                                                                                                                                                                   openapi.baidu.com/oauth/2.0/token
+    api-url: https://openapi.baidu.com/oauth/2.0/token
