@@ -11,6 +11,8 @@ import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.exception.UploadFileException;
+import com.buis.ai.agent.Agent;
+import com.buis.ai.bean.UserMessage;
 import com.buis.common.core.domain.R;
 import com.buis.service.impl.AiServiceImpl;
 import io.swagger.annotations.Api;
@@ -22,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +37,9 @@ public class AiController {
 
     @Autowired
     private AiServiceImpl aiService;
+
+    @Autowired
+    private Agent agent;
 
     @Value("${aliyun.ai.api-key}")
     String apiKey; //阿里云api
@@ -116,6 +122,18 @@ public class AiController {
         return aiService.agentCallWithMessage(message, threadId);
 
     }
+
+    /**
+     * langchain4j自定义实现的ai
+     *
+     */
+    @PostMapping(value = "/v1/chat", produces = "text/stream;charset=utf-8")
+    @ApiOperation("langchain4j对话")
+    public Flux<String> chat(String userMessage) {
+        return agent.chat(userMessage);
+    }
+
+
 
 
 }
