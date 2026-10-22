@@ -80,7 +80,6 @@ public class JoinApiController extends BaseController {
             preStudentService.insertPreSignStudent(preSignStudent);
         }
         return R.ok();
-
     }
 
     /**

@@ -138,4 +138,5 @@ public interface IUserInfoService {
      * @return
      */
     R<Boolean> updateAssistantStatus(Long userId, Integer isAssistant);
+
 }
