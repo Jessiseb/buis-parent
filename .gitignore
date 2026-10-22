@@ -58,3 +58,4 @@ nbdist/
 application-local.yml
 application-local.yaml
 application-local.properties
+.secret-list.txt
