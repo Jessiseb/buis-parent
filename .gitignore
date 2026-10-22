@@ -46,3 +46,6 @@ nbdist/
 !*/build/*.html
 !*/build/*.xml
 /创新创业平台部署文档.pdf
+
+### AI 助手工作目录 ###
+.workbuddy/
