@@ -47,10 +47,6 @@ public class AiController {
     @Value("${coze}")
     String cozeToken;
 
-//    private static final String API_KEY = "***REMOVED***";
-//    private static final String SECRET_KEY = "***REMOVED***";
-//    private static final String API_URL = "你的智能体API地址";
-
 
     /**
      * 接入通易模型,识别图像信息

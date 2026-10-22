@@ -173,15 +173,31 @@ mysql -u root -p ruoyi_race < sql/dataInsert.sql
 mysql -u root -p ruoyi_race < sql/quartz.sql
 ```
 
-### 2. 修改配置
+### 2. 配置环境变量
 
-编辑 `buis-admin/src/main/resources/application-dev.yml`（默认激活 test  profile，按需在 `application.yml` 中切换 `spring.profiles.active`）：
+**仓库中不存放任何真实凭据**，所有密码、API Key、服务器地址均通过环境变量注入。
 
-- `spring.datasource.druid.master`：数据库地址、账号、密码
-- `spring.redis`：Redis 地址与密码
-- `aliyun.ai`：百炼 API Key 与 base-url
-- `aliyun.oss`：OSS endpoint、AccessKey、bucket
-- `wenxin.app`：文心智能体 id 与密钥
+先复制环境变量模板：
+
+```bash
+cp .env.example .env
+```
+
+然后按实际环境填写 `.env`，或直接在启动时以环境变量方式传入。必填项：
+
+| 变量 | 说明 |
+| --- | --- |
+| `DB_HOST` / `DB_PORT` / `DB_USERNAME` / `DB_PASSWORD` | MySQL 连接信息 |
+| `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` | Redis 连接信息 |
+| `TOKEN_SECRET` / `SA_TOKEN_JWT_SECRET` | 令牌与 JWT 签名密钥，`openssl rand -base64 48` 生成 |
+| `ALIYUN_AI_API_KEY` | 阿里云百炼 API Key |
+| `ALIYUN_OSS_ACCESS_KEY_ID` / `ALIYUN_OSS_ACCESS_KEY_SECRET` | 阿里云 OSS AccessKey |
+| `COZE_TOKEN` | Coze 个人访问令牌 |
+| `WENXIN_APP_ID` / `WENXIN_APP_SECRET_KEY` | 文心智能体应用凭据 |
+| `MAIL_USERNAME` / `MAIL_PASSWORD` | 发件邮箱与授权码 |
+| `DRUID_PASSWORD` | Druid 监控台密码 |
+
+必填项缺失时应用会在启动阶段直接失败，避免带着空密码上线。完整说明见 [docs/配置与密钥部署说明.md](docs/配置与密钥部署说明.md)。
 
 ### 3. 打包运行
 
@@ -211,15 +227,23 @@ Windows 下可用 `bin/` 目录下的 `package.bat` / `run.bat`。
 
 ## 配置说明
 
-| 配置项 | 位置 | 说明 |
-| --- | --- | --- |
-| `server.port` | `application.yml` | 服务端口，默认 8190 |
-| `spring.profiles.active` | `application.yml` | 环境切换：dev / test / prod |
-| `sa-token` | `application.yml` | token 名称、有效期、JWT 密钥、并发登录策略 |
-| `ruoyi.profile` | `application.yml` | 本地文件上传路径 |
-| `langchain4j.community.dashscope` | `buis-business/src/main/resources/application.properties` | langchain4j 模型与密钥 |
-| `aliyun.ai` / `aliyun.oss` | `application-*.yml` | 百炼 API Key、OSS 配置 |
-| `wenxin.app` | `application-*.yml` | 文心智能体配置 |
+配置项通过 `application.yml` 与各 profile 文件声明，**敏感值一律使用 `${环境变量}` 占位**，不落盘在仓库中。
+
+| 配置项 | 位置 | 对应环境变量 | 说明 |
+| --- | --- | --- | --- |
+| `server.port` | `application.yml` | — | 服务端口，默认 8190 |
+| `spring.profiles.active` | `application.yml` | — | 环境切换：dev / test / prod |
+| `token.secret` | `application.yml` | `TOKEN_SECRET` | 令牌签名密钥 |
+| `sa-token.jwt-secret-key` | `application*.yml` | `SA_TOKEN_JWT_SECRET` | JWT 密钥 |
+| `ruoyi.profile` | `application.yml` | — | 本地文件上传路径 |
+| `spring.datasource.druid.master` | `application-*.yml` | `DB_HOST` `DB_PORT` `DB_USERNAME` `DB_PASSWORD` | 数据库连接 |
+| `spring.redis` | `application-*.yml` | `REDIS_HOST` `REDIS_PORT` `REDIS_PASSWORD` | Redis 连接 |
+| `aliyun.ai` | `application.yml` | `ALIYUN_AI_API_KEY` | 百炼 API Key |
+| `aliyun.oss` | `application.yml` | `ALIYUN_OSS_ACCESS_KEY_ID` `ALIYUN_OSS_ACCESS_KEY_SECRET` | OSS AccessKey |
+| `coze` | `application.yml` | `COZE_TOKEN` | Coze 访问令牌 |
+| `wenxin.app` | `application.yml` | `WENXIN_APP_ID` `WENXIN_APP_SECRET_KEY` | 文心智能体凭据 |
+| `spring.mail` | `application-*.yml` | `MAIL_USERNAME` `MAIL_PASSWORD` | 邮箱与授权码 |
+| `langchain4j.community.dashscope` | `buis-business/src/main/resources/application.properties` | `ALIYUN_AI_API_KEY` | langchain4j 模型与密钥 |
 
 ## 目录结构
 
@@ -234,7 +258,9 @@ buis-parent/
 ├── buis-generator/      # 代码生成器
 ├── sql/                 # 建表脚本、基础数据、Quartz 表
 ├── bin/                 # Windows 打包 / 清理 / 运行脚本
-├── doc/                 # 部署与环境手册
+├── docs/                # 部署与配置手册
+├── scripts/             # 历史密钥清洗脚本
+├── .env.example         # 环境变量模板（复制为 .env 后填写）
 ├── ry.sh / ry.bat       # Linux / Windows 部署脚本
 └── pom.xml              # 父工程 POM
 ```

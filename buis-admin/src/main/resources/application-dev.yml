@@ -1,19 +1,15 @@
 # 数据源配置
 spring:
-  url: http://43.136.119.58:3306/
+  url: http://${DB_HOST}:3306/
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     druid:
-      # 主库数据源(暂时用与另外一个服务器)
-#      master:
-#        url: jdbc:mysql://42.194.233.38:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#        username: root
-#        password: ***REMOVED***
+      # 主库数据源
       master:
-        url: jdbc:mysql://43.136.119.58:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-        username: root
-        password: ***REMOVED***
+        url: jdbc:mysql://${DB_HOST}:${DB_PORT:3306}/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        username: ${DB_USERNAME:root}
+        password: ${DB_PASSWORD}
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -52,8 +48,8 @@ spring:
         allow:
         url-pattern: /druid/*
         # 控制台管理用户名和密码
-        login-username: ruoyi
-        login-password: ***REMOVED***
+        login-username: ${DRUID_USERNAME:ruoyi}
+        login-password: ${DRUID_PASSWORD}
       filter:
         stat:
           enabled: true
@@ -68,13 +64,13 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: 43.136.119.58
+    host: ${REDIS_HOST}
     # 端口，默认为6379
-    port: 6379
+    port: ${REDIS_PORT:6379}
     # 数据库索引
     database: 2
     # 密码
-    password:
+    password: ${REDIS_PASSWORD:}
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -96,10 +92,10 @@ spring:
     # 编码集
     default-encoding: UTF-8
     #发送邮件的账户
-    username: 3119932256@qq.com
+    username: ${MAIL_USERNAME:}
     #授权码
-    password: ***REMOVED***
-    from: 3119932256@qq.com
+    password: ${MAIL_PASSWORD:}
+    from: ${MAIL_USERNAME:}
     test-connection: true
     properties:
       mail:
@@ -131,7 +127,7 @@ sa-token:
   # 是否输出操作日志
   is-log: true
   # jwt秘钥
-  jwt-secret-key: ***REMOVED***
+  jwt-secret-key: ${SA_TOKEN_JWT_SECRET}
 
 
 
