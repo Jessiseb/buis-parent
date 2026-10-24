@@ -76,7 +76,7 @@ token:
   # 令牌自定义标识
   header: Authorization
   # 令牌密钥
-  secret: ***REMOVED***
+  secret: ${TOKEN_SECRET}
   # 令牌有效期（默认30分钟）
   expireTime: 30
 
@@ -128,4 +128,4 @@ sa-token:
   # 是否输出操作日志
   is-log: true
   # jwt秘钥
-  jwt-secret-key: ***REMOVED***
+  jwt-secret-key: ${SA_TOKEN_JWT_SECRET}
