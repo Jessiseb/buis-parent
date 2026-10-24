@@ -46,3 +46,13 @@ nbdist/
 !*/build/*.html
 !*/build/*.xml
 /创新创业平台部署文档.pdf
+
+### 本地环境变量与真实配置（含密钥，禁止入库） ###
+.env
+.env.local
+*.env
+!.env.example
+application-local.yml
+application-local.yaml
+application-local.properties
+.secret-list.txt
