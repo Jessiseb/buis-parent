@@ -76,7 +76,7 @@ token:
   # 令牌自定义标识
   header: Authorization
   # 令牌密钥
-  secret: ***REMOVED***
+  secret: ${TOKEN_SECRET}
   # 令牌有效期（默认30分钟）
   expireTime: 30
 
@@ -128,20 +128,20 @@ sa-token:
   # 是否输出操作日志
   is-log: true
   # jwt秘钥
-  jwt-secret-key: ***REMOVED***
+  jwt-secret-key: ${SA_TOKEN_JWT_SECRET}
 
 aliyun:
   ai:
-    api-key: ***REMOVED***
-    #api-key: ***REMOVED***
+    api-key: ${ALIYUN_AI_API_KEY}
+    #api-key: ${ALIYUN_AI_API_KEY}
     base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
 
-coze: ***REMOVED***
+coze: ${COZE_TOKEN}
 
 wenxin:
   api:
-    id: ***REMOVED*** #智能体id
+    id: ${WENXIN_APP_ID} #智能体id
     secret:
-      key: ***REMOVED*** #密钥
+      key: ${WENXIN_APP_SECRET_KEY} #密钥
   agent:
     api-url: https://openapi.baidu.com/oauth/2.0/token
