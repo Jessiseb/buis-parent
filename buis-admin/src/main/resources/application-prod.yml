@@ -8,7 +8,7 @@ spring:
       master:
         url: jdbc:mysql://42.194.233.38:3306/ruoyi_race?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
-        password: ***REMOVED***
+        password: ${DB_PASSWORD}
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -48,7 +48,7 @@ spring:
         url-pattern: /druid/*
         # 控制台管理用户名和密码
         login-username: ruoyi
-        login-password: ***REMOVED***
+        login-password: ${DRUID_PASSWORD}
       filter:
         stat:
           enabled: true
@@ -69,10 +69,10 @@ spring:
     # 编码集
     default-encoding: UTF-8
     #发送邮件的账户
-    username: 3119932256@qq.com
+    username: ${MAIL_USERNAME}
     #授权码
-    password: ***REMOVED***
-    from: 3119932256@qq.com
+    password: ${MAIL_PASSWORD}
+    from: ${MAIL_USERNAME}
     test-connection: true
     properties:
       mail:
